@@ -89,29 +89,48 @@ export default function MesaPage({ params }: PageProps) {
   const tieneCAfe = items.some(i => ["c1","c2"].includes(i.producto.categoria_id || ""));
   const mostrarUpsell = tieneProductosDePan && !tieneCAfe && items.length > 0;
 
+  const isUUID = (str?: string | null) =>
+    Boolean(str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str));
+
   const llamarMesero = async () => {
     setLlamandoMesero(true);
+    const mesaNum = parseInt(numero) || 1;
     try {
-      if (supabase && mesaId) {
+      const { useSystemStore } = await import("@/store");
+      useSystemStore.getState().addAlerta({
+        mesa_numero: mesaNum,
+        tipo: "llamado",
+        mensaje: `Mesa ${mesaNum} solicita atención`,
+        datos_extra: {},
+      });
+
+      if (supabase) {
         await supabase.from("alertas_mesero").insert({
-          mesa_id: mesaId, mesa_numero: parseInt(numero),
-          tipo: "llamado", mensaje: `Mesa ${numero} solicita atención`,
+          mesa_id: isUUID(mesaId) ? mesaId : null,
+          mesa_numero: mesaNum,
+          tipo: "llamado",
+          mensaje: `Mesa ${mesaNum} solicita atención`,
         });
       }
       setTimeout(() => setLlamandoMesero(false), 3000);
-    } catch { setLlamandoMesero(false); }
+    } catch {
+      setLlamandoMesero(false);
+    }
   };
 
   const confirmarPedido = async () => {
     if (!items.length) return;
     setSubmitting(true);
+    const mesaNum = parseInt(numero) || 1;
     try {
       let newPedidoId = pedidoId;
 
       if (supabase) {
         const pedidoPayload = {
-          mesa_id: mesaId, mesa_numero: parseInt(numero),
-          estado: "pendiente", total: total(),
+          mesa_id: isUUID(mesaId) ? mesaId : null,
+          mesa_numero: mesaNum,
+          estado: "pendiente",
+          total: total(),
         };
         if (!newPedidoId) {
           const { data: pedido } = await supabase.from("pedidos").insert(pedidoPayload).select().single();
@@ -119,23 +138,56 @@ export default function MesaPage({ params }: PageProps) {
           if (newPedidoId) setPedidoId(newPedidoId);
         }
         if (newPedidoId) {
-          const itemsPayload = items.map(i => ({
-            pedido_id: newPedidoId, producto_id: i.producto.id,
-            producto_nombre: i.producto.nombre, cantidad: i.cantidad,
-            precio_unitario: i.producto.precio, subtotal: i.cantidad * i.producto.precio,
-            chips_seleccionados: i.chips_seleccionados, notas: i.notas,
-            estacion: i.producto.estacion, estado: "pendiente",
+          const itemsPayload = items.map((i) => ({
+            pedido_id: newPedidoId,
+            producto_id: isUUID(i.producto.id) ? i.producto.id : null,
+            producto_nombre: i.producto.nombre,
+            cantidad: i.cantidad,
+            precio_unitario: i.producto.precio,
+            subtotal: i.cantidad * i.producto.precio,
+            chips_seleccionados: i.chips_seleccionados,
+            notas: i.notas,
+            estacion: i.producto.estacion,
+            estado: "pendiente",
           }));
           await supabase.from("items_pedido").insert(itemsPayload);
-          await supabase.from("mesas").update({ estado: "ocupada" }).eq("id", mesaId);
+          if (isUUID(mesaId)) {
+            await supabase.from("mesas").update({ estado: "ocupada" }).eq("id", mesaId);
+          }
           setPedidoEstado("pendiente");
         }
-      } else {
-        // Demo mode
-        newPedidoId = `demo-${Date.now()}`;
-        setPedidoId(newPedidoId);
+      }
+
+      // Sincronizar en Store local
+      const { useSystemStore } = await import("@/store");
+      useSystemStore.getState().addPedido({
+        mesa_numero: mesaNum,
+        estado: "pendiente",
+        total: total(),
+        cliente_nombre: `Mesa ${mesaNum}`,
+        es_ronda: false,
+        items: items.map((i, idx) => ({
+          id: `item-${Date.now()}-${idx}`,
+          pedido_id: newPedidoId || `ped-${Date.now()}`,
+          producto_id: i.producto.id,
+          producto_nombre: i.producto.nombre,
+          cantidad: i.cantidad,
+          precio_unitario: i.producto.precio,
+          subtotal: i.cantidad * i.producto.precio,
+          chips_seleccionados: i.chips_seleccionados,
+          notas: i.notas,
+          estacion: i.producto.estacion,
+          estado: "pendiente",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })),
+      });
+
+      if (!newPedidoId) {
+        setPedidoId(`demo-${Date.now()}`);
         setPedidoEstado("pendiente");
       }
+
       clearCart();
       setCartOpen(false);
     } finally {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import RoleNav from "@/components/RoleNav";
+import SupabaseSync from "@/components/SupabaseSync";
 
 export const metadata: Metadata = {
   title: {
@@ -36,6 +37,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#1E130C" />
       </head>
       <body>
+        <SupabaseSync />
         <Suspense fallback={<div className="h-14 bg-amber-950" />}>
           <RoleNav />
         </Suspense>

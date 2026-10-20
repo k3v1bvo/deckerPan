@@ -178,10 +178,36 @@ END; $$ language plpgsql;
 DROP TRIGGER IF EXISTS trg_recalc_total ON items_pedido;
 CREATE TRIGGER trg_recalc_total AFTER INSERT OR UPDATE OR DELETE ON items_pedido FOR EACH ROW EXECUTE FUNCTION recalc_pedido_total();
 
-ALTER PUBLICATION supabase_realtime ADD TABLE pedidos;
-ALTER PUBLICATION supabase_realtime ADD TABLE items_pedido;
-ALTER PUBLICATION supabase_realtime ADD TABLE mesas;
-ALTER PUBLICATION supabase_realtime ADD TABLE alertas_mesero;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'pedidos'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE pedidos;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'items_pedido'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE items_pedido;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'mesas'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE mesas;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'alertas_mesero'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE alertas_mesero;
+  END IF;
+END $$;
 `;
 
 const SQL_SEED = `

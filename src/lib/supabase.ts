@@ -1,17 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  'https://ixdpabvlcdogcsdxxcid.supabase.co';
 
-export const SUPABASE_CONFIGURED = !!(supabaseUrl && supabaseAnonKey);
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  'sb_publishable_5vMHA85HZWJhwhxRtY12Fw_wk3fsG_S';
 
-export const supabase = SUPABASE_CONFIGURED
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      realtime: { params: { eventsPerSecond: 10 } },
-    })
-  : null;
+export const SUPABASE_CONFIGURED = Boolean(supabaseUrl && supabaseAnonKey);
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: {
+    params: {
+      eventsPerSecond: 10,
+    },
+  },
+});
 
 export function getSupabase() {
-  if (!supabase) throw new Error('Supabase no configurado');
   return supabase;
 }
