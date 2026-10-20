@@ -1,26 +1,363 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+/* ================================================
+   DENCKER PAN — DESIGN SYSTEM
+   "Warm Artisanal Bakery & Coffee"
+   ================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Color Tokens ── */
+  --cream:         #FAF6F0;
+  --crumb:         #F3ECE1;
+  --crumb-dark:    #EAE0D3;
+  --surface:       #FFFFFF;
+  --espresso:      #1E130C;
+  --espresso-80:   #3D2A1F;
+  --espresso-50:   #8F7265;
+  --espresso-30:   #C2AFA4;
+  --espresso-10:   #EDE7E3;
+  --crust:         #D97706;    /* dorado corteza — acento principal */
+  --crust-light:   #F59E0B;
+  --crust-dark:    #B45309;
+  --crust-soft:    #FEF3C7;
+  --cocoa:         #92400E;
+  --sage:          #6B7280;
+  --red-alert:     #DC2626;
+  --green-ok:      #16A34A;
+  --blue-info:     #2563EB;
+
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 3px rgba(30,19,12,0.08), 0 1px 2px rgba(30,19,12,0.04);
+  --shadow-md:   0 4px 12px rgba(30,19,12,0.10), 0 2px 4px rgba(30,19,12,0.06);
+  --shadow-lg:   0 10px 30px rgba(30,19,12,0.14), 0 4px 8px rgba(30,19,12,0.08);
+  --shadow-xl:   0 20px 50px rgba(30,19,12,0.18);
+  --shadow-crust:0 4px 20px rgba(217,119,6,0.30);
+
+  /* ── Radii ── */
+  --r-sm:  6px;
+  --r-md:  12px;
+  --r-lg:  18px;
+  --r-xl:  24px;
+  --r-full:9999px;
+
+  /* ── Motion ── */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:      cubic-bezier(0, 0, 0.2, 1);
+  --dur-fast:      150ms;
+  --dur-normal:    250ms;
+  --dur-slow:      400ms;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ── Base Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--cream);
+  color: var(--espresso);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+
+/* ── Typography ── */
+.font-display {
+  font-family: 'Fraunces', Georgia, serif;
+}
+.font-ui {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+.font-mono-nums {
+  font-family: 'Courier New', Courier, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--crumb); }
+::-webkit-scrollbar-thumb { background: var(--espresso-30); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--espresso-50); }
+
+/* ── Selection ── */
+::selection { background: var(--crust-soft); color: var(--crust-dark); }
+
+/* ── Focus ── */
+:focus-visible {
+  outline: 2px solid var(--crust);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ── Utility Classes ── */
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--crumb-dark);
+}
+.card-warm {
+  background: var(--crumb);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--crumb-dark);
+}
+.card-elevated {
+  background: var(--surface);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--r-full);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-spring),
+              box-shadow var(--dur-normal) var(--ease-standard),
+              background-color var(--dur-normal) var(--ease-standard),
+              opacity var(--dur-fast) var(--ease-standard);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.96); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn:disabled:active { transform: none; }
+
+.btn-primary {
+  background: var(--crust);
+  color: white;
+  box-shadow: var(--shadow-crust);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--crust-dark);
+  box-shadow: 0 6px 24px rgba(217,119,6,0.40);
+}
+
+.btn-secondary {
+  background: var(--crumb);
+  color: var(--espresso);
+  border: 1.5px solid var(--crumb-dark);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--crumb-dark);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--espresso-50);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--crumb);
+  color: var(--espresso);
+}
+
+.btn-danger {
+  background: var(--red-alert);
+  color: white;
+}
+
+.btn-sm { padding: 7px 14px; font-size: 0.8rem; }
+.btn-lg { padding: 14px 28px; font-size: 1rem; }
+.btn-xl { padding: 18px 36px; font-size: 1.1rem; }
+.btn-icon { padding: 10px; border-radius: var(--r-md); }
+
+/* Chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1.5px solid var(--crumb-dark);
+  background: var(--crumb);
+  color: var(--espresso-80);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-standard);
+  user-select: none;
+}
+.chip:hover { border-color: var(--crust); background: var(--crust-soft); }
+.chip-active { background: var(--crust); border-color: var(--crust-dark); color: white; }
+
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--r-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-libre     { background: #DCFCE7; color: #15803D; }
+.badge-ocupada   { background: #FEF3C7; color: #B45309; }
+.badge-reservada { background: #DBEAFE; color: #1D4ED8; }
+.badge-limpieza  { background: #F3F4F6; color: #6B7280; }
+.badge-pendiente { background: #FEF9C3; color: #854D0E; }
+.badge-preparando{ background: #FED7AA; color: #C2410C; }
+.badge-listo     { background: #DCFCE7; color: #15803D; }
+.badge-pagado    { background: #F3F4F6; color: #4B5563; }
+
+/* Input */
+.input {
+  width: 100%;
+  padding: 11px 16px;
+  background: var(--crumb);
+  border: 1.5px solid var(--crumb-dark);
+  border-radius: var(--r-md);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--espresso);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard);
+}
+.input:focus {
+  border-color: var(--crust);
+  box-shadow: 0 0 0 3px rgba(217,119,6,0.15);
+  background: var(--surface);
+}
+.input::placeholder { color: var(--espresso-30); }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--crumb-dark), transparent);
+  margin: 16px 0;
+}
+
+/* Price tag */
+.price {
+  font-family: 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--crust-dark);
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, var(--crumb) 25%, var(--crumb-dark) 50%, var(--crumb) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--r-md);
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Spinner */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Timer KDS */
+.timer-ok      { color: var(--green-ok); }
+.timer-warning { color: var(--crust); }
+.timer-alert   { color: var(--red-alert); animation: pulse-alert 1s ease-in-out infinite; }
+@keyframes pulse-alert {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Gradient header */
+.header-gradient {
+  background: linear-gradient(135deg, var(--espresso) 0%, var(--espresso-80) 50%, #5C3D1E 100%);
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* Bottom sheet overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 19, 12, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 40;
+}
+
+/* ── Print Styles (Tickets Térmicos 80mm / 58mm) ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+  body { background: white !important; color: black !important; font-family: 'Courier New', monospace; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+
+  .ticket-80mm { width: 80mm; margin: 0 auto; }
+  .ticket-58mm { width: 58mm; margin: 0 auto; }
+
+  .ticket-header-inv {
+    background: black !important;
+    color: white !important;
+    padding: 8mm;
+    text-align: center;
+    font-size: 18pt;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+
+  .ticket-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed #000;
+    padding: 2mm 0;
+    font-size: 10pt;
+  }
+
+  .ticket-total {
+    font-size: 14pt;
+    font-weight: bold;
+    border-top: 2px solid black;
+    padding-top: 3mm;
+    margin-top: 3mm;
+  }
+
+  .ticket-cambio {
+    background: black !important;
+    color: white !important;
+    padding: 3mm;
+    text-align: center;
+    font-size: 16pt;
+    font-weight: bold;
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  body { font-size: 15px; }
 }
