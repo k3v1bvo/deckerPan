@@ -1,21 +1,157 @@
 "use client";
 import { useEffect } from "react";
 import { supabase, SUPABASE_CONFIGURED } from "@/lib/supabase";
-import { useSystemStore } from "@/store";
-import { Pedido, ItemPedido, Mesa, AlertaMesero, Producto, Categoria, Zona } from "@/types";
+import { useSystemStore, useUIStore } from "@/store";
+import { subscribeToSync, markEventHandled, SyncMessage } from "@/lib/broadcast";
+import { soundManager } from "@/lib/sound";
+import { Pedido, Mesa, AlertaMesero, Producto, Categoria, Zona } from "@/types";
 
 export default function SupabaseSync() {
-  const {
-    setMesas,
-    setProductos,
-    zonas,
-    mesas,
-  } = useSystemStore();
+  const { setMesas, setProductos } = useSystemStore();
 
   useEffect(() => {
-    if (!SUPABASE_CONFIGURED || !supabase) return;
-
     let mounted = true;
+
+    // 0. Desbloquear AudioContext en la primera interacción del usuario
+    const unlockAudio = () => {
+      soundManager.playClick();
+      window.removeEventListener("click", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+    };
+    window.addEventListener("click", unlockAudio, { once: true });
+    window.addEventListener("touchstart", unlockAudio, { once: true });
+
+    // ─────────────────────────────────────────────────────────────
+    // 1. CANAL LOCAL SUB-MILISEGUNDO (BroadcastChannel entre pestañas)
+    // ─────────────────────────────────────────────────────────────
+    const unsubscribeBroadcast = subscribeToSync((msg: SyncMessage) => {
+      if (!mounted) return;
+
+      const { type, payload } = msg;
+
+      switch (type) {
+        case "NEW_ORDER": {
+          const ped = payload as Pedido;
+          if (ped && ped.id) {
+            const isFirst = markEventHandled("order-" + ped.id);
+            // Sincronizar en store local si no existe
+            useSystemStore.setState((state) => {
+              const exists = state.pedidos.some((p) => p.id === ped.id);
+              const pedidosUpdated = exists ? state.pedidos : [ped, ...state.pedidos];
+              const mesasUpdated = state.mesas.map((m) =>
+                m.numero === ped.mesa_numero ? { ...m, estado: "ocupada" as const } : m
+              );
+              return { pedidos: pedidosUpdated, mesas: mesasUpdated };
+            });
+
+            if (isFirst) {
+              soundManager.playOrderChime();
+              useUIStore.getState().addToast({
+                tipo: "comanda",
+                titulo: "Nueva Comanda en Mesa",
+                mensaje: `Mesa ${ped.mesa_numero} — Total: Bs ${(ped.total || 0).toFixed(2)}`,
+                mesa_numero: ped.mesa_numero,
+              });
+            }
+          }
+          break;
+        }
+
+        case "WAITER_CALL": {
+          const alerta = payload as AlertaMesero;
+          if (alerta && alerta.id) {
+            const isFirst = markEventHandled("alerta-" + alerta.id);
+            useSystemStore.setState((state) => {
+              const exists = state.alertas.some((a) => a.id === alerta.id);
+              return {
+                alertas: exists ? state.alertas : [alerta, ...state.alertas],
+              };
+            });
+
+            if (isFirst) {
+              soundManager.playWaiterBell();
+              useUIStore.getState().addToast({
+                tipo: "alerta",
+                titulo: alerta.tipo === "cuenta_pedida" ? "Solicitud de Cuenta" : "Llamada de Mesa",
+                mensaje: alerta.mensaje || `Mesa ${alerta.mesa_numero} solicita atención del mesero`,
+                mesa_numero: alerta.mesa_numero,
+              });
+            }
+          }
+          break;
+        }
+
+        case "ORDER_READY": {
+          const { id, estado, mesa_numero } = payload;
+          if (id) {
+            const isFirst = markEventHandled(`order-state-${id}-${estado}`);
+            useSystemStore.setState((state) => ({
+              pedidos: state.pedidos.map((p) => (p.id === id ? { ...p, estado } : p)),
+            }));
+
+            if (estado === "listo" && isFirst) {
+              soundManager.playSuccessTone();
+              useUIStore.getState().addToast({
+                tipo: "cocina",
+                titulo: "Comanda Lista para Servir",
+                mensaje: `Cocina despachó los platillos de Mesa ${mesa_numero || ""}`,
+                mesa_numero,
+              });
+            }
+          }
+          break;
+        }
+
+        case "PAYMENT_COMPLETED": {
+          const { pedidoId, mesa_numero, monto } = payload;
+          if (pedidoId) {
+            const isFirst = markEventHandled("pago-" + pedidoId);
+            useSystemStore.setState((state) => ({
+              pedidos: state.pedidos.map((p) =>
+                p.id === pedidoId ? { ...p, estado: "pagado" as const } : p
+              ),
+              mesas: state.mesas.map((m) =>
+                m.numero === mesa_numero ? { ...m, estado: "libre" as const } : m
+              ),
+            }));
+
+            if (isFirst) {
+              soundManager.playSuccessTone();
+              useUIStore.getState().addToast({
+                tipo: "pago",
+                titulo: "Cobro Registrado — Cuenta Cerrada",
+                mensaje: `Mesa ${mesa_numero} cobrada con éxito (Bs ${(monto || 0).toFixed(2)}). Mesa liberada.`,
+                mesa_numero,
+              });
+            }
+          }
+          break;
+        }
+
+        case "TABLE_STATUS_CHANGED": {
+          const { id, estado } = payload;
+          if (id && estado) {
+            useSystemStore.setState((state) => ({
+              mesas: state.mesas.map((m) => (m.id === id ? { ...m, estado } : m)),
+            }));
+          }
+          break;
+        }
+
+        default:
+          break;
+      }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // 2. SUPABASE REMOTO (WebSockets vía Supabase Realtime)
+    // ─────────────────────────────────────────────────────────────
+    if (!SUPABASE_CONFIGURED || !supabase) {
+      return () => {
+        mounted = false;
+        unsubscribeBroadcast();
+      };
+    }
 
     async function initialFetch() {
       try {
@@ -46,7 +182,7 @@ export default function SupabaseSync() {
           setProductos(pData as Producto[]);
         }
 
-        // Cargar Pedidos Activos con sus Items
+        // Cargar Pedidos Activos
         const { data: pedData } = await supabase
           .from("pedidos")
           .select("*, items:items_pedido(*)")
@@ -54,19 +190,16 @@ export default function SupabaseSync() {
           .neq("estado", "cancelado")
           .order("created_at", { ascending: false });
 
-        if (pedData && mounted) {
-          // Si hay pedidos en Supabase, sincronizarlos
-          if (pedData.length > 0) {
-            useSystemStore.setState((state) => ({
-              pedidos: [
-                ...pedData.map((p) => ({
-                  ...p,
-                  items: p.items || [],
-                })),
-                ...state.pedidos.filter((localP) => !pedData.some((dbP) => dbP.id === localP.id)),
-              ],
-            }));
-          }
+        if (pedData && mounted && pedData.length > 0) {
+          useSystemStore.setState((state) => ({
+            pedidos: [
+              ...pedData.map((p) => ({
+                ...p,
+                items: p.items || [],
+              })),
+              ...state.pedidos.filter((localP) => !pedData.some((dbP) => dbP.id === localP.id)),
+            ],
+          }));
         }
 
         // Cargar Alertas Pendientes
@@ -76,7 +209,7 @@ export default function SupabaseSync() {
           .eq("atendida", false)
           .order("created_at", { ascending: false });
 
-        if (alData && mounted) {
+        if (alData && mounted && alData.length > 0) {
           useSystemStore.setState((state) => ({
             alertas: [
               ...(alData as AlertaMesero[]),
@@ -91,7 +224,7 @@ export default function SupabaseSync() {
 
     initialFetch();
 
-    // Suscribirse a cambios en tiempo real
+    // Suscribirse a cambios en tiempo real vía WebSockets
     const channel = supabase
       .channel("dencker-realtime-global")
       .on(
@@ -99,6 +232,7 @@ export default function SupabaseSync() {
         { event: "*", schema: "public", table: "pedidos" },
         async (payload) => {
           if (!mounted) return;
+
           if (payload.eventType === "INSERT") {
             const { data: fullPedido } = await supabase
               .from("pedidos")
@@ -107,6 +241,7 @@ export default function SupabaseSync() {
               .single();
 
             if (fullPedido) {
+              const isFirst = markEventHandled("order-" + fullPedido.id);
               useSystemStore.setState((state) => {
                 const exists = state.pedidos.some((p) => p.id === fullPedido.id);
                 if (exists) return state;
@@ -114,13 +249,48 @@ export default function SupabaseSync() {
                   pedidos: [fullPedido as Pedido, ...state.pedidos],
                 };
               });
+
+              if (isFirst) {
+                soundManager.playOrderChime();
+                useUIStore.getState().addToast({
+                  tipo: "comanda",
+                  titulo: "¡Nueva Comanda Registrada!",
+                  mensaje: `Mesa ${fullPedido.mesa_numero} — Total: Bs ${(fullPedido.total || 0).toFixed(2)}`,
+                  mesa_numero: fullPedido.mesa_numero,
+                });
+              }
             }
           } else if (payload.eventType === "UPDATE") {
+            const updated = payload.new as Pedido;
             useSystemStore.setState((state) => ({
               pedidos: state.pedidos.map((p) =>
-                p.id === payload.new.id ? { ...p, ...payload.new } : p
+                p.id === updated.id ? { ...p, ...updated } : p
               ),
             }));
+
+            if (updated.estado === "listo") {
+              const isFirst = markEventHandled(`order-state-${updated.id}-listo`);
+              if (isFirst) {
+                soundManager.playSuccessTone();
+                useUIStore.getState().addToast({
+                  tipo: "cocina",
+                  titulo: "Comanda Lista para Servir",
+                  mensaje: `Cocina despachó comanda de Mesa ${updated.mesa_numero}`,
+                  mesa_numero: updated.mesa_numero,
+                });
+              }
+            } else if (updated.estado === "pagado") {
+              const isFirst = markEventHandled("pago-" + updated.id);
+              if (isFirst) {
+                soundManager.playSuccessTone();
+                useUIStore.getState().addToast({
+                  tipo: "pago",
+                  titulo: "Cuenta Pagada — Mesa Liberada",
+                  mensaje: `Mesa ${updated.mesa_numero} ha sido cancelada en caja`,
+                  mesa_numero: updated.mesa_numero,
+                });
+              }
+            }
           }
         }
       )
@@ -129,10 +299,23 @@ export default function SupabaseSync() {
         { event: "*", schema: "public", table: "alertas_mesero" },
         (payload) => {
           if (!mounted) return;
+
           if (payload.eventType === "INSERT") {
+            const alerta = payload.new as AlertaMesero;
+            const isFirst = markEventHandled("alerta-" + alerta.id);
             useSystemStore.setState((state) => ({
-              alertas: [payload.new as AlertaMesero, ...state.alertas],
+              alertas: [alerta, ...state.alertas],
             }));
+
+            if (isFirst) {
+              soundManager.playWaiterBell();
+              useUIStore.getState().addToast({
+                tipo: "alerta",
+                titulo: alerta.tipo === "cuenta_pedida" ? "Solicitud de Cuenta" : "Llamada de Servicio",
+                mensaje: alerta.mensaje || `Mesa ${alerta.mesa_numero} requiere atención`,
+                mesa_numero: alerta.mesa_numero,
+              });
+            }
           } else if (payload.eventType === "UPDATE") {
             useSystemStore.setState((state) => ({
               alertas: state.alertas.map((a) =>
@@ -160,6 +343,7 @@ export default function SupabaseSync() {
 
     return () => {
       mounted = false;
+      unsubscribeBroadcast();
       supabase.removeChannel(channel);
     };
   }, [setMesas, setProductos]);

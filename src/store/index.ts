@@ -22,6 +22,7 @@ import {
   SEED_CATEGORIAS,
   SEED_PRODUCTOS,
 } from '@/lib/seed-data';
+import { broadcastSync, markEventHandled } from '@/lib/broadcast';
 
 // ============================
 // SYSTEM STORE (Central Data: Mesas, Pedidos, Productos, Alertas)
@@ -229,10 +230,13 @@ export const useSystemStore = create<SystemStore>()(
           mesas: state.mesas.filter((m) => m.id !== id),
         })),
 
-      setEstadoMesa: (id, estado) =>
+      setEstadoMesa: (id, estado) => {
         set((state) => ({
           mesas: state.mesas.map((m) => (m.id === id ? { ...m, estado } : m)),
-        })),
+        }));
+        const m = get().mesas.find((mesa) => mesa.id === id);
+        broadcastSync('TABLE_STATUS_CHANGED', { id, numero: m?.numero, estado });
+      },
 
       ajustarCantidadMesas: (cantidad, zonaId) =>
         set((state) => {
@@ -331,6 +335,7 @@ export const useSystemStore = create<SystemStore>()(
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
+        markEventHandled('order-' + id);
         set((state) => {
           // Marcar mesa como ocupada si corresponde
           const mesasActualizadas = state.mesas.map((m) =>
@@ -341,17 +346,23 @@ export const useSystemStore = create<SystemStore>()(
             mesas: mesasActualizadas,
           };
         });
+        broadcastSync('NEW_ORDER', nuevo);
         return nuevo;
       },
 
-      updatePedidoEstado: (id, estado) =>
+      updatePedidoEstado: (id, estado) => {
+        markEventHandled(`order-state-${id}-${estado}`);
         set((state) => ({
           pedidos: state.pedidos.map((p) =>
             p.id === id ? { ...p, estado, updated_at: new Date().toISOString() } : p
           ),
-        })),
+        }));
+        const ped = get().pedidos.find((p) => p.id === id);
+        broadcastSync('ORDER_READY', { id, estado, mesa_numero: ped?.mesa_numero });
+      },
 
-      updateItemEstado: (itemId, estado) =>
+      updateItemEstado: (itemId, estado) => {
+        markEventHandled(`item-state-${itemId}-${estado}`);
         set((state) => ({
           pedidos: state.pedidos.map((p) => {
             const hasItem = p.items?.some((i) => i.id === itemId);
@@ -368,7 +379,10 @@ export const useSystemStore = create<SystemStore>()(
               updated_at: new Date().toISOString(),
             };
           }),
-        })),
+        }));
+        const ped = get().pedidos.find((p) => p.items?.some((i) => i.id === itemId));
+        broadcastSync('ITEM_READY', { itemId, estado, pedidoId: ped?.id, mesa_numero: ped?.mesa_numero });
+      },
 
       addItemToPedido: (pedidoId, itemData) =>
         set((state) => {
@@ -396,16 +410,19 @@ export const useSystemStore = create<SystemStore>()(
         }),
 
       // --- Alertas ---
-      addAlerta: (alertaData) =>
+      addAlerta: (alertaData) => {
+        const nuevaAlerta: AlertaMesero = {
+          ...alertaData,
+          id: 'al-' + Date.now(),
+          atendida: false,
+          created_at: new Date().toISOString(),
+        };
+        markEventHandled('alerta-' + nuevaAlerta.id);
         set((state) => {
-          const nuevaAlerta: AlertaMesero = {
-            ...alertaData,
-            id: 'al-' + Date.now(),
-            atendida: false,
-            created_at: new Date().toISOString(),
-          };
           return { alertas: [nuevaAlerta, ...state.alertas] };
-        }),
+        });
+        broadcastSync('WAITER_CALL', nuevaAlerta);
+      },
 
       marcarAlertaAtendida: (id) =>
         set((state) => ({
@@ -446,7 +463,9 @@ export const useSystemStore = create<SystemStore>()(
           };
         }),
 
-      registrarPago: (pedidoId, pagoData) =>
+      registrarPago: (pedidoId, pagoData) => {
+        markEventHandled('pago-' + pedidoId);
+        const pedidoPrev = get().pedidos.find((p) => p.id === pedidoId);
         set((state) => {
           const pedido = state.pedidos.find((p) => p.id === pedidoId);
           const monto = pagoData.monto;
@@ -477,7 +496,13 @@ export const useSystemStore = create<SystemStore>()(
             mesas: mesasUpdated,
             sesionCaja: sesionUpdated,
           };
-        }),
+        });
+        broadcastSync('PAYMENT_COMPLETED', {
+          pedidoId,
+          mesa_numero: pedidoPrev?.mesa_numero,
+          monto: pagoData.monto,
+        });
+      },
 
       // --- Reservas ---
       addReserva: (data) =>
@@ -584,26 +609,57 @@ export const useCartStore = create<CartStore>((set, get) => ({
 }));
 
 // ============================
-// UI STORE
+// UI STORE & NOTIFICATIONS
 // ============================
+export interface ToastNotification {
+  id: string;
+  tipo: 'alerta' | 'comanda' | 'cocina' | 'pago' | 'info';
+  titulo: string;
+  mensaje: string;
+  mesa_numero?: number;
+  created_at: string;
+}
+
 interface UIStore {
   currentRole: 'cliente' | 'mesero' | 'cocina' | 'caja' | 'admin';
   cartOpen: boolean;
   paymentOpen: boolean;
   paymentMode: 'todo' | 'partes' | 'items';
+  toasts: ToastNotification[];
   setCurrentRole: (r: UIStore['currentRole']) => void;
   setCartOpen: (v: boolean) => void;
   setPaymentOpen: (v: boolean) => void;
   setPaymentMode: (m: UIStore['paymentMode']) => void;
+  addToast: (toast: Omit<ToastNotification, 'id' | 'created_at'>) => void;
+  removeToast: (id: string) => void;
 }
 
-export const useUIStore = create<UIStore>((set) => ({
+export const useUIStore = create<UIStore>((set, get) => ({
   currentRole: 'cliente',
   cartOpen: false,
   paymentOpen: false,
   paymentMode: 'todo',
+  toasts: [],
   setCurrentRole: (currentRole) => set({ currentRole }),
   setCartOpen: (cartOpen) => set({ cartOpen }),
   setPaymentOpen: (paymentOpen) => set({ paymentOpen }),
   setPaymentMode: (paymentMode) => set({ paymentMode }),
+  addToast: (toast) => {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+    const newToast: ToastNotification = {
+      ...toast,
+      id,
+      created_at: new Date().toISOString(),
+    };
+    set((state) => ({
+      toasts: [newToast, ...state.toasts].slice(0, 5), // máximo 5 toasts simultáneos
+    }));
+    setTimeout(() => {
+      get().removeToast(id);
+    }, 5500);
+  },
+  removeToast: (id) =>
+    set((state) => ({
+      toasts: state.toasts.filter((t) => t.id !== id),
+    })),
 }));
