@@ -17,6 +17,7 @@ import {
   DollarSign,
   X,
   CreditCard,
+  Star,
 } from "lucide-react";
 import { useSystemStore } from "@/store";
 import { Pedido, MetodoPago, BILLETES_BOLIVIANOS } from "@/types";
@@ -57,15 +58,43 @@ export default function CajaPage() {
   });
   const [notasCierre, setNotasCierre] = useState("");
 
+  const [propinaPct, setPropinaPct] = useState<number>(0);
+  const [propinaCustom, setPropinaCustom] = useState<number>(0);
+
   // Pedidos pendientes de pago
   const pedidosPendientes = useMemo(() => {
     return pedidos.filter((p) => p.estado !== "pagado" && p.estado !== "cancelado");
   }, [pedidos]);
 
-  // Total de la orden actual
-  const totalPagar = pedidoSeleccionado ? pedidoSeleccionado.total : 0;
+  // Total de la orden actual con propina
+  const subtotalPagar = pedidoSeleccionado ? pedidoSeleccionado.total : 0;
+  const montoPropina = propinaPct > 0 
+    ? Math.round(subtotalPagar * (propinaPct / 100) * 10) / 10 
+    : propinaCustom;
+  const totalPagar = subtotalPagar + montoPropina;
   const montoPorPersona = splitPersonas > 1 ? totalPagar / splitPersonas : totalPagar;
   const cambio = Math.max(0, montoRecibido - totalPagar);
+
+  // Desglose sugerido de billetes y monedas bolivianas para el vuelto
+  const desgloseCambio = useMemo(() => {
+    if (cambio <= 0) return [];
+    let rem = cambio;
+    const resultado: { valor: number; label: string; cantidad: number }[] = [];
+    const denominaciones = [200, 100, 50, 20, 10, 5, 2, 1, 0.5];
+
+    for (const d of denominaciones) {
+      if (rem >= d) {
+        const cant = Math.floor(rem / d);
+        resultado.push({
+          valor: d,
+          label: d >= 1 ? `Bs ${d}` : `${d * 100} ctv`,
+          cantidad: cant,
+        });
+        rem = Math.round((rem - cant * d) * 10) / 10;
+      }
+    }
+    return resultado;
+  }, [cambio]);
 
   // Conteo total del arqueo
   const totalArqueoContado = useMemo(() => {
@@ -75,13 +104,17 @@ export default function CajaPage() {
   }, [conteoBilletes]);
 
   const seleccionarPedido = (p: Pedido) => {
+    soundManager.playTactileClick();
     setPedidoSeleccionado(p);
     setMontoRecibido(p.total);
     setSplitPersonas(1);
+    setPropinaPct(0);
+    setPropinaCustom(0);
     setPagoCompletado(false);
   };
 
   const agregarBillete = (valor: number) => {
+    soundManager.playCoinRattle();
     setMontoRecibido((prev) => prev + valor);
   };
 
@@ -98,18 +131,20 @@ export default function CajaPage() {
       items_pagados: (pedidoSeleccionado.items || []).map((i) => i.id),
     });
 
-    soundManager.playSuccessTone();
+    // 💰 ¡Sonido icónico de Caja Registradora Antigua de Bronce Ka-Ching!
+    soundManager.playCashRegister();
     setPagoCompletado(true);
     setModalReciboAbierto(true);
   };
 
   const imprimirRecibo = () => {
+    soundManager.playTactileClick();
     window.print();
   };
 
   const ejecutarCierreCaja = () => {
     cerrarCaja(totalArqueoContado, notasCierre);
-    soundManager.playSuccessTone();
+    soundManager.playCashRegister();
     setModalArqueoAbierto(false);
   };
 
@@ -304,6 +339,33 @@ export default function CajaPage() {
                 )}
               </div>
 
+              {/* Selector de Propina Sugerida */}
+              <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200/80 flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-stone-700">
+                  <Star size={14} className="text-amber-500 fill-amber-500" />
+                  <span>Propina Voluntaria:</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {[0, 5, 10, 15].map((pct) => (
+                    <button
+                      key={pct}
+                      type="button"
+                      onClick={() => {
+                        setPropinaPct(pct);
+                        soundManager.playTactileClick();
+                      }}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition ${
+                        propinaPct === pct
+                          ? "bg-amber-900 text-white shadow-xs"
+                          : "bg-white text-stone-600 border border-stone-200 hover:bg-stone-100"
+                      }`}
+                    >
+                      {pct === 0 ? "Sin propina" : `+${pct}% (Bs ${(subtotalPagar * pct / 100).toFixed(1)})`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Método de Pago Tabs */}
               <div>
                 <label className="text-xs font-semibold text-stone-500 uppercase tracking-wider block mb-2">
@@ -446,6 +508,36 @@ export default function CajaPage() {
                       </div>
                     </div>
                   </div>
+
+                  {/* 💰 Sugerencia Inteligente de Entrega de Billetes y Monedas */}
+                  {cambio > 0 && desgloseCambio.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-2xl space-y-2 shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between text-xs font-bold text-amber-950">
+                        <span className="flex items-center gap-1.5">
+                          <Calculator size={13} className="text-amber-700" />
+                          Entrega de Vuelto Óptimo (Caja Automática):
+                        </span>
+                        <span className="text-[11px] text-amber-800 font-mono">Total: Bs {cambio.toFixed(2)}</span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {desgloseCambio.map((b, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-amber-300 shadow-2xs text-xs font-bold text-stone-800"
+                          >
+                            <span className="w-5 h-5 rounded-full bg-amber-900 text-amber-100 text-[10px] flex items-center justify-center font-mono">
+                              {b.cantidad}x
+                            </span>
+                            <span className="font-mono text-amber-950">{b.label}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               )}
 

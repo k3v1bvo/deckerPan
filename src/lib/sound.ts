@@ -269,6 +269,139 @@ class SoundManager {
   }
 
   /**
+   * Vintage Brass Cash Register "Ka-Ching!" (Campanilla de bronce + resorte cajón + tintineo de monedas)
+   */
+  playCashRegister() {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      // 1. Golpe de palanca mecánico inicial (0 - 50ms)
+      const lever = ctx.createOscillator();
+      const leverGain = ctx.createGain();
+      lever.type = "sawtooth";
+      lever.frequency.setValueAtTime(320, now);
+      lever.frequency.exponentialRampToValueAtTime(70, now + 0.05);
+      leverGain.gain.setValueAtTime(0.25, now);
+      leverGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      lever.connect(leverGain);
+      leverGain.connect(ctx.destination);
+      lever.start(now);
+      lever.stop(now + 0.06);
+
+      // 2. Campanilla metálica icónica "¡DING!" (70ms)
+      const bellFreqs = [1760, 3520]; // A6 y armónico
+      bellFreqs.forEach((freq, idx) => {
+        const bell = ctx.createOscillator();
+        const bGain = ctx.createGain();
+        bell.type = "sine";
+        bell.frequency.setValueAtTime(freq, now + 0.06);
+        bGain.gain.setValueAtTime(idx === 0 ? 0.45 : 0.22, now + 0.06);
+        bGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.75);
+        bell.connect(bGain);
+        bGain.connect(ctx.destination);
+        bell.start(now + 0.06);
+        bell.stop(now + 0.78);
+      });
+
+      // 3. Deslizamiento metálico del cajón abriéndose (80ms - 260ms)
+      const bufSize = Math.floor(ctx.sampleRate * 0.22);
+      const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 1.4);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buf;
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(1400, now + 0.08);
+      filter.Q.setValueAtTime(2.8, now + 0.08);
+      const nGain = ctx.createGain();
+      nGain.gain.setValueAtTime(0.28, now + 0.08);
+      nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+      noise.connect(filter);
+      filter.connect(nGain);
+      nGain.connect(ctx.destination);
+      noise.start(now + 0.08);
+      noise.stop(now + 0.27);
+
+      // 4. Monedas tintineando en la gaveta "Clink-clink-clash" (150ms - 420ms)
+      const coinTones = [2960, 3951, 2637, 3322, 4186];
+      coinTones.forEach((cf, idx) => {
+        const coin = ctx.createOscillator();
+        const cGain = ctx.createGain();
+        coin.type = "triangle";
+        const startT = now + 0.14 + idx * 0.04;
+        coin.frequency.setValueAtTime(cf, startT);
+        cGain.gain.setValueAtTime(0.18, startT);
+        cGain.gain.exponentialRampToValueAtTime(0.0001, startT + 0.16);
+        coin.connect(cGain);
+        cGain.connect(ctx.destination);
+        coin.start(startT);
+        coin.stop(startT + 0.17);
+      });
+    } catch {}
+  }
+
+  /**
+   * Monedas cayendo en bandeja (para calculadora de cambio)
+   */
+  playCoinRattle() {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const coins = [3135, 4186, 2793];
+      coins.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        const t = now + idx * 0.05;
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.18, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      });
+    } catch {}
+  }
+
+  /**
+   * Beep de datáfono POS / Contactless RFID
+   */
+  playPOSBeep() {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1760, now); // A6
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.13);
+    } catch {}
+  }
+
+  /**
+   * Click táctil satisfactorio para cualquier botón del sistema
+   */
+  playTactileClick() {
+    this.playClick();
+  }
+
+  /**
    * Notificación armónica de éxito (Pago completado o pedido listo)
    */
   playSuccessTone() {
@@ -301,3 +434,4 @@ class SoundManager {
 }
 
 export const soundManager = new SoundManager();
+
