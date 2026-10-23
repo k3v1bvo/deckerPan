@@ -114,15 +114,19 @@ export default function KDSPage() {
   return (
     <div className="min-h-screen bg-[#0d0907] text-stone-100 pb-28 font-sans selection:bg-amber-500 selection:text-black">
       {/* ── Header KDS Apple Pro High Contrast ── */}
-      <header className="bg-[#17100b]/90 backdrop-blur-2xl border-b border-amber-900/40 px-4 lg:px-8 py-3.5 shadow-2xl sticky top-14 z-30">
+      <header className="bg-[#17100b]/90 backdrop-blur-2xl border-b border-amber-900/40 px-4 lg:px-8 py-3.5 shadow-2xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-amber-200 border border-amber-500/40 shadow-lg shadow-amber-950/80">
-              <ChefHat size={22} />
+            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+              <img
+                src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                alt="Dencker Pan"
+                className="w-full h-full object-contain drop-shadow"
+              />
             </div>
             <div>
               <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-wide text-amber-100 flex items-center gap-2">
-                KDS — Cocina & Barismo
+                KDS — Cocina & Barismo Dencker Pan
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" /> EN VIVO
                 </span>

@@ -278,7 +278,7 @@ export default function MesaPage({ params }: PageProps) {
       });
 
       if (!newPedidoId) {
-        setPedidoId(`demo-${Date.now()}`);
+        setPedidoId(`PED-${Date.now()}`);
         setPedidoEstado("pendiente");
       }
 
@@ -311,8 +311,12 @@ export default function MesaPage({ params }: PageProps) {
       <header className="sticky top-0 z-30 bg-[#281810]/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 py-3 shadow-xl">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-stone-950 font-serif font-black text-base shadow-md">
-              🥐
+            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+              <img
+                src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                alt="Dencker Pan"
+                className="w-full h-full object-contain drop-shadow"
+              />
             </div>
             <div>
               <div className="font-serif font-bold text-base text-white leading-tight">
@@ -830,7 +834,7 @@ export default function MesaPage({ params }: PageProps) {
 
               <div className="space-y-2">
                 <a
-                  href={`/pago/${pedidoId || "demo"}?modo=efectivo`}
+                  href={`/pago/${pedidoId || "PED-1021"}?modo=efectivo`}
                   className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center gap-3 hover:border-amber-400 transition"
                 >
                   <span className="text-2xl">💵</span>
@@ -843,7 +847,7 @@ export default function MesaPage({ params }: PageProps) {
                 </a>
 
                 <a
-                  href={`/pago/${pedidoId || "demo"}?modo=qr`}
+                  href={`/pago/${pedidoId || "PED-1021"}?modo=qr`}
                   className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center gap-3 hover:border-amber-400 transition"
                 >
                   <span className="text-2xl">📱</span>

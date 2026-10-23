@@ -88,7 +88,7 @@ export const useSystemStore = create<SystemStore>()(
       productos: SEED_PRODUCTOS,
       pedidos: [
         {
-          id: 'ped-demo-1',
+          id: 'PED-1021',
           mesa_numero: 3,
           estado: 'en_preparacion',
           total: 62,
@@ -99,7 +99,7 @@ export const useSystemStore = create<SystemStore>()(
           items: [
             {
               id: 'item-1',
-              pedido_id: 'ped-demo-1',
+              pedido_id: 'PED-1021',
               producto_nombre: 'Cappuccino',
               cantidad: 2,
               precio_unitario: 22,
@@ -112,7 +112,7 @@ export const useSystemStore = create<SystemStore>()(
             },
             {
               id: 'item-2',
-              pedido_id: 'ped-demo-1',
+              pedido_id: 'PED-1021',
               producto_nombre: 'Croissant Mantequilla',
               cantidad: 1,
               precio_unitario: 18,
@@ -126,7 +126,7 @@ export const useSystemStore = create<SystemStore>()(
           ],
         },
         {
-          id: 'ped-demo-2',
+          id: 'PED-1022',
           mesa_numero: 5,
           estado: 'pendiente',
           total: 86,
@@ -137,7 +137,7 @@ export const useSystemStore = create<SystemStore>()(
           items: [
             {
               id: 'item-3',
-              pedido_id: 'ped-demo-2',
+              pedido_id: 'PED-1022',
               producto_nombre: 'Sandwich Jamón y Queso',
               cantidad: 2,
               precio_unitario: 28,
@@ -150,7 +150,7 @@ export const useSystemStore = create<SystemStore>()(
             },
             {
               id: 'item-4',
-              pedido_id: 'ped-demo-2',
+              pedido_id: 'PED-1022',
               producto_nombre: 'Limonada Clásica',
               cantidad: 2,
               precio_unitario: 15,

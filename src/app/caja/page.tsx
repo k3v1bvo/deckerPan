@@ -113,15 +113,19 @@ export default function CajaPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-amber-950 pb-24">
       {/* Header Caja */}
-      <div className="bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 text-white px-6 py-4 shadow-lg sticky top-14 z-30">
+      <div className="bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 text-white px-6 py-4 shadow-lg">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="p-2.5 rounded-2xl bg-amber-800/50 text-amber-300 border border-amber-600/30">
-              <Receipt size={24} />
-            </span>
+            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+              <img
+                src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                alt="Dencker Pan"
+                className="w-full h-full object-contain drop-shadow"
+              />
+            </div>
             <div>
               <h1 className="font-serif text-2xl font-bold tracking-wide text-amber-100 flex items-center gap-2">
-                Caja & Facturación POS
+                Caja & Facturación POS — Dencker Pan
               </h1>
               <p className="text-amber-200/60 text-xs">
                 Cobro en Bolivianos (Bs), QR Simple, Split de cuenta y arqueo ciego

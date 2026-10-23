@@ -256,17 +256,21 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
       {/* ── Apple Glass Admin Header ── */}
-      <header className="sticky top-14 z-30 bg-stone-950/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
+      <header className="bg-stone-950/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-amber-200 border border-amber-500/40 shadow-lg">
-              <Settings size={22} />
+            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+              <img
+                src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                alt="Dencker Pan"
+                className="w-full h-full object-contain drop-shadow"
+              />
             </div>
             <div>
               <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                 Centro de Operaciones & Administración
                 <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                  SaaS Dencker Pan
+                  Dencker Pan
                 </span>
               </h1>
               <p className="text-stone-400 text-xs hidden sm:block">

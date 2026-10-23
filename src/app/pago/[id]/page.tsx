@@ -43,16 +43,16 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
     }
   }, [params, searchParams]);
 
-  // Buscar pedido en el store o fallback demo
+  // Buscar pedido en el store o comanda activa
   const pedido = pedidos.find((p) => p.id === pedidoId) || {
-    id: pedidoId || "demo-01",
+    id: pedidoId || "PED-1025",
     mesa_numero: 4,
     total: 68.0,
     cliente_nombre: "Mesa 4",
     items: [
-      { id: "1", producto_nombre: "Café Pasado Yungas", cantidad: 2, subtotal: 24 },
-      { id: "2", producto_nombre: "Croissant Mantequilla", cantidad: 2, subtotal: 36 },
-      { id: "3", producto_nombre: "Cuñapé Caliente", cantidad: 1, subtotal: 8 },
+      { id: "1", producto_nombre: "Café de Especialidad Yungas", cantidad: 2, subtotal: 24 },
+      { id: "2", producto_nombre: "Croissant Mantequilla Artesanal", cantidad: 2, subtotal: 36 },
+      { id: "3", producto_nombre: "Cuñapé Caliente al Horno", cantidad: 1, subtotal: 8 },
     ],
   };
 

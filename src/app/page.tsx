@@ -709,7 +709,7 @@ export default function HomePage() {
                   className="px-6 py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition flex items-center gap-2 shadow-md"
                 >
                   <QrCode size={16} />
-                  <span>Probar Menú Digital (Mesa 1)</span>
+                  <span>Menú Digital Mesa 1</span>
                 </Link>
                 <Link
                   href="/mesa/3"
@@ -747,7 +747,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Controles del Simulador */}
+            {/* Controles del Cotizador */}
             <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-[32px] border border-stone-200 shadow-md space-y-6">
               
               {/* Preset Selector */}
