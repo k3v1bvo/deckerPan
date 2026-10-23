@@ -40,6 +40,7 @@ export interface Categoria {
   estacion: Estacion;
   orden: number;
   activa: boolean;
+  imagen_url?: string;
 }
 
 export interface Producto {

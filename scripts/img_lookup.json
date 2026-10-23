@@ -1,0 +1,48 @@
+{
+  "logo": "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+  "banners": [
+    "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg",
+    "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg"
+  ],
+  "categorias": {
+    "1": "https://i.ibb.co/BH4rgH4f/dencker-cat-1.jpg",
+    "2": "https://i.ibb.co/TQ2z3r4/dencker-cat-2.jpg",
+    "3": "https://i.ibb.co/S75YZFD4/dencker-cat-3.jpg",
+    "4": "https://i.ibb.co/8LbH4mwr/dencker-cat-4.jpg",
+    "5": "https://i.ibb.co/JL4MnXC/dencker-cat-5.jpg",
+    "6": "https://i.ibb.co/bj5f2wcT/dencker-cat-6.jpg",
+    "7": "https://i.ibb.co/BV52cJkc/dencker-cat-7.jpg"
+  },
+  "productos": {
+    "dk-22": "https://i.ibb.co/d0zB2kgM/dk-caukas-con-queso.jpg",
+    "dk-23": "https://i.ibb.co/GQTSt8LS/dk-caukas-con-queso-con-or.jpg",
+    "dk-9": "https://i.ibb.co/d0rkYyLr/dk-caukas-con-queso-integral.jpg",
+    "dk-195": "https://i.ibb.co/WWfvkwRy/dk-chupete-grande.jpg",
+    "dk-196": "https://i.ibb.co/N6x6Yt2W/dk-chupete-peque-o.jpg",
+    "dk-37": "https://i.ibb.co/rf6Lb0gR/dk-cu-ap-abizcochado-100gr.jpg",
+    "dk-36": "https://i.ibb.co/YBJQpmqM/dk-cu-ap-abizcochado-200gr.jpg",
+    "dk-39": "https://i.ibb.co/d8x8RyR/dk-cu-ap-abizcochado-con-aj.jpg",
+    "dk-38": "https://i.ibb.co/d8x8RyR/dk-cu-ap-abizcochado-con-aj.jpg",
+    "dk-128": "https://i.ibb.co/Myyvs9GS/dk-galleta-chip.jpg",
+    "dk-26": "https://i.ibb.co/S7dyJ4Js/dk-galletas-cebritas.jpg",
+    "dk-30": "https://i.ibb.co/GQND9DK7/dk-galletas-con-almendra.jpg",
+    "dk-27": "https://i.ibb.co/dwTtMgGf/dk-galletas-con-coco.jpg",
+    "dk-28": "https://i.ibb.co/7xD4knqZ/dk-galletas-con-lim-n.jpg",
+    "dk-31": "https://i.ibb.co/xSxs4Fzx/dk-galletas-con-salvado.jpg",
+    "dk-29": "https://i.ibb.co/wTK48zZ/dk-galletas-de-ajonjol.jpg",
+    "dk-35": "https://i.ibb.co/5xxgh4SP/dk-galletas-de-champagne.jpg",
+    "dk-25": "https://i.ibb.co/whVdnYkK/dk-galletas-de-harina-de-mai.jpg",
+    "dk-32": "https://i.ibb.co/ymyF55Fj/dk-galletas-de-mantequilla.jpg",
+    "dk-33": "https://i.ibb.co/whZVTZKR/dk-galletas-de-naranja.jpg",
+    "dk-24": "https://i.ibb.co/Nnr7Sq8J/dk-palitos-con-aj.jpg",
+    "dk-72": "https://i.ibb.co/Zz99WPrb/dk-torta-mil-hojas.jpg",
+    "dk-51": "https://i.ibb.co/fdX7gB9K/dk-empanada-de-queso.jpg",
+    "dk-52": "https://i.ibb.co/Pv82FKYN/dk-cu-ap.jpg",
+    "dk-181": "https://i.ibb.co/4Rrqv2ZC/dk-esfihas.jpg",
+    "dk-55": "https://i.ibb.co/ZRsSMWDQ/dk-alfajores-maicena.jpg",
+    "dk-106": "https://i.ibb.co/ym3LGdBL/dk-croasan-de-queso.jpg",
+    "dk-53": "https://i.ibb.co/RTDThwr6/dk-palitos-de-queso.jpg",
+    "dk-66": "https://i.ibb.co/MymM6SZV/dk-pie-de-lim-n-peque-o.jpg",
+    "dk-150": "https://i.ibb.co/DgvnZZNb/dk-croissant-sandwich-pavita.jpg"
+  }
+}

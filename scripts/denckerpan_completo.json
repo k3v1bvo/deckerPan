@@ -1,0 +1,2222 @@
+{
+  "empresa": "Dencker Pan",
+  "logo": "https://tienda.denckerpan.com/views/logo.png",
+  "banners": [
+    "https://tienda.denckerpan.com/img/banners/banner_1.jpg",
+    "https://tienda.denckerpan.com/img/banners/banner_2.jpg"
+  ],
+  "categorias": [
+    {
+      "id": 1,
+      "nombre": "GALLETAS",
+      "url": "https://tienda.denckerpan.com/pedido/index.php?cat=1",
+      "img": "https://tienda.denckerpan.com/img/categories/image_1.jpg"
+    },
+    {
+      "id": 2,
+      "nombre": "MASITAS SALADAS",
+      "url": "https://tienda.denckerpan.com/pedido/index.php?cat=2",
+      "img": "https://tienda.denckerpan.com/img/categories/image_2.jpg"
+    },
+    {
+      "id": 3,
+      "nombre": "PANADERÍA",
+      "url": "https://tienda.denckerpan.com/pedido/index.php?cat=3",
+      "img": "https://tienda.denckerpan.com/img/categories/image_3.jpg"
+    },
+    {
+      "id": 4,
+      "nombre": "PASTELERIA",
+      "url": "https://tienda.denckerpan.com/pedido/index.php?cat=4",
+      "img": "https://tienda.denckerpan.com/img/categories/image_4.jpg"
+    },
+    {
+      "id": 5,
+      "nombre": "QUEQUES",
+      "url": "https://tienda.denckerpan.com/pedido/index.php?cat=5",
+      "img": "https://tienda.denckerpan.com/img/categories/image_5.jpg"
+    },
+    {
+      "id": 6,
+      "nombre": "PIZZAS",
+      "url": "https://tienda.denckerpan.com/pedido/index.php?cat=6",
+      "img": "https://tienda.denckerpan.com/img/categories/image_6.jpg"
+    },
+    {
+      "id": 7,
+      "nombre": "BEBIDAS",
+      "url": "https://tienda.denckerpan.com/pedido/index.php?cat=7",
+      "img": "https://tienda.denckerpan.com/img/categories/image_7.jpg"
+    }
+  ],
+  "total_productos": 240,
+  "productos": [
+    {
+      "id": "dk-292",
+      "nombre": "Caballito de jengibre",
+      "categoria": "GALLETAS",
+      "precio": 30,
+      "stock": 1995,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-22",
+      "nombre": "Caukas con queso",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 547,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711667871.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-23",
+      "nombre": "Caukas con queso (con orégano)",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 1232,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711667906.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-9",
+      "nombre": "Caukas con Queso integrales",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 2086,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711667839.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-195",
+      "nombre": "Chupete Grande",
+      "categoria": "GALLETAS",
+      "precio": 5,
+      "stock": 9925,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712701753.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-196",
+      "nombre": "Chupete Pequeño",
+      "categoria": "GALLETAS",
+      "precio": 1,
+      "stock": 9207,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712701771.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-37",
+      "nombre": "Cuñapé Abizcochado 100gr",
+      "categoria": "GALLETAS",
+      "precio": 14,
+      "stock": 19923,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668521.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-36",
+      "nombre": "Cuñapé Abizcochado 200gr",
+      "categoria": "GALLETAS",
+      "precio": 24,
+      "stock": 19341,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668491.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-39",
+      "nombre": "Cuñapé Abizcochado con ajo 200gr",
+      "categoria": "GALLETAS",
+      "precio": 24,
+      "stock": 10985,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668603.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-38",
+      "nombre": "Cuñapé Abizcochado con orégano 200gr",
+      "categoria": "GALLETAS",
+      "precio": 24,
+      "stock": 10107,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668566.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-128",
+      "nombre": "Galleta Chip",
+      "categoria": "GALLETAS",
+      "precio": 9.5,
+      "stock": 19646,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712681433.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-26",
+      "nombre": "Galletas Cebritas",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 9830,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668080.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-30",
+      "nombre": "Galletas con Almendra",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 1853,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668224.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-27",
+      "nombre": "Galletas con Coco",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 2595,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668133.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-28",
+      "nombre": "Galletas con Limón",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 19726,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668160.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-31",
+      "nombre": "Galletas con Salvado",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 2786,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668294.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-29",
+      "nombre": "Galletas de Ajonjolí",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 20117,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668187.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-35",
+      "nombre": "Galletas de champagne",
+      "categoria": "GALLETAS",
+      "precio": 5,
+      "stock": 11633,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668397.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-25",
+      "nombre": "Galletas de harina de maiz",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 10834,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711667993.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-32",
+      "nombre": "Galletas de mantequilla",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 2763,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668321.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-33",
+      "nombre": "Galletas de naranja",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 2066,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711668348.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-330",
+      "nombre": "Galletas decoradoras",
+      "categoria": "GALLETAS",
+      "precio": 18,
+      "stock": 4,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-286",
+      "nombre": "Galletas navideñas",
+      "categoria": "GALLETAS",
+      "precio": 10,
+      "stock": 1928,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-290",
+      "nombre": "Galletas navideñas bandeja",
+      "categoria": "GALLETAS",
+      "precio": 20,
+      "stock": 2082,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-224",
+      "nombre": "Galletas Palitos Con Aji",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 20007,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-225",
+      "nombre": "Galletas Rosquitas De Maiz",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 950,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-275",
+      "nombre": "Nachos",
+      "categoria": "GALLETAS",
+      "precio": 8,
+      "stock": 19922,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-24",
+      "nombre": "Palitos con Ají",
+      "categoria": "GALLETAS",
+      "precio": 17,
+      "stock": 10459,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711667945.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-72",
+      "nombre": "Torta mil hojas",
+      "categoria": "GALLETAS",
+      "precio": 19,
+      "stock": 6991,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824687.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-51",
+      "nombre": "Empanada de queso",
+      "categoria": "MASITAS SALADAS",
+      "precio": 8.5,
+      "stock": 16544,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823193.jpg",
+      "es_mas_vendido": true,
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-52",
+      "nombre": "Cuñapé",
+      "categoria": "MASITAS SALADAS",
+      "precio": 8.5,
+      "stock": 25652,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823213.jpg",
+      "es_mas_vendido": true,
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-181",
+      "nombre": "Esfihas",
+      "categoria": "PIZZAS",
+      "precio": 11.5,
+      "stock": 7063,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712588932.jpg",
+      "es_mas_vendido": true,
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-55",
+      "nombre": "Alfajores Maicena",
+      "categoria": "PASTELERIA",
+      "precio": 7.5,
+      "stock": 196711,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823429.jpg",
+      "es_mas_vendido": true,
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-106",
+      "nombre": "Croasan de Queso",
+      "categoria": "PASTELERIA",
+      "precio": 10,
+      "stock": 1190,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712117921.jpg",
+      "es_mas_vendido": true,
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-53",
+      "nombre": "Palitos de queso",
+      "categoria": "MASITAS SALADAS",
+      "precio": 7.5,
+      "stock": 2040,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823283.jpg",
+      "es_mas_vendido": true,
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-66",
+      "nombre": "Pie de limón (Pequeño)",
+      "categoria": "PASTELERIA",
+      "precio": 18,
+      "stock": 2542,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824313.jpg",
+      "es_mas_vendido": true,
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-288",
+      "nombre": "Ccapuchino+mini torta",
+      "categoria": "MASITAS SALADAS",
+      "precio": 28,
+      "stock": 19999,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-315",
+      "nombre": "CROASANT ESPECIAL",
+      "categoria": "MASITAS SALADAS",
+      "precio": 9,
+      "stock": 708,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-268",
+      "nombre": "CROISSANT DE QUESO  PEQUEÑO",
+      "categoria": "MASITAS SALADAS",
+      "precio": 6,
+      "stock": 20872,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-150",
+      "nombre": "Croissant Sandwich pavita",
+      "categoria": "MASITAS SALADAS",
+      "precio": 29,
+      "stock": 1087,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712590391.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-314",
+      "nombre": "CROSANT ESPECIAL",
+      "categoria": "MASITAS SALADAS",
+      "precio": 9,
+      "stock": 1920,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-143",
+      "nombre": "Cuñape frito",
+      "categoria": "MASITAS SALADAS",
+      "precio": 7.5,
+      "stock": 4172,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712701120.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-301",
+      "nombre": "Desayuno 1",
+      "categoria": "MASITAS SALADAS",
+      "precio": 350,
+      "stock": 998,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-302",
+      "nombre": "Desayuno 2",
+      "categoria": "MASITAS SALADAS",
+      "precio": 125,
+      "stock": 998,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-303",
+      "nombre": "Desayuno 3",
+      "categoria": "MASITAS SALADAS",
+      "precio": 150,
+      "stock": 997,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-304",
+      "nombre": "Desayuno 4",
+      "categoria": "MASITAS SALADAS",
+      "precio": 250,
+      "stock": 994,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-228",
+      "nombre": "Empanada De Hoja",
+      "categoria": "MASITAS SALADAS",
+      "precio": 9.5,
+      "stock": 19830,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-129",
+      "nombre": "Empanadas Requeson",
+      "categoria": "MASITAS SALADAS",
+      "precio": 10.5,
+      "stock": 106074,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649407.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-144",
+      "nombre": "Pan de arroz",
+      "categoria": "MASITAS SALADAS",
+      "precio": 10.5,
+      "stock": 4916,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649564.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-298",
+      "nombre": "Pastel",
+      "categoria": "MASITAS SALADAS",
+      "precio": 7,
+      "stock": 1458,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-333",
+      "nombre": "pastel jamon con queso",
+      "categoria": "MASITAS SALADAS",
+      "precio": 8,
+      "stock": 77,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-296",
+      "nombre": "PROMO JUGO + CROASANT",
+      "categoria": "MASITAS SALADAS",
+      "precio": 20,
+      "stock": 1000,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-311",
+      "nombre": "PUCA CAPA",
+      "categoria": "MASITAS SALADAS",
+      "precio": 11,
+      "stock": 19892,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-149",
+      "nombre": "Sandwich Croissant  jamón y queso",
+      "categoria": "MASITAS SALADAS",
+      "precio": 26,
+      "stock": 8681,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712702060.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-173",
+      "nombre": "sandwich croissant tocino",
+      "categoria": "MASITAS SALADAS",
+      "precio": 35,
+      "stock": 9958,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712590820.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-237",
+      "nombre": "Sandwich de pavita pequeño",
+      "categoria": "MASITAS SALADAS",
+      "precio": 11,
+      "stock": 999213,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-172",
+      "nombre": "Sandwich especial Dencker",
+      "categoria": "MASITAS SALADAS",
+      "precio": 35,
+      "stock": 10260,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712591056.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-147",
+      "nombre": "Sandwich jamon y queso",
+      "categoria": "MASITAS SALADAS",
+      "precio": 26,
+      "stock": 199463,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649649.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-148",
+      "nombre": "Sandwich pavita",
+      "categoria": "MASITAS SALADAS",
+      "precio": 29,
+      "stock": 97985,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649673.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-332",
+      "nombre": "Sandwich pavita pequeño",
+      "categoria": "MASITAS SALADAS",
+      "precio": 11,
+      "stock": 1954,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-141",
+      "nombre": "sonso",
+      "categoria": "MASITAS SALADAS",
+      "precio": 15.5,
+      "stock": 8505,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649704.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-281",
+      "nombre": "Abizcochado en bolsa 200gr",
+      "categoria": "PANADERÍA",
+      "precio": 18,
+      "stock": 20965,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-294",
+      "nombre": "Baguette pequeño",
+      "categoria": "PANADERÍA",
+      "precio": 4,
+      "stock": 19986,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-306",
+      "nombre": "Bizcocho",
+      "categoria": "PANADERÍA",
+      "precio": 4,
+      "stock": 9962,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-329",
+      "nombre": "Croissant sin relleno",
+      "categoria": "PANADERÍA",
+      "precio": 9,
+      "stock": 979,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-136",
+      "nombre": "Hamburguesa 14cm",
+      "categoria": "PANADERÍA",
+      "precio": 23,
+      "stock": 19824,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713647143.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-308",
+      "nombre": "Media luna pequeña",
+      "categoria": "PANADERÍA",
+      "precio": 5,
+      "stock": 19988,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-139",
+      "nombre": "Pan Baguette",
+      "categoria": "PANADERÍA",
+      "precio": 8,
+      "stock": 6916,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712760813.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-8",
+      "nombre": "Pan con Cereales",
+      "categoria": "PANADERÍA",
+      "precio": 14,
+      "stock": 19762,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663068.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-14",
+      "nombre": "Pan con Salvado",
+      "categoria": "PANADERÍA",
+      "precio": 13,
+      "stock": 2016,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663393.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-324",
+      "nombre": "Pan concha",
+      "categoria": "PANADERÍA",
+      "precio": 5,
+      "stock": 1993,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-313",
+      "nombre": "Pan de masa madre",
+      "categoria": "PANADERÍA",
+      "precio": 12,
+      "stock": 9844,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-297",
+      "nombre": "PAN MATILDA",
+      "categoria": "PANADERÍA",
+      "precio": 17,
+      "stock": 9797,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-5",
+      "nombre": "Pan Miga",
+      "categoria": "PANADERÍA",
+      "precio": 21,
+      "stock": 19402,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711662981.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-4",
+      "nombre": "Pan Molde Blanco",
+      "categoria": "PANADERÍA",
+      "precio": 15,
+      "stock": 1280,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711660195.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-6",
+      "nombre": "Pan Molde Salvado",
+      "categoria": "PANADERÍA",
+      "precio": 15,
+      "stock": 1316,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663005.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-7",
+      "nombre": "Pan Molde Salvado con Estevia",
+      "categoria": "PANADERÍA",
+      "precio": 15,
+      "stock": 1757,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663044.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-19",
+      "nombre": "Pan Molido 1000 gr",
+      "categoria": "PANADERÍA",
+      "precio": 19,
+      "stock": 10668,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663802.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-18",
+      "nombre": "Pan Molido 500 gr",
+      "categoria": "PANADERÍA",
+      "precio": 14,
+      "stock": 10907,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663751.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-140",
+      "nombre": "Pan Panini",
+      "categoria": "PANADERÍA",
+      "precio": 5,
+      "stock": 10569,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712763609.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-13",
+      "nombre": "Pan para Hamburguesa",
+      "categoria": "PANADERÍA",
+      "precio": 13,
+      "stock": 198072,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663360.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-16",
+      "nombre": "Pan para Hot Dog (grande)",
+      "categoria": "PANADERÍA",
+      "precio": 20,
+      "stock": 10726,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663551.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-15",
+      "nombre": "Pan para Hot Dog (pequeño)",
+      "categoria": "PANADERÍA",
+      "precio": 13,
+      "stock": 149,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663451.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-12",
+      "nombre": "Pan Tortillas",
+      "categoria": "PANADERÍA",
+      "precio": 14,
+      "stock": 1297,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663289.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-317",
+      "nombre": "PIE DE MARACUYA",
+      "categoria": "PANADERÍA",
+      "precio": 20,
+      "stock": 1962,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-17",
+      "nombre": "Pre Pizza",
+      "categoria": "PANADERÍA",
+      "precio": 13,
+      "stock": 4553,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663647.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-135",
+      "nombre": "Pre Pizza (pequeño)",
+      "categoria": "PANADERÍA",
+      "precio": 3,
+      "stock": 10966,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713647256.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-239",
+      "nombre": "Queque de arandanos",
+      "categoria": "PANADERÍA",
+      "precio": 37,
+      "stock": 310953,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-271",
+      "nombre": "Sandwich especial baguette",
+      "categoria": "PANADERÍA",
+      "precio": 40,
+      "stock": 19741,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-20",
+      "nombre": "Tostadas con Salvado",
+      "categoria": "PANADERÍA",
+      "precio": 15,
+      "stock": 2666,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663889.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-21",
+      "nombre": "Tostadas con Vainilla",
+      "categoria": "PANADERÍA",
+      "precio": 15,
+      "stock": 1950,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711663929.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-84",
+      "nombre": "Alfajor Marplatense",
+      "categoria": "PASTELERIA",
+      "precio": 12.5,
+      "stock": 1753,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712680508.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-112",
+      "nombre": "Almoaditas",
+      "categoria": "PASTELERIA",
+      "precio": 8.5,
+      "stock": 14538,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712680592.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-269",
+      "nombre": "Arroz con leche",
+      "categoria": "PASTELERIA",
+      "precio": 12,
+      "stock": 199716,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-56",
+      "nombre": "Berlines",
+      "categoria": "PASTELERIA",
+      "precio": 12.5,
+      "stock": 10379,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823470.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-108",
+      "nombre": "Bombitas (Croofins)",
+      "categoria": "PASTELERIA",
+      "precio": 10,
+      "stock": 9792,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712680987.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-331",
+      "nombre": "Brazo gitano",
+      "categoria": "PASTELERIA",
+      "precio": 110,
+      "stock": 1999,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-63",
+      "nombre": "Brownie / Blondy",
+      "categoria": "PASTELERIA",
+      "precio": 12.5,
+      "stock": 8172,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824121.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-153",
+      "nombre": "Budin",
+      "categoria": "PASTELERIA",
+      "precio": 7,
+      "stock": 9032,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713647447.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-256",
+      "nombre": "Cajas de desayunos",
+      "categoria": "PASTELERIA",
+      "precio": 4,
+      "stock": 19946,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-176",
+      "nombre": "cake pop",
+      "categoria": "PASTELERIA",
+      "precio": 9,
+      "stock": 7945,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712681041.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-257",
+      "nombre": "Cheescake",
+      "categoria": "PASTELERIA",
+      "precio": 15,
+      "stock": 9594,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-260",
+      "nombre": "Chocorona",
+      "categoria": "PASTELERIA",
+      "precio": 20,
+      "stock": 19619,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-126",
+      "nombre": "Cinnamon",
+      "categoria": "PASTELERIA",
+      "precio": 13,
+      "stock": 8295,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712701182.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-180",
+      "nombre": "Cono con crema",
+      "categoria": "PASTELERIA",
+      "precio": 13,
+      "stock": 7837,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713647538.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-116",
+      "nombre": "Coxinhas",
+      "categoria": "PASTELERIA",
+      "precio": 11.5,
+      "stock": 7556,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712700679.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-175",
+      "nombre": "crema extra",
+      "categoria": "PASTELERIA",
+      "precio": 7,
+      "stock": 10695,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712759741.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-134",
+      "nombre": "Croasan de jamón",
+      "categoria": "PASTELERIA",
+      "precio": 11,
+      "stock": 3293,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712759428.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-124",
+      "nombre": "Crumble de Manzana",
+      "categoria": "PASTELERIA",
+      "precio": 19,
+      "stock": 9459,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712697870.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-60",
+      "nombre": "CupCakes",
+      "categoria": "PASTELERIA",
+      "precio": 13,
+      "stock": 9414,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823907.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-81",
+      "nombre": "Donas",
+      "categoria": "PASTELERIA",
+      "precio": 11,
+      "stock": 8525,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712010095.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-267",
+      "nombre": "DONAS PEQUEÑAS",
+      "categoria": "PASTELERIA",
+      "precio": 6,
+      "stock": 2256,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-65",
+      "nombre": "Donas rellenas",
+      "categoria": "PASTELERIA",
+      "precio": 12.5,
+      "stock": 9019,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824228.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-109",
+      "nombre": "Eclers",
+      "categoria": "PASTELERIA",
+      "precio": 9,
+      "stock": 8846,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712759120.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-152",
+      "nombre": "Flan",
+      "categoria": "PASTELERIA",
+      "precio": 7,
+      "stock": 8877,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712758762.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-283",
+      "nombre": "Galletas de champagne grande",
+      "categoria": "PASTELERIA",
+      "precio": 7,
+      "stock": 1907,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-154",
+      "nombre": "gelatina",
+      "categoria": "PASTELERIA",
+      "precio": 5,
+      "stock": 1000807,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712759895.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-59",
+      "nombre": "Hojaraska",
+      "categoria": "PASTELERIA",
+      "precio": 7.5,
+      "stock": 7025,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823887.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-110",
+      "nombre": "Italianos",
+      "categoria": "PASTELERIA",
+      "precio": 12.5,
+      "stock": 5622,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712760039.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-117",
+      "nombre": "Llaucchas",
+      "categoria": "PASTELERIA",
+      "precio": 12.5,
+      "stock": 5582,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713647575.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-64",
+      "nombre": "Media luna",
+      "categoria": "PASTELERIA",
+      "precio": 10.5,
+      "stock": 9607,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824161.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-69",
+      "nombre": "Mini Cakes",
+      "categoria": "PASTELERIA",
+      "precio": 17,
+      "stock": 5039,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824502.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-125",
+      "nombre": "Mousse",
+      "categoria": "PASTELERIA",
+      "precio": 14,
+      "stock": 11000,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713647749.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-61",
+      "nombre": "Muffin de arándanos/Chocolate",
+      "categoria": "PASTELERIA",
+      "precio": 11.5,
+      "stock": 8643,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823948.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-325",
+      "nombre": "NAPOLEON",
+      "categoria": "PASTELERIA",
+      "precio": 19,
+      "stock": 10939,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-326",
+      "nombre": "NAPOLEON PORCION",
+      "categoria": "PASTELERIA",
+      "precio": 19,
+      "stock": 11001,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-70",
+      "nombre": "New York Rolls",
+      "categoria": "PASTELERIA",
+      "precio": 21,
+      "stock": 4024,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824583.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-78",
+      "nombre": "Niditos (pequeño y grande)",
+      "categoria": "PASTELERIA",
+      "precio": 25,
+      "stock": 2060,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824998.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-58",
+      "nombre": "Osiquitos con mermelada de membrillo",
+      "categoria": "PASTELERIA",
+      "precio": 9,
+      "stock": 10198,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823843.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-121",
+      "nombre": "Palmeritas",
+      "categoria": "PASTELERIA",
+      "precio": 10.5,
+      "stock": 8360,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712760191.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-74",
+      "nombre": "Paraguayos",
+      "categoria": "PASTELERIA",
+      "precio": 13,
+      "stock": 20060,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824830.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-57",
+      "nombre": "Pencos",
+      "categoria": "PASTELERIA",
+      "precio": 10,
+      "stock": 9220,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711823698.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-316",
+      "nombre": "PIE DE CHOCOLATE",
+      "categoria": "PASTELERIA",
+      "precio": 20,
+      "stock": 1987,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-80",
+      "nombre": "Pie de limón (Grande)",
+      "categoria": "PASTELERIA",
+      "precio": 70,
+      "stock": 8069,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712009017.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-79",
+      "nombre": "Pie de Manzana (Grande)",
+      "categoria": "PASTELERIA",
+      "precio": 55,
+      "stock": 11087,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712008791.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-67",
+      "nombre": "Pie de manzana (Pequeño)",
+      "categoria": "PASTELERIA",
+      "precio": 18,
+      "stock": 9051,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824378.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-241",
+      "nombre": "Placa Grande Suspiro",
+      "categoria": "PASTELERIA",
+      "precio": 45,
+      "stock": 9973,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-115",
+      "nombre": "Placas de Suspiros",
+      "categoria": "PASTELERIA",
+      "precio": 45,
+      "stock": 1998,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712764781.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-310",
+      "nombre": "PORCION TORTA DURAZNO",
+      "categoria": "PASTELERIA",
+      "precio": 8,
+      "stock": 1965,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-295",
+      "nombre": "PROMO CAPUCHINO + MINICAKE",
+      "categoria": "PASTELERIA",
+      "precio": 30,
+      "stock": 2999,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-276",
+      "nombre": "PROMO HELADO + BROWNIE",
+      "categoria": "PASTELERIA",
+      "precio": 15,
+      "stock": 19984,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-245",
+      "nombre": "promo latte + empanada",
+      "categoria": "PASTELERIA",
+      "precio": 22,
+      "stock": 20030,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-252",
+      "nombre": "PROMO ROLLS",
+      "categoria": "PASTELERIA",
+      "precio": 35,
+      "stock": 99806,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-85",
+      "nombre": "Rollo de Queso(Grande)",
+      "categoria": "PASTELERIA",
+      "precio": 30,
+      "stock": 7105,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712115596.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-73",
+      "nombre": "Rosquetes",
+      "categoria": "PASTELERIA",
+      "precio": 19,
+      "stock": 19973,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824741.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-114",
+      "nombre": "Suspiros",
+      "categoria": "PASTELERIA",
+      "precio": 28,
+      "stock": 2951,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713647827.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-307",
+      "nombre": "Tiramisu",
+      "categoria": "PASTELERIA",
+      "precio": 19,
+      "stock": 1864,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-300",
+      "nombre": "TORTA",
+      "categoria": "PASTELERIA",
+      "precio": 475,
+      "stock": 19978,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-278",
+      "nombre": "Torta de capas",
+      "categoria": "PASTELERIA",
+      "precio": 17,
+      "stock": 19983,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-68",
+      "nombre": "Torta tres leches",
+      "categoria": "PASTELERIA",
+      "precio": 19,
+      "stock": 8012,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711824440.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-312",
+      "nombre": "Torta vasca",
+      "categoria": "PASTELERIA",
+      "precio": 27,
+      "stock": 1944,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-50",
+      "nombre": "Pasta Frola",
+      "categoria": "QUEQUES",
+      "precio": 26.5,
+      "stock": 2536,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711813593.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-323",
+      "nombre": "Porcion de queque",
+      "categoria": "QUEQUES",
+      "precio": 12,
+      "stock": 19992,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-320",
+      "nombre": "Queque Coco",
+      "categoria": "QUEQUES",
+      "precio": 24.5,
+      "stock": 1964,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-43",
+      "nombre": "Queque de Naranja",
+      "categoria": "QUEQUES",
+      "precio": 24.5,
+      "stock": 7311,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711812838.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-49",
+      "nombre": "Queque De Platano",
+      "categoria": "QUEQUES",
+      "precio": 24.5,
+      "stock": 10070,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711813317.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-48",
+      "nombre": "Queque Japonés",
+      "categoria": "QUEQUES",
+      "precio": 42,
+      "stock": 9839,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711813236.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-321",
+      "nombre": "Queque limon",
+      "categoria": "QUEQUES",
+      "precio": 24.5,
+      "stock": 1977,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-44",
+      "nombre": "Queque Marmolado",
+      "categoria": "QUEQUES",
+      "precio": 24.5,
+      "stock": 9541,
+      "imagen": "https://tienda.denckerpan.com/img/products/1711812877.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-319",
+      "nombre": "Queque Premium",
+      "categoria": "QUEQUES",
+      "precio": 50,
+      "stock": 2000,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-318",
+      "nombre": "Queque Zanahoria",
+      "categoria": "QUEQUES",
+      "precio": 37,
+      "stock": 19991,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-87",
+      "nombre": "Pizza 4 Estaciones",
+      "categoria": "PIZZAS",
+      "precio": 85,
+      "stock": 10942,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712588603.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-98",
+      "nombre": "Pizza Catupiry con Pollo",
+      "categoria": "PIZZAS",
+      "precio": 90,
+      "stock": 10971,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589116.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-90",
+      "nombre": "Pizza Champiñon",
+      "categoria": "PIZZAS",
+      "precio": 85,
+      "stock": 10898,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589020.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-96",
+      "nombre": "Pizza Criolla",
+      "categoria": "PIZZAS",
+      "precio": 90,
+      "stock": 10970,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589164.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-91",
+      "nombre": "Pizza de Choclo Amarillo",
+      "categoria": "PIZZAS",
+      "precio": 85,
+      "stock": 10954,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589264.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-94",
+      "nombre": "Pizza de Palmito",
+      "categoria": "PIZZAS",
+      "precio": 90,
+      "stock": 10996,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589298.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-97",
+      "nombre": "Pizza de Salame",
+      "categoria": "PIZZAS",
+      "precio": 90,
+      "stock": 10955,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589327.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-93",
+      "nombre": "Pizza de Tocino",
+      "categoria": "PIZZAS",
+      "precio": 90,
+      "stock": 10952,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589406.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-178",
+      "nombre": "Pizza especial Dencker",
+      "categoria": "PIZZAS",
+      "precio": 110,
+      "stock": 9951,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712588982.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-89",
+      "nombre": "Pizza Hawaiana",
+      "categoria": "PIZZAS",
+      "precio": 85,
+      "stock": 10874,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712114164.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-86",
+      "nombre": "Pizza Margarita",
+      "categoria": "PIZZAS",
+      "precio": 75,
+      "stock": 10969,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589070.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-198",
+      "nombre": "Pizza Pequeña",
+      "categoria": "PIZZAS",
+      "precio": 55,
+      "stock": 99524,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589653.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-199",
+      "nombre": "Pizza Pequeña Margarita",
+      "categoria": "PIZZAS",
+      "precio": 50,
+      "stock": 9982,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589596.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-95",
+      "nombre": "Pizza Portuguesa",
+      "categoria": "PIZZAS",
+      "precio": 90,
+      "stock": 10972,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589443.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-88",
+      "nombre": "Pizza Queso y Jamón",
+      "categoria": "PIZZAS",
+      "precio": 85,
+      "stock": 10869,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712114283.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-177",
+      "nombre": "Porción extra Pizza",
+      "categoria": "PIZZAS",
+      "precio": 6,
+      "stock": 19978,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712589718.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-99",
+      "nombre": "Agua 600ml",
+      "categoria": "BEBIDAS",
+      "precio": 8,
+      "stock": 2877,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648019.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-221",
+      "nombre": "Agua De 2 Litros",
+      "categoria": "BEBIDAS",
+      "precio": 12,
+      "stock": 2963,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-210",
+      "nombre": "ALOE VERA",
+      "categoria": "BEBIDAS",
+      "precio": 11,
+      "stock": 9691,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713646373.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-169",
+      "nombre": "Aquarius 300ml",
+      "categoria": "BEBIDAS",
+      "precio": 5,
+      "stock": 2912,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713646392.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-277",
+      "nombre": "Arroz con leche vaso",
+      "categoria": "BEBIDAS",
+      "precio": 7,
+      "stock": 19601,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-183",
+      "nombre": "Cafe Americano clasico",
+      "categoria": "BEBIDAS",
+      "precio": 16,
+      "stock": 1511,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648044.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-184",
+      "nombre": "Cafe Americano Grande",
+      "categoria": "BEBIDAS",
+      "precio": 22,
+      "stock": 8460,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648071.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-104",
+      "nombre": "Café Capuchino (Grande)",
+      "categoria": "BEBIDAS",
+      "precio": 24,
+      "stock": 9312,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712146999.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-103",
+      "nombre": "Café Capuchino SCrem",
+      "categoria": "BEBIDAS",
+      "precio": 20,
+      "stock": 5811,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712147370.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-230",
+      "nombre": "Cafe Con Leche Frio",
+      "categoria": "BEBIDAS",
+      "precio": 15,
+      "stock": 9981,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-185",
+      "nombre": "Cafe Cortado Clasico",
+      "categoria": "BEBIDAS",
+      "precio": 19,
+      "stock": 8613,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648100.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-186",
+      "nombre": "Cafe Cortado Grande",
+      "categoria": "BEBIDAS",
+      "precio": 21,
+      "stock": 9738,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648153.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-187",
+      "nombre": "Cafe Expresso Clasico",
+      "categoria": "BEBIDAS",
+      "precio": 16,
+      "stock": 9694,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648199.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-188",
+      "nombre": "Cafe Expresso Doble",
+      "categoria": "BEBIDAS",
+      "precio": 22,
+      "stock": 9891,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648228.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-272",
+      "nombre": "Cafe Frio",
+      "categoria": "BEBIDAS",
+      "precio": 15,
+      "stock": 19918,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-189",
+      "nombre": "Cafe Latte Clasico",
+      "categoria": "BEBIDAS",
+      "precio": 18,
+      "stock": 9454,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648254.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-192",
+      "nombre": "Cafe Latte Grande",
+      "categoria": "BEBIDAS",
+      "precio": 20,
+      "stock": 99303,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648292.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-190",
+      "nombre": "Cafe Mocka Clasico",
+      "categoria": "BEBIDAS",
+      "precio": 20,
+      "stock": 8729,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648325.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-191",
+      "nombre": "Cafe Mocka Grande",
+      "categoria": "BEBIDAS",
+      "precio": 24,
+      "stock": 9571,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648349.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-193",
+      "nombre": "Chocolatada Clasica",
+      "categoria": "BEBIDAS",
+      "precio": 18,
+      "stock": 99434,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648372.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-194",
+      "nombre": "Chocolatada Grande",
+      "categoria": "BEBIDAS",
+      "precio": 22,
+      "stock": 100259,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648446.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-305",
+      "nombre": "Coca cola de 2 litros",
+      "categoria": "BEBIDAS",
+      "precio": 17,
+      "stock": 19995,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-162",
+      "nombre": "cocacola 1000 ml",
+      "categoria": "BEBIDAS",
+      "precio": 15,
+      "stock": 2827,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648468.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-158",
+      "nombre": "cocacola 190 ml",
+      "categoria": "BEBIDAS",
+      "precio": 3,
+      "stock": 1179,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648500.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-163",
+      "nombre": "cocacola 3 lt",
+      "categoria": "BEBIDAS",
+      "precio": 22,
+      "stock": 10783,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648522.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-159",
+      "nombre": "cocacola 300ml",
+      "categoria": "BEBIDAS",
+      "precio": 5,
+      "stock": 20367,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648658.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-161",
+      "nombre": "cocacola 500ml",
+      "categoria": "BEBIDAS",
+      "precio": 8,
+      "stock": 2496,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648675.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-160",
+      "nombre": "cocacola 600 ml",
+      "categoria": "BEBIDAS",
+      "precio": 10,
+      "stock": 1690,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648695.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-132",
+      "nombre": "Del Valle 1Lt",
+      "categoria": "BEBIDAS",
+      "precio": 15,
+      "stock": 10329,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648815.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-170",
+      "nombre": "Del Valle 300ml desechable",
+      "categoria": "BEBIDAS",
+      "precio": 5,
+      "stock": 9379,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648841.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-131",
+      "nombre": "Del Valle 300ml vidrio",
+      "categoria": "BEBIDAS",
+      "precio": 8,
+      "stock": 10322,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648864.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-299",
+      "nombre": "Extra fruta para jugos",
+      "categoria": "BEBIDAS",
+      "precio": 6,
+      "stock": 1999,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-167",
+      "nombre": "Fanta 1000ml",
+      "categoria": "BEBIDAS",
+      "precio": 13,
+      "stock": 1984,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648894.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-165",
+      "nombre": "Fanta 190 ml",
+      "categoria": "BEBIDAS",
+      "precio": 3,
+      "stock": 100896,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648935.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-166",
+      "nombre": "Fanta 500ml",
+      "categoria": "BEBIDAS",
+      "precio": 8,
+      "stock": 1921,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648970.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-168",
+      "nombre": "Fanta 600ml",
+      "categoria": "BEBIDAS",
+      "precio": 10,
+      "stock": 100987,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649050.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-174",
+      "nombre": "frapuchinos",
+      "categoria": "BEBIDAS",
+      "precio": 25,
+      "stock": 98945,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649080.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-309",
+      "nombre": "Gelatina o juguito",
+      "categoria": "BEBIDAS",
+      "precio": 2,
+      "stock": 1969,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-262",
+      "nombre": "Helado",
+      "categoria": "BEBIDAS",
+      "precio": 7,
+      "stock": 499170,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-164",
+      "nombre": "jugo 2lt",
+      "categoria": "BEBIDAS",
+      "precio": 15,
+      "stock": 9944,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649100.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-242",
+      "nombre": "Jugo 3lt",
+      "categoria": "BEBIDAS",
+      "precio": 19,
+      "stock": 9948,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-155",
+      "nombre": "Jugo de fruta con agua",
+      "categoria": "BEBIDAS",
+      "precio": 14,
+      "stock": 6847,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649140.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-156",
+      "nombre": "Jugo de fruta con leche",
+      "categoria": "BEBIDAS",
+      "precio": 16,
+      "stock": 19608,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649175.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-280",
+      "nombre": "Jugo mixto",
+      "categoria": "BEBIDAS",
+      "precio": 20,
+      "stock": 20000,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-130",
+      "nombre": "Jugo Pura Vida",
+      "categoria": "BEBIDAS",
+      "precio": 8,
+      "stock": 10798,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649205.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-82",
+      "nombre": "Jugos Frapeados con agua",
+      "categoria": "BEBIDAS",
+      "precio": 16,
+      "stock": 10880,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712146728.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-83",
+      "nombre": "Jugos Frapeados con Leche",
+      "categoria": "BEBIDAS",
+      "precio": 18,
+      "stock": 10973,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712146742.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-273",
+      "nombre": "Latte Frio",
+      "categoria": "BEBIDAS",
+      "precio": 17,
+      "stock": 19782,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-274",
+      "nombre": "Mate,Trimate grande",
+      "categoria": "BEBIDAS",
+      "precio": 12,
+      "stock": 19804,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-102",
+      "nombre": "Mocka",
+      "categoria": "BEBIDAS",
+      "precio": 18,
+      "stock": 10984,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712147686.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-243",
+      "nombre": "Pan panini paquete",
+      "categoria": "BEBIDAS",
+      "precio": 30,
+      "stock": 9659,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-328",
+      "nombre": "Porcion extra fruta",
+      "categoria": "BEBIDAS",
+      "precio": 7,
+      "stock": 50,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-133",
+      "nombre": "Power",
+      "categoria": "BEBIDAS",
+      "precio": 7,
+      "stock": 10833,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648554.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-279",
+      "nombre": "Promo desayunos",
+      "categoria": "BEBIDAS",
+      "precio": 104,
+      "stock": 19997,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-240",
+      "nombre": "Promo frapes + croasant",
+      "categoria": "BEBIDAS",
+      "precio": 30,
+      "stock": 11969,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-214",
+      "nombre": "Sobre Extra de cafe o te",
+      "categoria": "BEBIDAS",
+      "precio": 2,
+      "stock": 99995,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713648577.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-229",
+      "nombre": "SOBRE EXTRA TE,MATE,CAFE",
+      "categoria": "BEBIDAS",
+      "precio": 3,
+      "stock": 9970,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-100",
+      "nombre": "Solo Leche",
+      "categoria": "BEBIDAS",
+      "precio": 8,
+      "stock": 10868,
+      "imagen": "https://tienda.denckerpan.com/img/products/1712148926.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-255",
+      "nombre": "Te con leche",
+      "categoria": "BEBIDAS",
+      "precio": 10,
+      "stock": 1982,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-101",
+      "nombre": "Té/Café/Maté",
+      "categoria": "BEBIDAS",
+      "precio": 10,
+      "stock": 7076,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649278.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-261",
+      "nombre": "VIENESA",
+      "categoria": "BEBIDAS",
+      "precio": 30,
+      "stock": 19689,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    },
+    {
+      "id": "dk-157",
+      "nombre": "Viscachani",
+      "categoria": "BEBIDAS",
+      "precio": 7,
+      "stock": 99223,
+      "imagen": "https://tienda.denckerpan.com/img/products/1713649326.jpg",
+      "tiene_foto": true
+    },
+    {
+      "id": "dk-322",
+      "nombre": "VOLT",
+      "categoria": "BEBIDAS",
+      "precio": 7,
+      "stock": 1996,
+      "imagen": "https://tienda.denckerpan.com/img/product_blank.jpg",
+      "tiene_foto": false
+    }
+  ]
+}

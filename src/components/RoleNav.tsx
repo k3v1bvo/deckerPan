@@ -43,15 +43,13 @@ export default function RoleNav() {
         <Link
           href="/"
           onClick={() => soundManager.playSuccessTone()}
-          className="flex items-center gap-2 px-2.5 py-1 rounded-full hover:bg-white/5 transition-all group shrink-0"
+          className="flex items-center gap-2.5 px-3 py-1 rounded-full hover:bg-white/5 transition-all group shrink-0"
         >
-          <motion.span
-            whileHover={{ rotate: [0, -10, 10, -5, 0], scale: 1.15 }}
-            transition={{ duration: 0.4 }}
-            className="text-xl"
-          >
-            🥐
-          </motion.span>
+          <img
+            src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+            alt="Dencker Pan Logo"
+            className="w-7 h-7 object-contain drop-shadow group-hover:scale-110 transition-transform"
+          />
           <div className="leading-tight flex items-center gap-1.5">
             <span className="font-serif font-bold text-sm tracking-wide text-amber-100">
               Dencker Pan

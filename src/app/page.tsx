@@ -22,6 +22,7 @@ import {
   Sliders,
   DollarSign,
   Heart,
+  MessageCircle,
 } from "lucide-react";
 import { soundManager } from "@/lib/sound";
 
@@ -114,6 +115,20 @@ export default function HomePage() {
         <div className="absolute bottom-0 right-0 w-[500px] h-[300px] bg-amber-500/10 blur-[100px] pointer-events-none" />
 
         <div className="max-w-6xl mx-auto relative z-10 text-center space-y-6">
+          {/* Logo Oficial Dencker Pan */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className="flex justify-center"
+          >
+            <img
+              src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+              alt="Dencker Pan Logo Oficial"
+              className="w-28 sm:w-36 h-auto object-contain filter drop-shadow-[0_10px_30px_rgba(217,119,6,0.45)] hover:scale-105 transition-transform"
+            />
+          </motion.div>
+
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -172,6 +187,30 @@ export default function HomePage() {
               <Calendar size={18} />
               <span>Cotizar Catering para Evento</span>
             </a>
+
+            <a
+              href="https://wa.me/59176911000"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3.5 rounded-full bg-emerald-600/90 hover:bg-emerald-500 text-white font-semibold text-sm transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-emerald-950/40"
+            >
+              <MessageCircle size={18} />
+              <span>WhatsApp (+591 76911000)</span>
+            </a>
+          </motion.div>
+
+          {/* Banner Oficial Dencker Pan */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.22 }}
+            className="pt-4 max-w-4xl mx-auto rounded-3xl overflow-hidden border border-white/15 shadow-2xl shadow-black/60 group"
+          >
+            <img
+              src="https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg"
+              alt="Dencker Pan Promociones"
+              className="w-full h-auto object-cover max-h-56 sm:max-h-72 group-hover:scale-102 transition-transform duration-700"
+            />
           </motion.div>
 
           {/* ── INTERACTIVE SYSTEM DEMO SHOWCASE ── */}
@@ -179,7 +218,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 280, damping: 26, delay: 0.25 }}
-            className="mt-12 rounded-[32px] bg-[#120B07]/90 border border-white/15 p-4 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl text-left max-w-4xl mx-auto"
+            className="mt-8 rounded-[32px] bg-[#120B07]/90 border border-white/15 p-4 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl text-left max-w-4xl mx-auto"
           >
             {/* Top Selector Tabs */}
             <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4 gap-2 overflow-x-auto">
