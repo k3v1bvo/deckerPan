@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
@@ -19,12 +19,24 @@ import {
   ShieldCheck,
   Flame,
   ChevronRight,
-  Sliders,
   DollarSign,
   Heart,
   MessageCircle,
+  Search,
+  ShoppingBag,
+  Plus,
+  Minus,
+  Check,
+  X,
+  MapPin,
+  Layers,
+  Store,
+  ExternalLink,
 } from "lucide-react";
+import { useSystemStore, useCartStore, useUIStore } from "@/store";
 import { soundManager } from "@/lib/sound";
+import { DENCKER_ASSETS, SEED_CATEGORIAS, SEED_PRODUCTOS } from "@/lib/seed-data";
+import { Producto, Categoria } from "@/types";
 
 const EVENTOS_PRESETS = [
   { id: "tesis", icon: "🎓", label: "Defensa de Tesis", precioPersona: 35, desc: "Café de especialidad + surtido de masitas y bocaditos salados" },
@@ -34,7 +46,24 @@ const EVENTOS_PRESETS = [
 ];
 
 export default function HomePage() {
-  // Simulador de Cotización de Catering
+  const storeProductos = useSystemStore((state) => state.productos);
+  const storeCategorias = useSystemStore((state) => state.categorias);
+
+  const productos: Producto[] = storeProductos && storeProductos.length > 0 ? storeProductos : SEED_PRODUCTOS;
+  const categorias: Categoria[] = storeCategorias && storeCategorias.length > 0 ? storeCategorias : SEED_CATEGORIAS;
+
+  const { items, addItem, updateCantidad, total, count } = useCartStore();
+  const { setCartOpen } = useUIStore();
+
+  // Estados del Catálogo
+  const [categoriaActiva, setCategoriaActiva] = useState<string>("todos");
+  const [busqueda, setBusqueda] = useState<string>("");
+  const [limiteVisible, setLimiteVisible] = useState<number>(24);
+  const [productoModal, setProductoModal] = useState<Producto | null>(null);
+  const [chipsSeleccionados, setChipsSeleccionados] = useState<string[]>([]);
+  const [notaPersonalizada, setNotaPersonalizada] = useState<string>("");
+
+  // Estados del Cotizador
   const [invitados, setInvitados] = useState<number>(30);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(EVENTOS_PRESETS[0]);
   const [incluirTortaEspecial, setIncluirTortaEspecial] = useState(true);
@@ -48,25 +77,54 @@ export default function HomePage() {
     fecha_evento: "",
     descripcion: "",
   });
-  const [enviando, setEnviando] = useState(false);
-  const [enviadoExitoso, setEnviadoExitoso] = useState(false);
+  const [enviandoReserva, setEnviandoReserva] = useState(false);
+  const [reservaExitosa, setReservaExitosa] = useState(false);
 
-  // Módulo Activo en el Showcase Interactivo
-  const [demoTab, setDemoTab] = useState<"qr" | "mesero" | "kds" | "caja">("qr");
+  // Filtrado reactivo de productos
+  const productosFiltrados = useMemo(() => {
+    return productos.filter((p) => {
+      // Filtro de categoría
+      const matchCat =
+        categoriaActiva === "todos"
+          ? true
+          : categoriaActiva === "favoritos"
+          ? p.es_mas_vendido
+          : p.categoria_id === categoriaActiva;
 
-  // Cálculo Dinámico en Tiempo Real de Catering
+      // Filtro de búsqueda
+      const query = busqueda.toLowerCase().trim();
+      const matchBusqueda =
+        !query ||
+        p.nombre.toLowerCase().includes(query) ||
+        (p.descripcion && p.descripcion.toLowerCase().includes(query));
+
+      return matchCat && matchBusqueda;
+    });
+  }, [productos, categoriaActiva, busqueda]);
+
+  const productosVisibles = useMemo(() => {
+    return productosFiltrados.slice(0, limiteVisible);
+  }, [productosFiltrados, limiteVisible]);
+
+  // Reset de límite al cambiar filtro
+  useEffect(() => {
+    setLimiteVisible(24);
+  }, [categoriaActiva, busqueda]);
+
+  // Cálculo Presupuesto Catering
   const presupuestoEstimado = useMemo(() => {
     let base = invitados * eventoSeleccionado.precioPersona;
-    if (incluirTortaEspecial) base += 220; // Torta artesanal grande
-    if (incluirBarista) base += 150; // Barista en vivo
+    if (incluirTortaEspecial) base += 220;
+    if (incluirBarista) base += 150;
     return base;
   }, [invitados, eventoSeleccionado, incluirTortaEspecial, incluirBarista]);
 
   const handleReserva = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEnviando(true);
+    setEnviandoReserva(true);
+    soundManager.playSuccessTone();
+
     try {
-      const { useSystemStore } = await import("@/store");
       useSystemStore.getState().addReserva({
         nombre_cliente: reservaForm.nombre,
         telefono: reservaForm.telefono,
@@ -96,106 +154,118 @@ export default function HomePage() {
         });
       }
 
-      soundManager.playSuccessTone();
-      setEnviadoExitoso(true);
+      setReservaExitosa(true);
     } catch (err) {
       console.error(err);
     } finally {
-      setEnviando(false);
+      setEnviandoReserva(false);
     }
   };
 
+  const abrirModalProducto = (p: Producto) => {
+    soundManager.playClick();
+    setProductoModal(p);
+    setChipsSeleccionados([]);
+    setNotaPersonalizada("");
+  };
+
+  const agregarAlCarritoDesdeModal = () => {
+    if (!productoModal) return;
+    soundManager.playSuccessTone();
+    addItem(productoModal, chipsSeleccionados, notaPersonalizada || undefined);
+    setProductoModal(null);
+  };
+
+  const getItemCantidadEnCarrito = (id: string) => {
+    const item = items.find((i) => i.producto.id === id);
+    return item ? item.cantidad : 0;
+  };
+
   return (
-    <div className="min-h-screen bg-[#FBF8F3] text-stone-900 selection:bg-amber-200 selection:text-amber-950 overflow-x-hidden">
+    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 selection:bg-amber-200 selection:text-amber-950 overflow-x-hidden font-sans">
       
-      {/* ── HERO SECTION ── */}
-      <section className="relative pt-12 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-[#1C120B] via-[#2A1A10] to-[#1C120B] text-white">
+      {/* ── 1. HERO SECTION DE ALTA GAMA CON LOGO OFICIAL ── */}
+      <section className="relative pt-12 pb-20 sm:pt-16 sm:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-[#1C120B] via-[#2A1A10] to-[#1C120B] text-white">
         {/* Glow ambient background orbs */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-amber-600/20 via-orange-600/10 to-transparent blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-amber-600/25 via-orange-600/10 to-transparent blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[500px] h-[300px] bg-amber-500/10 blur-[100px] pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto relative z-10 text-center space-y-6">
-          {/* Logo Oficial Dencker Pan */}
+        <div className="max-w-6xl mx-auto relative z-10 text-center space-y-7">
+          {/* Logo Oficial Dencker Pan con Framing Dorado */}
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className="flex justify-center"
+            className="flex flex-col items-center justify-center space-y-3"
           >
-            <img
-              src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
-              alt="Dencker Pan Logo Oficial"
-              className="w-28 sm:w-36 h-auto object-contain filter drop-shadow-[0_10px_30px_rgba(217,119,6,0.45)] hover:scale-105 transition-transform"
-            />
+            <div className="relative p-3 rounded-3xl bg-white/5 border border-amber-500/30 backdrop-blur-xl shadow-[0_10px_35px_rgba(217,119,6,0.3)]">
+              <img
+                src={DENCKER_ASSETS.logo}
+                alt="Dencker Pan Logo Oficial"
+                className="w-24 sm:w-32 h-auto object-contain filter drop-shadow-[0_8px_20px_rgba(217,119,6,0.5)] hover:scale-105 transition-transform"
+              />
+            </div>
+
+            {/* Badge de Tradición */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-amber-300 text-xs font-semibold shadow-inner">
+              <Sparkles size={14} className="text-amber-400" />
+              <span>Panadería de Masa Madre & Café de Especialidad • Cochabamba</span>
+            </div>
           </motion.div>
 
-          {/* Badge */}
+          {/* Headline Editorial */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-amber-300 text-xs font-semibold shadow-inner"
-          >
-            <Sparkles size={14} className="text-amber-400 animate-spin-slow" />
-            <span>Panadería de Masa Madre & Café de Especialidad en Cochabamba</span>
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.1 }}
-            className="font-serif text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.1]"
+            className="space-y-4 max-w-4xl mx-auto"
           >
-            El arte del buen pan,{" "}
-            <span className="bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 bg-clip-text text-transparent italic">
-              elevado a la perfección.
-            </span>
-          </motion.h1>
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
+              El arte del buen pan,{" "}
+              <span className="bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 bg-clip-text text-transparent italic">
+                elevado a la perfección.
+              </span>
+            </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.15 }}
-            className="text-amber-200/80 text-base sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed"
-          >
-            Harinas seleccionadas, fermentación lenta de 24 horas y café de altura boliviano.
-            Pide desde tu mesa con nuestro menú inteligente sin esperas.
-          </motion.p>
+            <p className="text-amber-100/80 text-base sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
+              Masa madre con fermentación natural de 24 horas, harinas seleccionadas y café de altura de los Yungas cosechado a 1,600 msnm.
+              Disfruta en nuestro salón o pide directo a tu puerta en Cochabamba.
+            </p>
+          </motion.div>
 
-          {/* Call to Actions */}
+          {/* Botones de Acción Inmediata */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.2 }}
             className="flex flex-wrap items-center justify-center gap-3 pt-2"
           >
-            <Link
-              href="/mesa/1"
-              onClick={() => soundManager.playOrderChime()}
-              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-500 text-white font-bold text-sm shadow-[0_10px_30px_rgba(217,119,6,0.4)] transition-all active:scale-95 flex items-center gap-2"
-            >
-              <QrCode size={18} />
-              <span>Ver Menú QR en Mesa 1</span>
-              <ArrowRight size={16} />
-            </Link>
-
             <a
-              href="#cotizador"
-              className="px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/15 backdrop-blur-xl border border-white/20 text-white font-semibold text-sm transition-all active:scale-95 flex items-center gap-2"
+              href="#catalogo"
+              onClick={() => soundManager.playOrderChime()}
+              className="px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-500 text-stone-950 font-black text-sm shadow-[0_10px_30px_rgba(217,119,6,0.4)] transition-all active:scale-95 flex items-center gap-2.5"
             >
-              <Calendar size={18} />
-              <span>Cotizar Catering para Evento</span>
+              <ShoppingBag size={18} />
+              <span>Explorar Menú Completo (240 Productos)</span>
+              <ArrowRight size={16} />
             </a>
 
             <a
-              href="https://wa.me/59176911000"
+              href={DENCKER_ASSETS.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3.5 rounded-full bg-emerald-600/90 hover:bg-emerald-500 text-white font-semibold text-sm transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-emerald-950/40"
+              className="px-7 py-3.5 rounded-full bg-emerald-600/95 hover:bg-emerald-500 text-white font-bold text-sm transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-emerald-950/40"
             >
               <MessageCircle size={18} />
-              <span>WhatsApp (+591 76911000)</span>
+              <span>WhatsApp Directo (+591 76911000)</span>
+            </a>
+
+            <a
+              href="#roles"
+              className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/15 backdrop-blur-xl border border-white/20 text-white font-semibold text-sm transition-all active:scale-95 flex items-center gap-2"
+            >
+              <Layers size={18} className="text-amber-400" />
+              <span>Portal de Roles (Equipo)</span>
             </a>
           </motion.div>
 
@@ -204,348 +274,483 @@ export default function HomePage() {
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.22 }}
-            className="pt-4 max-w-4xl mx-auto rounded-3xl overflow-hidden border border-white/15 shadow-2xl shadow-black/60 group"
+            className="pt-4 max-w-4xl mx-auto rounded-3xl overflow-hidden border border-amber-500/20 shadow-2xl shadow-black/80 group"
           >
             <img
-              src="https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg"
-              alt="Dencker Pan Promociones"
+              src={DENCKER_ASSETS.banners[0]}
+              alt="Dencker Pan Especialidades y Promociones"
               className="w-full h-auto object-cover max-h-56 sm:max-h-72 group-hover:scale-102 transition-transform duration-700"
             />
           </motion.div>
 
-          {/* ── INTERACTIVE SYSTEM DEMO SHOWCASE ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 280, damping: 26, delay: 0.25 }}
-            className="mt-8 rounded-[32px] bg-[#120B07]/90 border border-white/15 p-4 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl text-left max-w-4xl mx-auto"
-          >
-            {/* Top Selector Tabs */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4 gap-2 overflow-x-auto">
-              <div className="flex items-center gap-1.5">
-                {(
-                  [
-                    { id: "qr", label: "Menú Cliente QR", icon: QrCode },
-                    { id: "mesero", label: "Sala & Mesero", icon: UtensilsCrossed },
-                    { id: "kds", label: "Cocina KDS", icon: ChefHat },
-                    { id: "caja", label: "Caja POS", icon: Receipt },
-                  ] as const
-                ).map((t) => {
-                  const Icon = t.icon;
-                  const isSel = demoTab === t.id;
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => {
-                        setDemoTab(t.id);
-                        soundManager.playSuccessTone();
-                      }}
-                      className={`relative px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                        isSel
-                          ? "bg-amber-600 text-white shadow-md shadow-amber-950"
-                          : "text-amber-200/70 hover:text-white hover:bg-white/5"
-                      }`}
-                    >
-                      <Icon size={14} />
-                      <span>{t.label}</span>
-                    </button>
-                  );
-                })}
+          {/* Tira de Confianza & Valores Artesanales */}
+          <div className="pt-6 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto text-left">
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+              <span className="text-2xl">🥐</span>
+              <div>
+                <p className="font-bold text-xs text-white">Horneadas Diarias</p>
+                <p className="text-[11px] text-amber-200/70">07:30 y 16:30 calientes</p>
               </div>
-
-              <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1 shrink-0">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                Live Demo
-              </span>
             </div>
 
-            {/* Showcase Display Area */}
-            <AnimatePresence mode="wait">
-              {demoTab === "qr" && (
-                <motion.div
-                  key="qr"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs"
-                >
-                  <div className="md:col-span-2 space-y-3 bg-white/5 p-4 rounded-2xl border border-white/10">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-amber-200 text-sm">Menú Mesa 3 — Dencker Pan</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">
-                        🥐 56 Productos
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-amber-400/40 transition">
-                        <p className="font-bold text-white text-xs">Croissant Mantequilla</p>
-                        <p className="text-[11px] text-amber-300 font-mono">Bs 18.00</p>
-                        <span className="text-[9px] text-stone-400 block mt-1">Calentar en horno ✓</span>
-                      </div>
-                      <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-amber-400/40 transition">
-                        <p className="font-bold text-white text-xs">Cappuccino Especial</p>
-                        <p className="text-[11px] text-amber-300 font-mono">Bs 22.00</p>
-                        <span className="text-[9px] text-stone-400 block mt-1">Canela encima ✓</span>
-                      </div>
-                    </div>
-                    <div className="p-2 rounded-xl bg-amber-900/40 border border-amber-600/30 flex items-center justify-between text-[11px]">
-                      <span>⚡ Pedido enviado a Cocina:</span>
-                      <span className="font-bold text-amber-300">En preparación 👨‍🍳</span>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-amber-950/60 border border-amber-800/40 flex flex-col justify-between space-y-3">
-                    <div>
-                      <span className="font-bold text-amber-200">Experiencia Cliente</span>
-                      <p className="text-[11px] text-stone-300 mt-1 leading-relaxed">
-                        Cero filas. El cliente escanea, personaliza con chips (sin azúcar, bien caliente) y sigue el estado en tiempo real.
-                      </p>
-                    </div>
-                    <Link
-                      href="/mesa/3"
-                      className="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-center font-bold text-white text-xs transition"
-                    >
-                      Abrir Mesa 3 →
-                    </Link>
-                  </div>
-                </motion.div>
-              )}
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+              <span className="text-2xl">☕</span>
+              <div>
+                <p className="font-bold text-xs text-white">Café de Altura</p>
+                <p className="text-[11px] text-amber-200/70">Yungas 1,600 msnm</p>
+              </div>
+            </div>
 
-              {demoTab === "mesero" && (
-                <motion.div
-                  key="mesero"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs"
-                >
-                  <div className="md:col-span-2 p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-amber-200">Croquis & Sala en Vivo</span>
-                      <span className="text-[10px] text-emerald-400">14 Libres | 5 Ocupadas | 1 Alerta</span>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                        <div
-                          key={num}
-                          className={`p-2 rounded-xl text-center border font-bold ${
-                            num === 3
-                              ? "bg-red-500/20 border-red-500 text-red-300 animate-pulse"
-                              : num === 5
-                              ? "bg-amber-500/20 border-amber-500 text-amber-300"
-                              : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
-                          }`}
-                        >
-                          Mesa {num}
-                          <span className="text-[9px] block font-normal text-stone-400">
-                            {num === 3 ? "Llamando 🔔" : num === 5 ? "Bs 86.00" : "Libre"}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-amber-950/60 border border-amber-800/40 flex flex-col justify-between space-y-3">
-                    <div>
-                      <span className="font-bold text-amber-200">Atención sin Demoras</span>
-                      <p className="text-[11px] text-stone-300 mt-1 leading-relaxed">
-                        Campanilla sintetizada instantánea cuando un cliente llama o pide la cuenta. Rondas rápidas en 1 toque.
-                      </p>
-                    </div>
-                    <Link
-                      href="/mesero"
-                      className="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-center font-bold text-white text-xs transition"
-                    >
-                      Ir a Sala & Meseros →
-                    </Link>
-                  </div>
-                </motion.div>
-              )}
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+              <span className="text-2xl">🌾</span>
+              <div>
+                <p className="font-bold text-xs text-white">Masa Madre 24h</p>
+                <p className="text-[11px] text-amber-200/70">Fermentación natural</p>
+              </div>
+            </div>
 
-              {demoTab === "kds" && (
-                <motion.div
-                  key="kds"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs"
-                >
-                  <div className="md:col-span-2 p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-amber-200">Pantalla KDS — Vitrina, Café & Cocina</span>
-                      <span className="font-mono text-emerald-400">Timer Semáforo Activo</span>
-                    </div>
-                    <div className="p-3 rounded-xl bg-stone-900 border border-amber-900/40 flex items-center justify-between">
-                      <div>
-                        <span className="font-bold text-amber-100 text-sm">Mesa 3 (#4012)</span>
-                        <p className="text-[11px] text-stone-400">2x Cappuccino, 1x Croissant</p>
-                      </div>
-                      <span className="px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-600 font-mono font-bold">
-                        ⏱️ 03:14 min
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-amber-950/60 border border-amber-800/40 flex flex-col justify-between space-y-3">
-                    <div>
-                      <span className="font-bold text-amber-200">Cero Comandas Perdidas</span>
-                      <p className="text-[11px] text-stone-300 mt-1 leading-relaxed">
-                        Despacho por estaciones táctil. Verde &lt;5m, ámbar 5-10m, rojo pulsante &gt;10m. Chime sonoro de panadería.
-                      </p>
-                    </div>
-                    <Link
-                      href="/kds"
-                      className="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-center font-bold text-white text-xs transition"
-                    >
-                      Abrir Pantalla KDS →
-                    </Link>
-                  </div>
-                </motion.div>
-              )}
-
-              {demoTab === "caja" && (
-                <motion.div
-                  key="caja"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs"
-                >
-                  <div className="md:col-span-2 p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-amber-200">POS & Facturación Boliviana</span>
-                      <span className="font-mono text-amber-300 font-bold">Bs 62.00 a cobrar</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 p-2 bg-white/5 rounded-xl border border-white/10 text-center">
-                        <span className="text-[10px] text-stone-400 block">QR Simple</span>
-                        <span className="font-bold text-white">BNB / BCP / Bisa</span>
-                      </div>
-                      <div className="flex-1 p-2 bg-white/5 rounded-xl border border-white/10 text-center">
-                        <span className="text-[10px] text-stone-400 block">Efectivo BOB</span>
-                        <span className="font-bold text-emerald-400">Bs 200, 100, 50...</span>
-                      </div>
-                      <div className="flex-1 p-2 bg-white/5 rounded-xl border border-white/10 text-center">
-                        <span className="text-[10px] text-stone-400 block">Split de Cuenta</span>
-                        <span className="font-bold text-amber-300">÷ 2 a 6 personas</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-amber-950/60 border border-amber-800/40 flex flex-col justify-between space-y-3">
-                    <div>
-                      <span className="font-bold text-amber-200">Cierre & Arqueo Ciego</span>
-                      <p className="text-[11px] text-stone-300 mt-1 leading-relaxed">
-                        Conteo de billetes y monedas con cálculo instantáneo de cuadre, ticket térmico e integración fiscal.
-                      </p>
-                    </div>
-                    <Link
-                      href="/caja"
-                      className="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-center font-bold text-white text-xs transition"
-                    >
-                      Ir a Caja POS →
-                    </Link>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+              <span className="text-2xl">🛵</span>
+              <div>
+                <p className="font-bold text-xs text-white">Delivery Cochabamba</p>
+                <p className="text-[11px] text-amber-200/70">A domicilio o en mesa</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── BENTO GRID: CARACTERÍSTICAS PREMIUM ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-12">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
+      {/* ── 2. EL CATÁLOGO DIGITAL Y VITRINA OFICIAL (240 PRODUCTOS REALES) ── */}
+      <section id="catalogo" className="py-20 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
+        
+        {/* Encabezado del Catálogo */}
+        <div className="text-center space-y-3 max-w-3xl mx-auto">
           <span className="text-xs uppercase font-bold tracking-widest text-amber-800 bg-amber-100 px-3 py-1 rounded-full">
-            Ecosistema Dencker Pan
+            Nuestra Vitrina en Vivo
           </span>
-          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-stone-900">
-            Diseñado para la excelencia en cada mesa
+          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-stone-900 tracking-tight">
+            Catálogo Completo de la Panadería
           </h2>
-          <p className="text-stone-600 text-sm sm:text-base">
-            Cada detalle ha sido pulido con física de fluidos de Apple, garantizando tiempos de respuesta mínimos y máxima elegancia.
+          <p className="text-stone-600 text-sm sm:text-base leading-relaxed">
+            Descubre nuestros 240 productos elaborados artesanalmente en Cochabamba con ingredientes de primera calidad.
+            Haz clic en cualquier producto para añadirlo a tu canasta y coordinar tu pedido directo por WhatsApp o pedir en mesa.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Bento Card 1: Panadería */}
-          <div className="p-8 rounded-[32px] bg-white border border-stone-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
-            <div className="space-y-4">
-              <span className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                🥐
-              </span>
-              <h3 className="font-serif text-2xl font-bold text-stone-900">
-                Masa Madre & Horno Diario
-              </h3>
-              <p className="text-stone-600 text-sm leading-relaxed">
-                Nuestros croissants, baguettes y panes rústicos salen recién horneados cada mañana a las 07:00 y en la tarde a las 16:30.
-              </p>
-            </div>
-            <div className="p-3 rounded-2xl bg-stone-50 border border-stone-100 text-xs font-medium text-stone-500 flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-emerald-600" />
-              <span>Harinas 100% orgánicas certificadas</span>
-            </div>
+        {/* Barra de Búsqueda Rápida */}
+        <div className="max-w-xl mx-auto relative">
+          <Search size={18} className="absolute left-4 top-3.5 text-stone-400" />
+          <input
+            type="text"
+            placeholder="Buscar entre los 240 productos (marraqueta, cuñapé, alfajor, cappuccino)..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white border border-stone-200 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-amber-700 placeholder:text-stone-400 transition"
+          />
+          {busqueda && (
+            <button
+              onClick={() => setBusqueda("")}
+              className="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-700 text-xs"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+
+        {/* Píldoras de Categorías (Horizontal Scroll con Imágenes Oficiales) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center">
+          <button
+            onClick={() => {
+              setCategoriaActiva("todos");
+              soundManager.playClick();
+            }}
+            className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2 shadow-2xs ${
+              categoriaActiva === "todos"
+                ? "bg-amber-900 text-white shadow-md shadow-amber-950/20"
+                : "bg-white text-stone-700 border border-stone-200 hover:bg-stone-50"
+            }`}
+          >
+            <span>🍽️</span>
+            <span>Todos ({productos.length})</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setCategoriaActiva("favoritos");
+              soundManager.playClick();
+            }}
+            className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2 shadow-2xs ${
+              categoriaActiva === "favoritos"
+                ? "bg-amber-900 text-white shadow-md shadow-amber-950/20"
+                : "bg-white text-stone-700 border border-stone-200 hover:bg-stone-50"
+            }`}
+          >
+            <span>⭐</span>
+            <span>Más Vendidos</span>
+          </button>
+
+          {categorias.map((cat) => {
+            const isSel = categoriaActiva === cat.id;
+            const countInCat = productos.filter((p) => p.categoria_id === cat.id).length;
+
+            return (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setCategoriaActiva(cat.id);
+                  soundManager.playClick();
+                }}
+                className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2 shadow-2xs ${
+                  isSel
+                    ? "bg-amber-900 text-white shadow-md shadow-amber-950/20"
+                    : "bg-white text-stone-700 border border-stone-200 hover:bg-stone-50"
+                }`}
+              >
+                <span>{cat.emoji}</span>
+                <span>{cat.nombre}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  isSel ? "bg-amber-800 text-amber-200" : "bg-stone-100 text-stone-500"
+                }`}>
+                  {countInCat}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Contador de Resultados */}
+        <div className="flex items-center justify-between text-xs text-stone-500 border-b border-stone-200 pb-3">
+          <span>
+            Mostrando <strong>{productosVisibles.length}</strong> de <strong>{productosFiltrados.length}</strong> productos
+            {categoriaActiva !== "todos" && ` en ${categorias.find(c => c.id === categoriaActiva)?.nombre || "favoritos"}`}
+          </span>
+          <span className="font-mono text-[11px] text-amber-800">
+            Moneda oficial: Bolivianos (BOB)
+          </span>
+        </div>
+
+        {/* Grid de Productos (Cards Ultra-Elegantes con Fotos ImgBB) */}
+        {productosVisibles.length === 0 ? (
+          <div className="p-12 text-center bg-white rounded-3xl border border-stone-200 space-y-3">
+            <p className="text-3xl">🔍</p>
+            <h4 className="font-serif font-bold text-lg text-stone-800">No encontramos coincidencias</h4>
+            <p className="text-xs text-stone-500">Prueba con otra palabra clave o selecciona otra categoría.</p>
+            <button
+              onClick={() => {
+                setBusqueda("");
+                setCategoriaActiva("todos");
+              }}
+              className="px-4 py-2 rounded-xl bg-amber-800 text-white text-xs font-bold"
+            >
+              Ver todos los productos
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {productosVisibles.map((prod) => {
+              const cantEnCarrito = getItemCantidadEnCarrito(prod.id);
+              const cat = categorias.find((c) => c.id === prod.categoria_id);
+
+              return (
+                <motion.div
+                  key={prod.id}
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => abrirModalProducto(prod)}
+                  className="rounded-3xl bg-white border border-stone-200/90 shadow-sm hover:shadow-xl hover:border-amber-300 transition-all flex flex-col justify-between overflow-hidden cursor-pointer group"
+                >
+                  <div>
+                    {/* Imagen del Producto (ImgBB) */}
+                    <div className="h-36 sm:h-44 w-full bg-gradient-to-br from-amber-50 to-amber-100/40 relative overflow-hidden flex items-center justify-center">
+                      {prod.imagen_url ? (
+                        <img
+                          src={prod.imagen_url}
+                          alt={prod.nombre}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <span className="text-4xl">{cat?.emoji || "🥐"}</span>
+                      )}
+
+                      {/* Badges superiores */}
+                      <div className="absolute top-2 left-2 flex flex-col gap-1">
+                        {prod.es_mas_vendido && (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-950/85 backdrop-blur-md text-amber-200 font-bold text-[9px] uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                            <Star size={9} className="fill-amber-400 text-amber-400" />
+                            Top
+                          </span>
+                        )}
+                        <span className="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-stone-700 font-semibold text-[9px]">
+                          {cat?.nombre || "Panadería"}
+                        </span>
+                      </div>
+
+                      {/* Contador si ya está en canasta */}
+                      {cantEnCarrito > 0 && (
+                        <div className="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-amber-600 text-white font-mono font-bold text-xs flex items-center justify-center shadow-lg">
+                          {cantEnCarrito}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Información del Producto */}
+                    <div className="p-3.5 sm:p-4 space-y-1.5">
+                      <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 line-clamp-1 group-hover:text-amber-800 transition-colors">
+                        {prod.nombre}
+                      </h3>
+                      <p className="text-[11px] text-stone-500 line-clamp-2 leading-relaxed">
+                        {prod.descripcion || "Elaborado fresco a diario con ingredientes seleccionados de primera calidad."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Footer de Card: Precio & Botón de Añadir */}
+                  <div className="p-3.5 sm:p-4 pt-0 flex items-center justify-between border-t border-stone-100 mt-2">
+                    <div>
+                      <span className="text-[10px] text-stone-400 block font-sans">Precio</span>
+                      <span className="font-serif font-extrabold text-base sm:text-lg text-amber-950">
+                        Bs {prod.precio.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        soundManager.playSuccessTone();
+                        addItem(prod);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-amber-900 hover:bg-amber-800 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95"
+                    >
+                      <Plus size={14} />
+                      <span>{cantEnCarrito > 0 ? "Añadir más" : "Añadir"}</span>
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Botón Ver Más Productos */}
+        {limiteVisible < productosFiltrados.length && (
+          <div className="text-center pt-6">
+            <button
+              onClick={() => {
+                setLimiteVisible((prev) => prev + 24);
+                soundManager.playClick();
+              }}
+              className="px-8 py-3.5 rounded-full bg-white border border-stone-300 hover:border-amber-700 text-stone-800 font-bold text-xs shadow-sm hover:shadow-md transition active:scale-95 inline-flex items-center gap-2"
+            >
+              <span>Cargar Más Productos ({productosFiltrados.length - limiteVisible} restantes)</span>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* ── 3. PORTAL OPERATIVO DE PERSONAL (5 ROLES PROFESIONALES) ── */}
+      <section id="roles" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#1C120B] via-[#24160E] to-[#1C120B] text-white border-y border-amber-900/30">
+        <div className="max-w-6xl mx-auto space-y-12">
+          
+          <div className="text-center space-y-3 max-w-3xl mx-auto">
+            <span className="text-xs uppercase font-bold tracking-widest text-amber-400 bg-amber-500/15 border border-amber-500/30 px-3.5 py-1 rounded-full">
+              Sistema de Gestión Integral
+            </span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
+              Portal Operativo para el Equipo
+            </h2>
+            <p className="text-amber-200/80 text-sm sm:text-base leading-relaxed">
+              Herramientas de alta velocidad diseñadas para cada área de servicio de Dencker Pan.
+              Sincronizadas al instante mediante Supabase Realtime con cero comandas perdidas.
+            </p>
           </div>
 
-          {/* Bento Card 2: Café de Especialidad */}
-          <div className="p-8 rounded-[32px] bg-white border border-stone-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
-            <div className="space-y-4">
-              <span className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                ☕
-              </span>
-              <h3 className="font-serif text-2xl font-bold text-stone-900">
-                Café de Origen Yungas
-              </h3>
-              <p className="text-stone-600 text-sm leading-relaxed">
-                Granos de altura cosechados a más de 1,600 msnm. Tostado medio para resaltar notas achocolatadas y florales únicas.
-              </p>
-            </div>
-            <div className="p-3 rounded-2xl bg-stone-50 border border-stone-100 text-xs font-medium text-stone-500 flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-emerald-600" />
-              <span>Extracción calibrada a 9 bares</span>
-            </div>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            {/* Rol 1: Mesero & Sala */}
+            <div className="p-7 rounded-[32px] bg-white/5 border border-white/10 hover:border-amber-500/40 shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                  <UtensilsCrossed size={22} />
+                </div>
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-white">
+                    Atención de Sala & Meseros
+                  </h3>
+                  <span className="text-xs text-amber-400 font-semibold">
+                    Salón Principal • Terraza • Balcón
+                  </span>
+                </div>
+                <p className="text-stone-300 text-xs sm:text-sm leading-relaxed">
+                  Croquis interactivo de mesas, toma de comandas móviles en tablet o celular, campanilla sintetizada de llamadas y rondas rápidas de café en 1 toque.
+                </p>
+              </div>
 
-          {/* Bento Card 3: POS SaaS Moderno */}
-          <div className="p-8 rounded-[32px] bg-white border border-stone-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
-            <div className="space-y-4">
-              <span className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                ⚡
-              </span>
-              <h3 className="font-serif text-2xl font-bold text-stone-900">
-                Sincronización en la Nube
-              </h3>
-              <p className="text-stone-600 text-sm leading-relaxed">
-                Supabase Realtime conecta cada mesa, cocina y caja al instante sin retrasos ni pérdidas de comandas.
-              </p>
+              <Link
+                href="/mesero"
+                onClick={() => soundManager.playSuccessTone()}
+                className="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs text-center transition flex items-center justify-center gap-2 shadow-md"
+              >
+                <span>Acceder a Módulo Mesero</span>
+                <ArrowRight size={14} />
+              </Link>
             </div>
-            <div className="p-3 rounded-2xl bg-stone-50 border border-stone-100 text-xs font-medium text-stone-500 flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-emerald-600" />
-              <span>Funciona online y en modo local reactivo</span>
+
+            {/* Rol 2: Cocina KDS */}
+            <div className="p-7 rounded-[32px] bg-white/5 border border-white/10 hover:border-blue-500/40 shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/20 text-blue-300 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                  <ChefHat size={22} />
+                </div>
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-white">
+                    Cocina & Barismo KDS
+                  </h3>
+                  <span className="text-xs text-blue-400 font-semibold">
+                    Vitrina • Barismo • Cocina Caliente
+                  </span>
+                </div>
+                <p className="text-stone-300 text-xs sm:text-sm leading-relaxed">
+                  Pantalla táctil de preparación por estaciones sin boletos de papel. Semáforo dinámico de tiempos (verde &lt;5m, ámbar 5-10m, rojo pulsante) y chime sonoro.
+                </p>
+              </div>
+
+              <Link
+                href="/kds"
+                onClick={() => soundManager.playSuccessTone()}
+                className="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs text-center transition flex items-center justify-center gap-2 shadow-md"
+              >
+                <span>Abrir Pantalla KDS</span>
+                <ArrowRight size={14} />
+              </Link>
             </div>
+
+            {/* Rol 3: Caja POS */}
+            <div className="p-7 rounded-[32px] bg-white/5 border border-white/10 hover:border-emerald-500/40 shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                  <Receipt size={22} />
+                </div>
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-white">
+                    Caja POS & Facturación
+                  </h3>
+                  <span className="text-xs text-emerald-400 font-semibold">
+                    Bolivianos BOB • QR Simple
+                  </span>
+                </div>
+                <p className="text-stone-300 text-xs sm:text-sm leading-relaxed">
+                  Cobro instantáneo con código QR Simple interoperable (BNB, BCP, Bisa, Ganadero), cobro en efectivo con cálculo de cambio, división de cuentas y arqueo ciego.
+                </p>
+              </div>
+
+              <Link
+                href="/caja"
+                onClick={() => soundManager.playSuccessTone()}
+                className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs text-center transition flex items-center justify-center gap-2 shadow-md"
+              >
+                <span>Ir a Terminal Caja POS</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+
+            {/* Rol 4: Administración SaaS */}
+            <div className="p-7 rounded-[32px] bg-white/5 border border-white/10 hover:border-amber-500/40 shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-stone-500/20 text-stone-300 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                  <Settings size={22} />
+                </div>
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-white">
+                    Administración General
+                  </h3>
+                  <span className="text-xs text-stone-400 font-semibold">
+                    Catálogo 240 Items • ImgBB • Stock
+                  </span>
+                </div>
+                <p className="text-stone-300 text-xs sm:text-sm leading-relaxed">
+                  Panel maestro para editar precios, subir fotos en vivo mediante API de ImgBB, gestionar la disposición de mesas del salón y auditar reportes financieros.
+                </p>
+              </div>
+
+              <Link
+                href="/admin"
+                onClick={() => soundManager.playSuccessTone()}
+                className="w-full py-3 rounded-2xl bg-stone-700 hover:bg-stone-600 text-white font-bold text-xs text-center transition flex items-center justify-center gap-2 shadow-md"
+              >
+                <span>Administrar Sistema</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+
+            {/* Rol 5: Autoservicio Mesa QR */}
+            <div className="p-7 rounded-[32px] bg-white/5 border border-white/10 hover:border-amber-500/40 shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6 md:col-span-2 lg:col-span-2">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                  <QrCode size={22} />
+                </div>
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-white">
+                    Menú Digital en Mesa (Autoservicio QR)
+                  </h3>
+                  <span className="text-xs text-amber-400 font-semibold">
+                    Experiencia Premium para el Comensal
+                  </span>
+                </div>
+                <p className="text-stone-300 text-xs sm:text-sm leading-relaxed">
+                  El cliente escanea el código QR de su mesa física, visualiza el menú con fotos de alta resolución, añade notas específicas (&quot;sin azúcar&quot;, &quot;bien caliente&quot;) y llama al mesero directamente a su mesa sin filas.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-2">
+                <Link
+                  href="/mesa/1"
+                  onClick={() => soundManager.playOrderChime()}
+                  className="px-6 py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition flex items-center gap-2 shadow-md"
+                >
+                  <QrCode size={16} />
+                  <span>Probar Menú Digital (Mesa 1)</span>
+                </Link>
+                <Link
+                  href="/mesa/3"
+                  className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-stone-200 font-semibold text-xs transition"
+                >
+                  Mesa 3
+                </Link>
+                <Link
+                  href="/mesa/5"
+                  className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-stone-200 font-semibold text-xs transition"
+                >
+                  Mesa 5
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── SIMULADOR & COTIZADOR INTERACTIVO DE CATERING ── */}
+      {/* ── 4. COTIZADOR Y CONCIERGE DE CATERING & EVENTOS ── */}
       <section id="cotizador" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#FAF4EC] to-[#F5ECE1] border-y border-stone-200">
         <div className="max-w-5xl mx-auto space-y-12">
+          
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs uppercase font-bold tracking-widest text-amber-800 bg-amber-200/60 px-3 py-1 rounded-full">
+            <span className="text-xs uppercase font-bold tracking-widest text-amber-800 bg-amber-200/60 px-3.5 py-1 rounded-full">
               Cotizador en Tiempo Real
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-stone-900">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-stone-900 tracking-tight">
               Cotiza tu Evento & Catering en 10 Segundos
             </h2>
-            <p className="text-stone-600 text-sm sm:text-base">
-              Ajusta los comensales y el paquete para calcular el presupuesto en Bolivianos con seña automática.
+            <p className="text-stone-600 text-sm sm:text-base leading-relaxed">
+              Selecciona el tipo de festejo y el número de personas para calcular el presupuesto en Bolivianos con seña del 30% calculada al instante.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Controles del Simulador */}
             <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-[32px] border border-stone-200 shadow-md space-y-6">
-              {/* Selector de Tipo de Evento */}
+              
+              {/* Preset Selector */}
               <div>
                 <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block mb-3">
                   1. Selecciona el Tipo de Evento
@@ -595,9 +800,9 @@ export default function HomePage() {
                   className="w-full accent-amber-700 h-2 bg-stone-200 rounded-lg cursor-pointer"
                 />
                 <div className="flex justify-between text-[11px] text-stone-400 font-mono">
-                  <span>10 personas (íntimo)</span>
+                  <span>10 personas (reunión íntima)</span>
                   <span>100 personas</span>
-                  <span>200 personas (magno)</span>
+                  <span>200 personas (magno evento)</span>
                 </div>
               </div>
 
@@ -720,15 +925,15 @@ export default function HomePage() {
 
                 <button
                   type="submit"
-                  disabled={enviando || enviadoExitoso}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-500 text-white font-bold text-xs shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                  disabled={enviandoReserva || reservaExitosa}
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-500 text-stone-950 font-black text-xs shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {enviadoExitoso ? (
+                  {reservaExitosa ? (
                     <>
                       <CheckCircle2 size={16} className="text-emerald-300" />
-                      <span>¡Solicitud Enviada a Cocina & Admin!</span>
+                      <span>¡Solicitud Registrada con Éxito!</span>
                     </>
-                  ) : enviando ? (
+                  ) : enviandoReserva ? (
                     <span>Registrando Reserva...</span>
                   ) : (
                     <>
@@ -743,15 +948,78 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FOOTER DE ALTA GAMA ── */}
-      <footer className="bg-[#120B07] text-white py-16 px-4 border-t border-white/10">
+      {/* ── 5. CONTACTO, HORARIOS & UBICACIÓN EN COCHABAMBA ── */}
+      <section id="contacto" className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          <div className="p-8 rounded-[32px] bg-white border border-stone-200/80 shadow-sm space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl">
+              📍
+            </div>
+            <h3 className="font-serif text-xl font-bold text-stone-900">Ubicación Central</h3>
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Cochabamba, Bolivia. Vista panorámica a la sala de horneado y terraza colonial al aire libre.
+            </p>
+            <a
+              href="https://maps.google.com/?q=Cochabamba+Bolivia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:underline pt-2"
+            >
+              <span>Ver en Google Maps</span>
+              <ExternalLink size={12} />
+            </a>
+          </div>
+
+          <div className="p-8 rounded-[32px] bg-white border border-stone-200/80 shadow-sm space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl">
+              ⏰
+            </div>
+            <h3 className="font-serif text-xl font-bold text-stone-900">Horarios de Atención</h3>
+            <div className="space-y-1 text-xs text-stone-600">
+              <p><strong>Lunes a Sábado:</strong> 07:00 – 21:00</p>
+              <p><strong>Domingos y Feriados:</strong> 08:00 – 20:00</p>
+              <p className="text-amber-800 font-semibold pt-1">
+                🔥 Horneadas calientes: 07:30 y 16:30
+              </p>
+            </div>
+          </div>
+
+          <div className="p-8 rounded-[32px] bg-white border border-stone-200/80 shadow-sm space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-2xl">
+              💬
+            </div>
+            <h3 className="font-serif text-xl font-bold text-stone-900">Pedidos & WhatsApp</h3>
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Atención directa para catering, tortas de encargo y delivery en toda el área urbana de Cochabamba.
+            </p>
+            <a
+              href={DENCKER_ASSETS.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition"
+            >
+              <MessageCircle size={14} />
+              <span>+591 76911000</span>
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── 6. FOOTER DE ALTA GAMA ── */}
+      <footer className="bg-[#120B07] text-white py-16 px-4 border-t border-amber-900/30">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-xs text-stone-400">
+          
           <div className="space-y-3">
-            <span className="font-serif text-xl font-bold text-white flex items-center gap-2">
-              🥐 Dencker Pan
-            </span>
-            <p className="leading-relaxed">
-              Cafetería de especialidad, panadería de masa madre y pastelería fina en Cochabamba, Bolivia.
+            <div className="flex items-center gap-2">
+              <img src={DENCKER_ASSETS.logo} alt="" className="w-8 h-8 object-contain" />
+              <span className="font-serif text-lg font-bold text-white">
+                Dencker Pan
+              </span>
+            </div>
+            <p className="leading-relaxed text-stone-400">
+              Cafetería de especialidad, panadería tradicional de masa madre y repostería fina en Cochabamba, Bolivia.
             </p>
           </div>
 
@@ -767,22 +1035,189 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-2">
-            <p className="font-bold text-white uppercase tracking-wider text-[11px]">Horarios de Atención</p>
-            <p>Lunes a Sábado: 07:00 – 21:00</p>
-            <p>Domingos y Feriados: 08:00 – 20:00</p>
-            <p className="text-amber-300 pt-1">Horneadas calientes: 07:30 y 16:30</p>
+            <p className="font-bold text-white uppercase tracking-wider text-[11px]">Categorías Destacadas</p>
+            <ul className="space-y-1.5">
+              <li><a href="#catalogo" onClick={() => setCategoriaActiva("c3")} className="hover:text-amber-400 transition">Panadería de Masa Madre</a></li>
+              <li><a href="#catalogo" onClick={() => setCategoriaActiva("c4")} className="hover:text-amber-400 transition">Pastelería & Alfajores</a></li>
+              <li><a href="#catalogo" onClick={() => setCategoriaActiva("c2")} className="hover:text-amber-400 transition">Masitas Saladas & Cuñapés</a></li>
+              <li><a href="#catalogo" onClick={() => setCategoriaActiva("c7")} className="hover:text-amber-400 transition">Café de Altura Caranavi</a></li>
+            </ul>
           </div>
 
           <div className="space-y-2">
             <p className="font-bold text-white uppercase tracking-wider text-[11px]">Ubicación & Contacto</p>
             <p>Cochabamba, Bolivia</p>
-            <p>WhatsApp: +591 71234567</p>
+            <p>WhatsApp: +591 76911000</p>
             <p className="pt-2 text-[10px] text-stone-500">
               © 2026 Dencker Pan S.R.L. Todos los derechos reservados.
             </p>
           </div>
+
         </div>
       </footer>
+
+      {/* ── 7. BOTÓN FLOTANTE DE CANASTA (MOBILE & DESKTOP) ── */}
+      <AnimatePresence>
+        {count() > 0 && (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 max-w-md w-full px-4"
+          >
+            <button
+              onClick={() => {
+                soundManager.playClick();
+                setCartOpen(true);
+              }}
+              className="w-full py-4 px-6 rounded-full bg-[#1C120B] border border-amber-500/40 text-white shadow-2xl shadow-black/80 flex items-center justify-between gap-3 active:scale-98 transition group"
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-amber-600 text-stone-950 font-black text-xs flex items-center justify-center font-mono">
+                  {count()}
+                </span>
+                <div className="text-left leading-tight">
+                  <span className="font-bold text-xs text-amber-100 block">
+                    Ver Canasta ({count()} {count() === 1 ? "ítem" : "ítems"})
+                  </span>
+                  <span className="font-serif font-extrabold text-base text-amber-400">
+                    Bs {total().toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                <span>Enviar a WhatsApp</span>
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── 8. MODAL DE DETALLE Y PERSONALIZACIÓN DE PRODUCTO ── */}
+      <AnimatePresence>
+        {productoModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setProductoModal(null)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+            />
+            
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="relative bg-white rounded-[32px] overflow-hidden max-w-md w-full shadow-2xl border border-stone-200 z-10 flex flex-col max-h-[90vh]"
+            >
+              {/* Imagen en Modal */}
+              <div className="h-52 w-full bg-amber-100 relative overflow-hidden flex items-center justify-center shrink-0">
+                {productoModal.imagen_url ? (
+                  <img
+                    src={productoModal.imagen_url}
+                    alt={productoModal.nombre}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-5xl">🥐</span>
+                )}
+                
+                <button
+                  onClick={() => setProductoModal(null)}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Contenido */}
+              <div className="p-5 overflow-y-auto space-y-4 text-xs">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
+                    {categorias.find((c) => c.id === productoModal.categoria_id)?.nombre || "Panadería"}
+                  </span>
+                  <h3 className="font-serif font-bold text-xl text-stone-900 mt-1">
+                    {productoModal.nombre}
+                  </h3>
+                  <p className="text-stone-500 mt-1 leading-relaxed">
+                    {productoModal.descripcion || "Elaboración artesanal fresca de hoy en Dencker Pan."}
+                  </p>
+                </div>
+
+                {/* Chips de Personalización */}
+                {productoModal.chips_personalizacion && productoModal.chips_personalizacion.length > 0 && (
+                  <div className="space-y-2 pt-2 border-t border-stone-100">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-stone-500 block">
+                      Opciones y Preferencias:
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {productoModal.chips_personalizacion.map((chip) => {
+                        const isSelected = chipsSeleccionados.includes(chip);
+                        return (
+                          <button
+                            key={chip}
+                            type="button"
+                            onClick={() => {
+                              soundManager.playClick();
+                              setChipsSeleccionados((prev) =>
+                                isSelected ? prev.filter((c) => c !== chip) : [...prev, chip]
+                              );
+                            }}
+                            className={`px-3 py-1.5 rounded-xl border text-xs font-semibold transition ${
+                              isSelected
+                                ? "bg-amber-900 text-white border-amber-900"
+                                : "bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100"
+                            }`}
+                          >
+                            {chip} {isSelected ? "✓" : "+"}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Nota opcional */}
+                <div className="space-y-1.5 pt-2 border-t border-stone-100">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-stone-500 block">
+                    Instrucción especial:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Calentar bien en el horno, canela extra..."
+                    value={notaPersonalizada}
+                    onChange={(e) => setNotaPersonalizada(e.target.value)}
+                    className="w-full p-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-700 placeholder:text-stone-400"
+                  />
+                </div>
+              </div>
+
+              {/* Footer con Precio y Botón */}
+              <div className="p-4 bg-stone-50 border-t border-stone-200 flex items-center justify-between shrink-0">
+                <div>
+                  <span className="text-[10px] text-stone-400 block">Precio Unitario</span>
+                  <span className="font-serif font-extrabold text-2xl text-amber-950">
+                    Bs {productoModal.precio.toFixed(2)}
+                  </span>
+                </div>
+
+                <button
+                  onClick={agregarAlCarritoDesdeModal}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs shadow-md transition active:scale-95 flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  <span>Añadir a la Canasta</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

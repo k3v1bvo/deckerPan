@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import RoleNav from "@/components/RoleNav";
 import SupabaseSync from "@/components/SupabaseSync";
+import CartDrawer from "@/components/CartDrawer";
 
 export const metadata: Metadata = {
   title: {
@@ -42,6 +43,7 @@ export default function RootLayout({
           <RoleNav />
         </Suspense>
         <main>{children}</main>
+        <CartDrawer />
       </body>
     </html>
   );
