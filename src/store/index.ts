@@ -76,6 +76,12 @@ interface SystemStore {
   addReserva: (reserva: Omit<Reserva, 'id' | 'created_at' | 'updated_at'>) => void;
   updateReservaEstado: (id: string, estado: Reserva['estado']) => void;
 
+  // Configuración QR Bancario Simple (Subido por Admin desde App Banco)
+  qrBancarioUrl: string;
+  qrBancarioTitular: string;
+  qrBancarioBanco: string;
+  setQrBancarioConfig: (config: { url: string; titular?: string; banco?: string }) => void;
+
   // Reset a datos de fábrica
   resetToDefaults: () => void;
 }
@@ -525,12 +531,29 @@ export const useSystemStore = create<SystemStore>()(
           ),
         })),
 
+      // --- Configuración QR Bancario Simple (Generado en App de Banco) ---
+      qrBancarioUrl: "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+      qrBancarioTitular: "Dencker Pan S.R.L.",
+      qrBancarioBanco: "Banco Nacional de Bolivia (BNB) / BCP Simple",
+
+      setQrBancarioConfig: (config) => {
+        set((state) => ({
+          qrBancarioUrl: config.url || state.qrBancarioUrl,
+          qrBancarioTitular: config.titular || state.qrBancarioTitular,
+          qrBancarioBanco: config.banco || state.qrBancarioBanco,
+        }));
+        broadcastSync('QR_CONFIG_UPDATED', config);
+      },
+
       resetToDefaults: () =>
         set({
           zonas: SEED_ZONAS,
           mesas: SEED_MESAS,
           categorias: SEED_CATEGORIAS,
           productos: SEED_PRODUCTOS,
+          qrBancarioUrl: "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+          qrBancarioTitular: "Dencker Pan S.R.L.",
+          qrBancarioBanco: "Banco Nacional de Bolivia (BNB) / BCP Simple",
         }),
     }),
     {

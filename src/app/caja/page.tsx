@@ -27,6 +27,9 @@ export default function CajaPage() {
     pedidos,
     mesas,
     sesionCaja,
+    qrBancarioUrl,
+    qrBancarioTitular,
+    qrBancarioBanco,
     registrarPago,
     abrirCaja,
     cerrarCaja,
@@ -448,16 +451,26 @@ export default function CajaPage() {
 
               {metodoPago === "qr" && (
                 <div className="p-6 bg-amber-50/50 rounded-2xl border border-amber-200 text-center space-y-3">
-                  <p className="text-xs font-bold text-amber-950">
-                    Escanea con cualquier Banco Boliviano (BNB, BCP, Mercantil, Bisa)
-                  </p>
-                  <div className="w-44 h-44 bg-white p-3 rounded-2xl border border-amber-300 shadow-sm mx-auto flex flex-col items-center justify-center">
-                    <QrCode size={130} className="text-amber-950" />
-                    <span className="text-[10px] font-bold text-amber-900 mt-1">QR SIMPLE BOLIVIA</span>
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-bold text-amber-950">
+                      {qrBancarioBanco || "QR Simple Interoperable ASFI"}
+                    </p>
+                    <p className="text-[11px] text-stone-600">
+                      Titular: <span className="font-semibold text-stone-900">{qrBancarioTitular || "Dencker Pan S.R.L."}</span>
+                    </p>
                   </div>
-                  <div className="text-xs text-stone-600">
+
+                  <div className="w-52 h-52 bg-white p-3 rounded-2xl border border-amber-300 shadow-md mx-auto flex flex-col items-center justify-center relative overflow-hidden">
+                    <img
+                      src={qrBancarioUrl || "https://i.ibb.co/qMkf00HN/dencker-logo.png"}
+                      alt="QR Bancario Oficial"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  <div className="text-xs text-stone-600 flex items-center justify-center gap-1.5">
                     <span>Monto a transferir: </span>
-                    <span className="font-bold text-amber-900">Bs {totalPagar.toFixed(2)}</span>
+                    <span className="font-bold text-amber-950 text-sm font-mono">Bs {totalPagar.toFixed(2)}</span>
                   </div>
                 </div>
               )}

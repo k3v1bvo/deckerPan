@@ -5,6 +5,7 @@ import RoleNav from "@/components/RoleNav";
 import SupabaseSync from "@/components/SupabaseSync";
 import CartDrawer from "@/components/CartDrawer";
 import NotificationToast from "@/components/NotificationToast";
+import SoundToggle from "@/components/SoundToggle";
 
 export const metadata: Metadata = {
   title: {
@@ -46,6 +47,7 @@ export default function RootLayout({
         <main>{children}</main>
         <CartDrawer />
         <NotificationToast />
+        <SoundToggle />
       </body>
     </html>
   );

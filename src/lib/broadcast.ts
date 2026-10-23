@@ -9,7 +9,8 @@ export type SyncEventType =
   | 'ITEM_READY'
   | 'ORDER_READY'
   | 'PAYMENT_COMPLETED'
-  | 'TABLE_STATUS_CHANGED';
+  | 'TABLE_STATUS_CHANGED'
+  | 'QR_CONFIG_UPDATED';
 
 export interface SyncMessage {
   type: SyncEventType;

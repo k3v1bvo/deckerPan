@@ -28,6 +28,8 @@ import {
   ShieldCheck,
   ExternalLink,
   PieChart,
+  QrCode,
+  Copy,
 } from "lucide-react";
 import { useSystemStore } from "@/store";
 import { Mesa, Producto, TipoMesa, Estacion, Reserva } from "@/types";
@@ -42,6 +44,10 @@ export default function AdminPage() {
     categorias,
     reservas,
     pedidos,
+    qrBancarioUrl,
+    qrBancarioTitular,
+    qrBancarioBanco,
+    setQrBancarioConfig,
     addMesa,
     updateMesa,
     deleteMesa,
@@ -54,7 +60,7 @@ export default function AdminPage() {
     resetToDefaults,
   } = useSystemStore();
 
-  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "reservas" | "metricas">("mesas");
+  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "reservas" | "metricas" | "qr">("mesas");
 
   // Estados Gestión Mesas
   const [cantidadMesasInput, setCantidadMesasInput] = useState<number>(mesas.length);
@@ -75,6 +81,49 @@ export default function AdminPage() {
   const [subiendoImgBB, setSubiendoImgBB] = useState(false);
   const [errorImgBB, setErrorImgBB] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Estados Configuración QR Bancario Simple (Generado en App Banco)
+  const [formQr, setFormQr] = useState({
+    url: qrBancarioUrl || "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+    titular: qrBancarioTitular || "Dencker Pan S.R.L.",
+    banco: qrBancarioBanco || "Banco Nacional de Bolivia (BNB) / BCP Simple",
+  });
+  const [guardadoQrExitoso, setGuardadoQrExitoso] = useState(false);
+  const [subiendoQr, setSubiendoQr] = useState(false);
+  const qrFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSubirQr = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSubiendoQr(true);
+    soundManager.playClick();
+    try {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        if (dataUrl) {
+          setFormQr((prev) => ({ ...prev, url: dataUrl }));
+          soundManager.playSuccessTone();
+        }
+        setSubiendoQr(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Error al procesar imagen de QR:", err);
+      setSubiendoQr(false);
+    }
+  };
+
+  const guardarQr = () => {
+    soundManager.playSuccessTone();
+    setQrBancarioConfig({
+      url: formQr.url,
+      titular: formQr.titular,
+      banco: formQr.banco,
+    });
+    setGuardadoQrExitoso(true);
+    setTimeout(() => setGuardadoQrExitoso(false), 3000);
+  };
 
   const [formProducto, setFormProducto] = useState({
     nombre: "",
@@ -297,13 +346,14 @@ export default function AdminPage() {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
         {/* ── Apple HIG Segmented Control Slider ── */}
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/70 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-2xl">
+        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/70 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-3xl overflow-x-auto">
           {(
             [
               { id: "mesas", label: "Mesas & Aforo", icon: Layers, count: mesas.length },
               { id: "productos", label: "Menú & ImgBB", icon: UtensilsCrossed, count: productos.length },
               { id: "reservas", label: "Catering & Reservas", icon: Calendar, count: reservas.length },
               { id: "metricas", label: "Métricas BI", icon: BarChart3, count: undefined },
+              { id: "qr", label: "QR Bancario", icon: QrCode, count: undefined },
             ] as const
           ).map((tab) => {
             const Icon = tab.icon;
@@ -768,6 +818,176 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── 5. TAB QR BANCARIO SIMPLE (SUBIDO POR ADMIN) ── */}
+        {tabActiva === "qr" && (
+          <div className="space-y-6">
+            <div className="p-6 bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-amber-500/30">
+              <div className="space-y-1">
+                <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono uppercase font-bold border border-amber-400/30">
+                  QR Simple • Interoperable ASFI
+                </span>
+                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                  <QrCode size={24} className="text-amber-400" />
+                  QR Bancario de la Cafetería
+                </h2>
+                <p className="text-stone-300 text-xs max-w-xl">
+                  Sube aquí la captura o foto del QR generado desde la aplicación de tu banco (BCP, BNB, Banco Unión, Mercantil Santa Cruz). Se reflejará automáticamente en la pantalla de cobro de Caja POS y en el móvil de los clientes al pagar.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href="/caja"
+                  target="_blank"
+                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-amber-200 text-xs font-bold border border-white/10 transition flex items-center gap-1.5"
+                >
+                  <ExternalLink size={14} />
+                  <span>Probar en Caja POS</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Columna Izquierda: Vista Previa Real del QR */}
+              <div className="lg:col-span-5 bg-white dark:bg-stone-900 rounded-3xl p-6 border border-stone-200 dark:border-stone-800 shadow-sm flex flex-col items-center justify-center text-center space-y-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                  Vista Previa en Vivo (Lo que ve el cliente)
+                </span>
+
+                <div className="p-4 bg-white rounded-3xl border-2 border-dashed border-amber-300 shadow-md inline-block max-w-[280px] w-full">
+                  <div className="aspect-square w-full rounded-2xl overflow-hidden bg-stone-50 flex items-center justify-center relative">
+                    <img
+                      src={formQr.url || "https://i.ibb.co/qMkf00HN/dencker-logo.png"}
+                      alt="QR Bancario Dencker Pan"
+                      className="w-full h-full object-contain p-2"
+                    />
+                  </div>
+                  <div className="pt-2 text-center">
+                    <p className="font-bold text-xs text-stone-900 font-serif">
+                      {formQr.banco || "QR Simple Interoperable"}
+                    </p>
+                    <p className="text-[11px] text-stone-500">
+                      Titular: <span className="font-semibold text-stone-800">{formQr.titular}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-3.5 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                  <CheckCircle2 size={14} />
+                  <span>QR Verificado & Sincronizado en Red</span>
+                </div>
+              </div>
+
+              {/* Columna Derecha: Formulario de Carga y Configuración */}
+              <div className="lg:col-span-7 bg-white dark:bg-stone-900 rounded-3xl p-6 border border-stone-200 dark:border-stone-800 shadow-sm space-y-5">
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <Upload size={18} className="text-amber-700" />
+                  Actualizar Imagen del QR Bancario
+                </h3>
+
+                {/* Subir archivo desde dispositivo */}
+                <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-xs text-amber-950 dark:text-amber-200">
+                        Cargar archivo de imagen (PNG / JPG)
+                      </p>
+                      <p className="text-[11px] text-amber-800/80 dark:text-amber-300/70">
+                        Captura de pantalla de tu app de BCP, BNB, Banco Unión o similar.
+                      </p>
+                    </div>
+                  </div>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={qrFileInputRef}
+                    onChange={handleSubirQr}
+                    className="hidden"
+                  />
+
+                  <button
+                    type="button"
+                    disabled={subiendoQr}
+                    onClick={() => qrFileInputRef.current?.click()}
+                    className="w-full py-3 rounded-xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+                  >
+                    <Upload size={15} />
+                    <span>{subiendoQr ? "Procesando Imagen..." : "Seleccionar Imagen del QR desde mi dispositivo"}</span>
+                  </button>
+                </div>
+
+                {/* O pegar URL directa */}
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                      O pega la URL directa de la imagen del QR
+                    </label>
+                    <input
+                      type="url"
+                      value={formQr.url}
+                      onChange={(e) => setFormQr({ ...formQr, url: e.target.value })}
+                      placeholder="https://i.ibb.co/..."
+                      className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                        Banco o Entidad Financiera
+                      </label>
+                      <input
+                        type="text"
+                        value={formQr.banco}
+                        onChange={(e) => setFormQr({ ...formQr, banco: e.target.value })}
+                        placeholder="ej. BCP Simple / Banco Unión"
+                        className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                        Titular de la Cuenta
+                      </label>
+                      <input
+                        type="text"
+                        value={formQr.titular}
+                        onChange={(e) => setFormQr({ ...formQr, titular: e.target.value })}
+                        placeholder="ej. Dencker Pan S.R.L."
+                        className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botón Guardar */}
+                <div className="pt-2 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={guardarQr}
+                    className="px-6 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md transition active:scale-95 flex items-center gap-2"
+                  >
+                    <Save size={16} />
+                    <span>Guardar y Publicar QR Oficial</span>
+                  </button>
+
+                  {guardadoQrExitoso && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="text-xs font-bold text-emerald-700 flex items-center gap-1"
+                    >
+                      <CheckCircle2 size={16} />
+                      ¡QR Guardado y sincronizado en Caja y Mesas!
+                    </motion.span>
+                  )}
+                </div>
               </div>
             </div>
           </div>

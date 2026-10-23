@@ -35,6 +35,7 @@ import {
   Briefcase,
   Sliders,
 } from "lucide-react";
+import CoffeeLab from "@/components/CoffeeLab";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, SEED_CATEGORIAS, SEED_PRODUCTOS } from "@/lib/seed-data";
@@ -110,15 +111,67 @@ export default function HomePage() {
   const [enviandoReserva, setEnviandoReserva] = useState(false);
   const [reservaExitosa, setReservaExitosa] = useState(false);
 
+  // Helper de Audio ASMR contextual según tipo de producto
+  const reproducirSonidoProducto = (p: Producto) => {
+    const lower = p.nombre.toLowerCase();
+    const esHorneado =
+      p.categoria_id === "c2" ||
+      p.categoria_id === "c3" ||
+      p.categoria_id === "c6" ||
+      lower.includes("cuñapé") ||
+      lower.includes("cauka") ||
+      lower.includes("croasan") ||
+      lower.includes("croissant") ||
+      lower.includes("esfiha") ||
+      lower.includes("empanada") ||
+      lower.includes("pan") ||
+      lower.includes("marraqueta");
+
+    if (esHorneado) {
+      soundManager.playBreadCrunch();
+    } else {
+      soundManager.playPorcelainTink();
+    }
+  };
+
   // Filtrado reactivo de productos
   const productosFiltrados = useMemo(() => {
     return productos.filter((p) => {
-      const matchCat =
-        categoriaActiva === "todos"
-          ? true
-          : categoriaActiva === "favoritos"
-          ? p.es_mas_vendido
-          : p.categoria_id === categoriaActiva;
+      let matchCat = false;
+      const lowerNom = p.nombre.toLowerCase();
+
+      if (categoriaActiva === "todos") {
+        matchCat = true;
+      } else if (categoriaActiva === "favoritos") {
+        matchCat = Boolean(p.es_mas_vendido);
+      } else if (categoriaActiva === "horneados") {
+        matchCat =
+          p.categoria_id === "c2" ||
+          p.categoria_id === "c3" ||
+          p.categoria_id === "c6" ||
+          lowerNom.includes("cuñapé") ||
+          lowerNom.includes("cauka") ||
+          lowerNom.includes("croasan") ||
+          lowerNom.includes("croissant") ||
+          lowerNom.includes("esfiha") ||
+          lowerNom.includes("empanada") ||
+          lowerNom.includes("pan");
+      } else if (categoriaActiva === "reposteria") {
+        matchCat =
+          p.categoria_id === "c1" ||
+          p.categoria_id === "c4" ||
+          p.categoria_id === "c5" ||
+          p.categoria_id === "c7" ||
+          lowerNom.includes("alfajor") ||
+          lowerNom.includes("pie") ||
+          lowerNom.includes("torta") ||
+          lowerNom.includes("mil hojas") ||
+          lowerNom.includes("galleta") ||
+          lowerNom.includes("café") ||
+          lowerNom.includes("cappuccino");
+      } else {
+        matchCat = p.categoria_id === categoriaActiva;
+      }
 
       const query = busqueda.toLowerCase().trim();
       const matchBusqueda =
@@ -214,7 +267,7 @@ export default function HomePage() {
   };
 
   const abrirModalProducto = (p: Producto) => {
-    soundManager.playClick();
+    reproducirSonidoProducto(p);
     setProductoModal(p);
     setChipsSeleccionados([]);
     setNotaPersonalizada("");
@@ -470,13 +523,52 @@ export default function HomePage() {
         </div>
 
         {/* Píldoras de Categorías con Scroll Suave */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center">
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center">
+          {/* Tab 1: Horneados de la Casa (ASMR Crunch) */}
+          <button
+            onClick={() => {
+              setCategoriaActiva("horneados");
+              soundManager.playBreadCrunch();
+            }}
+            className={`px-5 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2.5 shadow-sm active:scale-95 ${
+              categoriaActiva === "horneados"
+                ? "bg-gradient-to-r from-amber-950 via-[#2A180E] to-amber-950 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-950/30"
+                : "bg-white text-stone-800 border border-stone-200/90 hover:bg-amber-50/50 hover:border-amber-300"
+            }`}
+          >
+            <Flame size={15} className="text-amber-500" />
+            <span>Horneados de la Casa</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono font-bold">
+              Calientes
+            </span>
+          </button>
+
+          {/* Tab 2: Repostería & Cafetería (ASMR Porcelain Tink) */}
+          <button
+            onClick={() => {
+              setCategoriaActiva("reposteria");
+              soundManager.playPorcelainTink();
+            }}
+            className={`px-5 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2.5 shadow-sm active:scale-95 ${
+              categoriaActiva === "reposteria"
+                ? "bg-gradient-to-r from-amber-950 via-[#2A180E] to-amber-950 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-950/30"
+                : "bg-white text-stone-800 border border-stone-200/90 hover:bg-amber-50/50 hover:border-amber-300"
+            }`}
+          >
+            <Coffee size={15} className="text-amber-400" />
+            <span>Repostería & Cafetería</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono font-bold">
+              Artesanal
+            </span>
+          </button>
+
+          {/* Tab 3: Todos los Productos */}
           <button
             onClick={() => {
               setCategoriaActiva("todos");
               soundManager.playClick();
             }}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2 shadow-2xs ${
+            className={`px-4 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2 shadow-2xs ${
               categoriaActiva === "todos"
                 ? "bg-[#1E130C] text-amber-300 shadow-md shadow-stone-950/20"
                 : "bg-white text-stone-700 border border-stone-200 hover:bg-stone-50"
@@ -486,19 +578,20 @@ export default function HomePage() {
             <span>Todos ({productos.length})</span>
           </button>
 
+          {/* Tab 4: Más Vendidos */}
           <button
             onClick={() => {
               setCategoriaActiva("favoritos");
               soundManager.playClick();
             }}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2 shadow-2xs ${
+            className={`px-4 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition flex items-center gap-2 shadow-2xs ${
               categoriaActiva === "favoritos"
                 ? "bg-[#1E130C] text-amber-300 shadow-md shadow-stone-950/20"
                 : "bg-white text-stone-700 border border-stone-200 hover:bg-stone-50"
             }`}
           >
             <Star size={14} className="text-amber-400 fill-amber-400" />
-            <span>Más Vendidos</span>
+            <span>Destacados</span>
           </button>
 
           {categorias.map((cat) => {
@@ -630,7 +723,7 @@ export default function HomePage() {
                         </span>
                         <button
                           onClick={() => {
-                            soundManager.playClick();
+                            reproducirSonidoProducto(prod);
                             updateCantidad(prod.id, cantCarrito + 1);
                           }}
                           className="w-6 h-6 rounded-xl bg-amber-800 text-white hover:bg-amber-700 flex items-center justify-center font-bold text-xs"
@@ -641,7 +734,7 @@ export default function HomePage() {
                     ) : (
                       <button
                         onClick={() => {
-                          soundManager.playSuccessTone();
+                          reproducirSonidoProducto(prod);
                           addItem(prod);
                         }}
                         className="px-3.5 py-2 rounded-2xl bg-[#1E130C] hover:bg-amber-800 text-white font-semibold text-xs flex items-center gap-1.5 transition active:scale-95 shadow-sm"
@@ -669,6 +762,9 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      {/* ── 2.5. ESPACIO EXPERIMENTAL: BARISMO & MARIDAJE (SIN ROLES) ── */}
+      <CoffeeLab />
 
       {/* ── 3. ECOSISTEMA DIGITAL: 5 ROLES TOTALMENTE SIMÉTRICOS ── */}
       <section id="roles" className="py-20 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#18100A] via-[#241710] to-[#18100A] text-white">

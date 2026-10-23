@@ -24,7 +24,7 @@ interface PageProps {
 }
 
 export default function PagoClientePage({ params, searchParams }: PageProps) {
-  const { pedidos, updatePedidoEstado, addAlerta } = useSystemStore();
+  const { pedidos, updatePedidoEstado, addAlerta, qrBancarioUrl, qrBancarioTitular, qrBancarioBanco } = useSystemStore();
   const [pedidoId, setPedidoId] = useState<string>("");
   const [metodo, setMetodo] = useState<"qr" | "efectivo" | "split">("qr");
   const [billeteSeleccionado, setBilleteSeleccionado] = useState<number>(100);
@@ -203,33 +203,26 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                     Escanea con tu App Bancaria
                   </h4>
                   <p className="text-xs text-stone-500">
-                    BCP, Banco Unión, BNB, Mercantil Santa Cruz, Banco Sol, Fie
+                    {qrBancarioBanco || "BCP, Banco Unión, BNB, Mercantil Santa Cruz, Banco Sol, Fie"}
+                  </p>
+                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                    Titular: <span className="font-semibold text-stone-900 dark:text-stone-200">{qrBancarioTitular || "Dencker Pan S.R.L."}</span>
                   </p>
                 </div>
 
                 {/* QR Visual */}
-                <div className="p-4 bg-white rounded-3xl border-2 border-stone-200 inline-block shadow-lg">
-                  <div className="w-52 h-52 bg-gradient-to-br from-amber-50 to-stone-100 rounded-2xl flex flex-col items-center justify-center relative p-3">
-                    {/* Fake realistic QR grid */}
-                    <div className="w-full h-full border-4 border-dashed border-stone-800 rounded-xl p-2 flex flex-col justify-between">
-                      <div className="flex justify-between">
-                        <div className="w-10 h-10 border-4 border-stone-950 rounded-md bg-stone-950 p-1">
-                          <div className="w-full h-full bg-white rounded-2xs" />
-                        </div>
-                        <div className="w-10 h-10 border-4 border-stone-950 rounded-md bg-stone-950 p-1">
-                          <div className="w-full h-full bg-white rounded-2xs" />
-                        </div>
-                      </div>
-                      <div className="text-center font-mono font-black text-xs text-stone-800 bg-white/80 py-1 rounded">
-                        Bs {total.toFixed(2)}
-                      </div>
-                      <div className="flex justify-between">
-                        <div className="w-10 h-10 border-4 border-stone-950 rounded-md bg-stone-950 p-1">
-                          <div className="w-full h-full bg-white rounded-2xs" />
-                        </div>
-                        <div className="text-[9px] font-mono text-stone-600">DENCKER PAN</div>
-                      </div>
-                    </div>
+                <div className="p-4 bg-white rounded-3xl border-2 border-amber-300 inline-block shadow-lg">
+                  <div className="w-56 h-56 bg-stone-50 rounded-2xl flex flex-col items-center justify-center relative p-2 overflow-hidden">
+                    <img
+                      src={qrBancarioUrl || "https://i.ibb.co/qMkf00HN/dencker-logo.png"}
+                      alt="QR Bancario Oficial"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="pt-2 text-center">
+                    <span className="text-xs font-mono font-bold text-amber-950">
+                      Monto: Bs {total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
 

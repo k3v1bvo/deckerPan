@@ -138,6 +138,16 @@ export default function SupabaseSync() {
           break;
         }
 
+        case "QR_CONFIG_UPDATED": {
+          const { url, titular, banco } = payload;
+          useSystemStore.setState((state) => ({
+            qrBancarioUrl: url || state.qrBancarioUrl,
+            qrBancarioTitular: titular || state.qrBancarioTitular,
+            qrBancarioBanco: banco || state.qrBancarioBanco,
+          }));
+          break;
+        }
+
         default:
           break;
       }
