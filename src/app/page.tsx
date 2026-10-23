@@ -101,6 +101,26 @@ export default function HomePage() {
   const [incluirTortaEspecial, setIncluirTortaEspecial] = useState(true);
   const [incluirBarista, setIncluirBarista] = useState(true);
 
+  // Estados Modal Llamar Mesero en Salón
+  const [modalMeseroAbierto, setModalMeseroAbierto] = useState(false);
+  const [mesaSeleccionadaAviso, setMesaSeleccionadaAviso] = useState(4);
+  const [avisoMeseroEnviado, setAvisoMeseroEnviado] = useState(false);
+
+  const handleLlamarMesero = (mesaNum: number) => {
+    soundManager.playWaiterBell();
+    addAlerta({
+      mesa_numero: mesaNum,
+      tipo: "llamado",
+      mensaje: `Mesa ${mesaNum} solicita atención del personal en salón`,
+      datos_extra: {},
+    });
+    setAvisoMeseroEnviado(true);
+    setTimeout(() => {
+      setAvisoMeseroEnviado(false);
+      setModalMeseroAbierto(false);
+    }, 2800);
+  };
+
   const presupuestoEstimado = useMemo(() => {
     let base = invitados * eventoSeleccionado.precioPersona;
     if (incluirTortaEspecial) base += 220;
@@ -258,10 +278,10 @@ export default function HomePage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-[#87A987]/15 via-[#C49B71]/10 to-transparent blur-[160px] pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[500px] h-[350px] bg-[#527953]/15 blur-[120px] pointer-events-none" />
 
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 min-h-[80vh] flex flex-col items-center justify-center py-20 lg:py-24 text-center relative z-10 space-y-10">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16 lg:py-24 relative z-10 space-y-12">
           
-          {/* Badge Superior */}
-          <div className="w-full flex justify-center">
+          {/* Badge Superior Centrado */}
+          <div className="w-full flex justify-center sm:justify-start">
             <motion.div
               initial={{ opacity: 0, y: -15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -276,63 +296,155 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* Headline Editorial en Fraunces Serif */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...springPhysics, delay: 0.1 }}
-            className="space-y-4 max-w-4xl mx-auto text-center w-full flex flex-col items-center"
-          >
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] text-center">
-              El aroma del pan crujiente,{" "}
-              <span className="italic font-normal text-[#CDE0C9] bg-gradient-to-r from-[#D8E6D3] via-[#FAF7F2] to-[#87A987] bg-clip-text text-transparent block sm:inline">
-                elevado a una experiencia sensorial.
-              </span>
-            </h1>
+          {/* Grilla Principal del Hero (8 Columnas Editorial + 4 Columnas Tarjeta Croissant) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center text-left">
+            
+            {/* Columna Izquierda: Copy Editorial y 3 CTAs */}
+            <div className="lg:col-span-8 space-y-6">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={springPhysics}
+                className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.06]"
+              >
+                El aroma del pan crujiente,{" "}
+                <span className="italic font-normal text-[#CDE0C9] bg-gradient-to-r from-[#D8E6D3] via-[#FAF7F2] to-[#87A987] bg-clip-text text-transparent block sm:inline">
+                  elevado a una experiencia sensorial.
+                </span>
+              </motion.h1>
 
-            <p className="text-[#D8C7B8] text-base sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed pt-2 text-center">
-              Masa madre viva de 24 horas, hojaldres con 100% pura mantequilla e infusiones de café de altura cosechado en Caranavi a 1,600 msnm.
-            </p>
-          </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...springPhysics, delay: 0.1 }}
+                className="text-[#D8C7B8] text-base sm:text-lg max-w-2xl font-sans leading-relaxed"
+              >
+                Masa madre viva de 24 horas, hojaldres con 100% pura mantequilla e infusiones de café de altura cosechado en Caranavi a 1,600 msnm.
+              </motion.p>
 
-          {/* Exactamente 2 Botones Bien Espaciados */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...springPhysics, delay: 0.2 }}
-            className="flex flex-wrap items-center justify-center gap-5 pt-4 w-full"
-          >
-            <motion.a
-              href="#menu-bento"
-              whileHover={{ scale: 1.04, y: -2 }}
-              whileTap={{ scale: 0.96, y: 1 }}
-              transition={springPhysics}
-              onClick={() => soundManager.playPastryCrinkle()}
-              className="px-8 py-4 rounded-full bg-[#FAF7F2] hover:bg-white text-[#1E130C] font-extrabold text-sm shadow-[0_8px_30px_rgba(255,255,255,0.2)] flex items-center gap-2.5 select-none transition"
-            >
-              <ShoppingBag size={18} className="text-[#527953]" />
-              <span>Explorar Menú Bento</span>
-              <ArrowRight size={16} />
-            </motion.a>
+              {/* 3 Botones Claros y Espaciados */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...springPhysics, delay: 0.2 }}
+                className="flex flex-wrap items-center gap-4 pt-2"
+              >
+                <motion.a
+                  href="#menu-bento"
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96, y: 1 }}
+                  transition={springPhysics}
+                  onClick={() => soundManager.playPastryCrinkle()}
+                  className="px-7 py-3.5 rounded-full bg-[#FAF7F2] hover:bg-white text-[#1E130C] font-extrabold text-sm shadow-[0_8px_30px_rgba(255,255,255,0.2)] flex items-center gap-2.5 select-none transition cursor-pointer"
+                >
+                  <ShoppingBag size={17} className="text-[#527953]" />
+                  <span>Explorar Menú Bento</span>
+                  <ArrowRight size={15} />
+                </motion.a>
 
-            <motion.a
-              href="#coffeelab"
-              whileHover={{ scale: 1.04, y: -2 }}
-              whileTap={{ scale: 0.96, y: 1 }}
-              transition={springPhysics}
-              onClick={() => soundManager.playPorcelainTink()}
-              className="px-8 py-4 rounded-full bg-[#241710]/90 hover:bg-[#2E1D14] border border-[#527953]/50 text-[#CDE0C9] font-bold text-sm flex items-center gap-2.5 select-none shadow-lg transition"
-            >
-              <Coffee size={18} className="text-[#87A987]" />
-              <span>CoffeeLab 3D</span>
-            </motion.a>
-          </motion.div>
+                <motion.a
+                  href="#coffeelab"
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96, y: 1 }}
+                  transition={springPhysics}
+                  onClick={() => soundManager.playCoffeeSteam()}
+                  className="px-6 py-3.5 rounded-full bg-[#241710]/90 hover:bg-[#2E1D14] border border-[#527953]/50 text-[#CDE0C9] font-bold text-sm flex items-center gap-2 select-none shadow-lg transition cursor-pointer"
+                >
+                  <Coffee size={17} className="text-[#87A987]" />
+                  <span>CoffeeLab 3D Interactivo</span>
+                </motion.a>
 
-          {/* Franja Inferior Limpia de 4 Columnas (Descongestionada) */}
-          <div className="pt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto text-left w-full">
-            <div className="p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
-                <Flame size={20} />
+                <motion.button
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96, y: 1 }}
+                  transition={springPhysics}
+                  onClick={() => setModalMeseroAbierto(true)}
+                  className="px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-stone-200 font-semibold text-xs flex items-center gap-2 select-none transition cursor-pointer"
+                >
+                  <Bell size={15} className="text-[#D49B54]" />
+                  <span>Llamar al Mesero</span>
+                </motion.button>
+              </motion.div>
+            </div>
+
+            {/* Columna Derecha: Tarjeta Editorial Croissant 100% Mantequilla */}
+            <div className="lg:col-span-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ ...springPhysics, delay: 0.25 }}
+                className="relative rounded-3xl bg-gradient-to-b from-[#241710] to-[#160E0A] border border-[#527953]/40 p-6 shadow-2xl backdrop-blur-xl space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] uppercase tracking-widest text-[#CDE0C9] font-bold flex items-center gap-1.5">
+                    <Flame size={14} className="text-[#87A987]" />
+                    <span>Tanda Recién Salida</span>
+                  </span>
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                    Horno Activo
+                  </span>
+                </div>
+
+                <div className="relative h-44 rounded-2xl overflow-hidden bg-stone-900 group">
+                  <img
+                    src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=800&q=80"
+                    alt="Croissant Francés 100% Mantequilla"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                    <div>
+                      <p className="text-[11px] text-[#CDE0C9] font-semibold">Laminado Francés</p>
+                      <h3 className="font-serif text-lg font-bold text-white">
+                        Croissant 100% Mantequilla
+                      </h3>
+                    </div>
+                    <span className="bg-[#FAF7F2] text-[#1E130C] font-extrabold text-xs px-3 py-1 rounded-full shadow-md font-sans">
+                      Bs 18.00
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#D8C7B8] leading-relaxed">
+                  72 capas de hojaldre crujiente horneadas cada mañana a las 07:30 y cada tarde a las 16:30 en nuestra casa de Cochabamba.
+                </p>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => {
+                    soundManager.playPastryCrinkle();
+                    addItem({
+                      id: "prod-croissant-hero",
+                      nombre: "Croissant Francés 100% Mantequilla",
+                      precio: 18.0,
+                      costo: 6.0,
+                      disponible: true,
+                      es_mas_vendido: true,
+                      stock: 50,
+                      categoria_id: "c2",
+                      estacion: "vitrina",
+                      chips_personalizacion: ["Recién horneado"],
+                      descripcion: "Hojaldrado tradicional con 100% mantequilla noble y 72 capas.",
+                      created_at: new Date().toISOString(),
+                      updated_at: new Date().toISOString(),
+                    });
+                  }}
+                  className="w-full py-3 rounded-2xl bg-[#527953]/25 hover:bg-[#527953] text-[#CDE0C9] hover:text-white border border-[#527953]/50 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Plus size={15} />
+                  <span>Reservar de la Tanda Caliente</span>
+                </motion.button>
+              </motion.div>
+            </div>
+
+          </div>
+
+          {/* Franja Inferior Limpia de 4 Columnas */}
+          <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+                <Clock size={18} />
               </div>
               <div>
                 <p className="font-bold text-sm text-white">07:30 y 16:30</p>
@@ -340,9 +452,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
-                <Coffee size={20} />
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+                <Coffee size={18} />
               </div>
               <div>
                 <p className="font-bold text-sm text-white">Caranavi & Samaipata</p>
@@ -350,9 +462,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
-                <Sparkles size={20} />
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+                <Flame size={18} />
               </div>
               <div>
                 <p className="font-bold text-sm text-white">Masa Madre Viva</p>
@@ -360,9 +472,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
-                <ShieldCheck size={20} />
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+                <ShieldCheck size={18} />
               </div>
               <div>
                 <p className="font-bold text-sm text-white">100% Mantequilla</p>
@@ -977,6 +1089,95 @@ export default function HomePage() {
                 <Plus size={16} className="text-[#87A987]" />
                 <span>Agregar al Pedido • Bs {productoModal.precio.toFixed(2)}</span>
               </motion.button>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Modal Llamar al Mesero en Salón */}
+        {modalMeseroAbierto && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={springPhysics}
+              className="w-full max-w-md bg-[#1D140F] text-[#FAF6F0] rounded-[32px] p-6 sm:p-7 border border-[#D49B54]/40 shadow-2xl space-y-5"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#D49B54]/20 border border-[#D49B54]/40 flex items-center justify-center text-[#E6AE68]">
+                    <Bell size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold">Llamar al Mesero</h3>
+                    <p className="text-[11px] text-[#C9B8A6]">Atención inmediata en salón Dencker Pan</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setModalMeseroAbierto(false);
+                    setAvisoMeseroEnviado(false);
+                  }}
+                  className="p-1.5 rounded-full hover:bg-white/10 text-[#C9B8A6] transition"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {avisoMeseroEnviado ? (
+                <div className="text-center py-6 space-y-3">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto animate-bounce">
+                    <Check size={28} />
+                  </div>
+                  <h4 className="font-bold text-lg text-white">¡Aviso enviado al personal!</h4>
+                  <p className="text-xs text-[#D8C7B8] max-w-xs mx-auto">
+                    El mesero asignado se dirige a la <strong className="text-[#E6AE68]">Mesa {mesaSeleccionadaAviso}</strong> en este instante.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#E6AE68] mb-2.5">
+                      Selecciona tu número de mesa:
+                    </label>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {[
+                        { num: 1, label: "Mesa 01 • Ventanal" },
+                        { num: 4, label: "Mesa 04 • Terraza Jardín" },
+                        { num: 7, label: "Mesa 07 • Barra Café" },
+                        { num: 12, label: "Mesa 12 • Salón Interior" },
+                      ].map((m) => (
+                        <button
+                          key={m.num}
+                          type="button"
+                          onClick={() => {
+                            soundManager.playTactileClick();
+                            setMesaSeleccionadaAviso(m.num);
+                          }}
+                          className={`p-3 rounded-2xl text-xs font-semibold border text-left transition-all cursor-pointer ${
+                            mesaSeleccionadaAviso === m.num
+                              ? "bg-[#D49B54]/25 border-[#D49B54] text-white shadow-md ring-1 ring-[#D49B54]/40"
+                              : "bg-black/30 border-white/10 text-[#C9B8A6] hover:bg-black/50"
+                          }`}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={springPhysics}
+                    onClick={() => handleLlamarMesero(mesaSeleccionadaAviso)}
+                    className="w-full py-4 rounded-2xl bg-[#D49B54] hover:bg-[#E6AE68] text-[#120D0A] font-extrabold text-xs uppercase tracking-wider transition-all shadow-xl shadow-[#D49B54]/20 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Bell size={16} />
+                    <span>Notificar al Mesero (Mesa {mesaSeleccionadaAviso})</span>
+                  </motion.button>
+                </div>
+              )}
             </motion.div>
           </div>
         )}
