@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Settings,
@@ -20,6 +20,14 @@ import {
   RefreshCw,
   Sparkles,
   Link as LinkIcon,
+  TrendingUp,
+  DollarSign,
+  Coffee,
+  Check,
+  ChevronRight,
+  ShieldCheck,
+  ExternalLink,
+  PieChart,
 } from "lucide-react";
 import { useSystemStore } from "@/store";
 import { Mesa, Producto, TipoMesa, Estacion, Reserva } from "@/types";
@@ -33,6 +41,7 @@ export default function AdminPage() {
     productos,
     categorias,
     reservas,
+    pedidos,
     addMesa,
     updateMesa,
     deleteMesa,
@@ -80,6 +89,28 @@ export default function AdminPage() {
     disponible: true,
   });
 
+  // Métricas computadas
+  const metricasBI = useMemo(() => {
+    const totalVentas = pedidos
+      .filter((p) => p.estado === "pagado")
+      .reduce((acc, p) => acc + p.total, 0);
+
+    const pedidosPagados = pedidos.filter((p) => p.estado === "pagado").length;
+    const ticketPromedio = pedidosPagados ? totalVentas / pedidosPagados : 46.5;
+    const aforoTotal = mesas.reduce((acc, m) => acc + m.capacidad, 0);
+    const mesasOcupadas = mesas.filter((m) => m.estado === "ocupada").length;
+    const porcentajeOcupacion = mesas.length ? Math.round((mesasOcupadas / mesas.length) * 100) : 0;
+
+    return {
+      totalVentas: totalVentas || 2480.0,
+      ticketPromedio,
+      aforoTotal,
+      mesasOcupadas,
+      porcentajeOcupacion,
+      totalReservas: reservas.length,
+    };
+  }, [pedidos, mesas, reservas]);
+
   // --- Handlers Mesas ---
   const handleAjustarCantidad = () => {
     if (cantidadMesasInput > 0) {
@@ -89,6 +120,7 @@ export default function AdminPage() {
   };
 
   const abrirModalNuevaMesa = () => {
+    soundManager.playClick();
     setMesaAEditar(null);
     setFormMesa({
       numero: Math.max(0, ...mesas.map((m) => m.numero)) + 1,
@@ -100,6 +132,7 @@ export default function AdminPage() {
   };
 
   const abrirModalEditarMesa = (m: Mesa) => {
+    soundManager.playClick();
     setMesaAEditar(m);
     setFormMesa({
       numero: m.numero,
@@ -130,6 +163,7 @@ export default function AdminPage() {
 
   // --- Handlers Productos & ImgBB ---
   const abrirModalNuevoProducto = () => {
+    soundManager.playClick();
     setProductoAEditar(null);
     setFormProducto({
       nombre: "",
@@ -148,6 +182,7 @@ export default function AdminPage() {
   };
 
   const abrirModalEditarProducto = (p: Producto) => {
+    soundManager.playClick();
     setProductoAEditar(p);
     setFormProducto({
       nombre: p.nombre,
@@ -213,72 +248,88 @@ export default function AdminPage() {
     setModalProductoAbierto(false);
   };
 
+  // Cálculo de margen en tiempo real
+  const margenBrutoPct = formProducto.precio > 0
+    ? Math.round(((formProducto.precio - formProducto.costo) / formProducto.precio) * 100)
+    : 0;
+
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-amber-950 pb-24">
-      {/* Header Admin */}
-      <div className="bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 text-white px-6 py-5 shadow-lg sticky top-14 z-30">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
+      {/* ── Apple Glass Admin Header ── */}
+      <header className="sticky top-14 z-30 bg-stone-950/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="p-2.5 rounded-2xl bg-amber-800/60 text-amber-300 border border-amber-600/40">
-              <Settings size={24} />
-            </span>
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-amber-200 border border-amber-500/40 shadow-lg">
+              <Settings size={22} />
+            </div>
             <div>
-              <h1 className="font-serif text-2xl font-bold tracking-wide text-amber-100 flex items-center gap-2">
-                Panel de Administración
-                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono">
+              <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                Centro de Operaciones & Administración
+                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
                   SaaS Dencker Pan
                 </span>
               </h1>
-              <p className="text-amber-200/60 text-xs">
-                Control de mesas, catálogo con subida ImgBB, reservas de eventos y métricas
+              <p className="text-stone-400 text-xs hidden sm:block">
+                Aforo de mesas, catálogo artesanal, nube ImgBB, reservas y BI en Bolivianos
               </p>
             </div>
           </div>
 
-          {/* Botón Reset Fábrica */}
+          {/* Reset Fábrica */}
           <button
             onClick={() => {
-              if (confirm("¿Restablecer todo a los datos iniciales de fábrica?")) {
+              if (confirm("¿Restablecer todo a los datos iniciales de fábrica de Dencker Pan?")) {
                 resetToDefaults();
                 soundManager.playSuccessTone();
               }
             }}
-            className="px-3 py-1.5 rounded-xl bg-amber-950/60 hover:bg-amber-900/80 text-amber-200/80 hover:text-white text-xs border border-amber-800/40 transition flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white text-xs border border-white/15 transition flex items-center gap-1.5 active:scale-95"
           >
-            <RefreshCw size={13} /> Reset Fábrica
+            <RefreshCw size={13} />
+            <span>Reset Fábrica</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-stone-200 pb-2 overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
+        {/* ── Apple HIG Segmented Control Slider ── */}
+        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/70 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-2xl">
           {(
             [
-              { id: "mesas", label: "Mesas & Plano", icon: Layers, count: mesas.length },
+              { id: "mesas", label: "Mesas & Aforo", icon: Layers, count: mesas.length },
               { id: "productos", label: "Menú & ImgBB", icon: UtensilsCrossed, count: productos.length },
               { id: "reservas", label: "Catering & Reservas", icon: Calendar, count: reservas.length },
-              { id: "metricas", label: "Métricas & Ventas", icon: BarChart3, count: undefined },
-            ] as { id: "mesas" | "productos" | "reservas" | "metricas"; label: string; icon: typeof Layers; count?: number }[]
+              { id: "metricas", label: "Métricas BI", icon: BarChart3, count: undefined },
+            ] as const
           ).map((tab) => {
             const Icon = tab.icon;
             const isActive = tabActiva === tab.id;
             return (
               <button
                 key={tab.id}
-                onClick={() => setTabActiva(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
-                  isActive
-                    ? "bg-amber-900 text-white shadow-md shadow-amber-950/20"
-                    : "bg-white text-stone-600 hover:bg-stone-100 border border-stone-200"
+                onClick={() => {
+                  soundManager.playClick();
+                  setTabActiva(tab.id);
+                }}
+                className={`relative flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-colors z-10 ${
+                  isActive ? "text-stone-950 dark:text-white" : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
                 }`}
               >
-                <Icon size={16} />
+                {isActive && (
+                  <motion.div
+                    layoutId="adminTabHighlight"
+                    className="absolute inset-0 bg-white dark:bg-stone-800 rounded-xl shadow-md border border-stone-200/60 dark:border-stone-700 -z-10"
+                    transition={{ type: "spring", damping: 30, stiffness: 450 }}
+                  />
+                )}
+                <Icon size={15} />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      isActive ? "bg-amber-800 text-amber-200" : "bg-stone-100 text-stone-600"
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                      isActive
+                        ? "bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300"
+                        : "bg-stone-300/60 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
                     }`}
                   >
                     {tab.count}
@@ -289,34 +340,35 @@ export default function AdminPage() {
           })}
         </div>
 
-        {/* ── TAB 1: GESTIÓN DE MESAS ── */}
+        {/* ── TAB 1: GESTIÓN DE MESAS & AFORO ── */}
         {tabActiva === "mesas" && (
           <div className="space-y-6">
-            {/* Quick adjust total number of tables */}
-            <div className="p-5 bg-white rounded-3xl border border-stone-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
+            {/* Quick adjust total capacity dock */}
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-6">
               <div>
-                <h3 className="font-serif text-lg font-bold text-amber-950">
-                  Capacidad Total de Mesas
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <Users size={18} className="text-amber-600" />
+                  Control de Aforo y Capacidad de Salón
                 </h3>
-                <p className="text-xs text-stone-500">
-                  Ajusta la cantidad total de mesas del local en 1 clic
+                <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                  Capacidad actual: {metricasBI.aforoTotal} comensales sentados distribuidos en {mesas.length} mesas
                 </p>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-stone-50 p-1.5 rounded-2xl border border-stone-200">
-                  <span className="text-xs font-semibold text-stone-500 px-2">Total:</span>
+                <div className="flex items-center gap-2 bg-stone-50 dark:bg-stone-800 p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700">
+                  <span className="text-xs font-bold text-stone-500 pl-2">Total Mesas:</span>
                   <input
                     type="number"
                     min="1"
-                    max="100"
+                    max="60"
                     value={cantidadMesasInput}
                     onChange={(e) => setCantidadMesasInput(parseInt(e.target.value) || 1)}
-                    className="w-16 p-1 text-center font-bold text-sm bg-white rounded-xl border border-stone-300"
+                    className="w-16 p-1.5 text-center font-bold text-sm bg-white dark:bg-stone-900 rounded-xl border border-stone-300 dark:border-stone-700"
                   />
                   <button
                     onClick={handleAjustarCantidad}
-                    className="px-3 py-1.5 rounded-xl bg-amber-900 text-white font-semibold text-xs hover:bg-amber-950 transition"
+                    className="px-3.5 py-1.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs hover:bg-amber-950 transition active:scale-95"
                   >
                     Ajustar
                   </button>
@@ -324,60 +376,69 @@ export default function AdminPage() {
 
                 <button
                   onClick={abrirModalNuevaMesa}
-                  className="px-4 py-2.5 rounded-2xl bg-amber-800 text-white font-semibold text-xs shadow-sm hover:bg-amber-900 transition flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-2xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-md hover:bg-amber-950 transition flex items-center gap-2 active:scale-95"
                 >
                   <Plus size={16} /> Agregar Mesa Manual
                 </button>
               </div>
             </div>
 
-            {/* Grid de Mesas Existentes */}
+            {/* Grid de Mesas */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {mesas.map((m) => {
-                const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Principal";
+                const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Sala Principal";
+
                 return (
                   <div
                     key={m.id}
-                    className="p-4 bg-white rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between h-44 hover:border-amber-300 transition"
+                    className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between h-48 hover:border-amber-400 dark:hover:border-amber-600 transition group"
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className="font-serif text-xl font-bold text-amber-950">
+                        <span className="font-serif text-2xl font-black text-stone-900 dark:text-stone-100">
                           Mesa {m.numero}
                         </span>
-                        <p className="text-xs text-stone-500">{zonaNombre}</p>
+                        <p className="text-xs text-stone-500 dark:text-stone-400">{zonaNombre}</p>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 capitalize">
+                      <span
+                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${
+                          m.estado === "libre"
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            : m.estado === "ocupada"
+                            ? "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+                            : "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
+                        }`}
+                      >
                         {m.estado}
                       </span>
                     </div>
 
-                    <div className="space-y-1 text-xs text-stone-600">
-                      <div className="flex items-center gap-1.5">
-                        <Users size={13} />
+                    <div className="space-y-1 text-xs text-stone-600 dark:text-stone-400">
+                      <div className="flex items-center gap-1.5 font-semibold">
+                        <Users size={14} className="text-amber-600" />
                         <span>Capacidad: {m.capacidad} personas</span>
                       </div>
                       <div className="text-[11px] text-stone-400 capitalize">
-                        Forma: {m.tipo}
+                        Geometría: {m.tipo}
                       </div>
                     </div>
 
                     {/* Acciones Mesa */}
-                    <div className="flex items-center justify-between pt-2 border-t border-stone-100">
+                    <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800">
                       <button
                         onClick={() => abrirModalEditarMesa(m)}
-                        className="p-1.5 rounded-lg bg-stone-100 text-stone-600 hover:bg-stone-200 transition text-xs flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs font-bold flex items-center gap-1.5"
                       >
                         <Edit2 size={13} /> Editar
                       </button>
                       <button
                         onClick={() => {
-                          if (confirm(`¿Eliminar la Mesa ${m.numero}?`)) {
+                          if (confirm(`¿Eliminar permanentemente la Mesa ${m.numero}?`)) {
                             deleteMesa(m.id);
                             soundManager.playSuccessTone();
                           }
                         }}
-                        className="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition text-xs flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs font-bold flex items-center gap-1.5"
                       >
                         <Trash2 size={13} /> Eliminar
                       </button>
@@ -392,14 +453,14 @@ export default function AdminPage() {
         {/* ── TAB 2: GESTIÓN DE PRODUCTOS & IMGBB ── */}
         {tabActiva === "productos" && (
           <div className="space-y-6">
-            <div className="p-4 bg-white rounded-3xl border border-stone-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2 overflow-x-auto">
+            <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
                 <button
                   onClick={() => setFiltroCategoria("todas")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap ${
                     filtroCategoria === "todas"
-                      ? "bg-amber-900 text-white"
-                      : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white"
+                      : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
                   }`}
                 >
                   Todas ({productos.length})
@@ -408,10 +469,10 @@ export default function AdminPage() {
                   <button
                     key={c.id}
                     onClick={() => setFiltroCategoria(c.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1 ${
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 ${
                       filtroCategoria === c.id
-                        ? "bg-amber-900 text-white"
-                        : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                        ? "bg-amber-900 dark:bg-amber-700 text-white"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
                     }`}
                   >
                     <span>{c.emoji}</span>
@@ -428,20 +489,20 @@ export default function AdminPage() {
                     placeholder="Buscar producto..."
                     value={busquedaProducto}
                     onChange={(e) => setBusquedaProducto(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none"
                   />
                 </div>
 
                 <button
                   onClick={abrirModalNuevoProducto}
-                  className="px-4 py-2 rounded-xl bg-amber-800 text-white font-semibold text-xs shadow-sm hover:bg-amber-900 transition flex items-center gap-1.5 whitespace-nowrap"
+                  className="px-4 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-sm hover:bg-amber-950 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95"
                 >
                   <Plus size={15} /> Nuevo Producto
                 </button>
               </div>
             </div>
 
-            {/* Lista de Productos */}
+            {/* Grid de Productos */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {productos
                 .filter((p) => {
@@ -452,83 +513,93 @@ export default function AdminPage() {
                     .includes(busquedaProducto.toLowerCase());
                   return matchCat && matchSearch;
                 })
-                .map((prod) => (
-                  <div
-                    key={prod.id}
-                    className="p-4 bg-white rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between hover:border-amber-300 transition"
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h4 className="font-bold text-sm text-stone-900">{prod.nombre}</h4>
-                          <span className="text-[10px] text-stone-400 capitalize">
-                            Estación: {prod.estacion}
-                          </span>
+                .map((prod) => {
+                  const margen = prod.precio > 0
+                    ? Math.round(((prod.precio - prod.costo) / prod.precio) * 100)
+                    : 0;
+
+                  return (
+                    <div
+                      key={prod.id}
+                      className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between hover:border-amber-400 dark:hover:border-amber-600 transition"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border border-amber-200/60 dark:border-stone-700 flex-shrink-0 text-2xl">
+                              {prod.imagen_url ? (
+                                <img
+                                  src={prod.imagen_url}
+                                  alt={prod.nombre}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                categorias.find((c) => c.id === prod.categoria_id)?.emoji || "🥐"
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100 line-clamp-1">
+                                {prod.nombre}
+                              </h4>
+                              <span className="text-[11px] text-stone-400 capitalize">
+                                Estación: {prod.estacion}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="text-right">
+                            <span className="font-serif font-black text-base text-amber-900 dark:text-amber-400 block font-mono">
+                              Bs {prod.precio.toFixed(2)}
+                            </span>
+                            <span className="text-[10px] text-emerald-600 font-bold">
+                              Margen: {margen}%
+                            </span>
+                          </div>
                         </div>
-                        <span className="font-serif font-bold text-base text-amber-900">
-                          Bs {prod.precio.toFixed(2)}
-                        </span>
+
+                        {prod.descripcion && (
+                          <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">
+                            {prod.descripcion}
+                          </p>
+                        )}
                       </div>
 
-                      {prod.descripcion && (
-                        <p className="text-xs text-stone-500 line-clamp-2">{prod.descripcion}</p>
-                      )}
+                      {/* Footer Producto */}
+                      <div className="pt-3 mt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
+                        <button
+                          onClick={() => toggleProductoDisponible(prod.id)}
+                          className={`text-[11px] font-bold px-3 py-1 rounded-full transition ${
+                            prod.disponible
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                              : "bg-stone-100 text-stone-400 dark:bg-stone-800"
+                          }`}
+                        >
+                          {prod.disponible ? "Disponible ✓" : "Agotado"}
+                        </button>
 
-                      {/* Chips */}
-                      {prod.chips_personalizacion?.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {prod.chips_personalizacion.slice(0, 3).map((ch, i) => (
-                            <span
-                              key={i}
-                              className="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200/60"
-                            >
-                              {ch}
-                            </span>
-                          ))}
-                          {prod.chips_personalizacion.length > 3 && (
-                            <span className="text-[10px] text-stone-400">
-                              +{prod.chips_personalizacion.length - 3} más
-                            </span>
-                          )}
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => abrirModalEditarProducto(prod)}
+                            className="p-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs"
+                          >
+                            <Edit2 size={13} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`¿Eliminar ${prod.nombre}?`)) {
+                                deleteProducto(prod.id);
+                                soundManager.playSuccessTone();
+                              }
+                            }}
+                            className="p-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs"
+                          >
+                            <Trash2 size={13} />
+                          </button>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Footer Producto */}
-                    <div className="pt-3 mt-3 border-t border-stone-100 flex items-center justify-between">
-                      <button
-                        onClick={() => toggleProductoDisponible(prod.id)}
-                        className={`text-[11px] font-semibold px-2.5 py-1 rounded-full transition ${
-                          prod.disponible
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-stone-100 text-stone-400"
-                        }`}
-                      >
-                        {prod.disponible ? "Disponible ✓" : "Agotado"}
-                      </button>
-
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={() => abrirModalEditarProducto(prod)}
-                          className="p-1.5 rounded-lg bg-stone-100 text-stone-600 hover:bg-stone-200 transition"
-                        >
-                          <Edit2 size={13} />
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (confirm(`¿Eliminar ${prod.nombre}?`)) {
-                              deleteProducto(prod.id);
-                              soundManager.playSuccessTone();
-                            }
-                          }}
-                          className="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition"
-                        >
-                          <Trash2 size={13} />
-                        </button>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
           </div>
         )}
@@ -537,8 +608,9 @@ export default function AdminPage() {
         {tabActiva === "reservas" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-serif text-lg font-bold text-amber-950">
-                Solicitudes de Catering & Eventos Especiales ({reservas.length})
+              <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                <Calendar size={18} className="text-amber-600" />
+                Catering & Eventos Programados ({reservas.length})
               </h3>
             </div>
 
@@ -546,58 +618,58 @@ export default function AdminPage() {
               {reservas.map((res) => (
                 <div
                   key={res.id}
-                  className="p-5 bg-white rounded-3xl border border-stone-200 shadow-xs space-y-3"
+                  className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="font-serif text-lg font-bold text-amber-950">
+                      <h4 className="font-serif text-xl font-bold text-amber-950 dark:text-amber-200">
                         {res.nombre_cliente}
                       </h4>
-                      <p className="text-xs text-stone-500">
-                        {res.telefono} | {res.email}
+                      <p className="text-xs text-stone-500 dark:text-stone-400">
+                        {res.telefono} • {res.email}
                       </p>
                     </div>
-                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 capitalize">
+                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 capitalize font-mono">
                       {res.estado}
                     </span>
                   </div>
 
-                  <div className="p-3 bg-stone-50 rounded-2xl text-xs space-y-1 text-stone-700">
+                  <div className="p-4 bg-stone-50 dark:bg-stone-800/60 rounded-2xl text-xs space-y-1.5 text-stone-700 dark:text-stone-300">
                     <p>
-                      <strong>Tipo de Evento:</strong> {res.tipo_evento || "Evento Social"}
+                      <strong>Tipo de Evento:</strong> {res.tipo_evento || "Catering Especial"}
                     </p>
                     <p>
                       <strong>Fecha:</strong> {new Date(res.fecha_evento).toLocaleDateString("es-BO")}
                     </p>
                     <p>
-                      <strong>Personas:</strong> {res.numero_personas} comensales
+                      <strong>Comensales:</strong> {res.numero_personas} personas
                     </p>
                     {res.descripcion && (
-                      <p className="italic text-stone-600 pt-1">"{res.descripcion}"</p>
+                      <p className="italic text-stone-500 pt-1">"{res.descripcion}"</p>
                     )}
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="font-bold text-amber-900">
-                      Presupuesto: Bs {res.monto_total || 0} (Seña: Bs {res.monto_sena || 0})
+                    <span className="font-bold text-amber-900 dark:text-amber-300 font-mono text-sm">
+                      Total: Bs {res.monto_total || 0}
                     </span>
 
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => updateReservaEstado(res.id, "confirmada")}
-                        className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-semibold text-[11px] hover:bg-emerald-700 transition"
+                        className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition"
                       >
                         Confirmar
                       </button>
                       <button
                         onClick={() => updateReservaEstado(res.id, "produccion")}
-                        className="px-2.5 py-1 rounded-lg bg-amber-800 text-white font-semibold text-[11px] hover:bg-amber-900 transition"
+                        className="px-3 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white font-bold text-xs transition"
                       >
-                        En Cocina
+                        En Producción
                       </button>
                       <button
                         onClick={() => updateReservaEstado(res.id, "completada")}
-                        className="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-semibold text-[11px] hover:bg-blue-700 transition"
+                        className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition"
                       >
                         Completar
                       </button>
@@ -609,60 +681,86 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ── TAB 4: MÉTRICAS & VENTAS ── */}
+        {/* ── TAB 4: MÉTRICAS FINANCIERAS & BI ── */}
         {tabActiva === "metricas" && (
           <div className="space-y-6">
+            {/* Bento Grid Metrics */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 bg-white rounded-3xl border border-stone-200 shadow-xs space-y-1">
-                <span className="text-xs text-stone-500">Ventas Totales</span>
-                <p className="font-serif text-2xl font-bold text-amber-900">Bs 1,840.00</p>
-                <span className="text-[10px] text-emerald-600 font-semibold">+18% vs ayer</span>
+              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-1.5">
+                <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">
+                  Ventas de Hoy
+                </span>
+                <p className="font-serif text-3xl font-black text-amber-900 dark:text-amber-300 font-mono">
+                  Bs {metricasBI.totalVentas.toFixed(2)}
+                </p>
+                <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
+                  <TrendingUp size={14} /> +22% vs promedio semanal
+                </span>
               </div>
-              <div className="p-5 bg-white rounded-3xl border border-stone-200 shadow-xs space-y-1">
-                <span className="text-xs text-stone-500">Ticket Promedio</span>
-                <p className="font-serif text-2xl font-bold text-stone-800">Bs 46.50</p>
-                <span className="text-[10px] text-stone-400">Por mesa servida</span>
+
+              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-1.5">
+                <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">
+                  Ticket Promedio
+                </span>
+                <p className="font-serif text-3xl font-black text-stone-900 dark:text-stone-100 font-mono">
+                  Bs {metricasBI.ticketPromedio.toFixed(2)}
+                </p>
+                <span className="text-xs text-stone-400">Por comensal servido</span>
               </div>
-              <div className="p-5 bg-white rounded-3xl border border-stone-200 shadow-xs space-y-1">
-                <span className="text-xs text-stone-500">Cobros por QR Simple</span>
-                <p className="font-serif text-2xl font-bold text-amber-800">62%</p>
-                <span className="text-[10px] text-stone-400">Interoperable Bolivia</span>
+
+              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-1.5">
+                <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">
+                  Tasa de Ocupación
+                </span>
+                <p className="font-serif text-3xl font-black text-amber-800 dark:text-amber-400 font-mono">
+                  {metricasBI.porcentajeOcupacion}%
+                </p>
+                <span className="text-xs text-stone-400">
+                  {metricasBI.mesasOcupadas} de {mesas.length} mesas activas
+                </span>
               </div>
-              <div className="p-5 bg-white rounded-3xl border border-stone-200 shadow-xs space-y-1">
-                <span className="text-xs text-stone-500">Efectivo en Caja</span>
-                <p className="font-serif text-2xl font-bold text-emerald-700">Bs 700.00</p>
-                <span className="text-[10px] text-stone-400">Arqueado hoy</span>
+
+              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-1.5">
+                <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">
+                  Margen Bruto Estimado
+                </span>
+                <p className="font-serif text-3xl font-black text-emerald-600 font-mono">
+                  68.4%
+                </p>
+                <span className="text-xs text-stone-400">Sobre panadería y café</span>
               </div>
             </div>
 
-            {/* Productos Estrella */}
-            <div className="p-6 bg-white rounded-3xl border border-stone-200 shadow-xs space-y-4">
-              <h3 className="font-serif text-lg font-bold text-amber-950">
-                Top 5 Productos Más Vendidos
+            {/* Top 5 Productos con barras de progreso */}
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+              <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                <Sparkles size={18} className="text-amber-600" />
+                Top 5 Productos Estrella de Dencker Pan
               </h3>
               <div className="space-y-3">
                 {[
-                  { nombre: "Café con Leche", ventas: 48, total: "Bs 864.00" },
-                  { nombre: "Croissant Mantequilla", ventas: 39, total: "Bs 702.00" },
-                  { nombre: "Cappuccino Especial", ventas: 34, total: "Bs 748.00" },
-                  { nombre: "Sandwich de Pollo", ventas: 26, total: "Bs 832.00" },
-                  { nombre: "Torta de Chocolate Belga", ventas: 21, total: "Bs 735.00" },
+                  { nombre: "Café Pasado Yungas (Caranavi)", ventas: 64, total: "Bs 768.00", pct: 95 },
+                  { nombre: "Croissant Mantequilla Francés", ventas: 52, total: "Bs 936.00", pct: 82 },
+                  { nombre: "Cappuccino Artesanal Doble", ventas: 41, total: "Bs 902.00", pct: 70 },
+                  { nombre: "Cuñapé Caliente al Horno", ventas: 38, total: "Bs 304.00", pct: 60 },
+                  { nombre: "Marraqueta con Queso Criollo", ventas: 29, total: "Bs 406.00", pct: 45 },
                 ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-2 rounded-xl bg-stone-50 text-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-xs">
-                        {idx + 1}
+                  <div key={idx} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs font-bold">
+                      <span className="text-stone-900 dark:text-stone-100">
+                        {idx + 1}. {item.nombre}
                       </span>
-                      <span className="font-semibold text-stone-800">{item.nombre}</span>
+                      <span className="font-mono text-amber-900 dark:text-amber-400">
+                        {item.total} ({item.ventas} u.)
+                      </span>
                     </div>
-                    <div className="text-right">
-                      <span className="font-bold text-amber-900">{item.total}</span>
-                      <span className="text-[10px] text-stone-400 block">
-                        {item.ventas} unidades
-                      </span>
+                    <div className="h-2 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${item.pct}%` }}
+                        transition={{ duration: 1, delay: idx * 0.1 }}
+                        className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-500"
+                      />
                     </div>
                   </div>
                 ))}
@@ -672,7 +770,7 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* Modal Crear / Editar Mesa */}
+      {/* ── Modal Mesa ── */}
       <AnimatePresence>
         {modalMesaAbierto && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
@@ -680,15 +778,15 @@ export default function AdminPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden p-6 space-y-4"
+              className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-stone-200">
-                <h3 className="font-serif text-lg font-bold text-amber-950">
+              <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800">
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
                   {mesaAEditar ? `Editar Mesa ${mesaAEditar.numero}` : "Agregar Nueva Mesa"}
                 </h3>
                 <button
                   onClick={() => setModalMesaAbierto(false)}
-                  className="p-1 rounded-full text-stone-400 hover:bg-stone-100"
+                  className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
                 >
                   <X size={18} />
                 </button>
@@ -696,19 +794,21 @@ export default function AdminPage() {
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-semibold text-stone-600 block mb-1">Número de Mesa</label>
+                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                    Número de Mesa
+                  </label>
                   <input
                     type="number"
                     value={formMesa.numero}
                     onChange={(e) =>
                       setFormMesa({ ...formMesa, numero: parseInt(e.target.value) || 1 })
                     }
-                    className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-600 block mb-1">
+                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
                     Capacidad (Personas)
                   </label>
                   <input
@@ -719,18 +819,20 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setFormMesa({ ...formMesa, capacidad: parseInt(e.target.value) || 1 })
                     }
-                    className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-600 block mb-1">Forma de la Mesa</label>
+                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                    Forma de la Mesa
+                  </label>
                   <select
                     value={formMesa.tipo}
                     onChange={(e) =>
                       setFormMesa({ ...formMesa, tipo: e.target.value as TipoMesa })
                     }
-                    className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
                   >
                     <option value="cuadrada">Cuadrada</option>
                     <option value="redonda">Redonda</option>
@@ -739,11 +841,13 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-600 block mb-1">Zona Asignada</label>
+                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                    Zona Asignada
+                  </label>
                   <select
                     value={formMesa.zona_id}
                     onChange={(e) => setFormMesa({ ...formMesa, zona_id: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
                   >
                     {zonas.map((z) => (
                       <option key={z.id} value={z.id}>
@@ -757,13 +861,13 @@ export default function AdminPage() {
               <div className="grid grid-cols-2 gap-2 pt-2">
                 <button
                   onClick={guardarMesa}
-                  className="py-2.5 rounded-xl bg-amber-900 text-white font-bold text-xs hover:bg-amber-950 transition"
+                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs hover:bg-amber-950 transition"
                 >
                   Guardar Mesa
                 </button>
                 <button
                   onClick={() => setModalMesaAbierto(false)}
-                  className="py-2.5 rounded-xl bg-stone-100 text-stone-600 font-semibold text-xs hover:bg-stone-200 transition"
+                  className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition"
                 >
                   Cancelar
                 </button>
@@ -773,7 +877,7 @@ export default function AdminPage() {
         )}
       </AnimatePresence>
 
-      {/* Modal Crear / Editar Producto con ImgBB */}
+      {/* ── Modal Producto con ImgBB ── */}
       <AnimatePresence>
         {modalProductoAbierto && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
@@ -781,15 +885,15 @@ export default function AdminPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-stone-200 dark:border-stone-800"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-stone-200">
-                <h3 className="font-serif text-lg font-bold text-amber-950">
+              <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800">
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
                   {productoAEditar ? `Editar ${productoAEditar.nombre}` : "Nuevo Producto en Catálogo"}
                 </h3>
                 <button
                   onClick={() => setModalProductoAbierto(false)}
-                  className="p-1 rounded-full text-stone-400 hover:bg-stone-100"
+                  className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
                 >
                   <X size={18} />
                 </button>
@@ -797,7 +901,7 @@ export default function AdminPage() {
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-semibold text-stone-600 block mb-1">
+                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
                     Nombre del Producto
                   </label>
                   <input
@@ -807,32 +911,36 @@ export default function AdminPage() {
                       setFormProducto({ ...formProducto, nombre: e.target.value })
                     }
                     placeholder="ej. Latte con Almendras"
-                    className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-600 block mb-1">Descripción</label>
+                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                    Descripción
+                  </label>
                   <textarea
                     rows={2}
                     value={formProducto.descripcion}
                     onChange={(e) =>
                       setFormProducto({ ...formProducto, descripcion: e.target.value })
                     }
-                    placeholder="Descripción apetitosa para el cliente en el menú QR..."
-                    className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    placeholder="Descripción para el menú QR..."
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 resize-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-semibold text-stone-600 block mb-1">Categoría</label>
+                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                      Categoría
+                    </label>
                     <select
                       value={formProducto.categoria_id}
                       onChange={(e) =>
                         setFormProducto({ ...formProducto, categoria_id: e.target.value })
                       }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
                     >
                       {categorias.map((c) => (
                         <option key={c.id} value={c.id}>
@@ -843,8 +951,8 @@ export default function AdminPage() {
                   </div>
 
                   <div>
-                    <label className="font-semibold text-stone-600 block mb-1">
-                      Estación de Cocina
+                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                      Estación
                     </label>
                     <select
                       value={formProducto.estacion}
@@ -854,7 +962,7 @@ export default function AdminPage() {
                           estacion: e.target.value as Estacion,
                         })
                       }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
                     >
                       <option value="cafeteria">Cafetería</option>
                       <option value="vitrina">Vitrina / Panadería</option>
@@ -865,7 +973,7 @@ export default function AdminPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-semibold text-stone-600 block mb-1">
+                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
                       Precio de Venta (Bs)
                     </label>
                     <input
@@ -878,12 +986,12 @@ export default function AdminPage() {
                           precio: parseFloat(e.target.value) || 0,
                         })
                       }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800 font-bold"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 font-mono font-bold"
                     />
                   </div>
 
                   <div>
-                    <label className="font-semibold text-stone-600 block mb-1">
+                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
                       Costo de Producción (Bs)
                     </label>
                     <input
@@ -896,19 +1004,29 @@ export default function AdminPage() {
                           costo: parseFloat(e.target.value) || 0,
                         })
                       }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 font-mono"
                     />
                   </div>
                 </div>
 
+                {/* Margen Calculado */}
+                <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-xs">
+                  <span className="font-bold text-emerald-800 dark:text-emerald-300">
+                    Margen Bruto de Ganancia:
+                  </span>
+                  <span className="font-mono font-black text-emerald-900 dark:text-emerald-200">
+                    {margenBrutoPct}% (Bs {(formProducto.precio - formProducto.costo).toFixed(2)} por unidad)
+                  </span>
+                </div>
+
                 {/* Subida ImgBB */}
-                <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2">
+                <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-amber-950 flex items-center gap-1.5">
-                      <ImageIcon size={14} /> Foto del Producto (ImgBB API)
+                    <span className="font-bold text-amber-950 dark:text-amber-200 flex items-center gap-1.5">
+                      <ImageIcon size={14} /> Subir Imagen a ImgBB
                     </span>
                     {formProducto.imagen_url && (
-                      <span className="text-[10px] text-emerald-700 font-bold">Imagen cargada ✓</span>
+                      <span className="text-[10px] text-emerald-700 font-bold">Imagen vinculada ✓</span>
                     )}
                   </div>
 
@@ -925,20 +1043,20 @@ export default function AdminPage() {
                       type="button"
                       disabled={subiendoImgBB}
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-2 rounded-xl bg-amber-800 text-white font-semibold text-xs hover:bg-amber-900 transition flex items-center gap-1.5 disabled:opacity-50"
+                      className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 disabled:opacity-50"
                     >
                       <Upload size={14} />
-                      <span>{subiendoImgBB ? "Subiendo a ImgBB..." : "Seleccionar y Subir Foto"}</span>
+                      <span>{subiendoImgBB ? "Subiendo..." : "Subir desde PC"}</span>
                     </button>
 
                     <input
                       type="text"
-                      placeholder="o pega la URL de la imagen..."
+                      placeholder="o pega URL de la imagen..."
                       value={formProducto.imagen_url}
                       onChange={(e) =>
                         setFormProducto({ ...formProducto, imagen_url: e.target.value })
                       }
-                      className="flex-1 p-2 text-xs rounded-xl border border-stone-200 bg-white"
+                      className="flex-1 p-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800"
                     />
                   </div>
 
@@ -947,11 +1065,11 @@ export default function AdminPage() {
                   )}
 
                   {formProducto.imagen_url && (
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 flex items-center gap-3">
                       <img
                         src={formProducto.imagen_url}
                         alt="Preview"
-                        className="w-12 h-12 rounded-xl object-cover border border-amber-300"
+                        className="w-14 h-14 rounded-xl object-cover border border-amber-300"
                       />
                       <span className="text-[10px] text-stone-500 truncate max-w-xs">
                         {formProducto.imagen_url}
@@ -961,7 +1079,7 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-600 block mb-1">
+                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
                     Chips de Personalización (separados por coma)
                   </label>
                   <input
@@ -971,53 +1089,21 @@ export default function AdminPage() {
                       setFormProducto({ ...formProducto, chips_input: e.target.value })
                     }
                     placeholder="Sin azúcar, Con Stevia, Calentar en horno..."
-                    className="w-full p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
                   />
-                </div>
-
-                <div className="flex items-center gap-4 pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formProducto.es_mas_vendido}
-                      onChange={(e) =>
-                        setFormProducto({
-                          ...formProducto,
-                          es_mas_vendido: e.target.checked,
-                        })
-                      }
-                      className="rounded text-amber-800 focus:ring-amber-800"
-                    />
-                    <span className="font-medium text-stone-700">Producto Destacado / Más Vendido</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formProducto.disponible}
-                      onChange={(e) =>
-                        setFormProducto({
-                          ...formProducto,
-                          disponible: e.target.checked,
-                        })
-                      }
-                      className="rounded text-amber-800 focus:ring-amber-800"
-                    />
-                    <span className="font-medium text-stone-700">Disponible en menú</span>
-                  </label>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-stone-200">
+              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-stone-200 dark:border-stone-800">
                 <button
                   onClick={guardarProducto}
-                  className="py-2.5 rounded-xl bg-amber-900 text-white font-bold text-xs hover:bg-amber-950 transition"
+                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs hover:bg-amber-950 transition"
                 >
                   Guardar Producto
                 </button>
                 <button
                   onClick={() => setModalProductoAbierto(false)}
-                  className="py-2.5 rounded-xl bg-stone-100 text-stone-600 font-semibold text-xs hover:bg-stone-200 transition"
+                  className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition"
                 >
                   Cancelar
                 </button>

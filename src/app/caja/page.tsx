@@ -268,9 +268,31 @@ export default function CajaPage() {
                   ))}
                 </div>
                 {splitPersonas > 1 && (
-                  <div className="text-xs text-amber-900 font-bold pt-1 flex justify-between">
-                    <span>Monto por comensal:</span>
-                    <span>Bs {montoPorPersona.toFixed(2)} c/u</span>
+                  <div className="pt-2 border-t border-amber-200/50 space-y-2">
+                    <div className="text-xs text-amber-900 font-bold flex justify-between items-center">
+                      <span>Monto por comensal:</span>
+                      <span className="font-mono text-sm bg-amber-200/70 px-2 py-0.5 rounded-lg">
+                        Bs {montoPorPersona.toFixed(2)} c/u
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-1">
+                      {Array.from({ length: splitPersonas }).map((_, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-amber-200 text-[11px] shadow-2xs"
+                        >
+                          <span className="w-5 h-5 rounded-full bg-amber-800 text-white font-bold flex items-center justify-center text-[10px]">
+                            {idx + 1}
+                          </span>
+                          <div className="leading-tight">
+                            <span className="text-[10px] text-stone-400 block">Comensal {idx + 1}</span>
+                            <span className="font-mono font-bold text-stone-900">
+                              Bs {montoPorPersona.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -311,41 +333,109 @@ export default function CajaPage() {
               {metodoPago === "efectivo" && (
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-semibold text-stone-600 block mb-2">
-                      Billetes Rápidos en Bolivianos
-                    </label>
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                      {BILLETES_BOLIVIANOS.slice(0, 6).map((b) => (
-                        <button
-                          key={b.valor}
-                          onClick={() => agregarBillete(b.valor)}
-                          className="py-2.5 rounded-xl bg-amber-100/70 hover:bg-amber-200 text-amber-950 font-bold text-xs border border-amber-300/50 transition active:scale-95"
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Banknote size={15} className="text-emerald-700" />
+                        Billetes & Monedas de Bolivia
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMontoRecibido(totalPagar);
+                          soundManager.playSuccessTone();
+                        }}
+                        className="text-[11px] font-bold text-amber-900 hover:text-amber-700 underline flex items-center gap-1"
+                      >
+                        Pagar Justo (Bs {totalPagar.toFixed(2)})
+                      </button>
+                    </div>
+
+                    {/* Tarjetas de Billetes Bolivianos Gráficos */}
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                      {[
+                        { val: 200, label: "Bs 200", bg: "from-[#0F383B] to-[#0A2628] border-teal-500/50 text-teal-100", tag: "Túpac Katari" },
+                        { val: 100, label: "Bs 100", bg: "from-[#63181E] to-[#450F14] border-red-500/50 text-red-100", tag: "Juana Azurduy" },
+                        { val: 50,  label: "Bs 50",  bg: "from-[#4B2354] to-[#321639] border-purple-500/50 text-purple-100", tag: "José M. Baca" },
+                        { val: 20,  label: "Bs 20",  bg: "from-[#78350F] to-[#542409] border-orange-500/50 text-orange-100", tag: "Genoveva Ríos" },
+                        { val: 10,  label: "Bs 10",  bg: "from-[#1E3A5F] to-[#142640] border-blue-500/50 text-blue-100", tag: "Apiaguaiki" },
+                      ].map((b) => (
+                        <motion.button
+                          key={b.val}
+                          type="button"
+                          whileHover={{ y: -3, scale: 1.03 }}
+                          whileTap={{ scale: 0.94 }}
+                          onClick={() => {
+                            agregarBillete(b.val);
+                            soundManager.playSuccessTone();
+                          }}
+                          className={`p-2.5 rounded-2xl bg-gradient-to-br ${b.bg} border shadow-md flex flex-col justify-between h-20 text-left transition-all relative overflow-hidden group`}
                         >
-                          +{b.label}
-                        </button>
+                          <div className="flex justify-between items-start w-full">
+                            <span className="font-mono font-black text-sm tracking-tight">{b.label}</span>
+                            <span className="text-[8px] opacity-60 uppercase font-sans tracking-widest">BOB</span>
+                          </div>
+                          <div>
+                            <span className="text-[9px] opacity-75 font-sans block truncate">{b.tag}</span>
+                            <span className="text-[10px] font-bold text-white group-hover:underline">+ Agregar</span>
+                          </div>
+                        </motion.button>
                       ))}
+                    </div>
+
+                    {/* Monedas Bolivianas */}
+                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-stone-100">
+                      <span className="text-[11px] text-stone-500 font-semibold shrink-0">Monedas:</span>
+                      {[
+                        { val: 5, label: "Bs 5" },
+                        { val: 2, label: "Bs 2" },
+                        { val: 1, label: "Bs 1" },
+                        { val: 0.5, label: "50 ctv" },
+                      ].map((m) => (
+                        <motion.button
+                          key={m.val}
+                          type="button"
+                          whileHover={{ scale: 1.08 }}
+                          whileTap={{ scale: 0.92 }}
+                          onClick={() => {
+                            agregarBillete(m.val);
+                            soundManager.playSuccessTone();
+                          }}
+                          className="px-3 py-1.5 rounded-full bg-gradient-to-b from-amber-100 to-amber-200 border border-amber-300 text-amber-950 font-bold text-xs shadow-xs hover:shadow-sm"
+                        >
+                          +{m.label}
+                        </motion.button>
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={() => setMontoRecibido(0)}
+                        className="ml-auto text-[11px] text-stone-400 hover:text-red-600 transition"
+                      >
+                        Limpiar
+                      </button>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-semibold text-stone-500 block mb-1">
-                        Monto Recibido (Bs)
+                        Monto Recibido en Mano (Bs)
                       </label>
                       <input
                         type="number"
                         step="0.5"
                         value={montoRecibido || ""}
                         onChange={(e) => setMontoRecibido(parseFloat(e.target.value) || 0)}
-                        className="w-full text-xl font-bold font-serif p-3 rounded-2xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-800"
+                        className="w-full text-2xl font-bold font-mono p-3 rounded-2xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-800 transition"
                       />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-stone-500 block mb-1">
-                        Cambio a Devolver
+                        Cambio / Vuelto a Devolver
                       </label>
-                      <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xl font-bold font-serif text-emerald-800">
-                        Bs {cambio.toFixed(2)}
+                      <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-2xl font-bold font-mono text-emerald-800 flex items-center justify-between">
+                        <span>Bs {cambio.toFixed(2)}</span>
+                        {cambio > 0 && <span className="text-xs font-sans font-medium text-emerald-600">Entregar vuelto ✓</span>}
                       </div>
                     </div>
                   </div>

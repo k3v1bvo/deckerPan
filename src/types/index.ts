@@ -4,7 +4,7 @@ export type TipoMesa = 'cuadrada' | 'redonda' | 'rectangular';
 export type EstadoPedido = 'pendiente' | 'en_preparacion' | 'listo' | 'entregado' | 'pagado' | 'cancelado';
 export type EstadoItem = 'pendiente' | 'en_preparacion' | 'listo' | 'entregado' | 'cancelado';
 export type MetodoPago = 'efectivo' | 'qr' | 'mixto';
-export type TipoAlerta = 'llamado' | 'cambio_solicitado' | 'pedido_listo' | 'cuenta_pedida';
+export type TipoAlerta = 'llamado' | 'cambio_solicitado' | 'pedido_listo' | 'cuenta_pedida' | 'pago_recibido';
 export type EstadoReserva = 'pendiente' | 'confirmada' | 'produccion' | 'completada' | 'cancelada';
 
 export interface Zona {
