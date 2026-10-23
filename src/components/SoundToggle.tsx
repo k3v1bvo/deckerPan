@@ -24,29 +24,30 @@ export default function SoundToggle() {
   return (
     <div className="fixed top-20 right-4 z-40 sm:top-24 sm:right-6">
       <motion.button
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.92 }}
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95, y: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
         onClick={handleToggle}
-        aria-label={isMuted ? "Activar sonido ASMR" : "Silenciar sonido ASMR"}
-        className={`relative p-3 rounded-2xl backdrop-blur-xl border shadow-xl flex items-center gap-2 transition-all duration-300 ${
+        aria-label={isMuted ? "Activar sonido artesanal" : "Silenciar sonido artesanal"}
+        className={`relative px-3.5 py-2.5 rounded-full backdrop-blur-2xl border shadow-xl flex items-center gap-2.5 transition-colors duration-200 select-none ${
           isMuted
-            ? "bg-[#1C120B]/90 border-stone-700/60 text-stone-400 hover:text-white"
-            : "bg-[#281810]/95 border-amber-500/40 text-amber-300 shadow-amber-950/40 hover:border-amber-400"
+            ? "bg-[#18100A]/90 border-stone-800 text-stone-400 hover:text-stone-200 shadow-black/40"
+            : "bg-[#18100A]/95 border-[#527953]/50 text-[#CDE0C9] shadow-[0_8px_24px_rgba(30,19,12,0.45)] hover:border-[#6B9E6C]"
         }`}
       >
-        <div className="relative">
+        <div className="relative flex items-center justify-center">
           {isMuted ? (
-            <VolumeX size={18} className="text-stone-400" />
+            <VolumeX size={16} className="text-stone-400" />
           ) : (
-            <div className="flex items-center gap-1">
-              <Volume2 size={18} className="text-amber-400" />
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping absolute -top-0.5 -right-0.5" />
-            </div>
+            <>
+              <Volume2 size={16} className="text-[#87A987]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#87A987] animate-pulse absolute -top-1 -right-1" />
+            </>
           )}
         </div>
 
-        <span className="text-[11px] font-bold font-mono tracking-wide hidden sm:inline">
-          {isMuted ? "Audio Off" : "ASMR On"}
+        <span className="text-[11px] font-semibold tracking-wide hidden sm:inline">
+          {isMuted ? "Silencio" : "Audio ASMR"}
         </span>
       </motion.button>
 

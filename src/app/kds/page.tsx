@@ -22,6 +22,7 @@ import {
 import { useSystemStore } from "@/store";
 import { Estacion, EstadoItem, ItemPedido } from "@/types";
 import { soundManager } from "@/lib/sound";
+import StaffAuthGuard from "@/components/StaffAuthGuard";
 
 export default function KDSPage() {
   const { pedidos, updateItemEstado, updatePedidoEstado, addAlerta } = useSystemStore();
@@ -112,7 +113,8 @@ export default function KDSPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0907] text-stone-100 pb-28 font-sans selection:bg-amber-500 selection:text-black">
+    <StaffAuthGuard requiredRole="cocina" roleTitle="Cocina & Barismo KDS">
+      <div className="min-h-screen bg-[#0d0907] text-stone-100 pb-28 font-sans selection:bg-amber-500 selection:text-black">
       {/* ── Header KDS Apple Pro High Contrast ── */}
       <header className="bg-[#17100b]/90 backdrop-blur-2xl border-b border-amber-900/40 px-4 lg:px-8 py-3.5 shadow-2xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
@@ -451,6 +453,7 @@ export default function KDSPage() {
           </div>
         )}
       </main>
-    </div>
+      </div>
+    </StaffAuthGuard>
   );
 }

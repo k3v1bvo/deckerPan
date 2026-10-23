@@ -123,6 +123,26 @@ export const SEED_CATEGORIAS: Categoria[] = [
 
 export const SEED_PRODUCTOS: Producto[] = [
   {
+    "id": "prod_ny_pistacho",
+    "categoria_id": "c4",
+    "nombre": "New York Roll de Pistacho",
+    "descripcion": "Rueda de hojaldre francés 100% mantequilla, corazón cremoso de pistacho siciliano y cobertura de chocolate blanco con praliné tostado.",
+    "precio": 26,
+    "costo": 9.5,
+    "imagen_url": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=1000&q=80",
+    "disponible": true,
+    "es_mas_vendido": true,
+    "stock": 38,
+    "chips_personalizacion": [
+      "Tibio de horno",
+      "Pistacho extra crocante",
+      "Empaque boutique"
+    ],
+    "estacion": "vitrina",
+    "created_at": "2026-10-23T00:25:05.509Z",
+    "updated_at": "2026-10-23T00:25:05.511Z"
+  },
+  {
     "id": "prod_1",
     "categoria_id": "c1",
     "nombre": "Caballito de jengibre",

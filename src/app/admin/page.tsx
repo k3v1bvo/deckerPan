@@ -1,5 +1,6 @@
 "use client";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Settings,
@@ -30,10 +31,14 @@ import {
   PieChart,
   QrCode,
   Copy,
+  Printer,
+  FileText,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { useSystemStore } from "@/store";
-import { Mesa, Producto, TipoMesa, Estacion, Reserva } from "@/types";
 import { uploadImageToImgBB } from "@/lib/imgbb";
+import { Mesa, Producto, TipoMesa, Estacion, Reserva } from "@/types";
+import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { soundManager } from "@/lib/sound";
 
 export default function AdminPage() {
@@ -60,7 +65,18 @@ export default function AdminPage() {
     resetToDefaults,
   } = useSystemStore();
 
-  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "reservas" | "metricas" | "qr">("mesas");
+  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "qr_mesas" | "reservas" | "metricas" | "qr">("mesas");
+  const [baseUrlMesas, setBaseUrlMesas] = useState("https://decker-pan.vercel.app");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        setBaseUrlMesas("https://decker-pan.vercel.app");
+      } else {
+        setBaseUrlMesas(window.location.origin);
+      }
+    }
+  }, []);
 
   // Estados Gestión Mesas
   const [cantidadMesasInput, setCantidadMesasInput] = useState<number>(mesas.length);
@@ -303,7 +319,8 @@ export default function AdminPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
+    <StaffAuthGuard requiredRole="admin" roleTitle="Administración General">
+      <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
       {/* ── Apple Glass Admin Header ── */}
       <header className="bg-stone-950/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
@@ -328,32 +345,44 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Reset Fábrica */}
-          <button
-            onClick={() => {
-              if (confirm("¿Restablecer todo a los datos iniciales de fábrica de Dencker Pan?")) {
-                resetToDefaults();
-                soundManager.playSuccessTone();
-              }
-            }}
-            className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white text-xs border border-white/15 transition flex items-center gap-1.5 active:scale-95"
-          >
-            <RefreshCw size={13} />
-            <span>Reset Fábrica</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/menu-pdf"
+              target="_blank"
+              className="px-3.5 py-1.5 rounded-xl bg-amber-900/60 hover:bg-amber-900 text-amber-100 text-xs border border-amber-500/30 transition flex items-center gap-1.5 active:scale-95 font-semibold"
+            >
+              <FileText size={13} className="text-[#87A987]" />
+              <span>Menú en PDF</span>
+            </Link>
+
+            {/* Reset Fábrica */}
+            <button
+              onClick={() => {
+                if (confirm("¿Restablecer todo a los datos iniciales de fábrica de Dencker Pan?")) {
+                  resetToDefaults();
+                  soundManager.playSuccessTone();
+                }
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white text-xs border border-white/15 transition flex items-center gap-1.5 active:scale-95"
+            >
+              <RefreshCw size={13} />
+              <span>Reset Fábrica</span>
+            </button>
+          </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
         {/* ── Apple HIG Segmented Control Slider ── */}
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/70 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-3xl overflow-x-auto">
+        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/70 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-4xl overflow-x-auto">
           {(
             [
               { id: "mesas", label: "Mesas & Aforo", icon: Layers, count: mesas.length },
               { id: "productos", label: "Menú & ImgBB", icon: UtensilsCrossed, count: productos.length },
+              { id: "qr_mesas", label: "QRs de Mesas", icon: QrCode, count: mesas.length },
               { id: "reservas", label: "Catering & Reservas", icon: Calendar, count: reservas.length },
               { id: "metricas", label: "Métricas BI", icon: BarChart3, count: undefined },
-              { id: "qr", label: "QR Bancario", icon: QrCode, count: undefined },
+              { id: "qr", label: "QR Bancario", icon: DollarSign, count: undefined },
             ] as const
           ).map((tab) => {
             const Icon = tab.icon;
@@ -992,6 +1021,135 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
+        {/* ── TAB: QRS DINÁMICOS POR MESA (IMPRIMIBLES) ── */}
+        {tabActiva === "qr_mesas" && (
+          <div className="space-y-6">
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <QrCode size={20} className="text-amber-600" />
+                  Tarjetas QR Autoservicio por Mesa
+                </h3>
+                <p className="text-xs text-stone-500 dark:text-stone-400">
+                  Cada código QR enlaza al comensal con su número de mesa exacto para enviar la orden directo al mesero y cocina.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  href="/menu-pdf"
+                  target="_blank"
+                  className="px-4 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center gap-2 border border-stone-200 dark:border-stone-700"
+                >
+                  <FileText size={15} className="text-[#527953]" />
+                  <span>Ver Menú PDF</span>
+                </Link>
+
+                <button
+                  onClick={() => window.print()}
+                  className="px-5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white text-xs font-bold shadow-md transition flex items-center gap-2 active:scale-95"
+                >
+                  <Printer size={15} />
+                  <span>Imprimir Todos los QRs</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Ajuste de Host / URL Base */}
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-stone-900/60 border border-amber-200/80 dark:border-amber-900/40 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <LinkIcon size={16} className="text-amber-700 dark:text-amber-400" />
+                <span className="font-bold text-amber-950 dark:text-amber-200">
+                  Dominio / IP Base para escanear en red local o celular:
+                </span>
+              </div>
+              <div className="flex items-center gap-2 flex-1 max-w-md">
+                <input
+                  type="text"
+                  value={baseUrlMesas}
+                  onChange={(e) => setBaseUrlMesas(e.target.value)}
+                  placeholder="http://192.168.1.5:3000 o https://tu-dominio.com"
+                  className="w-full p-2 rounded-xl bg-white dark:bg-stone-800 border border-amber-300 dark:border-stone-700 font-mono text-xs"
+                />
+              </div>
+            </div>
+
+            {/* Grilla de Tarjetas Imprimibles */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 print:grid-cols-2 print:gap-8">
+              {mesas.map((m) => {
+                const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Salón";
+                const mesaUrl = `${baseUrlMesas || "https://tienda.denckerpan.com"}/mesa/${m.numero}`;
+
+                return (
+                  <div
+                    key={m.id}
+                    className="p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-200/80 dark:border-amber-900/40 shadow-sm flex flex-col items-center text-center justify-between space-y-4 break-inside-avoid print:border-black print:p-6"
+                  >
+                    <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100">
+                      <img
+                        src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                        alt="Logo"
+                        className="w-7 h-7 object-contain"
+                      />
+                      <span className="font-serif font-black text-sm tracking-wider uppercase">
+                        Dencker Pan
+                      </span>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="font-serif text-2xl font-black text-amber-950 dark:text-amber-300">
+                        MESA {m.numero}
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#527953] bg-[#EBF3EA] px-2.5 py-0.5 rounded-full inline-block">
+                        {zonaNombre} • {m.capacidad} Pers.
+                      </span>
+                    </div>
+
+                    {/* QR Code SVG Vectorial */}
+                    <div className="p-3 bg-white rounded-2xl border border-stone-200 shadow-inner flex items-center justify-center">
+                      <QRCodeSVG
+                        value={mesaUrl}
+                        size={130}
+                        level="M"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-medium text-stone-600 dark:text-stone-300 leading-tight">
+                        Escanea para ver el menú y ordenar
+                      </p>
+                      <p className="text-[9px] font-mono text-stone-400 truncate max-w-[200px]">
+                        {mesaUrl}
+                      </p>
+                    </div>
+
+                    <div className="w-full pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-center gap-2 print:hidden">
+                      <Link
+                        href={`/mesa/${m.numero}`}
+                        target="_blank"
+                        className="flex-1 py-1.5 px-2 rounded-xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white text-[11px] font-bold text-center transition"
+                      >
+                        Abrir Mesa
+                      </Link>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(mesaUrl);
+                          soundManager.playSuccessTone();
+                          alert(`¡Enlace copiado de Mesa ${m.numero}!`);
+                        }}
+                        className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-100"
+                        title="Copiar enlace"
+                      >
+                        <Copy size={14} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Modal Mesa ── */}
@@ -1336,6 +1494,7 @@ export default function AdminPage() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </StaffAuthGuard>
   );
 }

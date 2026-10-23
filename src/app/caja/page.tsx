@@ -22,6 +22,7 @@ import {
 import { useSystemStore } from "@/store";
 import { Pedido, MetodoPago, BILLETES_BOLIVIANOS } from "@/types";
 import { soundManager } from "@/lib/sound";
+import StaffAuthGuard from "@/components/StaffAuthGuard";
 
 export default function CajaPage() {
   const {
@@ -149,7 +150,8 @@ export default function CajaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-amber-950 pb-24">
+    <StaffAuthGuard requiredRole="caja" roleTitle="Caja POS & Facturación">
+      <div className="min-h-screen bg-[#FDFBF7] text-amber-950 pb-24">
       {/* Header Caja */}
       <div className="bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 text-white px-6 py-4 shadow-lg">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
@@ -794,6 +796,7 @@ export default function CajaPage() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </StaffAuthGuard>
   );
 }

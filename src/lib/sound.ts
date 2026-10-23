@@ -61,6 +61,110 @@ class SoundManager {
   }
 
   /**
+   * Micro-sonido sutil del hojaldre o papel crinkle (Ondas sinusoidales de alta frecuencia + ruido blanco filtrado)
+   * Diseñado para el botón "Agregar al Pedido"
+   */
+  playPastryCrinkle() {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      // Ruido blanco filtrado con envolvente de fractura en hojaldre
+      const bufferSize = Math.floor(ctx.sampleRate * 0.14);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        const decay = Math.pow(1 - i / bufferSize, 2.2);
+        const microSnap = Math.random() > 0.85 ? 1.8 : 0.45;
+        data[i] = white * decay * microSnap;
+      }
+
+      const noiseSource = ctx.createBufferSource();
+      noiseSource.buffer = buffer;
+
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = "bandpass";
+      bandpass.frequency.setValueAtTime(3800, now);
+      bandpass.frequency.exponentialRampToValueAtTime(1900, now + 0.12);
+      bandpass.Q.setValueAtTime(2.8, now);
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.26, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+
+      noiseSource.connect(bandpass);
+      bandpass.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noiseSource.start(now);
+      noiseSource.stop(now + 0.14);
+
+      // Micro-ondas sinusoidales de alta frecuencia (snap cristalino del hojaldre crujiente)
+      const highFreqs = [3520, 5280];
+      highFreqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const oscGain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + idx * 0.015);
+
+        oscGain.gain.setValueAtTime(0.12, now + idx * 0.015);
+        oscGain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.015 + 0.06);
+
+        osc.connect(oscGain);
+        oscGain.connect(ctx.destination);
+        osc.start(now + idx * 0.015);
+        osc.stop(now + idx * 0.015 + 0.07);
+      });
+    } catch {}
+  }
+
+  /**
+   * Timbre vintage armónico y resonante de caja registradora clásica
+   */
+  playVintageRegisterDing() {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      // Golpe mecánico sutil de percutor
+      const strike = ctx.createOscillator();
+      const strikeGain = ctx.createGain();
+      strike.type = "triangle";
+      strike.frequency.setValueAtTime(240, now);
+      strike.frequency.exponentialRampToValueAtTime(60, now + 0.04);
+      strikeGain.gain.setValueAtTime(0.2, now);
+      strikeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      strike.connect(strikeGain);
+      strikeGain.connect(ctx.destination);
+      strike.start(now);
+      strike.stop(now + 0.05);
+
+      // Armónicos metálicos de campana clásica de latón
+      const chimeFreqs = [1760, 3520, 5280];
+      chimeFreqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + 0.02);
+
+        const initialGain = idx === 0 ? 0.45 : idx === 1 ? 0.24 : 0.12;
+        gain.gain.setValueAtTime(initialGain, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.1);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + 0.02);
+        osc.stop(now + 1.15);
+      });
+    } catch {}
+  }
+
+  /**
    * ASMR 1: Crujido de pan recién horneado (Horneados de la Casa)
    * Ráfaga crujiente de micro-impulsos filtrados orgánicamente
    */
@@ -429,6 +533,29 @@ class SoundManager {
         osc.start(now + idx * 0.09);
         osc.stop(now + idx * 0.09 + 0.5);
       });
+    } catch {}
+  }
+
+  /**
+   * Tono de advertencia / PIN incorrecto
+   */
+  playAlertTone() {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.setValueAtTime(160, now + 0.1);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.35);
     } catch {}
   }
 }

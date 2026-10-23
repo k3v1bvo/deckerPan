@@ -44,7 +44,7 @@ export default function RootLayout({
         <Suspense fallback={<div className="h-14 bg-amber-950" />}>
           <RoleNav />
         </Suspense>
-        <main>{children}</main>
+        <main className="w-full flex flex-col items-center flex-1">{children}</main>
         <CartDrawer />
         <NotificationToast />
         <SoundToggle />

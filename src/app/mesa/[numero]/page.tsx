@@ -33,16 +33,16 @@ type EstadoPedido = "pendiente" | "en_preparacion" | "listo" | "entregado" | "pa
 
 const ESTADO_LABELS: Record<EstadoPedido, { label: string; step: number; color: string; desc: string }> = {
   pendiente: {
-    label: "Pedido recibido",
+    label: "Esperando al Mesero 📋",
     step: 1,
     color: "text-amber-600 bg-amber-500/15 border-amber-500/30",
-    desc: "Nuestra comanda ya está registrada en el sistema de cocina.",
+    desc: "Tu orden fue enviada desde la mesa. El mesero se acercará para verificar tu pedido y mandarlo a cocina.",
   },
   en_preparacion: {
-    label: "En preparación 👨‍🍳",
+    label: "¡Verificado! En Cocina 👨‍🍳",
     step: 2,
     color: "text-blue-600 bg-blue-500/15 border-blue-500/30",
-    desc: "El barista o chef está preparando tus productos ahora mismo.",
+    desc: "El mesero confirmó tu comanda y nuestro barista y panaderos la están preparando ahora mismo.",
   },
   listo: {
     label: "¡Listo para servir! 🥐",
@@ -275,6 +275,14 @@ export default function MesaPage({ params }: PageProps) {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })),
+      });
+
+      // Emitir alerta inmediata de alta prioridad al mesero de turno
+      useSystemStore.getState().addAlerta({
+        mesa_numero: mesaNum,
+        tipo: "llamado",
+        mensaje: `🔔 Nuevo pedido QR de Mesa ${mesaNum} (${items.length} productos, Bs ${total().toFixed(2)}) — Acercarse a verificar y mandar a cocina`,
+        datos_extra: { pedidoId: newPedidoId || `ped-${Date.now()}`, tipo: "pedido_qr" },
       });
 
       if (!newPedidoId) {

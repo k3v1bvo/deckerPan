@@ -25,6 +25,7 @@ import {
 import { useSystemStore } from "@/store";
 import { Mesa, EstadoMesa, Producto, ItemPedido, Zona } from "@/types";
 import { soundManager } from "@/lib/sound";
+import StaffAuthGuard from "@/components/StaffAuthGuard";
 
 export default function MeseroPage() {
   const {
@@ -36,6 +37,8 @@ export default function MeseroPage() {
     categorias,
     setEstadoMesa,
     addPedido,
+    updatePedidoEstado,
+    updateItemEstado,
     addItemToPedido,
     addAlerta,
     marcarAlertaAtendida,
@@ -54,6 +57,38 @@ export default function MeseroPage() {
     cantidad: number;
     notas?: string;
   }[]>([]);
+
+  // Pedidos enviados por clientes vía QR pendientes de verificación
+  const pedidosPendientesQR = useMemo(() => {
+    return pedidos.filter(
+      (p) => p.estado === "pendiente" && typeof p.mesa_numero === "number" && p.mesa_numero > 0
+    );
+  }, [pedidos]);
+
+  const verificarYMandarACocina = (pedidoId: string, mesaNumero?: number) => {
+    updatePedidoEstado(pedidoId, "en_preparacion");
+    const ped = pedidos.find((p) => p.id === pedidoId);
+    if (ped && ped.items) {
+      ped.items.forEach((it) => {
+        updateItemEstado(it.id, "en_preparacion");
+      });
+    }
+
+    if (typeof mesaNumero === "number" && mesaNumero > 0) {
+      const mesaObj = mesas.find((m) => m.numero === mesaNumero);
+      if (mesaObj) {
+        setEstadoMesa(mesaObj.id, "ocupada");
+      }
+
+      alertas
+        .filter((a) => a.mesa_numero === mesaNumero && !a.atendida)
+        .forEach((a) => {
+          marcarAlertaAtendida(a.id);
+        });
+    }
+
+    soundManager.playSuccessTone();
+  };
 
   // Sincronizar mesa seleccionada si cambia en store
   useEffect(() => {
@@ -265,7 +300,8 @@ export default function MeseroPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
+    <StaffAuthGuard requiredRole="mesero" roleTitle="Sala & Meseros">
+      <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
       {/* ── Apple Liquid Glass Header ── */}
       <header className="bg-stone-900/90 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
@@ -356,6 +392,78 @@ export default function MeseroPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
+        {/* ── Pedidos QR en Mesa Pendientes de Verificación ── */}
+        {pedidosPendientesQR.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-5 rounded-3xl bg-amber-500/15 border-2 border-amber-500/40 shadow-xl space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5 text-amber-950 dark:text-amber-200 font-bold text-sm">
+                <span className="p-2 rounded-2xl bg-amber-600 text-white animate-pulse">
+                  <Bell size={18} />
+                </span>
+                <span>Pedidos QR en Mesa por Verificar ({pedidosPendientesQR.length})</span>
+              </div>
+              <span className="text-xs text-amber-800 dark:text-amber-300 font-medium hidden sm:inline">
+                Acércate a la mesa, verifica la orden con el cliente y mándala a cocina
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {pedidosPendientesQR.map((ped) => (
+                <div
+                  key={ped.id}
+                  className="p-4 rounded-2xl bg-white dark:bg-stone-800 border border-amber-300 dark:border-amber-700/50 shadow-md space-y-3 flex flex-col justify-between"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-serif font-bold text-base text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                        <span>Mesa {ped.mesa_numero}</span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                          QR Móvil
+                        </span>
+                      </span>
+                      <span className="font-mono text-sm font-bold text-stone-900 dark:text-stone-100">
+                        Bs {ped.total.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-stone-600 dark:text-stone-300 space-y-1 max-h-24 overflow-y-auto pr-1">
+                      {ped.items?.map((it, idx) => (
+                        <div key={idx} className="flex items-center justify-between">
+                          <span className="truncate">• {it.cantidad}x {it.producto_nombre}</span>
+                          <span className="text-[10px] text-stone-400 font-mono">Bs {it.subtotal.toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-stone-100 dark:border-stone-700">
+                    <button
+                      onClick={() => {
+                        const m = mesas.find((x) => x.numero === ped.mesa_numero);
+                        if (m) abrirDetalleMesa(m);
+                      }}
+                      className="px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 text-xs font-semibold hover:bg-stone-50"
+                    >
+                      Ver Mesa
+                    </button>
+                    <button
+                      onClick={() => verificarYMandarACocina(ped.id, ped.mesa_numero || 0)}
+                      className="flex-1 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition"
+                    >
+                      <CheckCircle2 size={15} />
+                      <span>Verificar y Mandar a Cocina</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* ── Active Critical Alerts Dock ── */}
         {alertasPendientes.length > 0 && (
           <motion.div
@@ -836,6 +944,16 @@ export default function MeseroPage() {
                         </span>
                       </div>
 
+                      {pedido.estado === "pendiente" && (
+                        <button
+                          onClick={() => verificarYMandarACocina(pedido.id, mesaSeleccionada.numero)}
+                          className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 active:scale-95 transition"
+                        >
+                          <CheckCircle2 size={16} />
+                          <span>✅ Verificar Orden con Cliente y Mandar a Cocina 👨‍🍳</span>
+                        </button>
+                      )}
+
                       {/* Actions */}
                       <div className="grid grid-cols-2 gap-3 pt-2">
                         <button
@@ -1128,6 +1246,7 @@ export default function MeseroPage() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </StaffAuthGuard>
   );
 }

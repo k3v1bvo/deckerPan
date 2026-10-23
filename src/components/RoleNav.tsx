@@ -24,6 +24,7 @@ import {
   Calendar,
   MapPin,
   Coffee,
+  FileText,
 } from "lucide-react";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
 import { soundManager } from "@/lib/sound";
@@ -86,6 +87,14 @@ export default function RoleNav() {
       color: "from-orange-600 to-amber-700",
       desc: "Experiencia del comensal sentado en mesa para pedir sin esperas.",
     },
+    {
+      id: "menu-pdf",
+      href: "/menu-pdf",
+      label: "Menú Carta PDF",
+      icon: FileText,
+      color: "from-stone-600 to-stone-800",
+      desc: "Menú físico imprimible y exportable en PDF con QR de mesa.",
+    },
   ];
 
   // ─────────────────────────────────────────────────────────────
@@ -100,7 +109,7 @@ export default function RoleNav() {
 
     return (
       <header className="sticky top-0 z-40 bg-[#160E09]/95 backdrop-blur-xl border-b border-amber-900/40 text-white px-3 sm:px-6 py-2.5 shadow-xl transition-all">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-3">
           {/* Logo + Estación Actual */}
           <div className="flex items-center gap-3 shrink-0">
             <Link
@@ -248,7 +257,7 @@ export default function RoleNav() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-[#160E09]/95 backdrop-blur-xl border-b border-amber-900/30 text-white transition-all shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
           
           {/* Logo Oficial de Dencker Pan con Tipografía Editorial */}
           <Link
@@ -304,6 +313,14 @@ export default function RoleNav() {
               <MapPin size={14} className="text-amber-500/80" />
               <span>Nuestra Casa</span>
             </a>
+            <Link
+              href="/menu-pdf"
+              target="_blank"
+              className="text-amber-300/90 hover:text-amber-200 transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-full bg-white/5 border border-amber-500/20"
+            >
+              <FileText size={13} className="text-amber-400" />
+              <span>Menú Carta PDF</span>
+            </Link>
           </nav>
 
           {/* Acciones de Cabecera: Carrito, WhatsApp & Portal de Roles */}
@@ -405,6 +422,15 @@ export default function RoleNav() {
                   <MapPin size={15} className="text-amber-400" />
                   <span>Sucursal & Horarios Cochabamba</span>
                 </a>
+                <Link
+                  href="/menu-pdf"
+                  target="_blank"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold flex items-center gap-2 border border-amber-500/20"
+                >
+                  <FileText size={15} className="text-amber-400" />
+                  <span>Menú Carta en PDF (Imprimible)</span>
+                </Link>
               </div>
 
               <div className="pt-2 border-t border-white/10 space-y-2">
