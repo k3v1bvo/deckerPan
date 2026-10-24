@@ -52,6 +52,7 @@ export interface Producto {
   precio: number;
   costo: number;
   imagen_url?: string;
+  imagen_interior_url?: string;
   disponible: boolean;
   es_mas_vendido: boolean;
   stock: number;
