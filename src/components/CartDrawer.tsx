@@ -14,6 +14,8 @@ import {
   ArrowRight,
   CheckCircle2,
   Sparkles,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import { useCartStore, useUIStore, useSystemStore } from "@/store";
 import { soundManager } from "@/lib/sound";
@@ -25,12 +27,20 @@ const springButton = { type: "spring", stiffness: 400, damping: 15 } as const;
 
 export default function CartDrawer() {
   const { cartOpen, setCartOpen } = useUIStore();
-  const { items, updateCantidad, removeItem, clearCart, total, count, mesaNumero } = useCartStore();
+  const { items, updateCantidad, removeItem, clearCart, total, count, mesaNumero, setMesa } = useCartStore();
 
-  const [tipoEntrega, setTipoEntrega] = useState<"delivery" | "retiro" | "mesa">("delivery");
+  const [tipoEntrega, setTipoEntrega] = useState<"retiro" | "delivery" | "mesa" | "reserva">(
+    mesaNumero ? "mesa" : "retiro"
+  );
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
+  const [zonaDelivery, setZonaDelivery] = useState("");
+  const [horaRetiro, setHoraRetiro] = useState<"asap" | "tarde" | "manana" | "otra">("asap");
+  const [mesaManual, setMesaManual] = useState<number>(mesaNumero || 1);
+  const [fechaReserva, setFechaReserva] = useState<string>("hoy");
+  const [horaReserva, setHoraReserva] = useState<string>("16:30");
+  const [personasReserva, setPersonasReserva] = useState<number>(2);
   const [notas, setNotas] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [enviadoExitoso, setEnviadoExitoso] = useState(false);
@@ -43,12 +53,22 @@ export default function CartDrawer() {
     setEnviando(true);
     soundManager.playVintageRegisterDing();
 
+    const mesaAsignada = tipoEntrega === "mesa" ? (mesaNumero || mesaManual || 1) : 0;
+
     try {
       const nuevoPedido = {
-        mesa_numero: tipoEntrega === "mesa" ? (mesaNumero || 1) : 0,
+        mesa_numero: mesaAsignada,
         estado: "pendiente" as const,
         total: subtotal,
-        cliente_nombre: nombre.trim() || (tipoEntrega === "delivery" ? "Cliente Delivery" : "Cliente Tienda"),
+        cliente_nombre:
+          nombre.trim() ||
+          (tipoEntrega === "delivery"
+            ? "Cliente Delivery"
+            : tipoEntrega === "retiro"
+            ? "Cliente Retiro en Vitrina"
+            : tipoEntrega === "mesa"
+            ? `Mesa ${mesaAsignada}`
+            : "Reserva Salón"),
         es_ronda: false,
         items: items.map((i, idx) => ({
           id: `item-web-${Date.now()}-${idx}`,
@@ -69,6 +89,28 @@ export default function CartDrawer() {
 
       useSystemStore.getState().addPedido(nuevoPedido);
 
+      if (tipoEntrega === "mesa" && mesaAsignada > 0) {
+        useSystemStore.getState().addAlerta({
+          mesa_numero: mesaAsignada,
+          tipo: "llamado",
+          mensaje: `Nuevo pedido comanda desde web para Mesa ${mesaAsignada} (Bs ${subtotal.toFixed(2)})`,
+          datos_extra: {},
+        });
+      }
+
+      if (tipoEntrega === "reserva") {
+        useSystemStore.getState().addReserva({
+          nombre_cliente: nombre.trim() || "Cliente Reserva",
+          telefono: telefono.trim(),
+          tipo_evento: "Reserva de Mesa con Consumo",
+          fecha_evento: `${fechaReserva} ${horaReserva}`,
+          numero_personas: personasReserva,
+          descripcion: `Pedido previo: ${items.map((i) => `${i.cantidad}x ${i.producto.nombre}`).join(", ")}`,
+          monto_total: subtotal,
+          estado: "pendiente",
+        });
+      }
+
       if (supabase) {
         try {
           await supabase.from("pedidos").insert({
@@ -83,17 +125,49 @@ export default function CartDrawer() {
         }
       }
 
-      let texto = `🥐 *PEDIDO DENCKER PAN — TIENDA ONLINE*\n`;
-      texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      texto += `👤 *Cliente:* ${nombre.trim() || "Cliente Online"}\n`;
-      texto += `📞 *Teléfono:* ${telefono.trim() || "No especificado"}\n`;
-      texto += `📍 *Modalidad:* ${
-        tipoEntrega === "delivery"
-          ? `🛵 Delivery en Cochabamba\n🏠 *Dirección:* ${direccion.trim() || "Por coordinar"}`
-          : tipoEntrega === "retiro"
-          ? `🛍️ Retiro en Sucursal`
-          : `🍽️ Consumo en Mesa ${mesaNumero || 1}`
-      }\n`;
+      let texto = "";
+      if (tipoEntrega === "retiro") {
+        const detalleHora =
+          horaRetiro === "asap"
+            ? "⚡ Lo antes posible (~15-20 min)"
+            : horaRetiro === "tarde"
+            ? "🔥 Tanda caliente de la tarde (16:30)"
+            : horaRetiro === "manana"
+            ? "🌅 Tanda caliente de la mañana (07:30)"
+            : "⏰ Hora acordada en notas";
+
+        texto += `🛍️ *PEDIDO PARA RECOGER (TAKEAWAY) — DENCKER PAN*\n`;
+        texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
+        texto += `👤 *Cliente:* ${nombre.trim() || "Cliente Retiro"}\n`;
+        texto += `📞 *WhatsApp:* ${telefono.trim() || "No especificado"}\n`;
+        texto += `⏰ *Hora estimada de retiro:* ${detalleHora}\n`;
+        texto += `📍 *Lugar de retiro:* Vitrina Principal Dencker Pan (Cochabamba)\n`;
+      } else if (tipoEntrega === "delivery") {
+        texto += `🛵 *PEDIDO DELIVERY COCHABAMBA — DENCKER PAN*\n`;
+        texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
+        texto += `👤 *Cliente:* ${nombre.trim() || "Cliente Delivery"}\n`;
+        texto += `📞 *WhatsApp:* ${telefono.trim() || "No especificado"}\n`;
+        texto += `🏠 *Dirección de Entrega:* ${direccion.trim() || "Por coordinar"}\n`;
+        if (zonaDelivery.trim()) {
+          texto += `📍 *Zona / Referencia:* ${zonaDelivery.trim()}\n`;
+        }
+      } else if (tipoEntrega === "mesa") {
+        texto += `🍽️ *ORDEN EN SALÓN — MESA ${mesaAsignada}*\n`;
+        texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
+        texto += `👤 *Comensal:* ${nombre.trim() || `Mesa ${mesaAsignada}`}\n`;
+        texto += `📍 *Ubicación:* Mesa ${mesaAsignada} — Salón Dencker Pan\n`;
+        if (telefono.trim()) {
+          texto += `📞 *WhatsApp:* ${telefono.trim()}\n`;
+        }
+      } else {
+        texto += `📅 *SOLICITUD DE RESERVA CON PEDIDO — DENCKER PAN*\n`;
+        texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
+        texto += `👤 *Titular:* ${nombre.trim() || "Cliente Reserva"}\n`;
+        texto += `📞 *WhatsApp:* ${telefono.trim() || "No especificado"}\n`;
+        texto += `📆 *Fecha:* ${fechaReserva} | ⏰ *Hora:* ${horaReserva}\n`;
+        texto += `👥 *Comensales:* ${personasReserva} personas\n`;
+      }
+
       texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
       texto += `📋 *PRODUCTOS SELECCIONADOS:*\n`;
 
@@ -235,25 +309,7 @@ export default function CartDrawer() {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
-                    <motion.button
-                      whileTap={{ scale: 0.95, y: 1 }}
-                      transition={springButton}
-                      type="button"
-                      onClick={() => {
-                        soundManager.playTactileClick();
-                        setTipoEntrega("delivery");
-                      }}
-                      className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-1.5 transition-all ${
-                        tipoEntrega === "delivery"
-                          ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-md"
-                          : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
-                      }`}
-                    >
-                      <MapPin size={17} className={tipoEntrega === "delivery" ? "text-[#87A987]" : "text-[#785E4F]"} />
-                      <span className="text-[11px] font-bold">Delivery</span>
-                    </motion.button>
-
+                  <div className="grid grid-cols-4 gap-1.5">
                     <motion.button
                       whileTap={{ scale: 0.95, y: 1 }}
                       transition={springButton}
@@ -262,14 +318,32 @@ export default function CartDrawer() {
                         soundManager.playTactileClick();
                         setTipoEntrega("retiro");
                       }}
-                      className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-1.5 transition-all ${
+                      className={`p-2.5 rounded-2xl border text-center flex flex-col items-center gap-1 transition-all ${
                         tipoEntrega === "retiro"
                           ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-md"
                           : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
                       }`}
                     >
-                      <Store size={17} className={tipoEntrega === "retiro" ? "text-[#87A987]" : "text-[#785E4F]"} />
-                      <span className="text-[11px] font-bold">Retiro</span>
+                      <Store size={16} className={tipoEntrega === "retiro" ? "text-[#87A987]" : "text-[#785E4F]"} />
+                      <span className="text-[10px] font-bold">Retiro</span>
+                    </motion.button>
+
+                    <motion.button
+                      whileTap={{ scale: 0.95, y: 1 }}
+                      transition={springButton}
+                      type="button"
+                      onClick={() => {
+                        soundManager.playTactileClick();
+                        setTipoEntrega("delivery");
+                      }}
+                      className={`p-2.5 rounded-2xl border text-center flex flex-col items-center gap-1 transition-all ${
+                        tipoEntrega === "delivery"
+                          ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-md"
+                          : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
+                      }`}
+                    >
+                      <MapPin size={16} className={tipoEntrega === "delivery" ? "text-[#87A987]" : "text-[#785E4F]"} />
+                      <span className="text-[10px] font-bold">Delivery</span>
                     </motion.button>
 
                     <motion.button
@@ -280,14 +354,32 @@ export default function CartDrawer() {
                         soundManager.playTactileClick();
                         setTipoEntrega("mesa");
                       }}
-                      className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-1.5 transition-all ${
+                      className={`p-2.5 rounded-2xl border text-center flex flex-col items-center gap-1 transition-all ${
                         tipoEntrega === "mesa"
                           ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-md"
                           : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
                       }`}
                     >
-                      <Utensils size={17} className={tipoEntrega === "mesa" ? "text-[#87A987]" : "text-[#785E4F]"} />
-                      <span className="text-[11px] font-bold">En Mesa</span>
+                      <Utensils size={16} className={tipoEntrega === "mesa" ? "text-[#87A987]" : "text-[#785E4F]"} />
+                      <span className="text-[10px] font-bold">En Mesa</span>
+                    </motion.button>
+
+                    <motion.button
+                      whileTap={{ scale: 0.95, y: 1 }}
+                      transition={springButton}
+                      type="button"
+                      onClick={() => {
+                        soundManager.playTactileClick();
+                        setTipoEntrega("reserva");
+                      }}
+                      className={`p-2.5 rounded-2xl border text-center flex flex-col items-center gap-1 transition-all ${
+                        tipoEntrega === "reserva"
+                          ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-md"
+                          : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
+                      }`}
+                    >
+                      <Calendar size={16} className={tipoEntrega === "reserva" ? "text-[#87A987]" : "text-[#785E4F]"} />
+                      <span className="text-[10px] font-bold">Reserva</span>
                     </motion.button>
                   </div>
                 </div>
@@ -381,12 +473,170 @@ export default function CartDrawer() {
                   </div>
                 </div>
 
-                {/* 3. Datos del Despacho */}
+                {/* 3. Datos del Despacho según Modalidad */}
                 <div className="space-y-3 pt-3 border-t border-[#EAE2D5]">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#785E4F] block">
-                    Datos de Contacto & Despacho
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#785E4F] block">
+                      {tipoEntrega === "retiro"
+                        ? "Datos de Retiro en Vitrina"
+                        : tipoEntrega === "delivery"
+                        ? "Datos de Envío a Domicilio"
+                        : tipoEntrega === "mesa"
+                        ? "Ubicación en Salón"
+                        : "Detalles de Reserva"}
+                    </label>
+                  </div>
 
+                  {/* Detalle contextual según modalidad */}
+                  {tipoEntrega === "retiro" && (
+                    <div className="p-3 rounded-xl bg-[#EBF3EA] border border-[#527953]/30 text-[#2D452E] space-y-2">
+                      <div className="flex items-start gap-2">
+                        <Store size={15} className="text-[#527953] shrink-0 mt-0.5" />
+                        <p className="text-[11px] leading-relaxed">
+                          <strong>Pasa a recoger sin filas:</strong> Tu bolsa estará lista en el mostrador principal de Dencker Pan.
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-[#527953] uppercase tracking-wider block">
+                          ¿Cuándo pasas a recoger?
+                        </span>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {[
+                            { id: "asap", label: "⚡ En 15-20 min" },
+                            { id: "tarde", label: "🔥 Tanda Tarde (16:30)" },
+                            { id: "manana", label: "🌅 Tanda Mañana (07:30)" },
+                            { id: "otra", label: "⏰ Indicar en notas" },
+                          ].map((t) => (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => {
+                                soundManager.playTactileClick();
+                                setHoraRetiro(t.id as any);
+                              }}
+                              className={`py-1.5 px-2 rounded-lg text-[10px] font-bold transition text-left ${
+                                horaRetiro === t.id
+                                  ? "bg-[#2D452E] text-white shadow-xs"
+                                  : "bg-white text-[#2D452E] border border-[#527953]/20 hover:bg-[#F0F6EF]"
+                              }`}
+                            >
+                              {t.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {tipoEntrega === "delivery" && (
+                    <div className="p-3 rounded-xl bg-[#FDF8F3] border border-[#D49B54]/30 text-[#6B4724] flex items-start gap-2">
+                      <MapPin size={15} className="text-[#D49B54] shrink-0 mt-0.5" />
+                      <p className="text-[11px] leading-relaxed">
+                        <strong>Delivery en Cochabamba:</strong> Llevamos tus piezas calientes y café en moto a tu casa u oficina.
+                      </p>
+                    </div>
+                  )}
+
+                  {tipoEntrega === "mesa" && (
+                    <div className="p-3 rounded-xl bg-[#FAF4ED] border border-[#3D271D]/20 text-[#3D271D] space-y-2.5">
+                      {mesaNumero ? (
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#527953]">
+                          <CheckCircle2 size={16} />
+                          <span>Mesa {mesaNumero} — QR Escaneado previamente</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#785E4F]">
+                              ¿En qué mesa te encuentras?
+                            </span>
+                            <span className="text-[10px] text-[#A8988D]">Revisa el cartel de tu mesa</span>
+                          </div>
+                          <div className="grid grid-cols-6 gap-1">
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                              <button
+                                key={num}
+                                type="button"
+                                onClick={() => {
+                                  soundManager.playTactileClick();
+                                  setMesaManual(num);
+                                  setMesa(num);
+                                }}
+                                className={`py-1.5 rounded-lg text-xs font-mono font-bold transition ${
+                                  (mesaManual || mesaNumero) === num
+                                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
+                                    : "bg-white text-[#3D271D] border border-[#EAE2D5] hover:bg-[#F5EFEB]"
+                                }`}
+                              >
+                                {num}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {tipoEntrega === "reserva" && (
+                    <div className="p-3 rounded-xl bg-[#F7F4EF] border border-[#3D271D]/20 space-y-2 text-[#3D271D]">
+                      <div className="flex items-start gap-2">
+                        <Calendar size={15} className="text-[#527953] shrink-0 mt-0.5" />
+                        <p className="text-[11px] leading-relaxed">
+                          <strong>Reserva con Menú Anticipado:</strong> Apartamos tu mesa y tendremos tu pedido listo cuando llegues.
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <label className="text-[10px] text-[#785E4F] block font-semibold mb-0.5">Fecha:</label>
+                          <select
+                            value={fechaReserva}
+                            onChange={(e) => setFechaReserva(e.target.value)}
+                            className="w-full p-2 rounded-lg bg-white border border-[#EAE2D5] text-xs font-medium text-[#1E130C]"
+                          >
+                            <option value="Hoy">Hoy</option>
+                            <option value="Mañana">Mañana</option>
+                            <option value="Este Fin de Semana">Este Fin de Semana</option>
+                            <option value="Próxima Semana">Próxima Semana</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-[#785E4F] block font-semibold mb-0.5">Hora:</label>
+                          <select
+                            value={horaReserva}
+                            onChange={(e) => setHoraReserva(e.target.value)}
+                            className="w-full p-2 rounded-lg bg-white border border-[#EAE2D5] text-xs font-medium text-[#1E130C]"
+                          >
+                            <option value="08:30 (Desayuno)">08:30 (Desayuno)</option>
+                            <option value="10:00 (Brunch)">10:00 (Brunch)</option>
+                            <option value="12:30 (Almuerzo)">12:30 (Almuerzo)</option>
+                            <option value="16:30 (Tanda Pan Caliente)">16:30 (Pan Caliente)</option>
+                            <option value="18:30 (Merienda)">18:30 (Merienda)</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-[#785E4F] block font-semibold mb-0.5">Personas:</label>
+                        <div className="flex gap-1.5">
+                          {[2, 4, 6, 8, 12].map((p) => (
+                            <button
+                              key={p}
+                              type="button"
+                              onClick={() => setPersonasReserva(p)}
+                              className={`flex-1 py-1 rounded-lg text-xs font-bold transition ${
+                                personasReserva === p
+                                  ? "bg-[#1E130C] text-[#FAF7F2]"
+                                  : "bg-white text-[#3D271D] border border-[#EAE2D5]"
+                              }`}
+                            >
+                              {p}p
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Campos de texto comunes */}
                   <div className="space-y-2 text-xs">
                     <input
                       type="text"
@@ -405,13 +655,22 @@ export default function CartDrawer() {
                     />
 
                     {tipoEntrega === "delivery" && (
-                      <input
-                        type="text"
-                        placeholder="Dirección exacta en Cochabamba (calle, zona, referencias)"
-                        value={direccion}
-                        onChange={(e) => setDireccion(e.target.value)}
-                        className="w-full p-3 rounded-xl bg-white border border-[#EAE2D5] focus:outline-none focus:ring-2 focus:ring-[#527953] placeholder:text-[#A8988D] text-[#1E130C]"
-                      />
+                      <>
+                        <input
+                          type="text"
+                          placeholder="Dirección exacta en Cochabamba (calle, número de puerta)"
+                          value={direccion}
+                          onChange={(e) => setDireccion(e.target.value)}
+                          className="w-full p-3 rounded-xl bg-white border border-[#EAE2D5] focus:outline-none focus:ring-2 focus:ring-[#527953] placeholder:text-[#A8988D] text-[#1E130C]"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Zona y Referencias (ej. Cala Cala, portón blanco, piso 2)"
+                          value={zonaDelivery}
+                          onChange={(e) => setZonaDelivery(e.target.value)}
+                          className="w-full p-3 rounded-xl bg-white border border-[#EAE2D5] focus:outline-none focus:ring-2 focus:ring-[#527953] placeholder:text-[#A8988D] text-[#1E130C]"
+                        />
+                      </>
                     )}
 
                     <textarea
@@ -436,8 +695,14 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex justify-between text-xs text-[#785E4F]">
                     <span>Modalidad:</span>
-                    <span className="font-semibold text-[#1E130C] capitalize">
-                      {tipoEntrega === "delivery" ? "Delivery Cochabamba" : tipoEntrega === "retiro" ? "Retiro en Vitrina" : "Servicio en Mesa"}
+                    <span className="font-semibold text-[#1E130C]">
+                      {tipoEntrega === "delivery"
+                        ? "🛵 Delivery Cochabamba"
+                        : tipoEntrega === "retiro"
+                        ? "🛍️ Retiro en Vitrina (Sin fila)"
+                        : tipoEntrega === "mesa"
+                        ? `🍽️ Consumo en Mesa ${mesaNumero || mesaManual || 1}`
+                        : `📅 Reserva (${personasReserva} personas)`}
                     </span>
                   </div>
                   <div className="flex justify-between items-baseline pt-2 border-t border-[#F5EFEB]">

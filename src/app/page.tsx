@@ -32,6 +32,11 @@ import {
   LayoutGrid,
   ListFilter,
   Tag,
+  Calendar,
+  Store,
+  Utensils,
+  QrCode,
+  Award,
 } from "lucide-react";
 import CoffeeLab from "@/components/CoffeeLab";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
@@ -193,13 +198,14 @@ export default function HomePage() {
   const storeProductos = useSystemStore((state) => state.productos);
   const storeCategorias = useSystemStore((state) => state.categorias);
   const addAlerta = useSystemStore((state) => state.addAlerta);
+  const addReserva = useSystemStore((state) => state.addReserva);
 
   const productos: Producto[] =
     storeProductos && storeProductos.length > 0 ? storeProductos : SEED_PRODUCTOS;
   const categorias: Categoria[] =
     storeCategorias && storeCategorias.length > 0 ? storeCategorias : SEED_CATEGORIAS;
 
-  const { items, addItem, updateCantidad, total, count } = useCartStore();
+  const { items, addItem, updateCantidad, total, count, setMesa } = useCartStore();
   const { setCartOpen } = useUIStore();
 
   const cartCount = count();
@@ -277,6 +283,57 @@ export default function HomePage() {
       setAvisoMeseroEnviado(false);
       setModalMeseroAbierto(false);
     }, 2800);
+  };
+
+  // Estados Modal Reserva de Mesa
+  const [reservaModalOpen, setReservaModalOpen] = useState(false);
+  const [reservaData, setReservaData] = useState({
+    nombre: "",
+    telefono: "",
+    fecha: "Hoy",
+    hora: "16:30 (Tanda Pan Caliente)",
+    personas: 2,
+    zona: "Salón Principal",
+    motivo: "Desayuno / Merienda Casual",
+    notas: "",
+  });
+  const [reservaEnviada, setReservaEnviada] = useState(false);
+
+  const handleEnviarReserva = () => {
+    soundManager.playVintageRegisterDing();
+
+    addReserva({
+      nombre_cliente: reservaData.nombre.trim() || "Cliente Reserva Web",
+      telefono: reservaData.telefono.trim(),
+      tipo_evento: `Reserva ${reservaData.zona} — ${reservaData.motivo}`,
+      fecha_evento: `${reservaData.fecha} a las ${reservaData.hora}`,
+      numero_personas: reservaData.personas,
+      descripcion: reservaData.notas.trim() || "Reserva solicitada desde la web principal",
+      estado: "pendiente",
+    });
+
+    let texto = `📅 *SOLICITUD DE RESERVA DE MESA — DENCKER PAN*\n`;
+    texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    texto += `👤 *Titular:* ${reservaData.nombre.trim() || "Cliente Reserva"}\n`;
+    texto += `📞 *WhatsApp:* ${reservaData.telefono.trim() || "No especificado"}\n`;
+    texto += `📆 *Fecha:* ${reservaData.fecha}\n`;
+    texto += `⏰ *Horario:* ${reservaData.hora}\n`;
+    texto += `👥 *Comensales:* ${reservaData.personas} personas\n`;
+    texto += `🏛️ *Zona Preferida:* ${reservaData.zona}\n`;
+    texto += `🎉 *Motivo / Ocasión:* ${reservaData.motivo}\n`;
+    if (reservaData.notas.trim()) {
+      texto += `📝 *Observaciones:* ${reservaData.notas.trim()}\n`;
+    }
+    texto += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    texto += `✨ _Enviado desde el sistema digital de Dencker Pan Cochabamba_`;
+
+    const url = `https://wa.me/59176911000?text=${encodeURIComponent(texto)}`;
+    setReservaEnviada(true);
+    setTimeout(() => {
+      window.open(url, "_blank");
+      setReservaEnviada(false);
+      setReservaModalOpen(false);
+    }, 1100);
   };
 
   const presupuestoEstimado = useMemo(() => {
@@ -640,6 +697,258 @@ export default function HomePage() {
                 <p className="text-xs text-[#A8988D]">Hojaldrado europeo noble</p>
               </div>
             </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── 1.5. SELECTOR DE MODALIDADES DE ATENCIÓN (PARA LLEVAR / DELIVERY / MESA / RESERVA / CATERING) ── */}
+      <section className="w-full bg-[#150E09] border-y border-[#3D271D]/50 py-12 text-white relative z-20">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 space-y-8">
+          
+          {/* Header de la Sección */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-1.5">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-[#87A987] flex items-center gap-1.5">
+                <Sparkles size={13} className="text-[#87A987]" />
+                <span>Atención Flexible • Dencker Pan Cochabamba</span>
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                Elige cómo disfrutar tu experiencia hoy
+              </h2>
+              <p className="text-xs sm:text-sm text-[#D8C7B8] max-w-xl leading-relaxed">
+                ¿Estás en tu oficina, descansando en casa o ya tomaste asiento en el local? Selecciona la opción perfecta para ti:
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[11px] text-[#A8988D] hidden sm:inline">¿Dudas con tu pedido?</span>
+              <a
+                href={DENCKER_ASSETS.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-2 rounded-full bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition"
+              >
+                <MessageCircle size={14} />
+                <span>Asistencia en Vivo</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Grilla Bento de 4 Modalidades */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            {/* 1. Para Llevar (Takeaway Express) */}
+            <motion.div
+              whileHover={{ y: -3 }}
+              transition={springPhysics}
+              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-[#527953]/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-[#87A987]/50 transition-all"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-[#527953]/20 text-[#87A987] flex items-center justify-center border border-[#527953]/30">
+                    <Store size={20} />
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#527953]/30 text-[#CDE0C9]">
+                    Sin Filas
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-white group-hover:text-[#CDE0C9] transition-colors">
+                    Para Recoger (Takeaway)
+                  </h3>
+                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
+                    Ordena antes de salir. Empacamos tus panes y café caliente para que retires directo por vitrina sin esperas.
+                  </p>
+                </div>
+                <div className="text-[10px] text-[#A3B899] font-medium flex items-center gap-1.5 pt-1">
+                  <Clock size={12} />
+                  <span>Tandas calientes 07:30 y 16:30</span>
+                </div>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("menu-bento");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="w-full py-2.5 px-3 rounded-2xl bg-[#527953]/20 hover:bg-[#527953] text-[#CDE0C9] hover:text-white border border-[#527953]/40 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Pedir para Recoger</span>
+                <ArrowRight size={13} />
+              </motion.button>
+            </motion.div>
+
+            {/* 2. Delivery Cochabamba */}
+            <motion.div
+              whileHover={{ y: -3 }}
+              transition={springPhysics}
+              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-[#D49B54]/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-[#D49B54]/50 transition-all"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-[#D49B54]/20 text-[#D49B54] flex items-center justify-center border border-[#D49B54]/30">
+                    <MapPin size={20} />
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D49B54]/20 text-[#F5DEB3]">
+                    A tu Puerta
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-white group-hover:text-[#F5DEB3] transition-colors">
+                    Delivery Cochabamba
+                  </h3>
+                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
+                    Hojaldres crujientes, New York Rolls y café filtrado en moto directo a tu domicilio o lugar de trabajo.
+                  </p>
+                </div>
+                <div className="text-[10px] text-[#D8C7B8] font-medium flex items-center gap-1.5 pt-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>Zona Norte, Cala Cala, Recoleta, Centro</span>
+                </div>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  const el = document.getElementById("menu-bento");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="w-full py-2.5 px-3 rounded-2xl bg-[#D49B54]/20 hover:bg-[#D49B54] text-[#F5DEB3] hover:text-[#120D0A] border border-[#D49B54]/40 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Pedir Delivery</span>
+                <ArrowRight size={13} />
+              </motion.button>
+            </motion.div>
+
+            {/* 3. Autoservicio en Mesa (¿Ya estás en el local?) */}
+            <motion.div
+              whileHover={{ y: -3 }}
+              transition={springPhysics}
+              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-amber-600/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-amber-500/50 transition-all"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center border border-amber-500/30">
+                    <Utensils size={20} />
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200">
+                    En Salón
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-white group-hover:text-amber-200 transition-colors">
+                    ¿Ya estás sentado?
+                  </h3>
+                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
+                    Si entraste sin escanear el QR físico, pulsa tu mesa para pedir desde tu asiento:
+                  </p>
+                </div>
+                
+                {/* 12 Mesas Rápidas */}
+                <div className="grid grid-cols-6 gap-1 pt-1">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                    <Link
+                      key={num}
+                      href={`/mesa/${num}`}
+                      onClick={() => {
+                        soundManager.playTactileClick();
+                        setMesa(num);
+                      }}
+                      className="py-1 rounded-lg bg-white/5 hover:bg-amber-500 hover:text-stone-950 border border-white/10 text-stone-300 font-mono text-[11px] font-bold text-center transition"
+                      title={`Ir a Mesa ${num}`}
+                    >
+                      M{num}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => setModalMeseroAbierto(true)}
+                  className="w-full py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Bell size={13} />
+                  <span>Llamar al Mesero</span>
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* 4. Reservar Mesa en Salón */}
+            <motion.div
+              whileHover={{ y: -3 }}
+              transition={springPhysics}
+              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-blue-500/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-blue-400/50 transition-all"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-300 flex items-center justify-center border border-blue-500/30">
+                    <Calendar size={20} />
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-200">
+                    Anticipado
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-white group-hover:text-blue-200 transition-colors">
+                    Reservar Mesa
+                  </h3>
+                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
+                    Asegura tu lugar en el Salón Principal o en la Terraza Jardín para brunch o tertulias de café.
+                  </p>
+                </div>
+                <div className="text-[10px] text-[#C9B8A6] font-medium flex items-center gap-1.5 pt-1">
+                  <Users size={12} />
+                  <span>Mesas para 2, 4, 6 o grupos grandes</span>
+                </div>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setReservaModalOpen(true);
+                }}
+                className="w-full py-2.5 px-3 rounded-2xl bg-blue-500/20 hover:bg-blue-600 text-blue-200 hover:text-white border border-blue-400/40 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Calendar size={13} />
+                <span>Solicitar Reserva</span>
+              </motion.button>
+            </motion.div>
+
+          </div>
+
+          {/* Banner Especial de Catering & Cálculos */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/30">
+                <Award size={18} />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-bold text-white">
+                  ¿Defensas de Grado, Cumpleaños o Reuniones Corporativas?
+                </p>
+                <p className="text-[11px] text-[#A8988D]">
+                  Usa nuestro calculador automático de catering y cotiza bocaditos, tortas y barismo por persona en segundos.
+                </p>
+              </div>
+            </div>
+
+            <motion.a
+              href="#cotizador"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => soundManager.playTactileClick()}
+              className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold flex items-center gap-2 shrink-0 transition"
+            >
+              <span>Calcular Presupuesto</span>
+              <ArrowRight size={13} />
+            </motion.a>
           </div>
 
         </div>
@@ -1840,6 +2149,198 @@ export default function HomePage() {
                   >
                     <Bell size={16} />
                     <span>Notificar al Mesero (Mesa {mesaSeleccionadaAviso})</span>
+                  </motion.button>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+
+        {/* Modal de Reserva de Mesa */}
+        {reservaModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setReservaModalOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-md"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={springPhysics}
+              className="relative w-full max-w-lg bg-gradient-to-b from-[#1C130D] to-[#120B07] border border-[#527953]/40 rounded-3xl p-6 sm:p-7 shadow-[0_20px_70px_rgba(0,0,0,0.8)] z-10 text-white space-y-5"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#527953]/25 border border-[#527953]/40 flex items-center justify-center text-[#87A987]">
+                    <Calendar size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-white">
+                      Reservar Mesa en Salón
+                    </h3>
+                    <p className="text-[11px] text-[#D8C7B8]">
+                      Salón Principal & Terraza Jardín • Dencker Pan Cochabamba
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    setReservaModalOpen(false);
+                    setReservaEnviada(false);
+                  }}
+                  className="p-1.5 rounded-full hover:bg-white/10 text-[#C9B8A6] transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {reservaEnviada ? (
+                <div className="text-center py-8 space-y-3">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto animate-bounce">
+                    <Check size={32} />
+                  </div>
+                  <h4 className="font-bold text-xl text-white">¡Solicitud de Reserva Registrada!</h4>
+                  <p className="text-xs text-[#D8C7B8] max-w-sm mx-auto">
+                    Abriendo WhatsApp para confirmación inmediata con el anfitrión de salón.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4 text-xs">
+                  {/* Selector de Zona */}
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                      Zona Preferida:
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { id: "Salón Principal", label: "Salón Principal" },
+                        { id: "Terraza Jardín", label: "Terraza Jardín" },
+                        { id: "Barra de Café", label: "Barra Café" },
+                      ].map((z) => (
+                        <button
+                          key={z.id}
+                          type="button"
+                          onClick={() => {
+                            soundManager.playTactileClick();
+                            setReservaData({ ...reservaData, zona: z.id });
+                          }}
+                          className={`py-2 px-3 rounded-xl font-semibold border text-center transition cursor-pointer ${
+                            reservaData.zona === z.id
+                              ? "bg-[#527953] border-[#87A987] text-white shadow-md"
+                              : "bg-white/5 border-white/10 text-stone-300 hover:bg-white/10"
+                          }`}
+                        >
+                          {z.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Fecha y Hora */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                        Día:
+                      </label>
+                      <select
+                        value={reservaData.fecha}
+                        onChange={(e) => setReservaData({ ...reservaData, fecha: e.target.value })}
+                        className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white font-medium focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                      >
+                        <option value="Hoy" className="bg-[#1C130D]">Hoy</option>
+                        <option value="Mañana" className="bg-[#1C130D]">Mañana</option>
+                        <option value="Este Fin de Semana" className="bg-[#1C130D]">Este Fin de Semana</option>
+                        <option value="Próxima Semana" className="bg-[#1C130D]">Próxima Semana</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                        Turno / Hora:
+                      </label>
+                      <select
+                        value={reservaData.hora}
+                        onChange={(e) => setReservaData({ ...reservaData, hora: e.target.value })}
+                        className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white font-medium focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                      >
+                        <option value="08:30 (Desayuno)" className="bg-[#1C130D]">08:30 (Desayuno)</option>
+                        <option value="10:00 (Brunch)" className="bg-[#1C130D]">10:00 (Brunch)</option>
+                        <option value="12:30 (Almuerzo)" className="bg-[#1C130D]">12:30 (Almuerzo)</option>
+                        <option value="16:30 (Tanda Pan Caliente)" className="bg-[#1C130D]">16:30 (Pan Caliente)</option>
+                        <option value="18:30 (Merienda)" className="bg-[#1C130D]">18:30 (Merienda)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Cantidad de personas */}
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                      Número de Comensales:
+                    </label>
+                    <div className="grid grid-cols-6 gap-1.5">
+                      {[1, 2, 4, 6, 8, 12].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => {
+                            soundManager.playTactileClick();
+                            setReservaData({ ...reservaData, personas: num });
+                          }}
+                          className={`py-2 rounded-xl font-bold font-mono transition text-center cursor-pointer ${
+                            reservaData.personas === num
+                              ? "bg-[#D49B54] text-[#120D0A] shadow-md"
+                              : "bg-white/5 border border-white/10 text-stone-300 hover:bg-white/10"
+                          }`}
+                        >
+                          {num}p
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Contacto */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <input
+                      type="text"
+                      placeholder="Tu Nombre Completo"
+                      value={reservaData.nombre}
+                      onChange={(e) => setReservaData({ ...reservaData, nombre: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="WhatsApp (ej. 76911000)"
+                      value={reservaData.telefono}
+                      onChange={(e) => setReservaData({ ...reservaData, telefono: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                    />
+                  </div>
+
+                  {/* Notas */}
+                  <textarea
+                    rows={2}
+                    placeholder="Ocasión especial (cumpleaños, reunión) o requerimientos..."
+                    value={reservaData.notas}
+                    onChange={(e) => setReservaData({ ...reservaData, notas: e.target.value })}
+                    className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#87A987] resize-none"
+                  />
+
+                  {/* Botón Enviar */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={springPhysics}
+                    onClick={handleEnviarReserva}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#527953] to-[#3E5F3F] hover:from-[#5C865D] hover:to-[#456A46] text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-xl shadow-[#527953]/25 flex items-center justify-center gap-2 cursor-pointer border border-[#87A987]/30"
+                  >
+                    <MessageCircle size={17} />
+                    <span>Confirmar Reserva vía WhatsApp</span>
                   </motion.button>
                 </div>
               )}
