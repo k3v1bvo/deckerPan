@@ -3,7 +3,7 @@ export type EstadoMesa = 'libre' | 'ocupada' | 'reservada' | 'limpieza';
 export type TipoMesa = 'cuadrada' | 'redonda' | 'rectangular';
 export type EstadoPedido = 'pendiente' | 'en_preparacion' | 'listo' | 'entregado' | 'pagado' | 'cancelado';
 export type EstadoItem = 'pendiente' | 'en_preparacion' | 'listo' | 'entregado' | 'cancelado';
-export type MetodoPago = 'efectivo' | 'qr' | 'mixto';
+export type MetodoPago = 'efectivo' | 'qr' | 'qr_simple' | 'mixto';
 export type TipoAlerta = 'llamado' | 'cambio_solicitado' | 'pedido_listo' | 'cuenta_pedida' | 'pago_recibido';
 export type EstadoReserva = 'pendiente' | 'confirmada' | 'produccion' | 'completada' | 'cancelada';
 
@@ -118,6 +118,11 @@ export interface Pago {
   estado: 'pendiente' | 'completado' | 'fallido';
   items_pagados: string[];
   created_at: string;
+  cliente_nombre?: string;
+  mesa_numero?: number;
+  turno?: 'manana' | 'tarde' | 'noche';
+  modalidad?: 'mesa' | 'retiro' | 'delivery' | 'reserva';
+  cajero?: string;
 }
 
 export interface Reserva {

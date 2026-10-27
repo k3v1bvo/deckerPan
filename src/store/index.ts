@@ -21,6 +21,8 @@ import {
   SEED_MESAS,
   SEED_CATEGORIAS,
   SEED_PRODUCTOS,
+  SEED_PAGOS,
+  SEED_HISTORIAL_SESIONES,
 } from '@/lib/seed-data';
 import { broadcastSync, markEventHandled } from '@/lib/broadcast';
 
@@ -36,6 +38,8 @@ interface SystemStore {
   alertas: AlertaMesero[];
   reservas: Reserva[];
   sesionCaja: SesionCaja | null;
+  pagos: Pago[];
+  historialSesiones: SesionCaja[];
 
   // Acciones Mesas (Admin & Mesero)
   setMesas: (mesas: Mesa[]) => void;
@@ -210,6 +214,8 @@ export const useSystemStore = create<SystemStore>()(
         estado: 'abierta',
         abierta_at: new Date().toISOString(),
       },
+      pagos: SEED_PAGOS,
+      historialSesiones: SEED_HISTORIAL_SESIONES,
 
       // --- Mesas ---
       setMesas: (mesas) => set({ mesas }),
@@ -457,15 +463,17 @@ export const useSystemStore = create<SystemStore>()(
         set((state) => {
           if (!state.sesionCaja) return {};
           const diferencia = efectivoContado - state.sesionCaja.efectivo_esperado;
+          const sesionCerrada: SesionCaja = {
+            ...state.sesionCaja,
+            efectivo_contado: efectivoContado,
+            diferencia,
+            estado: 'cerrada',
+            cerrada_at: new Date().toISOString(),
+            notas,
+          };
           return {
-            sesionCaja: {
-              ...state.sesionCaja,
-              efectivo_contado: efectivoContado,
-              diferencia,
-              estado: 'cerrada',
-              cerrada_at: new Date().toISOString(),
-              notas,
-            },
+            sesionCaja: sesionCerrada,
+            historialSesiones: [sesionCerrada, ...(state.historialSesiones || [])],
           };
         }),
 
@@ -488,6 +496,24 @@ export const useSystemStore = create<SystemStore>()(
             };
           }
 
+          // Registrar el pago en el historial de transacciones
+          const horaActual = new Date().getHours();
+          const turnoInferido = horaActual < 14 ? 'manana' : horaActual < 19 ? 'tarde' : 'noche';
+          const nuevoPago: Pago = {
+            ...pagoData,
+            id: 'pago-' + Date.now(),
+            pedido_id: pedidoId,
+            cliente_nombre:
+              pagoData.cliente_nombre ||
+              pedido?.cliente_nombre ||
+              (pedido?.mesa_numero ? `Mesa ${pedido.mesa_numero}` : 'Cliente Mostrador'),
+            mesa_numero: pagoData.mesa_numero ?? pedido?.mesa_numero,
+            turno: pagoData.turno || sesionActual?.turno || turnoInferido,
+            cajero: pagoData.cajero || sesionActual?.cajero || 'Cajero Principal',
+            modalidad: pagoData.modalidad || (pedido?.mesa_numero ? 'mesa' : 'retiro'),
+            created_at: new Date().toISOString(),
+          };
+
           // Marcar pedido como pagado y liberar mesa
           const pedidosUpdated = state.pedidos.map((p) =>
             p.id === pedidoId ? { ...p, estado: 'pagado' as EstadoPedido, updated_at: new Date().toISOString() } : p
@@ -501,6 +527,7 @@ export const useSystemStore = create<SystemStore>()(
             pedidos: pedidosUpdated,
             mesas: mesasUpdated,
             sesionCaja: sesionUpdated,
+            pagos: [nuevoPago, ...(state.pagos || [])],
           };
         });
         broadcastSync('PAYMENT_COMPLETED', {
@@ -551,6 +578,8 @@ export const useSystemStore = create<SystemStore>()(
           mesas: SEED_MESAS,
           categorias: SEED_CATEGORIAS,
           productos: SEED_PRODUCTOS,
+          pagos: SEED_PAGOS,
+          historialSesiones: SEED_HISTORIAL_SESIONES,
           qrBancarioUrl: "https://i.ibb.co/qMkf00HN/dencker-logo.png",
           qrBancarioTitular: "Dencker Pan S.R.L.",
           qrBancarioBanco: "Banco Nacional de Bolivia (BNB) / BCP Simple",

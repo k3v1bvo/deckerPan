@@ -130,6 +130,13 @@ export default function CajaPage() {
       cambio,
       estado: "completado",
       items_pagados: (pedidoSeleccionado.items || []).map((i) => i.id),
+      cliente_nombre:
+        pedidoSeleccionado.cliente_nombre ||
+        (pedidoSeleccionado.mesa_numero ? `Mesa ${pedidoSeleccionado.mesa_numero}` : "Cliente Mostrador"),
+      mesa_numero: pedidoSeleccionado.mesa_numero,
+      turno: sesionCaja?.turno || (new Date().getHours() < 14 ? "manana" : new Date().getHours() < 19 ? "tarde" : "noche"),
+      cajero: sesionCaja?.cajero || "Caja Principal",
+      modalidad: pedidoSeleccionado.mesa_numero ? "mesa" : "retiro",
     });
 
     // 💰 ¡Sonido icónico de Caja Registradora Antigua de Bronce Ka-Ching!
