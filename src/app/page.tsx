@@ -86,6 +86,102 @@ const EVENTOS_PRESETS = [
   },
 ];
 
+const HERO_PASTRY_SHOWCASE = [
+  {
+    id: "prod_croissant_frances",
+    nombre: "Croissant Francés 100% Mantequilla",
+    tag: "Laminado Francés • 72 Capas",
+    precio: 18.0,
+    costo: 6.0,
+    categoria_id: "c4",
+    desc: "72 capas crujientes con 100% pura mantequilla europea noble. Alveolado aireado y aroma dulce que cautiva desde la primera mordida.",
+    imagen: "/img/hero/pastries_coffee_table.jpg",
+    badge: "Tanda Caliente 16:30",
+    badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+  },
+  {
+    id: "prod_ny_pistacho",
+    nombre: "New York Roll de Pistacho",
+    tag: "Hojaldre Rueda • Pistacho Bronte",
+    precio: 26.0,
+    costo: 9.5,
+    categoria_id: "c4",
+    desc: "Rueda de hojaldre laminado rellena de crema sedosa de pistacho siciliano y corona de praliné tostado artesanal.",
+    imagen: "/images/products/ny_roll_pistacho_cut.jpg",
+    badge: "Top Más Vendido ★",
+    badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+  },
+  {
+    id: "prod_cunape_abizcochado",
+    nombre: "Cuñapé Abizcochado Crujiente",
+    tag: "Herencia Oriental • Queso Chaqueño",
+    precio: 8.0,
+    costo: 3.0,
+    categoria_id: "c3",
+    desc: "Receta tradicional con almidón de yuca seleccionado y queso chaqueño madurado, con ese crujiente abizcochado inconfundible.",
+    imagen: "/images/products/cunape_abizcochado_cut.jpg",
+    badge: "Clásico Criollo",
+    badgeColor: "bg-orange-500/20 text-orange-300 border-orange-500/30",
+  },
+  {
+    id: "prod_alfajor_manjar",
+    nombre: "Alfajor Artesanal Cochabambino",
+    tag: "Dulce de Leche • Masa Suave",
+    precio: 12.0,
+    costo: 4.5,
+    categoria_id: "c1",
+    desc: "Tapas suaves que se deshacen en boca, abundante manjar casero cocido a fuego lento y lluvia de nueces seleccionadas.",
+    imagen: "/images/products/alfajor_boliviano_cut.jpg",
+    badge: "Favorito de la Tarde",
+    badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+  },
+];
+
+const PHOTO_RIBBON_ITEMS = [
+  {
+    id: "ribbon-1",
+    nombre: "Croissant Francés de Mantequilla",
+    desc: "72 capas laminadas con pura mantequilla noble",
+    imagen: "/img/hero/pastries_coffee_table.jpg",
+    tag: "Viennoiserie",
+  },
+  {
+    id: "ribbon-2",
+    nombre: "New York Roll de Pistacho",
+    desc: "Hojaldre rueda con crema pastelera de pistacho",
+    imagen: "/images/products/ny_roll_pistacho_cut.jpg",
+    tag: "Pastelería Fina",
+  },
+  {
+    id: "ribbon-3",
+    nombre: "Nuestra Panadería & Café",
+    desc: "Horno a la vista y barista frente a ti",
+    imagen: "/img/hero/bakery_ambiance.jpg",
+    tag: "Casa Dencker",
+  },
+  {
+    id: "ribbon-4",
+    nombre: "Cuñapé Abizcochado Crujiente",
+    desc: "Herencia criolla con queso chaqueño madurado",
+    imagen: "/images/products/cunape_abizcochado_cut.jpg",
+    tag: "Tradición",
+  },
+  {
+    id: "ribbon-5",
+    nombre: "Alfajor de Dulce de Leche",
+    desc: "Manjar casero en masa que se deshace en boca",
+    imagen: "/images/products/alfajor_boliviano_cut.jpg",
+    tag: "Repostería",
+  },
+  {
+    id: "ribbon-6",
+    nombre: "Alveolado de Panal Francés",
+    desc: "Miga abierta perfecta y corteza crujiente",
+    imagen: "/images/products/croissant_french_cut.jpg",
+    tag: "Maestría",
+  },
+];
+
 interface SeccionMenu {
   id: string;
   categoriaId: string;
@@ -275,6 +371,7 @@ export default function HomePage() {
   const [mesaSeleccionadaAviso, setMesaSeleccionadaAviso] = useState(4);
   const [metodoPagoCuenta, setMetodoPagoCuenta] = useState<"efectivo" | "tarjeta" | "qr">("efectivo");
   const [avisoMeseroEnviado, setAvisoMeseroEnviado] = useState(false);
+  const [heroPastryIndex, setHeroPastryIndex] = useState(0);
 
   const handleLlamarMesero = (mesaNum: number, modoOverride?: "llamado" | "cuenta") => {
     const modoActivo = modoOverride || modoModalMesero;
@@ -506,44 +603,68 @@ export default function HomePage() {
   return (
     <div className="w-full min-h-screen bg-[#FAF7F2] text-[#1E130C] selection:bg-[#E2EBDC] selection:text-[#2D452E] overflow-x-hidden font-sans flex flex-col items-center">
       
-      {/* ── 1. HERO EDITORIAL DESCONGESTIONADO (FULL BLEED w-full) ── */}
-      <section className="w-full bg-gradient-to-b from-[#100A07] via-[#1A110B] to-[#100A07] text-white relative overflow-hidden flex flex-col items-center justify-center">
-        {/* Glows ambientales sutiles */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-[#87A987]/15 via-[#C49B71]/10 to-transparent blur-[160px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[350px] bg-[#527953]/15 blur-[120px] pointer-events-none" />
+      {/* ── 1. HERO GRANDIOSO DE ALTA GASTRONOMÍA & BRANDING DENCKER PAN ── */}
+      <section className="w-full bg-[#100A07] text-white relative overflow-hidden flex flex-col items-center justify-center">
+        {/* Foto de Fondo Atmosférica de la Panadería con iluminación cinematográfica */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <img
+            src="/img/hero/bakery_ambiance.jpg"
+            alt="Ambiente Dencker Pan"
+            className="w-full h-full object-cover object-center opacity-30 mix-blend-luminosity filter contrast-125 scale-105 transition-transform duration-1000"
+          />
+          {/* Capas de gradientes para garantizar contraste perfecto y legibilidad editorial */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#100A07] via-[#100A07]/80 to-[#100A07]/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#100A07] via-[#100A07]/75 to-[#100A07]/60" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-amber-500/15 via-[#C49B71]/10 to-transparent blur-[160px]" />
+          <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-emerald-600/10 blur-[140px]" />
+        </div>
 
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16 lg:py-24 relative z-10 space-y-12">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 pt-12 pb-16 lg:py-20 relative z-10 space-y-12">
           
-          {/* Badge Superior Centrado */}
+          {/* Emblema & Escudo Oficial Dencker Pan Centrado */}
           <div className="w-full flex justify-center sm:justify-start">
             <motion.div
-              initial={{ opacity: 0, y: -15 }}
+              initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={springPhysics}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-[#CDE0C9] text-xs font-semibold shadow-2xl"
+              className="inline-flex items-center gap-3.5 px-4 sm:px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-2xl border border-amber-400/40 text-amber-100 shadow-[0_8px_32px_rgba(217,119,6,0.2)] ring-1 ring-white/10"
             >
-              <span className="w-2 h-2 rounded-full bg-[#87A987] animate-pulse" />
-              <span>Fermentación de 24h • Horno de Masa Madre • Granos de Altura</span>
-              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#527953]/40 text-[#EBF3EA] font-bold">
-                Cochabamba
-              </span>
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-amber-500/20 p-1 border border-amber-400/50 flex items-center justify-center shrink-0 shadow-inner">
+                <img
+                  src={DENCKER_ASSETS.logo}
+                  alt="Dencker Pan Logo Oficial"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(217,119,6,0.5)]"
+                />
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="font-serif font-black tracking-wider uppercase text-amber-200">
+                  Dencker Pan
+                </span>
+                <span className="text-stone-400 font-normal hidden sm:inline">•</span>
+                <span className="text-stone-300 font-normal hidden sm:inline">
+                  Maison de Boulangerie & Café de Especialidad
+                </span>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/25 text-amber-300 border border-amber-400/40 font-mono font-bold">
+                  Cochabamba
+                </span>
+              </div>
             </motion.div>
           </div>
 
-          {/* Grilla Principal del Hero (8 Columnas Editorial + 4 Columnas Tarjeta Croissant) */}
+          {/* Grilla Principal del Hero (7 Columnas Copy Editorial + 5 Columnas Showcase Interactivo de Fotos) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center text-left">
             
-            {/* Columna Izquierda: Copy Editorial y 3 CTAs */}
-            <div className="lg:col-span-8 space-y-6">
+            {/* Columna Izquierda: Copy Editorial & Botones */}
+            <div className="lg:col-span-7 space-y-6">
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={springPhysics}
-                className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.06]"
+                className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05]"
               >
-                El aroma del pan crujiente,{" "}
-                <span className="italic font-normal text-[#CDE0C9] bg-gradient-to-r from-[#D8E6D3] via-[#FAF7F2] to-[#87A987] bg-clip-text text-transparent block sm:inline">
-                  elevado a una experiencia sensorial.
+                La nobleza del pan artesanal,{" "}
+                <span className="italic font-normal text-[#E8C59A] bg-gradient-to-r from-[#FCEBD5] via-[#E8C59A] to-[#C49B71] bg-clip-text text-transparent block sm:inline">
+                  en el corazón de Cochabamba.
                 </span>
               </motion.h1>
 
@@ -553,26 +674,26 @@ export default function HomePage() {
                 transition={{ ...springPhysics, delay: 0.1 }}
                 className="text-[#D8C7B8] text-base sm:text-lg max-w-2xl font-sans leading-relaxed"
               >
-                Masa madre viva de 24 horas, hojaldres con 100% pura mantequilla e infusiones de café de altura cosechado en Caranavi a 1,600 msnm.
+                Masa madre viva de 24 horas, hojaldres con 100% pura mantequilla e infusiones de café de altura cosechado en Caranavi. Horneado fresco dos veces al día en nuestro horno artesanal.
               </motion.p>
 
-              {/* 3 Botones Claros y Espaciados */}
+              {/* Botones de Acción */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...springPhysics, delay: 0.2 }}
-                className="flex flex-wrap items-center gap-4 pt-2"
+                className="flex flex-wrap items-center gap-3.5 pt-2"
               >
                 <motion.a
-                  href="#menu-bento"
+                  href="#catalogo"
                   whileHover={{ scale: 1.04, y: -2 }}
                   whileTap={{ scale: 0.96, y: 1 }}
                   transition={springPhysics}
                   onClick={() => soundManager.playPastryCrinkle()}
-                  className="px-7 py-3.5 rounded-full bg-[#FAF7F2] hover:bg-white text-[#1E130C] font-extrabold text-sm shadow-[0_8px_30px_rgba(255,255,255,0.2)] flex items-center gap-2.5 select-none transition cursor-pointer"
+                  className="px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-110 text-stone-950 font-black text-sm shadow-[0_8px_30px_rgba(245,158,11,0.35)] flex items-center gap-2.5 select-none transition cursor-pointer"
                 >
-                  <ShoppingBag size={17} className="text-[#527953]" />
-                  <span>Explorar Menú Bento</span>
+                  <ShoppingBag size={17} className="text-stone-950" />
+                  <span>Explorar Menú Digital</span>
                   <ArrowRight size={15} />
                 </motion.a>
 
@@ -582,10 +703,10 @@ export default function HomePage() {
                   whileTap={{ scale: 0.96, y: 1 }}
                   transition={springPhysics}
                   onClick={() => soundManager.playCoffeeSteam()}
-                  className="px-6 py-3.5 rounded-full bg-[#241710]/90 hover:bg-[#2E1D14] border border-[#527953]/50 text-[#CDE0C9] font-bold text-sm flex items-center gap-2 select-none shadow-lg transition cursor-pointer"
+                  className="px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-[#CDE0C9] font-bold text-xs flex items-center gap-2 select-none shadow-lg transition cursor-pointer"
                 >
-                  <Coffee size={17} className="text-[#87A987]" />
-                  <span>CoffeeLab 3D Interactivo</span>
+                  <Coffee size={16} className="text-[#87A987]" />
+                  <span>CoffeeLab 3D</span>
                 </motion.a>
 
                 <motion.button
@@ -596,10 +717,10 @@ export default function HomePage() {
                     setModoModalMesero("llamado");
                     setModalMeseroAbierto(true);
                   }}
-                  className="px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-stone-200 font-semibold text-xs flex items-center gap-2 select-none transition cursor-pointer"
+                  className="px-4 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-stone-200 font-semibold text-xs flex items-center gap-2 select-none transition cursor-pointer"
                 >
-                  <Bell size={15} className="text-[#D49B54]" />
-                  <span>Llamar al Mesero</span>
+                  <Bell size={14} className="text-[#D49B54]" />
+                  <span>Llamar Mesero</span>
                 </motion.button>
 
                 <motion.button
@@ -611,91 +732,136 @@ export default function HomePage() {
                     setModoModalMesero("cuenta");
                     setModalMeseroAbierto(true);
                   }}
-                  className="px-5 py-3.5 rounded-full bg-[#D49B54]/25 hover:bg-[#D49B54]/35 border border-[#D49B54]/50 text-[#FCEBD5] font-bold text-xs flex items-center gap-2 select-none transition cursor-pointer shadow-md"
+                  className="px-4 py-3.5 rounded-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 font-bold text-xs flex items-center gap-2 select-none transition cursor-pointer shadow-md"
                 >
-                  <Receipt size={15} className="text-[#E6AE68]" />
-                  <span>Traer la Cuenta</span>
+                  <Receipt size={14} className="text-[#E6AE68]" />
+                  <span>Traer Cuenta</span>
                 </motion.button>
               </motion.div>
             </div>
 
-            {/* Columna Derecha: Tarjeta Editorial Croissant 100% Mantequilla */}
-            <div className="lg:col-span-4">
+            {/* Columna Derecha: Tarjeta Showcase Interactiva de Fotos Reales */}
+            <div className="lg:col-span-5">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ ...springPhysics, delay: 0.25 }}
-                className="relative rounded-3xl bg-gradient-to-b from-[#241710] to-[#160E0A] border border-[#527953]/40 p-6 shadow-2xl backdrop-blur-xl space-y-4"
+                className="relative rounded-[32px] bg-gradient-to-b from-[#241710]/95 via-[#1E130D]/95 to-[#160E0A]/95 border border-amber-500/40 p-6 shadow-2xl backdrop-blur-2xl space-y-4"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] uppercase tracking-widest text-[#CDE0C9] font-bold flex items-center gap-1.5">
-                    <Flame size={14} className="text-[#87A987]" />
-                    <span>Tanda Recién Salida</span>
-                  </span>
-                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
-                    Horno Activo
-                  </span>
+                {/* Selector de Pestañas de Pastelería Artesanal */}
+                <div className="flex items-center justify-between gap-1 p-1 rounded-2xl bg-black/40 border border-white/10">
+                  {HERO_PASTRY_SHOWCASE.map((item, idx) => {
+                    const isActive = heroPastryIndex === idx;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          soundManager.playPastryCrinkle();
+                          setHeroPastryIndex(idx);
+                        }}
+                        className={`flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold transition-all truncate cursor-pointer ${
+                          isActive
+                            ? "bg-amber-500 text-stone-950 shadow-md font-extrabold"
+                            : "text-stone-400 hover:text-white"
+                        }`}
+                      >
+                        {item.nombre.split(" ")[0]}
+                      </button>
+                    );
+                  })}
                 </div>
 
-                <div className="relative h-44 rounded-2xl overflow-hidden bg-stone-900 group">
-                  <img
-                    src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=800&q=80"
-                    alt="Croissant Francés 100% Mantequilla"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-                    <div>
-                      <p className="text-[11px] text-[#CDE0C9] font-semibold">Laminado Francés</p>
-                      <h3 className="font-serif text-lg font-bold text-white">
-                        Croissant 100% Mantequilla
-                      </h3>
-                    </div>
-                    <span className="bg-[#FAF7F2] text-[#1E130C] font-extrabold text-xs px-3 py-1 rounded-full shadow-md font-sans">
-                      Bs 18.00
-                    </span>
-                  </div>
-                </div>
+                {/* Foto Principal de Alta Resolución con Efecto de Profundidad */}
+                {(() => {
+                  const currentItem = HERO_PASTRY_SHOWCASE[heroPastryIndex];
+                  return (
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentItem.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.25 }}
+                        className="space-y-4"
+                      >
+                        <div className="relative h-60 sm:h-64 rounded-2xl overflow-hidden bg-stone-900 border border-white/10 group shadow-inner">
+                          <img
+                            src={currentItem.imagen}
+                            alt={currentItem.nombre}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
 
-                <p className="text-xs text-[#D8C7B8] leading-relaxed">
-                  72 capas de hojaldre crujiente horneadas cada mañana a las 07:30 y cada tarde a las 16:30 en nuestra casa de Cochabamba.
-                </p>
+                          {/* Pill Superior: Tanda o Estado */}
+                          <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                            <span className={`text-[10px] font-bold px-3 py-1 rounded-full border backdrop-blur-md ${currentItem.badgeColor}`}>
+                              {currentItem.badge}
+                            </span>
+                            <span className="text-[10px] px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 font-mono font-bold border border-amber-500/30">
+                              Hecho a Mano
+                            </span>
+                          </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => {
-                    soundManager.playPastryCrinkle();
-                    addItem({
-                      id: "prod-croissant-hero",
-                      nombre: "Croissant Francés 100% Mantequilla",
-                      precio: 18.0,
-                      costo: 6.0,
-                      disponible: true,
-                      es_mas_vendido: true,
-                      stock: 50,
-                      categoria_id: "c2",
-                      estacion: "vitrina",
-                      chips_personalizacion: ["Recién horneado"],
-                      descripcion: "Hojaldrado tradicional con 100% mantequilla noble y 72 capas.",
-                      created_at: new Date().toISOString(),
-                      updated_at: new Date().toISOString(),
-                    });
-                  }}
-                  className="w-full py-3 rounded-2xl bg-[#527953]/25 hover:bg-[#527953] text-[#CDE0C9] hover:text-white border border-[#527953]/50 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Plus size={15} />
-                  <span>Reservar de la Tanda Caliente</span>
-                </motion.button>
+                          {/* Info de Pie de Foto */}
+                          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                            <div>
+                              <p className="text-[11px] text-amber-300 font-semibold">
+                                {currentItem.tag}
+                              </p>
+                              <h3 className="font-serif text-xl font-bold text-white leading-tight">
+                                {currentItem.nombre}
+                              </h3>
+                            </div>
+                            <span className="bg-amber-400 text-stone-950 font-black text-xs px-3.5 py-1.5 rounded-full shadow-lg font-mono">
+                              Bs {currentItem.precio.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-[#D8C7B8] leading-relaxed">
+                          {currentItem.desc}
+                        </p>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => {
+                            soundManager.playPastryCrinkle();
+                            addItem({
+                              id: currentItem.id,
+                              nombre: currentItem.nombre,
+                              precio: currentItem.precio,
+                              costo: currentItem.costo,
+                              disponible: true,
+                              es_mas_vendido: true,
+                              stock: 50,
+                              categoria_id: currentItem.categoria_id,
+                              estacion: "vitrina",
+                              chips_personalizacion: ["Recién horneado"],
+                              descripcion: currentItem.desc,
+                              created_at: new Date().toISOString(),
+                              updated_at: new Date().toISOString(),
+                            });
+                          }}
+                          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:brightness-110 text-stone-950 font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <Plus size={16} />
+                          <span>Añadir a mi Orden ({currentItem.nombre.split(" ")[0]})</span>
+                        </motion.button>
+                      </motion.div>
+                    </AnimatePresence>
+                  );
+                })()}
               </motion.div>
             </div>
 
           </div>
 
-          {/* Franja Inferior Limpia de 4 Columnas */}
-          <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+          {/* Franja Inferior de 4 Columnas con Íconos y Datos */}
+          <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5 hover:bg-white/10 transition">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/30">
                 <Clock size={18} />
               </div>
               <div>
@@ -704,28 +870,28 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5 hover:bg-white/10 transition">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/30">
                 <Coffee size={18} />
               </div>
               <div>
                 <p className="font-bold text-sm text-white">Caranavi & Samaipata</p>
-                <p className="text-xs text-[#A8988D]">100% arábica seleccionado</p>
+                <p className="text-xs text-[#A8988D]">100% arábica de altura</p>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5 hover:bg-white/10 transition">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/30">
                 <Flame size={18} />
               </div>
               <div>
                 <p className="font-bold text-sm text-white">Masa Madre Viva</p>
-                <p className="text-xs text-[#A8988D]">Fermentación lenta y pura</p>
+                <p className="text-xs text-[#A8988D]">Fermentación lenta de 24h</p>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#527953]/25 text-[#87A987] flex items-center justify-center shrink-0 border border-[#527953]/30">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3.5 hover:bg-white/10 transition">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/30">
                 <ShieldCheck size={18} />
               </div>
               <div>
@@ -735,258 +901,389 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Cinta de Fotos de Galería Real: "Nuestra Pasión en Imágenes" */}
+          <div className="pt-2 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles size={16} className="text-amber-400" />
+                <h3 className="font-serif text-lg font-bold text-white tracking-wide">
+                  Nuestra Pasión en Imágenes
+                </h3>
+              </div>
+              <span className="text-[11px] text-amber-300/80 font-mono">
+                Vitrina 100% Auténtica Dencker Pan
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {PHOTO_RIBBON_ITEMS.map((item) => (
+                <motion.div
+                  key={item.id}
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  transition={springPhysics}
+                  className="rounded-2xl overflow-hidden bg-stone-900 border border-white/10 relative group aspect-square shadow-lg"
+                >
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  
+                  <div className="absolute top-2 left-2">
+                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-amber-200 border border-white/15">
+                      {item.tag}
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                    <h4 className="text-xs font-bold text-white leading-tight">
+                      {item.nombre}
+                    </h4>
+                    <p className="text-[10px] text-stone-300 line-clamp-1 mt-0.5">
+                      {item.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* ── 1.5. SELECTOR DE MODALIDADES DE ATENCIÓN (PARA LLEVAR / DELIVERY / MESA / RESERVA / CATERING) ── */}
-      <section className="w-full bg-[#150E09] border-y border-[#3D271D]/50 py-12 text-white relative z-20">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 space-y-8">
+      <section className="w-full bg-[#150E09] border-y border-[#3D271D]/50 py-16 text-white relative z-20">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 space-y-10">
           
-          {/* Header de la Sección */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="space-y-1.5">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-[#87A987] flex items-center gap-1.5">
-                <Sparkles size={13} className="text-[#87A987]" />
-                <span>Atención Flexible • Dencker Pan Cochabamba</span>
-              </span>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                Elige cómo disfrutar tu experiencia hoy
+          {/* Header de la Sección con Branding Dencker Pan */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-white/5">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/img/logo/logo.png"
+                  alt="Dencker Pan Sello"
+                  className="w-7 h-7 object-contain drop-shadow-[0_0_10px_rgba(212,155,84,0.4)]"
+                />
+                <span className="text-[11px] uppercase font-bold tracking-widest text-[#D49B54] flex items-center gap-1.5">
+                  <Sparkles size={13} className="text-[#D49B54]" />
+                  <span>Experiencia Flexible • Dencker Pan Cochabamba</span>
+                </span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+                Elige cómo disfrutar tu momento hoy
               </h2>
-              <p className="text-xs sm:text-sm text-[#D8C7B8] max-w-xl leading-relaxed">
-                ¿Estás en tu oficina, descansando en casa o ya tomaste asiento en el local? Selecciona la opción perfecta para ti:
+              <p className="text-xs sm:text-sm text-[#D8C7B8] max-w-2xl leading-relaxed">
+                ¿Prefieres retirar recién horneado de camino al trabajo, recibir en tu domicilio con aroma a café, o pedir directo desde tu mesa sin hacer fila?
               </p>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-3 shrink-0">
               <span className="text-[11px] text-[#A8988D] hidden sm:inline">¿Dudas con tu pedido?</span>
               <a
                 href={DENCKER_ASSETS.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3.5 py-2 rounded-full bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition"
+                className="px-4 py-2.5 rounded-full bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-2 transition shadow-sm hover:border-emerald-400/50"
               >
-                <MessageCircle size={14} />
+                <MessageCircle size={15} />
                 <span>Asistencia en Vivo</span>
               </a>
             </div>
           </div>
 
-          {/* Grilla Bento de 4 Modalidades */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Grilla Bento de 4 Modalidades con Portadas Fotográficas Reales */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             
             {/* 1. Para Llevar (Takeaway Express) */}
             <motion.div
-              whileHover={{ y: -3 }}
+              whileHover={{ y: -5 }}
               transition={springPhysics}
-              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-[#527953]/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-[#87A987]/50 transition-all"
+              className="rounded-3xl bg-gradient-to-b from-[#22160F] to-[#160E08] border border-[#527953]/35 overflow-hidden shadow-xl flex flex-col justify-between group hover:border-[#87A987]/60 hover:shadow-2xl hover:shadow-[#527953]/20 transition-all"
             >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-[#527953]/20 text-[#87A987] flex items-center justify-center border border-[#527953]/30">
+              <div>
+                {/* Portada Fotográfica */}
+                <div className="relative h-36 w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="/img/hero/pastries_coffee_table.jpg"
+                    alt="Takeaway Express Dencker Pan"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#22160F] via-black/40 to-black/10" />
+                  
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-950/80 backdrop-blur-md text-[#CDE0C9] border border-emerald-500/40">
+                      Sin Filas
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-3 left-3 w-10 h-10 rounded-2xl bg-[#527953] text-white flex items-center justify-center border border-emerald-400/50 shadow-md">
                     <Store size={20} />
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#527953]/30 text-[#CDE0C9]">
-                    Sin Filas
-                  </span>
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-white group-hover:text-[#CDE0C9] transition-colors">
-                    Para Recoger (Takeaway)
-                  </h3>
-                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
-                    Ordena antes de salir. Empacamos tus panes y café caliente para que retires directo por vitrina sin esperas.
-                  </p>
-                </div>
-                <div className="text-[10px] text-[#A3B899] font-medium flex items-center gap-1.5 pt-1">
-                  <Clock size={12} />
-                  <span>Tandas calientes 07:30 y 16:30</span>
+
+                {/* Contenido */}
+                <div className="p-5 space-y-3">
+                  <div>
+                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-[#CDE0C9] transition-colors">
+                      Para Recoger (Takeaway)
+                    </h3>
+                    <p className="text-xs text-[#D8C7B8] mt-1.5 leading-relaxed">
+                      Ordena antes de salir. Empacamos tus panes y café caliente en packaging térmico noble para retirar directo por vitrina sin esperas.
+                    </p>
+                  </div>
+                  
+                  <div className="text-[10px] text-[#A3B899] font-medium flex items-center gap-1.5 pt-1 border-t border-white/5">
+                    <Clock size={12} className="text-[#87A987]" />
+                    <span>Tandas calientes 07:30 y 16:30</span>
+                  </div>
                 </div>
               </div>
 
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                onClick={() => {
-                  soundManager.playPastryCrinkle();
-                  const el = document.getElementById("menu-bento");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="w-full py-2.5 px-3 rounded-2xl bg-[#527953]/20 hover:bg-[#527953] text-[#CDE0C9] hover:text-white border border-[#527953]/40 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>Pedir para Recoger</span>
-                <ArrowRight size={13} />
-              </motion.button>
+              <div className="p-5 pt-0">
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => {
+                    soundManager.playPastryCrinkle();
+                    const el = document.getElementById("menu-bento");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-[#527953]/25 hover:bg-[#527953] text-[#CDE0C9] hover:text-white border border-[#527953]/50 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <span>Pedir para Recoger</span>
+                  <ArrowRight size={13} />
+                </motion.button>
+              </div>
             </motion.div>
 
             {/* 2. Delivery Cochabamba */}
             <motion.div
-              whileHover={{ y: -3 }}
+              whileHover={{ y: -5 }}
               transition={springPhysics}
-              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-[#D49B54]/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-[#D49B54]/50 transition-all"
+              className="rounded-3xl bg-gradient-to-b from-[#22160F] to-[#160E08] border border-[#D49B54]/35 overflow-hidden shadow-xl flex flex-col justify-between group hover:border-[#D49B54]/70 hover:shadow-2xl hover:shadow-[#D49B54]/20 transition-all"
             >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-[#D49B54]/20 text-[#D49B54] flex items-center justify-center border border-[#D49B54]/30">
+              <div>
+                {/* Portada Fotográfica */}
+                <div className="relative h-36 w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="/images/products/croissant_french_cut.jpg"
+                    alt="Delivery de Croissant y Café"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#22160F] via-black/40 to-black/10" />
+                  
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-950/80 backdrop-blur-md text-[#F5DEB3] border border-amber-500/40">
+                      A tu Puerta
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-3 left-3 w-10 h-10 rounded-2xl bg-[#D49B54] text-[#120D0A] flex items-center justify-center border border-amber-300/50 shadow-md">
                     <MapPin size={20} />
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D49B54]/20 text-[#F5DEB3]">
-                    A tu Puerta
-                  </span>
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-white group-hover:text-[#F5DEB3] transition-colors">
-                    Delivery Cochabamba
-                  </h3>
-                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
-                    Hojaldres crujientes, New York Rolls y café filtrado en moto directo a tu domicilio o lugar de trabajo.
-                  </p>
-                </div>
-                <div className="text-[10px] text-[#D8C7B8] font-medium flex items-center gap-1.5 pt-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>Zona Norte, Cala Cala, Recoleta, Centro</span>
-                </div>
-              </div>
 
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                onClick={() => {
-                  soundManager.playTactileClick();
-                  const el = document.getElementById("menu-bento");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="w-full py-2.5 px-3 rounded-2xl bg-[#D49B54]/20 hover:bg-[#D49B54] text-[#F5DEB3] hover:text-[#120D0A] border border-[#D49B54]/40 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>Pedir Delivery</span>
-                <ArrowRight size={13} />
-              </motion.button>
-            </motion.div>
-
-            {/* 3. Autoservicio en Mesa (¿Ya estás en el local?) */}
-            <motion.div
-              whileHover={{ y: -3 }}
-              transition={springPhysics}
-              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-amber-600/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-amber-500/50 transition-all"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center border border-amber-500/30">
-                    <Utensils size={20} />
+                {/* Contenido */}
+                <div className="p-5 space-y-3">
+                  <div>
+                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-[#F5DEB3] transition-colors">
+                      Delivery Cochabamba
+                    </h3>
+                    <p className="text-xs text-[#D8C7B8] mt-1.5 leading-relaxed">
+                      Hojaldres crujientes con 100% mantequilla noble y café de especialidad en moto directo a tu domicilio o lugar de trabajo.
+                    </p>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200">
-                    En Salón
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-white group-hover:text-amber-200 transition-colors">
-                    ¿Ya estás sentado?
-                  </h3>
-                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
-                    Si entraste sin escanear el QR físico, pulsa tu mesa para pedir desde tu asiento:
-                  </p>
-                </div>
-                
-                {/* 12 Mesas Rápidas */}
-                <div className="grid grid-cols-6 gap-1 pt-1">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
-                    <Link
-                      key={num}
-                      href={`/mesa/${num}`}
-                      onClick={() => {
-                        soundManager.playTactileClick();
-                        setMesa(num);
-                      }}
-                      className="py-1 rounded-lg bg-white/5 hover:bg-amber-500 hover:text-stone-950 border border-white/10 text-stone-300 font-mono text-[11px] font-bold text-center transition"
-                      title={`Ir a Mesa ${num}`}
-                    >
-                      M{num}
-                    </Link>
-                  ))}
+                  
+                  <div className="text-[10px] text-[#D8C7B8] font-medium flex items-center gap-1.5 pt-1 border-t border-white/5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                    <span className="truncate">Zona Norte, Cala Cala, Recoleta, Centro</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <motion.button
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => {
-                    setModoModalMesero("llamado");
-                    setModalMeseroAbierto(true);
-                  }}
-                  className="w-full py-2 px-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-stone-200 border border-white/10 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <Bell size={13} className="text-[#D49B54]" />
-                  <span>Mesero</span>
-                </motion.button>
-
+              <div className="p-5 pt-0">
                 <motion.button
                   whileTap={{ scale: 0.96 }}
                   onClick={() => {
                     soundManager.playTactileClick();
-                    setModoModalMesero("cuenta");
-                    setModalMeseroAbierto(true);
+                    const el = document.getElementById("menu-bento");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="w-full py-2 px-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  className="w-full py-2.5 px-3 rounded-2xl bg-[#D49B54]/25 hover:bg-[#D49B54] text-[#F5DEB3] hover:text-[#120D0A] border border-[#D49B54]/50 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                 >
-                  <Receipt size={13} className="text-amber-300" />
-                  <span>Traer Cuenta</span>
+                  <span>Pedir Delivery</span>
+                  <ArrowRight size={13} />
                 </motion.button>
+              </div>
+            </motion.div>
+
+            {/* 3. Autoservicio en Mesa (¿Ya estás en el local?) */}
+            <motion.div
+              whileHover={{ y: -5 }}
+              transition={springPhysics}
+              className="rounded-3xl bg-gradient-to-b from-[#22160F] to-[#160E08] border border-amber-600/35 overflow-hidden shadow-xl flex flex-col justify-between group hover:border-amber-500/70 hover:shadow-2xl hover:shadow-amber-500/20 transition-all"
+            >
+              <div>
+                {/* Portada Fotográfica */}
+                <div className="relative h-36 w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="/img/hero/bakery_ambiance.jpg"
+                    alt="Salón y Mesas Dencker Pan"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#22160F] via-black/40 to-black/10" />
+                  
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-950/80 backdrop-blur-md text-amber-200 border border-amber-500/40">
+                      En Salón
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-3 left-3 w-10 h-10 rounded-2xl bg-amber-600 text-white flex items-center justify-center border border-amber-400/50 shadow-md">
+                    <Utensils size={20} />
+                  </div>
+                </div>
+
+                {/* Contenido */}
+                <div className="p-5 space-y-3">
+                  <div>
+                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-amber-200 transition-colors">
+                      ¿Ya estás sentado?
+                    </h3>
+                    <p className="text-xs text-[#D8C7B8] mt-1.5 leading-relaxed">
+                      Pide directo desde tu mesa sin hacer fila. Selecciona tu número para abrir el menú o llama al mesero:
+                    </p>
+                  </div>
+                  
+                  {/* 12 Mesas Rápidas */}
+                  <div className="grid grid-cols-6 gap-1 pt-1">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                      <Link
+                        key={num}
+                        href={`/mesa/${num}`}
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          setMesa(num);
+                        }}
+                        className="py-1 rounded-lg bg-white/5 hover:bg-amber-500 hover:text-stone-950 border border-white/10 text-stone-300 font-mono text-[11px] font-bold text-center transition hover:border-amber-400"
+                        title={`Ir a Mesa ${num}`}
+                      >
+                        M{num}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 pt-0">
+                <div className="grid grid-cols-2 gap-2">
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => {
+                      setModoModalMesero("llamado");
+                      setModalMeseroAbierto(true);
+                    }}
+                    className="w-full py-2 px-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-stone-200 border border-white/10 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Bell size={13} className="text-[#D49B54]" />
+                    <span>Mesero</span>
+                  </motion.button>
+
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setModoModalMesero("cuenta");
+                      setModalMeseroAbierto(true);
+                    }}
+                    className="w-full py-2 px-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 text-amber-200 border border-amber-400/35 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Receipt size={13} className="text-amber-300" />
+                    <span>Traer Cuenta</span>
+                  </motion.button>
+                </div>
               </div>
             </motion.div>
 
             {/* 4. Reservar Mesa en Salón */}
             <motion.div
-              whileHover={{ y: -3 }}
+              whileHover={{ y: -5 }}
               transition={springPhysics}
-              className="p-5 rounded-3xl bg-gradient-to-b from-[#22160F] to-[#18100A] border border-blue-500/30 shadow-lg flex flex-col justify-between space-y-4 group hover:border-blue-400/50 transition-all"
+              className="rounded-3xl bg-gradient-to-b from-[#22160F] to-[#160E08] border border-blue-500/35 overflow-hidden shadow-xl flex flex-col justify-between group hover:border-blue-400/70 hover:shadow-2xl hover:shadow-blue-500/20 transition-all"
             >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-300 flex items-center justify-center border border-blue-500/30">
+              <div>
+                {/* Portada Fotográfica */}
+                <div className="relative h-36 w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="/images/products/ny_roll_pistacho_cut.jpg"
+                    alt="Reservas de Salón y Brunch Dencker Pan"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#22160F] via-black/40 to-black/10" />
+                  
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-950/80 backdrop-blur-md text-blue-200 border border-blue-400/40">
+                      Anticipado
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-3 left-3 w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center border border-blue-300/50 shadow-md">
                     <Calendar size={20} />
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-200">
-                    Anticipado
-                  </span>
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-white group-hover:text-blue-200 transition-colors">
-                    Reservar Mesa
-                  </h3>
-                  <p className="text-xs text-[#D8C7B8] mt-1 leading-relaxed">
-                    Asegura tu lugar en el Salón Principal o en la Terraza Jardín para brunch o tertulias de café.
-                  </p>
-                </div>
-                <div className="text-[10px] text-[#C9B8A6] font-medium flex items-center gap-1.5 pt-1">
-                  <Users size={12} />
-                  <span>Mesas para 2, 4, 6 o grupos grandes</span>
+
+                {/* Contenido */}
+                <div className="p-5 space-y-3">
+                  <div>
+                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-blue-200 transition-colors">
+                      Reservar Mesa
+                    </h3>
+                    <p className="text-xs text-[#D8C7B8] mt-1.5 leading-relaxed">
+                      Asegura tu lugar en el Salón Principal o en la Terraza Jardín para brunches, tertulias de café o aniversarios.
+                    </p>
+                  </div>
+                  
+                  <div className="text-[10px] text-[#C9B8A6] font-medium flex items-center gap-1.5 pt-1 border-t border-white/5">
+                    <Users size={12} className="text-blue-300" />
+                    <span>Mesas para 2, 4, 6 o grupos grandes</span>
+                  </div>
                 </div>
               </div>
 
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                onClick={() => {
-                  soundManager.playTactileClick();
-                  setReservaModalOpen(true);
-                }}
-                className="w-full py-2.5 px-3 rounded-2xl bg-blue-500/20 hover:bg-blue-600 text-blue-200 hover:text-white border border-blue-400/40 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <Calendar size={13} />
-                <span>Solicitar Reserva</span>
-              </motion.button>
+              <div className="p-5 pt-0">
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    setReservaModalOpen(true);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-blue-500/25 hover:bg-blue-600 text-blue-200 hover:text-white border border-blue-400/50 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <Calendar size={13} />
+                  <span>Solicitar Reserva</span>
+                </motion.button>
+              </div>
             </motion.div>
 
           </div>
 
-          {/* Banner Especial de Catering & Cálculos */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/30">
-                <Award size={18} />
+          {/* Banner Especial de Catering & Eventos con Miniaturas */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-white/5 via-white/[0.07] to-white/5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-5 relative overflow-hidden">
+            <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-700/20 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/40 shadow-inner">
+                <Award size={22} />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-bold text-white">
-                  ¿Defensas de Grado, Cumpleaños o Reuniones Corporativas?
+                <p className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                  <span>¿Defensas de Grado, Cumpleaños o Eventos Corporativos?</span>
+                  <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 hidden md:inline">
+                    Catering Exclusivo
+                  </span>
                 </p>
-                <p className="text-[11px] text-[#A8988D]">
-                  Usa nuestro calculador automático de catering y cotiza bocaditos, tortas y barismo por persona en segundos.
+                <p className="text-xs text-[#A8988D] mt-0.5 leading-relaxed max-w-xl">
+                  Calcula al instante presupuesto para bocaditos artesanales, hojaldres, tortas y barra de café filtrado por persona.
                 </p>
               </div>
             </div>
@@ -996,10 +1293,10 @@ export default function HomePage() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => soundManager.playTactileClick()}
-              className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold flex items-center gap-2 shrink-0 transition"
+              className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-bold flex items-center gap-2 shrink-0 transition shadow-lg shadow-amber-900/30 cursor-pointer relative z-10"
             >
               <span>Calcular Presupuesto</span>
-              <ArrowRight size={13} />
+              <ArrowRight size={14} />
             </motion.a>
           </div>
 
