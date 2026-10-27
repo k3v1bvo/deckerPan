@@ -40,6 +40,7 @@ import {
   Lock,
   Phone,
   FileText,
+  Receipt,
 } from "lucide-react";
 import CoffeeLab from "@/components/CoffeeLab";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
@@ -268,18 +269,32 @@ export default function HomePage() {
   const [incluirTortaEspecial, setIncluirTortaEspecial] = useState(true);
   const [incluirBarista, setIncluirBarista] = useState(true);
 
-  // Estados Modal Llamar Mesero en Salón
+  // Estados Modal Llamar Mesero en Salón & Traer Cuenta
   const [modalMeseroAbierto, setModalMeseroAbierto] = useState(false);
+  const [modoModalMesero, setModoModalMesero] = useState<"llamado" | "cuenta">("llamado");
   const [mesaSeleccionadaAviso, setMesaSeleccionadaAviso] = useState(4);
+  const [metodoPagoCuenta, setMetodoPagoCuenta] = useState<"efectivo" | "tarjeta" | "qr">("efectivo");
   const [avisoMeseroEnviado, setAvisoMeseroEnviado] = useState(false);
 
-  const handleLlamarMesero = (mesaNum: number) => {
+  const handleLlamarMesero = (mesaNum: number, modoOverride?: "llamado" | "cuenta") => {
+    const modoActivo = modoOverride || modoModalMesero;
     soundManager.playWaiterBell();
+
+    const esCuenta = modoActivo === "cuenta";
+    const metodoLabel =
+      metodoPagoCuenta === "tarjeta"
+        ? "Datáfono / Tarjeta"
+        : metodoPagoCuenta === "qr"
+        ? "Cobro QR en mesa"
+        : "Efectivo";
+
     addAlerta({
       mesa_numero: mesaNum,
-      tipo: "llamado",
-      mensaje: `Mesa ${mesaNum} solicita atención del personal en salón`,
-      datos_extra: {},
+      tipo: esCuenta ? "cuenta_pedida" : "llamado",
+      mensaje: esCuenta
+        ? `Mesa ${mesaNum} solicita la cuenta (${metodoLabel})`
+        : `Mesa ${mesaNum} solicita atención del personal en salón`,
+      datos_extra: { metodo: metodoPagoCuenta, modo: modoActivo },
     });
     setAvisoMeseroEnviado(true);
     setTimeout(() => {
@@ -577,11 +592,29 @@ export default function HomePage() {
                   whileHover={{ scale: 1.04, y: -2 }}
                   whileTap={{ scale: 0.96, y: 1 }}
                   transition={springPhysics}
-                  onClick={() => setModalMeseroAbierto(true)}
+                  onClick={() => {
+                    setModoModalMesero("llamado");
+                    setModalMeseroAbierto(true);
+                  }}
                   className="px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-stone-200 font-semibold text-xs flex items-center gap-2 select-none transition cursor-pointer"
                 >
                   <Bell size={15} className="text-[#D49B54]" />
                   <span>Llamar al Mesero</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96, y: 1 }}
+                  transition={springPhysics}
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    setModoModalMesero("cuenta");
+                    setModalMeseroAbierto(true);
+                  }}
+                  className="px-5 py-3.5 rounded-full bg-[#D49B54]/25 hover:bg-[#D49B54]/35 border border-[#D49B54]/50 text-[#FCEBD5] font-bold text-xs flex items-center gap-2 select-none transition cursor-pointer shadow-md"
+                >
+                  <Receipt size={15} className="text-[#E6AE68]" />
+                  <span>Traer la Cuenta</span>
                 </motion.button>
               </motion.div>
             </div>
@@ -870,14 +903,30 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <motion.button
                   whileTap={{ scale: 0.96 }}
-                  onClick={() => setModalMeseroAbierto(true)}
-                  className="w-full py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  onClick={() => {
+                    setModoModalMesero("llamado");
+                    setModalMeseroAbierto(true);
+                  }}
+                  className="w-full py-2 px-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-stone-200 border border-white/10 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <Bell size={13} />
-                  <span>Llamar al Mesero</span>
+                  <Bell size={13} className="text-[#D49B54]" />
+                  <span>Mesero</span>
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    setModoModalMesero("cuenta");
+                    setModalMeseroAbierto(true);
+                  }}
+                  className="w-full py-2 px-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 text-[11px] font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                  <Receipt size={13} className="text-amber-300" />
+                  <span>Traer Cuenta</span>
                 </motion.button>
               </div>
             </motion.div>
@@ -2070,7 +2119,7 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Modal Llamar al Mesero en Salón */}
+        {/* Modal Llamar al Mesero / Traer Cuenta en Salón */}
         {modalMeseroAbierto && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
             <motion.div
@@ -2082,12 +2131,18 @@ export default function HomePage() {
             >
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#D49B54]/20 border border-[#D49B54]/40 flex items-center justify-center text-[#E6AE68]">
-                    <Bell size={18} />
+                  <div className="w-10 h-10 rounded-2xl bg-[#D49B54]/20 border border-[#D49B54]/40 flex items-center justify-center text-[#E6AE68]">
+                    {modoModalMesero === "cuenta" ? <Receipt size={20} /> : <Bell size={20} />}
                   </div>
                   <div>
-                    <h3 className="font-serif text-2xl font-bold">Llamar al Mesero</h3>
-                    <p className="text-[11px] text-[#C9B8A6]">Atención inmediata en salón Dencker Pan</p>
+                    <h3 className="font-serif text-2xl font-bold">
+                      {modoModalMesero === "cuenta" ? "Traer la Cuenta" : "Llamar al Mesero"}
+                    </h3>
+                    <p className="text-[11px] text-[#C9B8A6]">
+                      {modoModalMesero === "cuenta"
+                        ? "El mesero te llevará el ticket para pagar en tu mesa"
+                        : "Atención inmediata en salón Dencker Pan"}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -2095,9 +2150,43 @@ export default function HomePage() {
                     setModalMeseroAbierto(false);
                     setAvisoMeseroEnviado(false);
                   }}
-                  className="p-1.5 rounded-full hover:bg-white/10 text-[#C9B8A6] transition"
+                  className="p-1.5 rounded-full hover:bg-white/10 text-[#C9B8A6] transition cursor-pointer"
                 >
                   <X size={18} />
+                </button>
+              </div>
+
+              {/* Selector de Modo: Asistencia vs Traer Cuenta */}
+              <div className="grid grid-cols-2 p-1 rounded-2xl bg-black/40 border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    setModoModalMesero("llamado");
+                  }}
+                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    modoModalMesero === "llamado"
+                      ? "bg-[#D49B54] text-[#120D0A] shadow-md"
+                      : "text-stone-300 hover:text-white"
+                  }`}
+                >
+                  <Bell size={13} />
+                  <span>Asistencia</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    setModoModalMesero("cuenta");
+                  }}
+                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    modoModalMesero === "cuenta"
+                      ? "bg-[#D49B54] text-[#120D0A] shadow-md"
+                      : "text-stone-300 hover:text-white"
+                  }`}
+                >
+                  <Receipt size={13} />
+                  <span>Traer la Cuenta</span>
                 </button>
               </div>
 
@@ -2106,9 +2195,17 @@ export default function HomePage() {
                   <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto animate-bounce">
                     <Check size={28} />
                   </div>
-                  <h4 className="font-bold text-lg text-white">¡Aviso enviado al personal!</h4>
+                  <h4 className="font-bold text-lg text-white">
+                    {modoModalMesero === "cuenta"
+                      ? "¡Aviso de cuenta enviado!"
+                      : "¡Aviso enviado al personal!"}
+                  </h4>
                   <p className="text-xs text-[#D8C7B8] max-w-xs mx-auto">
-                    El mesero asignado se dirige a la <strong className="text-[#E6AE68]">Mesa {mesaSeleccionadaAviso}</strong> en este instante.
+                    El mesero asignado se dirige a la{" "}
+                    <strong className="text-[#E6AE68]">Mesa {mesaSeleccionadaAviso}</strong>{" "}
+                    {modoModalMesero === "cuenta"
+                      ? "con el ticket y tu forma de cobro."
+                      : "en este instante."}
                   </p>
                 </div>
               ) : (
@@ -2143,15 +2240,51 @@ export default function HomePage() {
                     </div>
                   </div>
 
+                  {modoModalMesero === "cuenta" && (
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#E6AE68]">
+                        ¿Cómo deseas pagar en la mesa?
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { id: "efectivo", label: "Efectivo", icon: "💵" },
+                          { id: "tarjeta", label: "Datáfono", icon: "💳" },
+                          { id: "qr", label: "QR Simple", icon: "📱" },
+                        ].map((met) => (
+                          <button
+                            key={met.id}
+                            type="button"
+                            onClick={() => {
+                              soundManager.playTactileClick();
+                              setMetodoPagoCuenta(met.id as any);
+                            }}
+                            className={`p-2.5 rounded-xl border text-center transition cursor-pointer ${
+                              metodoPagoCuenta === met.id
+                                ? "bg-[#D49B54]/30 border-[#D49B54] text-white ring-1 ring-[#D49B54]"
+                                : "bg-black/20 border-white/10 text-stone-300 hover:bg-black/40"
+                            }`}
+                          >
+                            <div className="text-xl">{met.icon}</div>
+                            <div className="text-[11px] font-bold mt-0.5">{met.label}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.96 }}
                     transition={springPhysics}
-                    onClick={() => handleLlamarMesero(mesaSeleccionadaAviso)}
+                    onClick={() => handleLlamarMesero(mesaSeleccionadaAviso, modoModalMesero)}
                     className="w-full py-4 rounded-2xl bg-[#D49B54] hover:bg-[#E6AE68] text-[#120D0A] font-extrabold text-xs uppercase tracking-wider transition-all shadow-xl shadow-[#D49B54]/20 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Bell size={16} />
-                    <span>Notificar al Mesero (Mesa {mesaSeleccionadaAviso})</span>
+                    {modoModalMesero === "cuenta" ? <Receipt size={16} /> : <Bell size={16} />}
+                    <span>
+                      {modoModalMesero === "cuenta"
+                        ? `Traer la Cuenta (Mesa ${mesaSeleccionadaAviso})`
+                        : `Notificar al Mesero (Mesa ${mesaSeleccionadaAviso})`}
+                    </span>
                   </motion.button>
                 </div>
               )}

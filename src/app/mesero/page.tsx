@@ -484,31 +484,57 @@ export default function MeseroPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {alertasPendientes.map((alerta) => (
-                <div
-                  key={alerta.id}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-white dark:bg-stone-800 border border-red-200 dark:border-red-900/40 shadow-sm"
-                >
-                  <div className="text-xs">
-                    <span className="font-bold text-red-600 dark:text-red-400 flex items-center gap-1">
-                      <span>Mesa {alerta.mesa_numero}</span>
-                      <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-red-100 dark:bg-red-950 text-red-700">
-                        {alerta.tipo.replace("_", " ")}
-                      </span>
-                    </span>
-                    <p className="text-stone-600 dark:text-stone-300 mt-0.5">{alerta.mensaje}</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      marcarAlertaAtendida(alerta.id);
-                      soundManager.playSuccessTone();
-                    }}
-                    className="px-3 py-1.5 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white transition shadow-sm active:scale-95"
+              {alertasPendientes.map((alerta) => {
+                const esCuenta = alerta.tipo === "cuenta_pedida";
+                return (
+                  <div
+                    key={alerta.id}
+                    className={`flex items-center justify-between p-3.5 rounded-2xl border shadow-sm transition-all ${
+                      esCuenta
+                        ? "bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/60 shadow-amber-500/10"
+                        : "bg-white dark:bg-stone-800 border-red-200 dark:border-red-900/40"
+                    }`}
                   >
-                    Atender
-                  </button>
-                </div>
-              ))}
+                    <div className="text-xs min-w-0 pr-2">
+                      <span
+                        className={`font-bold flex items-center gap-1.5 ${
+                          esCuenta
+                            ? "text-amber-800 dark:text-amber-300"
+                            : "text-red-600 dark:text-red-400"
+                        }`}
+                      >
+                        {esCuenta ? <Receipt size={14} /> : <Bell size={14} />}
+                        <span>Mesa {alerta.mesa_numero}</span>
+                        <span
+                          className={`text-[9px] uppercase font-mono px-1.5 py-0.5 rounded font-bold ${
+                            esCuenta
+                              ? "bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200"
+                              : "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300"
+                          }`}
+                        >
+                          {esCuenta ? "Traer Cuenta" : alerta.tipo.replace("_", " ")}
+                        </span>
+                      </span>
+                      <p className="text-stone-700 dark:text-stone-300 mt-1 text-[11px] font-medium leading-snug">
+                        {alerta.mensaje}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        marcarAlertaAtendida(alerta.id);
+                        soundManager.playSuccessTone();
+                      }}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-xl text-white transition shadow-sm active:scale-95 shrink-0 cursor-pointer ${
+                        esCuenta
+                          ? "bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold"
+                          : "bg-red-600 hover:bg-red-700"
+                      }`}
+                    >
+                      {esCuenta ? "Llevar Cuenta" : "Atender"}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         )}

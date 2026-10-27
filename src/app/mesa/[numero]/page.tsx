@@ -18,6 +18,8 @@ import {
   CheckCircle2,
   ChevronRight,
   Flame,
+  Receipt,
+  Wallet,
 } from "lucide-react";
 import { Producto, Categoria, CartItem, ItemPedido } from "@/types";
 import { useCartStore, useUIStore } from "@/store";
@@ -79,6 +81,11 @@ export default function MesaPage({ params }: PageProps) {
   const [chipsSeleccionados, setChipsSeleccionados] = useState<string[]>([]);
   const [notaProducto, setNotaProducto] = useState("");
   const [showPayment, setShowPayment] = useState(false);
+  const [modalCuentaAbierto, setModalCuentaAbierto] = useState(false);
+  const [metodoCuenta, setMetodoCuenta] = useState<"efectivo" | "tarjeta" | "qr">("efectivo");
+  const [solicitandoCuenta, setSolicitandoCuenta] = useState(false);
+  const [avisoCuentaEnviado, setAvisoCuentaEnviado] = useState(false);
+  const [cambioEfectivoEstimado, setCambioEfectivoEstimado] = useState<number | null>(null);
 
   const {
     items,
@@ -204,6 +211,63 @@ export default function MesaPage({ params }: PageProps) {
       setTimeout(() => setLlamandoMesero(false), 3500);
     } catch {
       setLlamandoMesero(false);
+    }
+  };
+
+  const solicitarTraerCuenta = async (metodoOverride?: "efectivo" | "tarjeta" | "qr") => {
+    const metodoElegido = metodoOverride || metodoCuenta;
+    setSolicitandoCuenta(true);
+    soundManager.playWaiterBell();
+    const mesaNum = parseInt(numero) || 1;
+
+    let detalleMetodo = "Efectivo";
+    if (metodoElegido === "tarjeta") {
+      detalleMetodo = "Datáfono / Tarjeta";
+    } else if (metodoElegido === "qr") {
+      detalleMetodo = "Cobro QR en mesa";
+    } else if (cambioEfectivoEstimado) {
+      detalleMetodo = `Efectivo (Paga con Bs ${cambioEfectivoEstimado})`;
+    }
+
+    const mensajeAlerta = `Mesa ${mesaNum} solicita la cuenta (${detalleMetodo})`;
+
+    try {
+      const { useSystemStore } = await import("@/store");
+      useSystemStore.getState().addAlerta({
+        mesa_numero: mesaNum,
+        tipo: "cuenta_pedida",
+        mensaje: mensajeAlerta,
+        datos_extra: {
+          metodo: metodoElegido,
+          detalle: detalleMetodo,
+          billete: cambioEfectivoEstimado,
+          origen: "mesa_digital",
+        },
+      });
+
+      if (supabase) {
+        await supabase.from("alertas_mesero").insert({
+          mesa_id: isUUID(mesaId) ? mesaId : null,
+          mesa_numero: mesaNum,
+          tipo: "cuenta_pedida",
+          mensaje: mensajeAlerta,
+          datos_extra: {
+            metodo: metodoElegido,
+            detalle: detalleMetodo,
+            billete: cambioEfectivoEstimado,
+            origen: "mesa_digital",
+          },
+        });
+      }
+
+      setAvisoCuentaEnviado(true);
+      setTimeout(() => {
+        setAvisoCuentaEnviado(false);
+        setModalCuentaAbierto(false);
+        setSolicitandoCuenta(false);
+      }, 3500);
+    } catch {
+      setSolicitandoCuenta(false);
     }
   };
 
@@ -337,18 +401,37 @@ export default function MesaPage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={llamarMesero}
-              className={`px-3 py-1.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
                 llamandoMesero
                   ? "bg-emerald-600 border-emerald-400 text-white animate-pulse"
                   : "bg-white/10 hover:bg-white/20 border-white/15 text-stone-200"
               }`}
+              title="Llamar al mesero para asistencia"
             >
               <Bell size={14} className={llamandoMesero ? "animate-bounce" : ""} />
-              <span>{llamandoMesero ? "Llamando..." : "Mesero"}</span>
+              <span className="hidden xs:inline">{llamandoMesero ? "Llamando..." : "Mesero"}</span>
+              <span className="xs:hidden">{llamandoMesero ? "..." : "Mesero"}</span>
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.94 }}
+              onClick={() => {
+                soundManager.playTactileClick();
+                setModalCuentaAbierto(true);
+              }}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
+                avisoCuentaEnviado
+                  ? "bg-amber-600 border-amber-400 text-white animate-pulse shadow-md"
+                  : "bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/40 text-amber-200"
+              }`}
+              title="Pedir que traigan la cuenta a la mesa"
+            >
+              <Receipt size={14} className={avisoCuentaEnviado ? "animate-bounce" : ""} />
+              <span>{avisoCuentaEnviado ? "Cuenta Pedida ✓" : "Traer Cuenta"}</span>
             </motion.button>
 
             <motion.button
@@ -357,7 +440,7 @@ export default function MesaPage({ params }: PageProps) {
                 soundManager.playClick();
                 setCartOpen(true);
               }}
-              className="px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-black shadow-md flex items-center gap-1.5 relative active:scale-95 transition"
+              className="px-3 sm:px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-black shadow-md flex items-center gap-1.5 relative active:scale-95 transition cursor-pointer"
             >
               <ShoppingCart size={14} />
               <span>{count()}</span>
@@ -410,18 +493,30 @@ export default function MesaPage({ params }: PageProps) {
               </div>
 
               {pedidoEstado !== "pagado" && (
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
                   <button
                     onClick={() => setCartOpen(true)}
-                    className="flex-1 py-2 px-3 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-bold hover:bg-stone-200 transition"
+                    className="flex-1 py-2 px-3 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-bold hover:bg-stone-200 dark:hover:bg-stone-700 transition flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    + Pedir otra ronda
+                    <Plus size={13} />
+                    <span>Pedir otra ronda</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setModalCuentaAbierto(true);
+                    }}
+                    className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Receipt size={14} />
+                    <span>Traer la Cuenta</span>
                   </button>
                   <button
                     onClick={() => setShowPayment(true)}
-                    className="flex-1 py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition shadow-sm"
+                    className="py-2 px-3 rounded-xl bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                    title="Pagar online inmediatamente por QR o Efectivo"
                   >
-                    💳 Pagar Cuenta
+                    <span>💳 Pagar Online</span>
                   </button>
                 </div>
               )}
@@ -841,6 +936,24 @@ export default function MesaPage({ params }: PageProps) {
               </div>
 
               <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setShowPayment(false);
+                    setModalCuentaAbierto(true);
+                  }}
+                  className="w-full p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/60 flex items-center gap-3 hover:border-amber-500 transition text-left cursor-pointer"
+                >
+                  <span className="text-2xl">🧾</span>
+                  <div>
+                    <div className="font-bold text-xs text-amber-950 dark:text-amber-200">
+                      Traer la Cuenta a la Mesa (Mesero)
+                    </div>
+                    <div className="text-[11px] text-amber-800/80 dark:text-amber-300/80">
+                      El mesero te llevará el ticket físico para abonar con efectivo o datáfono
+                    </div>
+                  </div>
+                </button>
+
                 <a
                   href={`/pago/${pedidoId || "PED-1021"}?modo=efectivo`}
                   className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center gap-3 hover:border-amber-400 transition"
@@ -848,7 +961,7 @@ export default function MesaPage({ params }: PageProps) {
                   <span className="text-2xl">💵</span>
                   <div>
                     <div className="font-bold text-xs text-stone-900 dark:text-stone-100">
-                      Pago en Efectivo
+                      Pago en Efectivo (Calculadora)
                     </div>
                     <div className="text-[11px] text-stone-500">Calculadora de cambio y billetes</div>
                   </div>
@@ -874,6 +987,192 @@ export default function MesaPage({ params }: PageProps) {
               >
                 Volver al Menú
               </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal Traer la Cuenta a la Mesa ── */}
+      <AnimatePresence>
+        {modalCuentaAbierto && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 10 }}
+              className="w-full max-w-md bg-stone-900 text-stone-100 rounded-[32px] p-6 border border-amber-500/40 shadow-2xl space-y-5"
+            >
+              {/* Header Modal */}
+              <div className="flex items-center justify-between border-b border-stone-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center shadow-inner">
+                    <Receipt size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-xl font-bold text-white flex items-center gap-2">
+                      <span>Traer la Cuenta</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono border border-amber-500/30">
+                        Mesa {numero}
+                      </span>
+                    </h3>
+                    <p className="text-[11px] text-stone-400">
+                      El mesero te llevará el ticket físico para abonar en tu mesa
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setModalCuentaAbierto(false);
+                    setAvisoCuentaEnviado(false);
+                  }}
+                  className="p-1.5 rounded-full hover:bg-white/10 text-stone-400 transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {avisoCuentaEnviado ? (
+                <div className="text-center py-6 space-y-3">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-400 flex items-center justify-center mx-auto animate-bounce shadow-lg shadow-emerald-500/20">
+                    <Check size={32} />
+                  </div>
+                  <h4 className="font-serif text-xl font-bold text-white">
+                    ¡Aviso Enviado al Mesero!
+                  </h4>
+                  <p className="text-xs text-stone-300 max-w-xs mx-auto leading-relaxed">
+                    Nuestro personal se dirige a la{" "}
+                    <strong className="text-amber-300">Mesa {numero}</strong> con el ticket impreso y tu opción seleccionada.
+                  </p>
+                  <div className="pt-2">
+                    <span className="text-[11px] text-stone-400 font-mono bg-stone-800/80 px-3 py-1 rounded-full border border-stone-700">
+                      Atención inmediata en salón
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-amber-400 mb-2">
+                      ¿Cómo deseas pagar en tu mesa?
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {[
+                        {
+                          id: "efectivo",
+                          label: "Efectivo",
+                          icon: "💵",
+                          desc: "Con cambio o billetes",
+                        },
+                        {
+                          id: "tarjeta",
+                          label: "Datáfono",
+                          icon: "💳",
+                          desc: "Tarjeta de débito/crédito",
+                        },
+                        {
+                          id: "qr",
+                          label: "QR Simple",
+                          icon: "📱",
+                          desc: "QR en el ticket",
+                        },
+                      ].map((m) => {
+                        const isSelected = metodoCuenta === m.id;
+                        return (
+                          <button
+                            key={m.id}
+                            type="button"
+                            onClick={() => {
+                              soundManager.playTactileClick();
+                              setMetodoCuenta(m.id as "efectivo" | "tarjeta" | "qr");
+                            }}
+                            className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                              isSelected
+                                ? "bg-amber-500/25 border-amber-400 text-white shadow-md ring-1 ring-amber-400/50"
+                                : "bg-stone-800/60 border-stone-700/80 text-stone-300 hover:bg-stone-800"
+                            }`}
+                          >
+                            <span className="text-2xl mb-1">{m.icon}</span>
+                            <div className="font-bold text-xs">{m.label}</div>
+                            <div className="text-[10px] text-stone-400 leading-tight mt-0.5">
+                              {m.desc}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Si seleccionó efectivo, opción rápida de billete para cambio */}
+                  {metodoCuenta === "efectivo" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="p-3 rounded-2xl bg-stone-800/50 border border-stone-700/60 space-y-2"
+                    >
+                      <div className="text-[11px] font-semibold text-stone-300">
+                        ¿Pagas con billete grande? (Opcional para traer tu cambio listo):
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {[200, 100, 50, 20].map((b) => (
+                          <button
+                            key={b}
+                            type="button"
+                            onClick={() =>
+                              setCambioEfectivoEstimado((prev) => (prev === b ? null : b))
+                            }
+                            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold border transition cursor-pointer ${
+                              cambioEfectivoEstimado === b
+                                ? "bg-amber-500 text-stone-950 border-amber-400 shadow-sm"
+                                : "bg-stone-800 text-stone-300 border-stone-700 hover:bg-stone-700"
+                            }`}
+                          >
+                            Bs {b}
+                          </button>
+                        ))}
+                        {cambioEfectivoEstimado && (
+                          <button
+                            type="button"
+                            onClick={() => setCambioEfectivoEstimado(null)}
+                            className="text-[10px] text-stone-400 hover:text-white underline ml-1 cursor-pointer"
+                          >
+                            Limpiar
+                          </button>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Botón Principal: Notificar al Mesero para Traer la Cuenta */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    disabled={solicitandoCuenta}
+                    onClick={() => solicitarTraerCuenta()}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:brightness-110 text-stone-950 font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    <Receipt size={16} />
+                    <span>
+                      {solicitandoCuenta
+                        ? "Avisando al mesero..."
+                        : `Traer la Cuenta a la Mesa ${numero}`}
+                    </span>
+                  </motion.button>
+
+                  {/* Alternativa: Pagar Online Ahora Mismo */}
+                  <div className="pt-2 border-t border-stone-800 text-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setModalCuentaAbierto(false);
+                        setShowPayment(true);
+                      }}
+                      className="text-xs text-amber-300/90 hover:text-amber-200 underline cursor-pointer"
+                    >
+                      ¿Prefieres pagar online ahora con QR desde tu celular?
+                    </button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </div>
         )}
