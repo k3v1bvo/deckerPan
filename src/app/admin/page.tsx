@@ -580,8 +580,8 @@ export default function AdminPage() {
       {/* ── Apple Glass Admin Header ── */}
       <header className="bg-stone-950/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1.5 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
                 src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
                 alt="Dencker Pan"
@@ -589,25 +589,25 @@ export default function AdminPage() {
               />
             </div>
             <div>
-              <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                Centro de Operaciones & Administración
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                Administración & Operaciones
+                <span className="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
                   Dencker Pan
                 </span>
               </h1>
               <p className="text-stone-400 text-xs hidden sm:block">
-                Aforo de mesas, catálogo artesanal, nube ImgBB, reservas y BI en Bolivianos
+                Panel central de mesas, catálogo, equipo, cobros y finanzas
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Link
               href="/menu-pdf"
               target="_blank"
-              className="px-3.5 py-1.5 rounded-xl bg-amber-900/60 hover:bg-amber-900 text-amber-100 text-xs border border-amber-500/30 transition flex items-center gap-1.5 active:scale-95 font-semibold"
+              className="px-4 py-2 rounded-xl bg-amber-900/60 hover:bg-amber-900 text-amber-100 text-xs border border-amber-500/30 transition flex items-center gap-2 active:scale-95 font-semibold"
             >
-              <FileText size={13} className="text-[#87A987]" />
+              <FileText size={16} className="text-[#87A987]" />
               <span>Menú en PDF</span>
             </Link>
 
@@ -619,9 +619,9 @@ export default function AdminPage() {
                   soundManager.playSuccessTone();
                 }
               }}
-              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white text-xs border border-white/15 transition flex items-center gap-1.5 active:scale-95"
+              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white text-xs border border-white/15 transition flex items-center gap-2 active:scale-95 font-semibold cursor-pointer"
             >
-              <RefreshCw size={13} />
+              <RefreshCw size={16} />
               <span>Reset Fábrica</span>
             </button>
           </div>
@@ -630,16 +630,16 @@ export default function AdminPage() {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
         {/* ── Apple HIG Segmented Control Slider ── */}
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/70 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-4xl overflow-x-auto">
+        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/80 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-5xl overflow-x-auto shadow-xs">
           {(
             [
-              { id: "mesas", label: "Mesas & Aforo", icon: Layers, count: mesas.length },
-              { id: "productos", label: "Menú & ImgBB", icon: UtensilsCrossed, count: productos.length },
-              { id: "personal", label: "Personal & PINs", icon: Users, count: (usuariosStaff || []).length },
-              { id: "qr_mesas", label: "QRs de Mesas", icon: QrCode, count: mesas.length },
-              { id: "reservas", label: "Catering & Reservas", icon: Calendar, count: reservas.length },
-              { id: "metricas", label: "Métricas BI", icon: BarChart3, count: undefined },
-              { id: "qr", label: "QR Bancario", icon: DollarSign, count: undefined },
+              { id: "mesas", label: "Mesas", icon: Layers },
+              { id: "productos", label: "Menú", icon: UtensilsCrossed },
+              { id: "personal", label: "Personal", icon: Users },
+              { id: "qr_mesas", label: "QRs Mesas", icon: QrCode },
+              { id: "reservas", label: "Reservas", icon: Calendar },
+              { id: "metricas", label: "Finanzas", icon: BarChart3 },
+              { id: "qr", label: "QR Cobro", icon: DollarSign },
             ] as const
           ).map((tab) => {
             const Icon = tab.icon;
@@ -651,30 +651,19 @@ export default function AdminPage() {
                   soundManager.playClick();
                   setTabActiva(tab.id);
                 }}
-                className={`relative flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-colors z-10 ${
-                  isActive ? "text-stone-950 dark:text-white" : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all z-10 cursor-pointer ${
+                  isActive ? "text-stone-950 dark:text-white font-extrabold" : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200"
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="adminTabHighlight"
-                    className="absolute inset-0 bg-white dark:bg-stone-800 rounded-xl shadow-md border border-stone-200/60 dark:border-stone-700 -z-10"
+                    className="absolute inset-0 bg-white dark:bg-stone-800 rounded-xl shadow-md border border-stone-200/70 dark:border-stone-700 -z-10"
                     transition={{ type: "spring", damping: 30, stiffness: 450 }}
                   />
                 )}
-                <Icon size={15} />
+                <Icon size={18} />
                 <span>{tab.label}</span>
-                {tab.count !== undefined && (
-                  <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                      isActive
-                        ? "bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300"
-                        : "bg-stone-300/60 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
-                    }`}
-                  >
-                    {tab.count}
-                  </span>
-                )}
               </button>
             );
           })}
@@ -1024,84 +1013,77 @@ export default function AdminPage() {
         {/* ── TAB: GESTIÓN DE PERSONAL & CÓDIGOS DE ACCESO (PIN) ── */}
         {tabActiva === "personal" && (
           <div className="space-y-6">
-            {/* Header del módulo de personal */}
-            <div className="p-6 bg-gradient-to-r from-stone-900 via-[#1C120B] to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-amber-500/30">
+            {/* Header limpio y profesional */}
+            <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono uppercase font-bold border border-amber-400/30 flex items-center gap-1.5">
-                    <ShieldCheck size={12} className="text-amber-400" />
-                    Seguridad Operativa • Control de Accesos
-                  </span>
-                  <span className="text-xs text-stone-400 font-medium">
-                    Autenticación por PIN táctil de 4 dígitos
-                  </span>
-                </div>
-                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                  <Users size={24} className="text-amber-400" />
-                  Equipo, Roles & Cuentas de Personal
+                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                  <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    <Users size={26} />
+                  </div>
+                  <span>Equipo & Colaboradores</span>
                 </h2>
-                <p className="text-stone-300 text-xs max-w-xl">
-                  Registra colaboradores, asígnales estación operativa (Meseros en Sala, Cocina/Barismo KDS, Caja POS o Gerencia) y administra sus códigos PIN de acceso.
+                <p className="text-stone-400 text-xs sm:text-sm">
+                  Control de personal, asignación de estaciones y claves PIN de acceso táctil.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => handleAbrirModalStaff()}
-                  className="px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                  className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer"
                 >
-                  <Plus size={16} />
+                  <Plus size={20} />
                   <span>Nuevo Colaborador</span>
                 </button>
               </div>
             </div>
 
             {/* 4 Tarjetas de Estadísticas de Personal */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 {
-                  label: "Total Colaboradores",
+                  label: "Total Personal",
                   count: (usuariosStaff || []).length,
                   icon: Users,
                   color: "text-stone-900 dark:text-stone-100",
-                  bg: "bg-stone-100 dark:bg-stone-800",
+                  bg: "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300",
                 },
                 {
                   label: "Meseros (Sala)",
                   count: (usuariosStaff || []).filter((u) => u.role === "mesero").length,
                   icon: UtensilsCrossed,
                   color: "text-amber-600 dark:text-amber-400",
-                  bg: "bg-amber-500/10",
+                  bg: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
                 },
                 {
                   label: "Cocina & Baristas",
                   count: (usuariosStaff || []).filter((u) => u.role === "cocina").length,
                   icon: ChefHat,
                   color: "text-blue-600 dark:text-blue-400",
-                  bg: "bg-blue-500/10",
+                  bg: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
                 },
                 {
                   label: "Caja POS & Admin",
                   count: (usuariosStaff || []).filter((u) => u.role === "caja" || u.role === "admin").length,
                   icon: Receipt,
                   color: "text-emerald-600 dark:text-emerald-400",
-                  bg: "bg-emerald-500/10",
+                  bg: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
                 },
               ].map((st, idx) => {
                 const Icon = st.icon;
                 return (
                   <div
                     key={idx}
-                    className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs flex items-center gap-3"
+                    className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs flex items-center gap-4"
                   >
-                    <div className={`w-10 h-10 rounded-xl ${st.bg} ${st.color} flex items-center justify-center shrink-0`}>
-                      <Icon size={18} />
+                    <div className={`w-12 h-12 rounded-2xl ${st.bg} flex items-center justify-center shrink-0`}>
+                      <Icon size={24} />
                     </div>
                     <div>
-                      <span className="text-[11px] text-stone-500 dark:text-stone-400 block font-medium">
+                      <span className="text-xs text-stone-500 dark:text-stone-400 block font-semibold">
                         {st.label}
                       </span>
-                      <span className={`text-xl font-black font-mono ${st.color}`}>
+                      <span className={`text-2xl font-black font-mono ${st.color}`}>
                         {st.count}
                       </span>
                     </div>
@@ -1111,8 +1093,8 @@ export default function AdminPage() {
             </div>
 
             {/* Filtros por Rol y Buscador */}
-            <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+            <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
                 {[
                   { id: "todos", label: "Todo el Personal" },
                   { id: "mesero", label: "Meseros" },
@@ -1123,10 +1105,10 @@ export default function AdminPage() {
                   <button
                     key={r.id}
                     onClick={() => setFiltroRoleStaff(r.id as any)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                    className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${
                       filtroRoleStaff === r.id
-                        ? "bg-amber-900 dark:bg-amber-700 text-white"
-                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+                        ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700"
                     }`}
                   >
                     {r.label}
@@ -1135,19 +1117,19 @@ export default function AdminPage() {
               </div>
 
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                <Search size={18} className="absolute left-3.5 top-3 text-stone-400" />
                 <input
                   type="text"
-                  placeholder="Buscar por nombre o cargo..."
+                  placeholder="Buscar colaborador..."
                   value={busquedaStaff}
                   onChange={(e) => setBusquedaStaff(e.target.value)}
-                  className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-56 sm:w-64"
+                  className="pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-64 sm:w-72"
                 />
               </div>
             </div>
 
             {/* Grid de Cuentas de Personal */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {(usuariosStaff || [])
                 .filter((u) => {
                   const matchRole = filtroRoleStaff === "todos" || u.role === filtroRoleStaff;
@@ -1163,25 +1145,25 @@ export default function AdminPage() {
                       label: "Administración",
                       icon: ShieldCheck,
                       badge: "bg-stone-900 text-amber-300 border-amber-500/40",
-                      station: "Acceso universal a todas las estaciones",
+                      station: "Acceso Total / Gerencia",
                     },
                     mesero: {
                       label: "Sala & Mesero",
                       icon: UtensilsCrossed,
                       badge: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
-                      station: "Terminal de Sala (/mesero)",
+                      station: "Terminal de Sala & Mesas",
                     },
                     cocina: {
                       label: "Cocina & Barismo",
                       icon: ChefHat,
                       badge: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30",
-                      station: "Comandas KDS (/kds)",
+                      station: "Pantalla KDS & Horno",
                     },
                     caja: {
                       label: "Caja POS",
                       icon: Receipt,
                       badge: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
-                      station: "Cobros & Arqueo (/caja)",
+                      station: "Cobros & Arqueo POS",
                     },
                   }[user.role];
 
@@ -1190,12 +1172,12 @@ export default function AdminPage() {
                   return (
                     <div
                       key={user.id}
-                      className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between space-y-4 hover:border-amber-400 dark:hover:border-amber-600 transition"
+                      className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-amber-400 dark:hover:border-amber-600 transition"
                     >
                       {/* Cabecera Tarjeta: Avatar + Rol + Estado */}
                       <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-base shrink-0">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex items-center justify-center font-black text-base shrink-0">
                             {user.nombre.slice(0, 2).toUpperCase()}
                           </div>
                           <div>
@@ -1209,7 +1191,7 @@ export default function AdminPage() {
                         </div>
 
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
                             user.activo
                               ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-400/30"
                               : "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border-red-400/30"
@@ -1220,46 +1202,43 @@ export default function AdminPage() {
                       </div>
 
                       {/* Estación y Permiso */}
-                      <div className="space-y-2 text-xs">
+                      <div className="space-y-1.5 text-xs">
                         <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bold border ${roleConfig.badge}`}>
-                            <RoleIcon size={13} />
+                          <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-bold border ${roleConfig.badge}`}>
+                            <RoleIcon size={16} />
                             <span>{roleConfig.label}</span>
                           </span>
                         </div>
-                        <p className="text-[11px] text-stone-500 dark:text-stone-400 flex items-center gap-1">
-                          <span>Estación:</span>
-                          <span className="font-semibold text-stone-700 dark:text-stone-300">
-                            {roleConfig.station}
-                          </span>
+                        <p className="text-xs text-stone-500 dark:text-stone-400">
+                          Estación: <span className="font-semibold text-stone-800 dark:text-stone-200">{roleConfig.station}</span>
                         </p>
                       </div>
 
-                      {/* Bloque de Código PIN de Seguridad */}
-                      <div className="p-3 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 flex items-center justify-between">
+                      {/* Bloque de Código PIN */}
+                      <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 flex items-center justify-between">
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
                             PIN de Acceso Táctil:
                           </span>
-                          <span className="font-mono text-sm font-black text-amber-950 dark:text-amber-200 tracking-widest">
+                          <span className="font-mono text-base font-black text-amber-950 dark:text-amber-200 tracking-widest">
                             {isVisible ? user.pin : "••••"}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => handleTogglePinVisible(user.id)}
-                            className="p-1.5 rounded-lg text-stone-500 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200 dark:hover:bg-stone-700 transition"
+                            className="p-2 rounded-xl text-stone-500 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200 dark:hover:bg-stone-700 transition cursor-pointer"
                             title={isVisible ? "Ocultar PIN" : "Ver PIN"}
                           >
-                            {isVisible ? <EyeOff size={15} /> : <Eye size={15} />}
+                            {isVisible ? <EyeOff size={18} /> : <Eye size={18} />}
                           </button>
                           <button
                             onClick={() => handleRegenerarPinRapido(user)}
-                            className="p-1.5 rounded-lg text-stone-500 hover:text-amber-600 hover:bg-stone-200 dark:hover:bg-stone-700 transition"
+                            className="p-2 rounded-xl text-stone-500 hover:text-amber-600 hover:bg-amber-100/60 dark:hover:bg-stone-700 transition cursor-pointer"
                             title="Regenerar PIN aleatorio"
                           >
-                            <KeyRound size={15} />
+                            <KeyRound size={18} />
                           </button>
                         </div>
                       </div>
@@ -1268,17 +1247,17 @@ export default function AdminPage() {
                       <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800">
                         <button
                           onClick={() => handleAbrirModalStaff(user)}
-                          className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                          className="px-4 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer active:scale-95"
                         >
-                          <Edit2 size={13} />
+                          <Edit2 size={16} />
                           <span>Editar</span>
                         </button>
 
                         <button
                           onClick={() => handleEliminarStaff(user)}
-                          className="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/60 transition text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                          className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/60 transition text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer active:scale-95"
                         >
-                          <Trash2 size={13} />
+                          <Trash2 size={16} />
                           <span>Eliminar</span>
                         </button>
                       </div>
@@ -1293,31 +1272,24 @@ export default function AdminPage() {
         {tabActiva === "metricas" && (
           <div className="space-y-6">
             {/* Cabecera Financiera y Selector de Períodos */}
-            <div className="p-6 bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-amber-500/30">
+            <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono uppercase font-bold border border-amber-400/30 flex items-center gap-1.5">
-                    <Wallet size={12} className="text-amber-300" />
-                    Business Intelligence • Finanzas en Bolivianos (BOB)
-                  </span>
-                  <span className="text-xs text-stone-400 font-medium">
-                    Actualizado en tiempo real
-                  </span>
-                </div>
-                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                  <TrendingUp size={24} className="text-emerald-400" />
-                  Panel Financiero & Control de Ingresos
+                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                  <div className="p-2 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <TrendingUp size={26} />
+                  </div>
+                  <span>Finanzas & Control de Ingresos</span>
                 </h2>
-                <p className="text-stone-300 text-xs max-w-xl">
-                  Visualiza cuánto se gana, cuánto se pagó, quién pagó, cuándo pagó y el desglose exacto de ingresos por turnos (Mañana, Tarde y Noche) junto al cuadre de caja registradora.
+                <p className="text-stone-400 text-xs sm:text-sm">
+                  Ventas totales, métodos de cobro en Bolivianos (BOB) y recaudación por turno.
                 </p>
               </div>
 
               {/* Selector de Períodos y Botón de Imprimir */}
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="p-1 rounded-2xl bg-black/40 border border-white/10 flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="p-1 rounded-2xl bg-black/50 border border-white/10 flex items-center gap-1.5">
                   {[
-                    { id: "hoy", label: "Hoy (Turnos)" },
+                    { id: "hoy", label: "Hoy" },
                     { id: "semana", label: "Esta Semana" },
                     { id: "mes", label: "Este Mes" },
                     { id: "todos", label: "Histórico" },
@@ -1328,10 +1300,10 @@ export default function AdminPage() {
                         soundManager.playClick();
                         setFiltroPeriodo(p.id as any);
                       }}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                      className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                         filtroPeriodo === p.id
                           ? "bg-amber-600 text-white shadow-sm"
-                          : "text-stone-300 hover:text-white hover:bg-white/5"
+                          : "text-stone-300 hover:text-white hover:bg-white/10"
                       }`}
                     >
                       {p.label}
@@ -1344,10 +1316,10 @@ export default function AdminPage() {
                     soundManager.playTactileClick();
                     window.print();
                   }}
-                  className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs font-bold border border-white/10 transition flex items-center gap-1.5 active:scale-95"
+                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs sm:text-sm font-bold border border-white/10 transition flex items-center gap-2 active:scale-95 cursor-pointer"
                 >
-                  <Printer size={14} />
-                  <span>Reporte Fiscal</span>
+                  <Printer size={16} />
+                  <span>Imprimir Reporte</span>
                 </button>
               </div>
             </div>
@@ -1358,7 +1330,7 @@ export default function AdminPage() {
               <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <DollarSign size={14} className="text-amber-600" />
+                    <DollarSign size={16} className="text-amber-600" />
                     Ventas del Período
                   </span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-mono">

@@ -2,9 +2,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, VolumeX, Sparkles } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { soundManager } from "@/lib/sound";
 
 export default function SoundToggle() {
+  const pathname = usePathname();
   const [isMuted, setIsMuted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -13,6 +15,18 @@ export default function SoundToggle() {
     const unsub = soundManager.subscribe((muted) => setIsMuted(muted));
     return unsub;
   }, []);
+
+  // Do not render floating audio toggle on staff/admin operational dashboards
+  if (
+    pathname &&
+    (pathname.startsWith("/admin") ||
+      pathname.startsWith("/caja") ||
+      pathname.startsWith("/mesero") ||
+      pathname.startsWith("/kds") ||
+      pathname.startsWith("/cocina"))
+  ) {
+    return null;
+  }
 
   const handleToggle = () => {
     const newState = soundManager.toggleMute();

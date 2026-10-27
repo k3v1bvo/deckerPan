@@ -47,7 +47,9 @@ export default function RootLayout({
         <main className="w-full flex flex-col items-center flex-1">{children}</main>
         <CartDrawer />
         <NotificationToast />
-        <SoundToggle />
+        <Suspense fallback={null}>
+          <SoundToggle />
+        </Suspense>
       </body>
     </html>
   );

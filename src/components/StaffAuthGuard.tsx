@@ -16,6 +16,7 @@ import {
   HelpCircle,
   X,
   Check,
+  Store,
 } from "lucide-react";
 import {
   StaffRole,
@@ -171,17 +172,17 @@ export default function StaffAuthGuard({
         {/* Barra superior de Turno Activo */}
         <aside
           aria-label="Control de turno de personal"
-          className="sticky top-0 z-50 bg-[#160E08]/95 backdrop-blur-md border-b border-amber-900/40 px-3 sm:px-6 py-2.5 text-white text-xs flex flex-wrap items-center justify-between gap-3 shadow-lg"
+          className="sticky top-0 z-50 bg-[#140D08]/95 backdrop-blur-md border-b border-amber-900/40 px-4 sm:px-6 py-2.5 text-white text-xs flex flex-wrap items-center justify-between gap-3 shadow-lg"
         >
           {/* Datos del Operador */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <div className="p-1 rounded-lg bg-amber-500/20 text-amber-400">
-              <RoleIcon size={14} />
+            <div className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              <RoleIcon size={18} />
             </div>
             <div>
-              <span className="font-bold text-amber-100">{session.user.nombre}</span>
-              <span className="text-stone-400 text-[11px] hidden sm:inline ml-1.5">
+              <span className="font-bold text-sm text-amber-100">{session.user.nombre}</span>
+              <span className="text-stone-400 text-xs hidden sm:inline ml-2">
                 • {roleTitle}
               </span>
             </div>
@@ -189,7 +190,7 @@ export default function StaffAuthGuard({
 
           {/* Selector de Estación (ESTRICTAMENTE SOLO PARA GERENCIA / ADMIN) */}
           {esAdmin && (
-            <div className="hidden md:flex items-center gap-1 p-1 rounded-full bg-black/40 border border-white/10">
+            <div className="hidden md:flex items-center gap-1.5 p-1 rounded-2xl bg-black/50 border border-white/10">
               {ADMIN_STATIONS.map((st) => {
                 const active = pathname.startsWith(st.href);
                 const Icon = st.icon;
@@ -198,13 +199,13 @@ export default function StaffAuthGuard({
                     key={st.id}
                     href={st.href}
                     onClick={() => soundManager.playClick()}
-                    className={`px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition ${
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition active:scale-95 ${
                       active
-                        ? "bg-amber-600 text-white shadow-xs"
+                        ? "bg-amber-600 text-white shadow-md font-bold"
                         : "text-stone-300 hover:text-white hover:bg-white/10"
                     }`}
                   >
-                    <Icon size={12} />
+                    <Icon size={16} />
                     <span>{st.label}</span>
                   </Link>
                 );
@@ -213,20 +214,21 @@ export default function StaffAuthGuard({
           )}
 
           {/* Acciones de Cierre de Sesión y Salida */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={handleCerrarTurno}
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-red-950/60 hover:text-red-300 text-stone-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer border border-white/10"
+              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-red-950/60 hover:text-red-300 text-stone-200 text-xs font-semibold flex items-center gap-2 transition active:scale-95 cursor-pointer border border-white/10"
               title="Bloquear terminal y cerrar turno"
             >
-              <LogOut size={13} className="text-red-400" />
+              <LogOut size={16} className="text-red-400" />
               <span>Bloquear / Salir</span>
             </button>
             <Link
               href="/"
               onClick={() => soundManager.playClick()}
-              className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 border border-amber-400/30"
+              className="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-semibold flex items-center gap-2 transition active:scale-95 border border-amber-400/30"
             >
+              <Store size={16} />
               <span>Tienda</span>
             </Link>
           </div>
