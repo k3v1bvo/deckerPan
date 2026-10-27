@@ -2822,9 +2822,9 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={handleGenerarPinAleatorio}
-                      className="text-[11px] text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-semibold"
+                      className="text-xs text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1.5 font-semibold cursor-pointer"
                     >
-                      <KeyRound size={12} />
+                      <KeyRound size={15} />
                       <span>Generar al azar</span>
                     </button>
                   </div>
@@ -2839,9 +2839,9 @@ export default function AdminPage() {
                       const val = e.target.value.replace(/\D/g, "").slice(0, 4);
                       setFormStaff({ ...formStaff, pin: val });
                     }}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-base font-bold tracking-widest text-center focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-lg font-bold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
-                  <span className="text-[10px] text-stone-400 mt-0.5 block">
+                  <span className="text-[11px] text-stone-400 mt-1 block">
                     Este PIN lo digitará el colaborador en la pantalla táctil de su estación.
                   </span>
                 </div>
@@ -2861,12 +2861,12 @@ export default function AdminPage() {
                 </div>
 
                 {/* Estado Activo */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
                   <div>
-                    <span className="font-bold text-stone-800 dark:text-stone-200 block text-xs">
+                    <span className="font-bold text-stone-800 dark:text-stone-200 block text-xs sm:text-sm">
                       Estado de la Cuenta
                     </span>
-                    <span className="text-[11px] text-stone-500">
+                    <span className="text-xs text-stone-500">
                       {formStaff.activo ? "Permite iniciar sesión en estación" : "Acceso bloqueado"}
                     </span>
                   </div>
@@ -2879,19 +2879,19 @@ export default function AdminPage() {
                 </div>
 
                 {/* Botón Guardar */}
-                <div className="pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-end gap-2">
+                <div className="pt-4 border-t border-stone-200 dark:border-stone-800 flex items-center justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setModalStaffAbierto(false)}
-                    className="px-4 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs sm:text-sm hover:bg-stone-200 cursor-pointer"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    className="px-6 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
                   >
-                    <Save size={14} />
+                    <Save size={16} />
                     <span>Guardar Colaborador</span>
                   </button>
                 </div>
