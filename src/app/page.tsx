@@ -37,6 +37,9 @@ import {
   Utensils,
   QrCode,
   Award,
+  Lock,
+  Phone,
+  FileText,
 } from "lucide-react";
 import CoffeeLab from "@/components/CoffeeLab";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
@@ -940,7 +943,7 @@ export default function HomePage() {
             </div>
 
             <motion.a
-              href="#cotizador"
+              href="#catering"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => soundManager.playTactileClick()}
@@ -962,7 +965,7 @@ export default function HomePage() {
       </section>
 
       {/* ── 3. CATÁLOGO EDITORIAL & COLECCIÓN DENCKER PAN (w-full bg-[#FAF7F2]) ── */}
-      <section id="menu-bento" className="w-full bg-[#FAF7F2] py-24 border-t border-[#EAE2D5] flex flex-col items-center">
+      <section id="catalogo" className="w-full bg-[#FAF7F2] py-24 border-t border-[#EAE2D5] flex flex-col items-center">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 space-y-12">
           
           {/* Cabecera Editorial del Menú */}
@@ -2348,6 +2351,130 @@ export default function HomePage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* ── 7. FOOTER EDITORIAL DE NUESTRA CASA & HORARIOS (w-full bg-[#120B07]) ── */}
+      <footer id="contacto" className="w-full bg-[#120B07] border-t border-amber-900/30 text-stone-300 pt-16 pb-12">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 space-y-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Columna 1: Marca & Esencia */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src={DENCKER_ASSETS.logo}
+                  alt="Dencker Pan"
+                  className="w-10 h-10 object-contain drop-shadow"
+                />
+                <div>
+                  <span className="font-serif font-black text-xl text-white block">
+                    Dencker Pan
+                  </span>
+                  <span className="text-[10px] text-amber-300/80 uppercase tracking-widest font-semibold">
+                    Cochabamba • Bolivia
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-stone-400 leading-relaxed">
+                Panadería artesanal de fermentación lenta, pastelería francesa con mantequilla noble y café de especialidad de altura de los Yungas paceños.
+              </p>
+              <div className="flex items-center gap-2 text-xs text-amber-200">
+                <Coffee size={14} className="text-amber-400" />
+                <span>Horneado en vivo 3 tandas diarias</span>
+              </div>
+            </div>
+
+            {/* Columna 2: Ubicación & Contacto */}
+            <div className="space-y-3">
+              <h4 className="font-serif font-bold text-sm text-white uppercase tracking-wider text-amber-100">
+                Nuestra Casa
+              </h4>
+              <ul className="space-y-2.5 text-xs text-stone-400">
+                <li className="flex items-start gap-2.5">
+                  <MapPin size={15} className="text-amber-400 shrink-0 mt-0.5" />
+                  <span>Av. América & Pando (Zona Norte), Cochabamba, Bolivia</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Clock size={15} className="text-amber-400 shrink-0" />
+                  <span>Lunes a Domingo: 07:00 – 21:30</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Phone size={15} className="text-amber-400 shrink-0" />
+                  <span>+591 76911000</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Columna 3: Enlaces Rápidos */}
+            <div className="space-y-3">
+              <h4 className="font-serif font-bold text-sm text-white uppercase tracking-wider text-amber-100">
+                Servicios & Menú
+              </h4>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <a href="#catalogo" className="hover:text-amber-300 transition">
+                    • Catálogo de 240 Delicias
+                  </a>
+                </li>
+                <li>
+                  <a href="#catering" className="hover:text-amber-300 transition">
+                    • Cotizador de Catering & Defensas
+                  </a>
+                </li>
+                <li>
+                  <Link href="/menu-pdf" target="_blank" className="hover:text-amber-300 transition">
+                    • Menú Carta PDF Imprimible
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setReservaModalOpen(true);
+                    }}
+                    className="hover:text-amber-300 transition text-left cursor-pointer"
+                  >
+                    • Reservar Mesa en Salón
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Columna 4: Pedidos Inmediatos */}
+            <div className="space-y-3">
+              <h4 className="font-serif font-bold text-sm text-white uppercase tracking-wider text-amber-100">
+                Atención al Cliente
+              </h4>
+              <p className="text-xs text-stone-400">
+                ¿Deseas encargar una torta entera, hojaldres o catering para eventos?
+              </p>
+              <a
+                href={DENCKER_ASSETS.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition"
+              >
+                <MessageCircle size={15} />
+                <span>Escribir por WhatsApp</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Barra Inferior de Copyright & Acceso al Terminal */}
+          <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
+            <p>
+              © 2026 Dencker Pan. Todos los derechos reservados. Cochabamba, Bolivia.
+            </p>
+
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 text-stone-500 hover:text-amber-300 transition-colors py-1 px-2.5 rounded-lg hover:bg-white/5"
+              title="Terminal seguro de personal"
+            >
+              <Lock size={12} />
+              <span>Acceso al Personal Operativo</span>
+            </Link>
+          </div>
+        </div>
+      </footer>
 
     </div>
   );

@@ -78,6 +78,21 @@ export function clearStaffSession(): void {
 }
 
 export function checkPinForRole(role: StaffRole, pin: string): boolean {
-  const target = STAFF_USERS[role];
-  return target && target.pin === pin.trim();
+  const p = pin.trim();
+  // El PIN maestro de Gerencia permite el acceso a cualquier estación operativa
+  if (p === "2024" || p === "2026" || p === "9900") return true;
+
+  if (role === "admin") return false; // Solo PINs de gerencia
+  if (role === "mesero") return p === "1111" || p === "1122";
+  if (role === "cocina") return p === "2222" || p === "3344";
+  if (role === "caja") return p === "3333" || p === "5566";
+  return false;
+}
+
+export function resolveRoleForPin(targetRole: StaffRole, pin: string): StaffRole {
+  const p = pin.trim();
+  if (p === "2024" || p === "2026" || p === "9900") {
+    return "admin";
+  }
+  return targetRole;
 }
