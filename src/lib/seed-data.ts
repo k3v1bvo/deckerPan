@@ -3,7 +3,7 @@
 // Extracted from tienda.denckerpan.com & ImgBB
 // ==========================================
 
-import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja } from '@/types';
+import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja, UsuarioStaff } from '@/types';
 
 export const DENCKER_ASSETS = {
   logo: "https://i.ibb.co/qMkf00HN/dencker-logo.png",
@@ -5424,3 +5424,62 @@ export const SEED_HISTORIAL_SESIONES: SesionCaja[] = [
     notas: 'Cierre de mañana cuadrado en su totalidad.',
   },
 ];
+
+export const SEED_USUARIOS_STAFF: UsuarioStaff[] = [
+  {
+    id: 'usr-admin-1',
+    nombre: 'Gerencia Dencker Pan',
+    role: 'admin',
+    cargo: 'Administrador General & Finanzas',
+    pin: '2024',
+    activo: true,
+    telefono: '+591 76911000',
+    created_at: new Date().toISOString(),
+    ultimo_acceso: new Date().toISOString(),
+  },
+  {
+    id: 'usr-mesero-1',
+    nombre: 'Mateo Arce',
+    role: 'mesero',
+    cargo: 'Mesero de Salón & Terraza',
+    pin: '1111',
+    activo: true,
+    telefono: '+591 70712345',
+    created_at: new Date().toISOString(),
+    ultimo_acceso: new Date().toISOString(),
+  },
+  {
+    id: 'usr-cocina-1',
+    nombre: 'Rodrigo Morales',
+    role: 'cocina',
+    cargo: 'Jefe de Horno, Bollería & Barismo',
+    pin: '2222',
+    activo: true,
+    telefono: '+591 71498765',
+    created_at: new Date().toISOString(),
+    ultimo_acceso: new Date().toISOString(),
+  },
+  {
+    id: 'usr-caja-1',
+    nombre: 'Valeria Quiroga',
+    role: 'caja',
+    cargo: 'Cajera Principal & Facturación POS',
+    pin: '3333',
+    activo: true,
+    telefono: '+591 72233445',
+    created_at: new Date().toISOString(),
+    ultimo_acceso: new Date().toISOString(),
+  },
+  {
+    id: 'usr-mesero-2',
+    nombre: 'Camila Rojas',
+    role: 'mesero',
+    cargo: 'Mesera de Turno Tarde',
+    pin: '1122',
+    activo: true,
+    telefono: '+591 73788990',
+    created_at: new Date().toISOString(),
+    ultimo_acceso: new Date().toISOString(),
+  },
+];
+

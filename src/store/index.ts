@@ -15,6 +15,7 @@ import {
   EstadoMesa,
   EstadoPedido,
   EstadoItem,
+  UsuarioStaff,
 } from '@/types';
 import {
   SEED_ZONAS,
@@ -23,6 +24,7 @@ import {
   SEED_PRODUCTOS,
   SEED_PAGOS,
   SEED_HISTORIAL_SESIONES,
+  SEED_USUARIOS_STAFF,
 } from '@/lib/seed-data';
 import { broadcastSync, markEventHandled } from '@/lib/broadcast';
 
@@ -40,6 +42,13 @@ interface SystemStore {
   sesionCaja: SesionCaja | null;
   pagos: Pago[];
   historialSesiones: SesionCaja[];
+  usuariosStaff: UsuarioStaff[];
+
+  // Acciones Personal & Cuentas Staff
+  setUsuariosStaff: (usuarios: UsuarioStaff[]) => void;
+  addUsuarioStaff: (usuario: Omit<UsuarioStaff, 'id' | 'created_at'>) => void;
+  updateUsuarioStaff: (id: string, data: Partial<UsuarioStaff>) => void;
+  deleteUsuarioStaff: (id: string) => void;
 
   // Acciones Mesas (Admin & Mesero)
   setMesas: (mesas: Mesa[]) => void;
@@ -97,6 +106,7 @@ export const useSystemStore = create<SystemStore>()(
       mesas: SEED_MESAS,
       categorias: SEED_CATEGORIAS,
       productos: SEED_PRODUCTOS,
+      usuariosStaff: SEED_USUARIOS_STAFF,
       pedidos: [
         {
           id: 'PED-1021',
@@ -572,12 +582,45 @@ export const useSystemStore = create<SystemStore>()(
         broadcastSync('QR_CONFIG_UPDATED', config);
       },
 
+      // --- Personal & Cuentas Staff (Admin) ---
+      setUsuariosStaff: (usuariosStaff) => set({ usuariosStaff }),
+
+      addUsuarioStaff: (data) =>
+        set((state) => {
+          const nuevo: UsuarioStaff = {
+            ...data,
+            id: 'usr-' + Date.now(),
+            created_at: new Date().toISOString(),
+            ultimo_acceso: new Date().toISOString(),
+          };
+          const updated = [...state.usuariosStaff, nuevo];
+          broadcastSync('STAFF_UPDATED', updated);
+          return { usuariosStaff: updated };
+        }),
+
+      updateUsuarioStaff: (id, data) =>
+        set((state) => {
+          const updated = state.usuariosStaff.map((u) =>
+            u.id === id ? { ...u, ...data } : u
+          );
+          broadcastSync('STAFF_UPDATED', updated);
+          return { usuariosStaff: updated };
+        }),
+
+      deleteUsuarioStaff: (id) =>
+        set((state) => {
+          const updated = state.usuariosStaff.filter((u) => u.id !== id);
+          broadcastSync('STAFF_UPDATED', updated);
+          return { usuariosStaff: updated };
+        }),
+
       resetToDefaults: () =>
         set({
           zonas: SEED_ZONAS,
           mesas: SEED_MESAS,
           categorias: SEED_CATEGORIAS,
           productos: SEED_PRODUCTOS,
+          usuariosStaff: SEED_USUARIOS_STAFF,
           pagos: SEED_PAGOS,
           historialSesiones: SEED_HISTORIAL_SESIONES,
           qrBancarioUrl: "https://i.ibb.co/qMkf00HN/dencker-logo.png",

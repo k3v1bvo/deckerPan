@@ -26,6 +26,7 @@ import {
   clearStaffSession,
   checkPinForRole,
   resolveRoleForPin,
+  findStaffUserByPin,
 } from "@/lib/auth";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
@@ -82,7 +83,8 @@ export default function StaffAuthGuard({
       if (checkPinForRole(requiredRole, pinAProbar)) {
         soundManager.playSuccessTone();
         const roleToSave = resolveRoleForPin(requiredRole, pinAProbar);
-        const newSession = saveStaffSession(roleToSave);
+        const specificUser = findStaffUserByPin(pinAProbar);
+        const newSession = saveStaffSession(roleToSave, specificUser || undefined);
         setSession(newSession);
         setErrorMsg(null);
         setPin("");

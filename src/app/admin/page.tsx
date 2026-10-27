@@ -46,13 +46,17 @@ import {
   CalendarDays,
   ArrowUpRight,
   ArrowDownRight,
-  ChevronDown,
   AlertTriangle,
+  ChefHat,
+  KeyRound,
+  EyeOff,
+  UserPlus,
+  Lock,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSystemStore } from "@/store";
 import { uploadImageToImgBB } from "@/lib/imgbb";
-import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja } from "@/types";
+import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja, UsuarioStaff, StaffRole } from "@/types";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { soundManager } from "@/lib/sound";
 
@@ -81,10 +85,29 @@ export default function AdminPage() {
     toggleProductoDisponible,
     updateReservaEstado,
     resetToDefaults,
+    usuariosStaff,
+    addUsuarioStaff,
+    updateUsuarioStaff,
+    deleteUsuarioStaff,
   } = useSystemStore();
 
-  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "qr_mesas" | "reservas" | "metricas" | "qr">("mesas");
+  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "personal" | "qr_mesas" | "reservas" | "metricas" | "qr">("mesas");
   const [baseUrlMesas, setBaseUrlMesas] = useState("https://decker-pan.vercel.app");
+
+  // Estados Gestión de Personal & Accesos PIN
+  const [modalStaffAbierto, setModalStaffAbierto] = useState(false);
+  const [usuarioStaffAEditar, setUsuarioStaffAEditar] = useState<UsuarioStaff | null>(null);
+  const [formStaff, setFormStaff] = useState({
+    nombre: "",
+    role: "mesero" as StaffRole,
+    cargo: "",
+    pin: "",
+    telefono: "",
+    activo: true,
+  });
+  const [pinsVisibles, setPinsVisibles] = useState<Record<string, boolean>>({});
+  const [filtroRoleStaff, setFiltroRoleStaff] = useState<"todos" | StaffRole>("todos");
+  const [busquedaStaff, setBusquedaStaff] = useState("");
 
   // Estados Dashboard Financiero & BI
   const [filtroPeriodo, setFiltroPeriodo] = useState<"hoy" | "semana" | "mes" | "todos">("hoy");
@@ -166,6 +189,97 @@ export default function AdminPage() {
     });
     setGuardadoQrExitoso(true);
     setTimeout(() => setGuardadoQrExitoso(false), 3000);
+  };
+
+  // --- Handlers Personal & Accesos PIN ---
+  const handleAbrirModalStaff = (usuario?: UsuarioStaff) => {
+    soundManager.playClick();
+    if (usuario) {
+      setUsuarioStaffAEditar(usuario);
+      setFormStaff({
+        nombre: usuario.nombre,
+        role: usuario.role,
+        cargo: usuario.cargo,
+        pin: usuario.pin,
+        telefono: usuario.telefono || "",
+        activo: usuario.activo,
+      });
+    } else {
+      setUsuarioStaffAEditar(null);
+      const randomPin = Math.floor(1000 + Math.random() * 9000).toString();
+      setFormStaff({
+        nombre: "",
+        role: "mesero",
+        cargo: "Mesero de Salón & Terraza",
+        pin: randomPin,
+        telefono: "+591 ",
+        activo: true,
+      });
+    }
+    setModalStaffAbierto(true);
+  };
+
+  const handleGenerarPinAleatorio = () => {
+    soundManager.playTactileClick();
+    const pinNuevo = Math.floor(1000 + Math.random() * 9000).toString();
+    setFormStaff((p) => ({ ...p, pin: pinNuevo }));
+  };
+
+  const handleGuardarStaff = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formStaff.nombre.trim()) {
+      alert("Por favor ingresa el nombre del colaborador.");
+      return;
+    }
+    if (!/^\d{4}$/.test(formStaff.pin.trim())) {
+      alert("El código PIN debe ser exactamente de 4 dígitos numéricos.");
+      return;
+    }
+    soundManager.playSuccessTone();
+    if (usuarioStaffAEditar) {
+      updateUsuarioStaff(usuarioStaffAEditar.id, {
+        nombre: formStaff.nombre.trim(),
+        role: formStaff.role,
+        cargo: formStaff.cargo.trim(),
+        pin: formStaff.pin.trim(),
+        telefono: formStaff.telefono.trim(),
+        activo: formStaff.activo,
+      });
+    } else {
+      addUsuarioStaff({
+        nombre: formStaff.nombre.trim(),
+        role: formStaff.role,
+        cargo: formStaff.cargo.trim(),
+        pin: formStaff.pin.trim(),
+        telefono: formStaff.telefono.trim(),
+        activo: formStaff.activo,
+      });
+    }
+    setModalStaffAbierto(false);
+  };
+
+  const handleTogglePinVisible = (id: string) => {
+    soundManager.playTactileClick();
+    setPinsVisibles((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleRegenerarPinRapido = (u: UsuarioStaff) => {
+    const pinNuevo = Math.floor(1000 + Math.random() * 9000).toString();
+    if (confirm(`¿Regenerar PIN para ${u.nombre}? Nuevo PIN asignado: ${pinNuevo}`)) {
+      soundManager.playSuccessTone();
+      updateUsuarioStaff(u.id, { pin: pinNuevo });
+    }
+  };
+
+  const handleEliminarStaff = (u: UsuarioStaff) => {
+    if (u.id === "usr-admin-1" || (u.role === "admin" && (usuariosStaff || []).filter((x) => x.role === "admin").length <= 1)) {
+      alert("No puedes eliminar la cuenta del Administrador Principal.");
+      return;
+    }
+    if (confirm(`¿Eliminar la cuenta de ${u.nombre} (${u.cargo})?`)) {
+      soundManager.playSuccessTone();
+      deleteUsuarioStaff(u.id);
+    }
   };
 
   const [formProducto, setFormProducto] = useState({
@@ -521,6 +635,7 @@ export default function AdminPage() {
             [
               { id: "mesas", label: "Mesas & Aforo", icon: Layers, count: mesas.length },
               { id: "productos", label: "Menú & ImgBB", icon: UtensilsCrossed, count: productos.length },
+              { id: "personal", label: "Personal & PINs", icon: Users, count: (usuariosStaff || []).length },
               { id: "qr_mesas", label: "QRs de Mesas", icon: QrCode, count: mesas.length },
               { id: "reservas", label: "Catering & Reservas", icon: Calendar, count: reservas.length },
               { id: "metricas", label: "Métricas BI", icon: BarChart3, count: undefined },
@@ -902,6 +1017,274 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: GESTIÓN DE PERSONAL & CÓDIGOS DE ACCESO (PIN) ── */}
+        {tabActiva === "personal" && (
+          <div className="space-y-6">
+            {/* Header del módulo de personal */}
+            <div className="p-6 bg-gradient-to-r from-stone-900 via-[#1C120B] to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-amber-500/30">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono uppercase font-bold border border-amber-400/30 flex items-center gap-1.5">
+                    <ShieldCheck size={12} className="text-amber-400" />
+                    Seguridad Operativa • Control de Accesos
+                  </span>
+                  <span className="text-xs text-stone-400 font-medium">
+                    Autenticación por PIN táctil de 4 dígitos
+                  </span>
+                </div>
+                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                  <Users size={24} className="text-amber-400" />
+                  Equipo, Roles & Cuentas de Personal
+                </h2>
+                <p className="text-stone-300 text-xs max-w-xl">
+                  Registra colaboradores, asígnales estación operativa (Meseros en Sala, Cocina/Barismo KDS, Caja POS o Gerencia) y administra sus códigos PIN de acceso.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleAbrirModalStaff()}
+                  className="px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-md transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                >
+                  <Plus size={16} />
+                  <span>Nuevo Colaborador</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 4 Tarjetas de Estadísticas de Personal */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                {
+                  label: "Total Colaboradores",
+                  count: (usuariosStaff || []).length,
+                  icon: Users,
+                  color: "text-stone-900 dark:text-stone-100",
+                  bg: "bg-stone-100 dark:bg-stone-800",
+                },
+                {
+                  label: "Meseros (Sala)",
+                  count: (usuariosStaff || []).filter((u) => u.role === "mesero").length,
+                  icon: UtensilsCrossed,
+                  color: "text-amber-600 dark:text-amber-400",
+                  bg: "bg-amber-500/10",
+                },
+                {
+                  label: "Cocina & Baristas",
+                  count: (usuariosStaff || []).filter((u) => u.role === "cocina").length,
+                  icon: ChefHat,
+                  color: "text-blue-600 dark:text-blue-400",
+                  bg: "bg-blue-500/10",
+                },
+                {
+                  label: "Caja POS & Admin",
+                  count: (usuariosStaff || []).filter((u) => u.role === "caja" || u.role === "admin").length,
+                  icon: Receipt,
+                  color: "text-emerald-600 dark:text-emerald-400",
+                  bg: "bg-emerald-500/10",
+                },
+              ].map((st, idx) => {
+                const Icon = st.icon;
+                return (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs flex items-center gap-3"
+                  >
+                    <div className={`w-10 h-10 rounded-xl ${st.bg} ${st.color} flex items-center justify-center shrink-0`}>
+                      <Icon size={18} />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-stone-500 dark:text-stone-400 block font-medium">
+                        {st.label}
+                      </span>
+                      <span className={`text-xl font-black font-mono ${st.color}`}>
+                        {st.count}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Filtros por Rol y Buscador */}
+            <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+                {[
+                  { id: "todos", label: "Todo el Personal" },
+                  { id: "mesero", label: "Meseros" },
+                  { id: "cocina", label: "Cocina / KDS" },
+                  { id: "caja", label: "Caja POS" },
+                  { id: "admin", label: "Administradores" },
+                ].map((r) => (
+                  <button
+                    key={r.id}
+                    onClick={() => setFiltroRoleStaff(r.id as any)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                      filtroRoleStaff === r.id
+                        ? "bg-amber-900 dark:bg-amber-700 text-white"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+                    }`}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre o cargo..."
+                  value={busquedaStaff}
+                  onChange={(e) => setBusquedaStaff(e.target.value)}
+                  className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-56 sm:w-64"
+                />
+              </div>
+            </div>
+
+            {/* Grid de Cuentas de Personal */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(usuariosStaff || [])
+                .filter((u) => {
+                  const matchRole = filtroRoleStaff === "todos" || u.role === filtroRoleStaff;
+                  const matchSearch =
+                    u.nombre.toLowerCase().includes(busquedaStaff.toLowerCase()) ||
+                    u.cargo.toLowerCase().includes(busquedaStaff.toLowerCase());
+                  return matchRole && matchSearch;
+                })
+                .map((user) => {
+                  const isVisible = !!pinsVisibles[user.id];
+                  const roleConfig = {
+                    admin: {
+                      label: "Administración",
+                      icon: ShieldCheck,
+                      badge: "bg-stone-900 text-amber-300 border-amber-500/40",
+                      station: "Acceso universal a todas las estaciones",
+                    },
+                    mesero: {
+                      label: "Sala & Mesero",
+                      icon: UtensilsCrossed,
+                      badge: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
+                      station: "Terminal de Sala (/mesero)",
+                    },
+                    cocina: {
+                      label: "Cocina & Barismo",
+                      icon: ChefHat,
+                      badge: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30",
+                      station: "Comandas KDS (/kds)",
+                    },
+                    caja: {
+                      label: "Caja POS",
+                      icon: Receipt,
+                      badge: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
+                      station: "Cobros & Arqueo (/caja)",
+                    },
+                  }[user.role];
+
+                  const RoleIcon = roleConfig.icon;
+
+                  return (
+                    <div
+                      key={user.id}
+                      className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between space-y-4 hover:border-amber-400 dark:hover:border-amber-600 transition"
+                    >
+                      {/* Cabecera Tarjeta: Avatar + Rol + Estado */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-base shrink-0">
+                            {user.nombre.slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <h4 className="font-serif font-bold text-base text-stone-900 dark:text-stone-100 leading-tight">
+                              {user.nombre}
+                            </h4>
+                            <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                              {user.cargo}
+                            </p>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                            user.activo
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-400/30"
+                              : "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border-red-400/30"
+                          }`}
+                        >
+                          {user.activo ? "Activo" : "Inactivo"}
+                        </span>
+                      </div>
+
+                      {/* Estación y Permiso */}
+                      <div className="space-y-2 text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bold border ${roleConfig.badge}`}>
+                            <RoleIcon size={13} />
+                            <span>{roleConfig.label}</span>
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-stone-500 dark:text-stone-400 flex items-center gap-1">
+                          <span>Estación:</span>
+                          <span className="font-semibold text-stone-700 dark:text-stone-300">
+                            {roleConfig.station}
+                          </span>
+                        </p>
+                      </div>
+
+                      {/* Bloque de Código PIN de Seguridad */}
+                      <div className="p-3 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 flex items-center justify-between">
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                            PIN de Acceso Táctil:
+                          </span>
+                          <span className="font-mono text-sm font-black text-amber-950 dark:text-amber-200 tracking-widest">
+                            {isVisible ? user.pin : "••••"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleTogglePinVisible(user.id)}
+                            className="p-1.5 rounded-lg text-stone-500 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200 dark:hover:bg-stone-700 transition"
+                            title={isVisible ? "Ocultar PIN" : "Ver PIN"}
+                          >
+                            {isVisible ? <EyeOff size={15} /> : <Eye size={15} />}
+                          </button>
+                          <button
+                            onClick={() => handleRegenerarPinRapido(user)}
+                            className="p-1.5 rounded-lg text-stone-500 hover:text-amber-600 hover:bg-stone-200 dark:hover:bg-stone-700 transition"
+                            title="Regenerar PIN aleatorio"
+                          >
+                            <KeyRound size={15} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Botones de Acción */}
+                      <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800">
+                        <button
+                          onClick={() => handleAbrirModalStaff(user)}
+                          className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Edit2 size={13} />
+                          <span>Editar</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleEliminarStaff(user)}
+                          className="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/60 transition text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Trash2 size={13} />
+                          <span>Eliminar</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         )}
@@ -2361,6 +2744,186 @@ export default function AdminPage() {
                   Cerrar
                 </button>
               </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* ── Modal Crear / Editar Colaborador ── */}
+        {modalStaffAbierto && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                    <Users size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                      {usuarioStaffAEditar ? "Editar Colaborador" : "Nuevo Colaborador"}
+                    </h3>
+                    <p className="text-[11px] text-stone-400">
+                      Asigna estación y PIN de seguridad de 4 dígitos
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setModalStaffAbierto(false)}
+                  className="p-1.5 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleGuardarStaff} className="space-y-3.5 text-xs">
+                {/* Nombre Completo */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. Camila Rojas"
+                    value={formStaff.nombre}
+                    onChange={(e) => setFormStaff({ ...formStaff, nombre: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  />
+                </div>
+
+                {/* Rol / Estación */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Estación Operativa & Rol *
+                  </label>
+                  <select
+                    value={formStaff.role}
+                    onChange={(e) => {
+                      const newRole = e.target.value as StaffRole;
+                      const defaultCargos: Record<StaffRole, string> = {
+                        mesero: "Mesero de Salón & Terraza",
+                        cocina: "Jefe de Cocina & Barismo",
+                        caja: "Cajero de Turno & POS",
+                        admin: "Administrador General",
+                      };
+                      setFormStaff({
+                        ...formStaff,
+                        role: newRole,
+                        cargo: formStaff.cargo === "" || Object.values(defaultCargos).includes(formStaff.cargo)
+                          ? defaultCargos[newRole]
+                          : formStaff.cargo,
+                      });
+                    }}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  >
+                    <option value="mesero">🍽️ Sala & Mesero (Mesas, Croquis y Comandas)</option>
+                    <option value="cocina">👨‍🍳 Cocina & Barismo KDS (Despacho de Tickets)</option>
+                    <option value="caja">💳 Caja POS & Facturación (Cobros Efectivo/QR)</option>
+                    <option value="admin">👑 Administración SaaS (Control Total y Métricas)</option>
+                  </select>
+                </div>
+
+                {/* Cargo descriptivo */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Cargo / Puesto de Trabajo
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Mesero Salón Turno Mañana"
+                    value={formStaff.cargo}
+                    onChange={(e) => setFormStaff({ ...formStaff, cargo: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none"
+                  />
+                </div>
+
+                {/* PIN de 4 dígitos */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-stone-700 dark:text-stone-300">
+                      Código PIN Táctil (4 Dígitos) *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleGenerarPinAleatorio}
+                      className="text-[11px] text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-semibold"
+                    >
+                      <KeyRound size={12} />
+                      <span>Generar al azar</span>
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={4}
+                    required
+                    pattern="\d{4}"
+                    placeholder="4 dígitos, ej. 5832"
+                    value={formStaff.pin}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      setFormStaff({ ...formStaff, pin: val });
+                    }}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-base font-bold tracking-widest text-center focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  />
+                  <span className="text-[10px] text-stone-400 mt-0.5 block">
+                    Este PIN lo digitará el colaborador en la pantalla táctil de su estación.
+                  </span>
+                </div>
+
+                {/* Teléfono / WhatsApp */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Teléfono / WhatsApp (Opcional)
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="+591 76911000"
+                    value={formStaff.telefono}
+                    onChange={(e) => setFormStaff({ ...formStaff, telefono: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none"
+                  />
+                </div>
+
+                {/* Estado Activo */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
+                  <div>
+                    <span className="font-bold text-stone-800 dark:text-stone-200 block text-xs">
+                      Estado de la Cuenta
+                    </span>
+                    <span className="text-[11px] text-stone-500">
+                      {formStaff.activo ? "Permite iniciar sesión en estación" : "Acceso bloqueado"}
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={formStaff.activo}
+                    onChange={(e) => setFormStaff({ ...formStaff, activo: e.target.checked })}
+                    className="w-5 h-5 rounded text-amber-600 focus:ring-amber-500 cursor-pointer"
+                  />
+                </div>
+
+                {/* Botón Guardar */}
+                <div className="pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setModalStaffAbierto(false)}
+                    className="px-4 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer active:scale-95"
+                  >
+                    <Save size={14} />
+                    <span>Guardar Colaborador</span>
+                  </button>
+                </div>
+              </form>
             </motion.div>
           </div>
         )}

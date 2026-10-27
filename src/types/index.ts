@@ -6,6 +6,19 @@ export type EstadoItem = 'pendiente' | 'en_preparacion' | 'listo' | 'entregado' 
 export type MetodoPago = 'efectivo' | 'qr' | 'qr_simple' | 'mixto';
 export type TipoAlerta = 'llamado' | 'cambio_solicitado' | 'pedido_listo' | 'cuenta_pedida' | 'pago_recibido';
 export type EstadoReserva = 'pendiente' | 'confirmada' | 'produccion' | 'completada' | 'cancelada';
+export type StaffRole = 'admin' | 'mesero' | 'cocina' | 'caja';
+
+export interface UsuarioStaff {
+  id: string;
+  nombre: string;
+  role: StaffRole;
+  cargo: string;
+  pin: string;
+  activo: boolean;
+  telefono?: string;
+  created_at: string;
+  ultimo_acceso?: string;
+}
 
 export interface Zona {
   id: string;
