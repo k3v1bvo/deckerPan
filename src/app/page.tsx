@@ -738,7 +738,7 @@ export default function HomePage() {
                     Croissants, New York Rolls & Café de Especialidad
                   </h3>
                   <p className="text-xs text-stone-300 line-clamp-1">
-                    Av. América & Pando (Zona Norte), Cochabamba
+                    Av. Daniel Salamanca, Cochabamba, Bolivia
                   </p>
                 </div>
               </div>
@@ -2447,6 +2447,162 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
+      {/* ── 6.5. CASA MATRIZ & CAFÉ 4 LLAMAS DE ESPECIALIDAD ── */}
+      <section id="ubicacion" className="w-full bg-[#FAF5EE] border-t border-[#EAE0D3] py-16 px-6 md:px-12 flex flex-col items-center">
+        <div className="w-full max-w-7xl mx-auto space-y-12">
+          
+          {/* Encabezado con Don Dencker */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-[#E6D9C8] pb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 rounded-3xl bg-[#F0E4D4] border border-[#DFCBB5] p-2 flex items-center justify-center shadow-xs shrink-0">
+                <img
+                  src="/img/brand/don-dencker.png"
+                  alt="Don Dencker"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div>
+                <span className="text-xs uppercase tracking-widest font-extrabold text-[#785E4F] block">
+                  Visítanos en Cochabamba
+                </span>
+                <h2 className="font-serif text-3xl sm:text-4xl font-black text-[#1E130C]">
+                  Nuestra Casa & Café de Especialidad
+                </h2>
+                <p className="text-xs sm:text-sm text-[#6E5547] mt-1">
+                  Av. Daniel Salamanca, Cochabamba • Granos 4 Llamas de Caranavi (1700 m.s.n.m.)
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="https://maps.app.goo.gl/xn24aVhPQEC9dUf16"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-3 rounded-2xl bg-[#9E2A2B] hover:bg-[#832021] text-white font-bold text-xs shadow-md transition flex items-center gap-2 active:scale-95 shrink-0"
+            >
+              <MapPin size={16} />
+              <span>Abrir en Google Maps</span>
+              <ChevronRight size={14} />
+            </a>
+          </div>
+
+          {/* Grid: Café 4 Llamas + Mapa Interactivo */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            
+            {/* Columna Izquierda: Partner Oficial Café 4 Llamas (5 cols) */}
+            <div className="lg:col-span-5 bg-gradient-to-br from-[#1E292B] to-[#121B1C] text-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden border border-emerald-950/40">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="space-y-4 relative z-10">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+                  <Coffee size={14} />
+                  <span>Café de Especialidad Oficial</span>
+                </div>
+
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
+                  4 Llamas <span className="text-amber-300 italic font-normal">— El Arte del Café</span>
+                </h3>
+
+                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                  En Dencker Pan servimos exclusivamente café boliviano de origen único, cultivado en las alturas de Caranavi bajo sombra natural y tostado con precisión de autor.
+                </p>
+
+                {/* Ficha Técnica del Café */}
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Variedad</span>
+                    <span className="text-sm font-black text-amber-300">Catuaí Lavado</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Altura</span>
+                    <span className="text-sm font-black text-emerald-300">1,700 m.s.n.m.</span>
+                  </div>
+                  <div className="col-span-2 p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Notas de Cata</span>
+                    <span className="text-xs font-bold text-stone-200">Chocolate negro, naranja sutil y caramelo</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Imagen del empaque y badge */}
+              <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between gap-4 relative z-10">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/img/brand/cafe-catuai-badge.png"
+                    alt="Sello Catuaí Lavado"
+                    className="w-14 h-14 object-contain rounded-full shadow-md"
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-white block">Zona Caranavi</span>
+                    <span className="text-[11px] text-stone-400">Yungas, Bolivia</span>
+                  </div>
+                </div>
+
+                <div className="w-20 h-24 rounded-2xl overflow-hidden border border-white/20 shadow-lg">
+                  <img
+                    src="/img/brand/cafe-4llamas-pack.png"
+                    alt="Bolsa 4 Llamas"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Columna Derecha: Mapa Interactivo & Detalles de la Casa (7 cols) */}
+            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-[#E6D9C8] shadow-sm flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#9E2A2B]">
+                    <MapPin size={15} />
+                    <span>Ubicación Exacta</span>
+                  </div>
+                  <span className="text-xs text-stone-400 font-mono">-17.38529, -66.15398</span>
+                </div>
+
+                <h3 className="font-serif text-xl sm:text-2xl font-black text-stone-900">
+                  Av. Daniel Salamanca, Cochabamba
+                </h3>
+                <p className="text-xs text-stone-600">
+                  Estamos ubicados en una zona accesible y tranquila, con salón climatizado, terraza jardín y aroma a pan caliente recién horneado.
+                </p>
+              </div>
+
+              {/* Contenedor del Mapa embebido */}
+              <div className="w-full h-64 sm:h-72 rounded-2xl overflow-hidden border border-stone-200 shadow-inner relative group">
+                <iframe
+                  title="Ubicación Dencker Pan en Cochabamba"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3807.52554746146!2d-66.1565620248386!3d-17.385289483501247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e375001993b041%3A0x99384f2150fd68a1!2sDencker%20Pan!5e0!3m2!1ses!2sbo!4v1714000000000!5m2!1ses!2sbo"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Servicios de la Casa */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+                {[
+                  { label: "Horario", val: "07:00 – 21:30" },
+                  { label: "Salón", val: "Climatizado" },
+                  { label: "Terraza", val: "Al aire libre" },
+                  { label: "Wi-Fi", val: "Alta velocidad" },
+                ].map((s, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl bg-stone-50 border border-stone-100 text-center">
+                    <span className="text-[10px] text-stone-400 block font-bold uppercase">{s.label}</span>
+                    <span className="text-xs font-bold text-stone-800">{s.val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
       {/* ── 7. FOOTER EDITORIAL DE NUESTRA CASA & HORARIOS (w-full bg-[#120B07]) ── */}
       <footer id="contacto" className="w-full bg-[#120B07] border-t border-amber-900/30 text-stone-300 pt-16 pb-12">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 space-y-12">
@@ -2485,7 +2641,14 @@ export default function HomePage() {
               <ul className="space-y-2.5 text-xs text-stone-400">
                 <li className="flex items-start gap-2.5">
                   <MapPin size={15} className="text-amber-400 shrink-0 mt-0.5" />
-                  <span>Av. América & Pando (Zona Norte), Cochabamba, Bolivia</span>
+                  <a
+                    href="https://maps.app.goo.gl/xn24aVhPQEC9dUf16"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-amber-300 transition underline underline-offset-2"
+                  >
+                    Av. Daniel Salamanca, Cochabamba, Bolivia (Ver en Google Maps ↗)
+                  </a>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Clock size={15} className="text-amber-400 shrink-0" />

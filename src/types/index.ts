@@ -71,8 +71,8 @@ export interface Producto {
   stock: number;
   chips_personalizacion: string[];
   estacion: Estacion;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CartItem {
@@ -201,3 +201,31 @@ export const BILLETES_BOLIVIANOS: BilleteBoliviano[] = [
   { valor: 1,   label: 'Bs 1',   tipo: 'moneda'  },
   { valor: 0.5, label: '50 cts', tipo: 'moneda'  },
 ];
+
+export interface FacturacionSiatConfig {
+  tokenSiat: string;
+  linkImpuestos: string;
+  cufd: string;
+  codigoPuntoVenta: number;
+  razonSocialEmisor: string;
+  nitEmisor: string;
+  activa: boolean;
+  modalidad: 'electronica_linea' | 'computarizada_linea' | 'recibo_oficial';
+  leyendaLey453: string;
+}
+
+export interface FacturaEmitida {
+  id: string;
+  numeroFactura: number;
+  cuf: string;
+  cufd: string;
+  fechaEmision: string;
+  clienteNombre: string;
+  clienteNitCi: string;
+  clienteComplemento?: string;
+  montoTotal: number;
+  codigoControl?: string;
+  urlQrVerificacion: string;
+  pedidoId: string;
+  estado: 'emitida' | 'anulada';
+}

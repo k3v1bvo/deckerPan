@@ -19,8 +19,9 @@ import {
   CreditCard,
   Star,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { useSystemStore } from "@/store";
-import { Pedido, MetodoPago, BILLETES_BOLIVIANOS } from "@/types";
+import { Pedido, MetodoPago, BILLETES_BOLIVIANOS, FacturaEmitida } from "@/types";
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 
@@ -35,6 +36,8 @@ export default function CajaPage() {
     registrarPago,
     abrirCaja,
     cerrarCaja,
+    facturacionSiatConfig,
+    emitirFacturaSiat,
   } = useSystemStore();
 
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<Pedido | null>(null);
@@ -44,6 +47,9 @@ export default function CajaPage() {
   const [modalArqueoAbierto, setModalArqueoAbierto] = useState(false);
   const [modalReciboAbierto, setModalReciboAbierto] = useState(false);
   const [pagoCompletado, setPagoCompletado] = useState(false);
+  const [facturaEmitidaActual, setFacturaEmitidaActual] = useState<FacturaEmitida | null>(null);
+  const [nitCiCliente, setNitCiCliente] = useState("0");
+  const [razonSocialCliente, setRazonSocialCliente] = useState("");
 
   // Arqueo conteo de billetes
   const [conteoBilletes, setConteoBilletes] = useState<Record<number, number>>({
@@ -131,6 +137,7 @@ export default function CajaPage() {
       estado: "completado",
       items_pagados: (pedidoSeleccionado.items || []).map((i) => i.id),
       cliente_nombre:
+        razonSocialCliente.trim() ||
         pedidoSeleccionado.cliente_nombre ||
         (pedidoSeleccionado.mesa_numero ? `Mesa ${pedidoSeleccionado.mesa_numero}` : "Cliente Mostrador"),
       mesa_numero: pedidoSeleccionado.mesa_numero,
@@ -138,6 +145,18 @@ export default function CajaPage() {
       cajero: sesionCaja?.cajero || "Caja Principal",
       modalidad: pedidoSeleccionado.mesa_numero ? "mesa" : "retiro",
     });
+
+    if (facturacionSiatConfig.activa) {
+      const fac = emitirFacturaSiat({
+        pedidoId: pedidoSeleccionado.id,
+        clienteNombre: razonSocialCliente.trim() || pedidoSeleccionado.cliente_nombre || "Sin Nombre",
+        clienteNitCi: nitCiCliente.trim() || "0",
+        montoTotal: totalPagar,
+      });
+      setFacturaEmitidaActual(fac);
+    } else {
+      setFacturaEmitidaActual(null);
+    }
 
     // 💰 ¡Sonido icónico de Caja Registradora Antigua de Bronce Ka-Ching!
     soundManager.playCashRegister();
@@ -586,11 +605,48 @@ export default function CajaPage() {
                 </div>
               )}
 
+              {/* Formulario Cliente SIAT (si la facturación está activa) */}
+              {facturacionSiatConfig.activa && (
+                <div className="p-3.5 bg-blue-50/80 rounded-2xl border border-blue-200 text-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-blue-950 flex items-center gap-1.5">
+                      <Receipt size={14} className="text-blue-600" />
+                      Facturación Oficial SIN Bolivia
+                    </span>
+                    <span className="text-[10px] bg-blue-200/70 text-blue-800 font-mono px-2 py-0.5 rounded-full font-bold">
+                      Punto {facturacionSiatConfig.codigoPuntoVenta}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[10px] text-stone-600 font-bold block mb-0.5">NIT / CI Cliente:</label>
+                      <input
+                        type="text"
+                        value={nitCiCliente}
+                        onChange={(e) => setNitCiCliente(e.target.value)}
+                        placeholder="0 (Sin NIT)"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-stone-300 bg-white font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-stone-600 font-bold block mb-0.5">Razón Social / Nombre:</label>
+                      <input
+                        type="text"
+                        value={razonSocialCliente}
+                        onChange={(e) => setRazonSocialCliente(e.target.value)}
+                        placeholder={pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-stone-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Botón Finalizar Cobro */}
               <button
                 disabled={metodoPago === "efectivo" && montoRecibido < totalPagar}
                 onClick={procesarCobro}
-                className="w-full py-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base shadow-lg transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base shadow-lg transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
               >
                 <CheckCircle2 size={20} />
                 <span>Confirmar Pago de Bs {totalPagar.toFixed(2)}</span>
@@ -624,16 +680,26 @@ export default function CajaPage() {
               {/* Ticket Térmico Styling */}
               <div id="recibo-termico" className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
                 <div className="text-center space-y-0.5">
-                  <h4 className="font-bold text-base font-serif">DENCKER PAN</h4>
-                  <p className="text-[11px]">CAFETERÍA & PANADERÍA S.R.L.</p>
-                  <p className="text-[10px] text-stone-500">NIT: 389201024</p>
-                  <p className="text-[10px] text-stone-500">Cochabamba - Bolivia</p>
+                  <h4 className="font-bold text-base font-serif">
+                    {facturacionSiatConfig.razonSocialEmisor || "DENCKER PAN"}
+                  </h4>
+                  <p className="text-[11px]">CAFETERÍA & PANADERÍA ARTESANAL</p>
+                  <p className="text-[10px] text-stone-600">Casa Matriz: 0 • Av. Daniel Salamanca, Cochabamba</p>
+                  <p className="text-[10px] text-stone-600 font-bold">NIT: {facturacionSiatConfig.nitEmisor || "389201024"}</p>
+                  {facturaEmitidaActual && (
+                    <div className="pt-1 text-[10px] text-stone-700">
+                      <p className="font-bold text-stone-900">FACTURA N°: {facturaEmitidaActual.numeroFactura}</p>
+                      <p className="break-all text-[8px] font-mono text-stone-500 leading-tight">CUF: {facturaEmitidaActual.cuf}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t border-dashed border-stone-300 pt-2 text-[11px] space-y-0.5">
-                  <p>Mesa: {pedidoSeleccionado.mesa_numero}</p>
+                  <p>Mesa: {pedidoSeleccionado.mesa_numero || "Mostrador"}</p>
                   <p>Fecha: {new Date().toLocaleDateString("es-BO")} {new Date().toLocaleTimeString("es-BO")}</p>
                   <p>Cajero: {sesionCaja?.cajero || "Caja Principal"}</p>
+                  <p>NIT/CI: {facturaEmitidaActual?.clienteNitCi || nitCiCliente || "0"}</p>
+                  <p>Señor(es): {facturaEmitidaActual?.clienteNombre || razonSocialCliente || pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}</p>
                 </div>
 
                 <div className="border-t border-dashed border-stone-300 pt-2 space-y-1">
@@ -662,9 +728,21 @@ export default function CajaPage() {
                   )}
                 </div>
 
-                <div className="text-center pt-2 text-[10px] text-stone-500">
-                  <p>¡Gracias por su preferencia!</p>
-                  <p>ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS</p>
+                {facturaEmitidaActual && (
+                  <div className="border-t border-dashed border-stone-300 pt-2 flex flex-col items-center justify-center space-y-1 text-center">
+                    <QRCodeSVG
+                      value={facturaEmitidaActual.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
+                      size={85}
+                      level="M"
+                    />
+                    <p className="text-[8px] text-stone-500 font-mono">Código de Control / QR SIAT</p>
+                  </div>
+                )}
+
+                <div className="text-center pt-2 text-[10px] text-stone-500 space-y-0.5">
+                  <p>¡Gracias por su preferencia en Dencker Pan!</p>
+                  <p className="font-bold">ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS</p>
+                  <p className="text-[8px] text-stone-400">Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad.</p>
                 </div>
               </div>
 

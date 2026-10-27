@@ -56,9 +56,10 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useSystemStore } from "@/store";
 import { uploadImageToImgBB } from "@/lib/imgbb";
-import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja, UsuarioStaff, StaffRole } from "@/types";
+import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja, UsuarioStaff, StaffRole, FacturaEmitida } from "@/types";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { soundManager } from "@/lib/sound";
+import { DENCKER_ASSETS, REAL_PRODUCT_PHOTOS, MENU_PDF_PAGES } from "@/lib/seed-data";
 
 export default function AdminPage() {
   const {
@@ -89,10 +90,31 @@ export default function AdminPage() {
     addUsuarioStaff,
     updateUsuarioStaff,
     deleteUsuarioStaff,
+    facturacionSiatConfig,
+    facturasEmitidas,
+    setFacturacionSiatConfig,
   } = useSystemStore();
 
-  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "personal" | "qr_mesas" | "reservas" | "metricas" | "qr">("mesas");
+  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "personal" | "qr_mesas" | "reservas" | "metricas" | "qr" | "siat">("mesas");
   const [baseUrlMesas, setBaseUrlMesas] = useState("https://decker-pan.vercel.app");
+
+  // Estados Edición Rápida de Precios & Galería de Fotos Reales
+  const [editandoPrecioId, setEditandoPrecioId] = useState<string | null>(null);
+  const [nuevoPrecioInput, setNuevoPrecioInput] = useState<string>("");
+  const [galeriaFotosAbierta, setGaleriaFotosAbierta] = useState(false);
+  const [productoParaGaleria, setProductoParaGaleria] = useState<Producto | null>(null);
+  const [busquedaFoto, setBusquedaFoto] = useState("");
+  const [filtroTipoFoto, setFiltroTipoFoto] = useState<"todas" | "productos" | "marca">("todas");
+  const [fotoSeleccionadaGaleria, setFotoSeleccionadaGaleria] = useState<string | null>(null);
+  const [productoDestinoFotoId, setProductoDestinoFotoId] = useState<string>("");
+  const [vistaProductosModo, setVistaProductosModo] = useState<"tarjetas" | "tabla">("tarjetas");
+  const [modalPdfAbierto, setModalPdfAbierto] = useState(false);
+  const [paginaPdfActiva, setPaginaPdfActiva] = useState(0);
+
+  // Estados Facturación SIAT / Impuestos Bolivia
+  const [formSiat, setFormSiat] = useState(facturacionSiatConfig);
+  const [siatGuardadoExitoso, setSiatGuardadoExitoso] = useState(false);
+  const [busquedaFactura, setBusquedaFactura] = useState("");
 
   // Estados Gestión de Personal & Accesos PIN
   const [modalStaffAbierto, setModalStaffAbierto] = useState(false);
@@ -635,6 +657,7 @@ export default function AdminPage() {
             [
               { id: "mesas", label: "Mesas", icon: Layers },
               { id: "productos", label: "Menú", icon: UtensilsCrossed },
+              { id: "siat", label: "Facturas SIAT", icon: Receipt },
               { id: "personal", label: "Personal", icon: Users },
               { id: "qr_mesas", label: "QRs Mesas", icon: QrCode },
               { id: "reservas", label: "Reservas", icon: Calendar },
@@ -779,17 +802,17 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ── TAB 2: GESTIÓN DE PRODUCTOS & IMGBB ── */}
+        {/* ── TAB 2: GESTIÓN DE PRODUCTOS & MENÚ OFICIAL ── */}
         {tabActiva === "productos" && (
           <div className="space-y-6">
             <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
                 <button
                   onClick={() => setFiltroCategoria("todas")}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer transition ${
                     filtroCategoria === "todas"
-                      ? "bg-amber-900 dark:bg-amber-700 text-white"
-                      : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
+                      : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
                   }`}
                 >
                   Todas ({productos.length})
@@ -798,10 +821,10 @@ export default function AdminPage() {
                   <button
                     key={c.id}
                     onClick={() => setFiltroCategoria(c.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 cursor-pointer transition ${
                       filtroCategoria === c.id
-                        ? "bg-amber-900 dark:bg-amber-700 text-white"
-                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
+                        ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
                     }`}
                   >
                     <span>{c.emoji}</span>
@@ -810,125 +833,814 @@ export default function AdminPage() {
                 ))}
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2.5">
                 <div className="relative">
                   <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
                   <input
                     type="text"
-                    placeholder="Buscar producto..."
+                    placeholder="Buscar producto o receta..."
                     value={busquedaProducto}
                     onChange={(e) => setBusquedaProducto(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none"
+                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500 w-44 sm:w-56"
                   />
                 </div>
 
+                {/* Selector Vista Tarjetas vs Tabla */}
+                <div className="flex items-center p-1 bg-stone-100 dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setVistaProductosModo("tarjetas");
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      vistaProductosModo === "tarjetas"
+                        ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs"
+                        : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
+                    }`}
+                    title="Vista Cuadrícula de Tarjetas"
+                  >
+                    <Layers size={13} />
+                    <span className="hidden sm:inline">Tarjetas</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setVistaProductosModo("tabla");
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      vistaProductosModo === "tabla"
+                        ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs"
+                        : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
+                    }`}
+                    title="Vista Planilla / Tabla de Precios Rápida"
+                  >
+                    <BarChart3 size={13} />
+                    <span className="hidden sm:inline">Planilla Precios</span>
+                  </button>
+                </div>
+
+                {/* Botón Ver PDF Oficial */}
+                <button
+                  onClick={() => {
+                    soundManager.playClick();
+                    setModalPdfAbierto(true);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 font-bold text-xs border border-amber-300/60 dark:border-amber-800 hover:bg-amber-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
+                  title="Ver las 6 páginas del Menú Dencker original"
+                >
+                  <FileText size={15} className="text-amber-700 dark:text-amber-400" />
+                  <span className="hidden sm:inline">Menú Oficial PDF</span>
+                  <span className="sm:hidden">PDF</span>
+                </button>
+
+                {/* Botón Galería de Fotos Reales */}
+                <button
+                  onClick={() => {
+                    soundManager.playClick();
+                    setProductoParaGaleria(null);
+                    setGaleriaFotosAbierta(true);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs border border-stone-200 dark:border-stone-700 hover:bg-stone-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
+                  title="Explorar el banco de 169 fotos reales para asignar"
+                >
+                  <ImageIcon size={15} className="text-amber-600" />
+                  <span>Fotos Reales ({REAL_PRODUCT_PHOTOS.length})</span>
+                </button>
+
+                {/* Botón Nuevo Producto */}
                 <button
                   onClick={abrirModalNuevoProducto}
-                  className="px-4 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-sm hover:bg-amber-950 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95"
+                  className="px-4 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-sm hover:bg-amber-950 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
                 >
-                  <Plus size={15} /> Nuevo Producto
+                  <Plus size={15} />
+                  <span>Nuevo Producto</span>
                 </button>
               </div>
             </div>
 
-            {/* Grid de Productos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {productos
-                .filter((p) => {
-                  const matchCat =
-                    filtroCategoria === "todas" || p.categoria_id === filtroCategoria;
-                  const matchSearch = p.nombre
-                    .toLowerCase()
-                    .includes(busquedaProducto.toLowerCase());
-                  return matchCat && matchSearch;
-                })
-                .map((prod) => {
-                  const margen = prod.precio > 0
-                    ? Math.round(((prod.precio - prod.costo) / prod.precio) * 100)
-                    : 0;
+            {/* Hint informativo para el admin */}
+            <div className="flex items-center justify-between text-xs px-4 py-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-300">
+              <div className="flex items-center gap-2">
+                <Sparkles size={16} className="text-amber-600 shrink-0" />
+                <span>
+                  {vistaProductosModo === "tarjetas" ? (
+                    <>
+                      <strong>Tip de Edición Rápida:</strong> Haz click sobre la <strong>foto</strong> de cualquier producto para cambiarla por una foto real del menú, o haz click sobre su <strong>precio (Bs)</strong> para modificarlo al instante.
+                    </>
+                  ) : (
+                    <>
+                      <strong>Modo Planilla Rápida:</strong> Edita precios al instante haciendo click en el precio. Cambia fotos en 1 click desde la galería de fotos reales de Dencker Pan.
+                    </>
+                  )}
+                </span>
+              </div>
+              <span className="text-[11px] font-mono text-amber-700 dark:text-amber-400 font-semibold hidden md:inline">
+                {productos.length} productos registrados
+              </span>
+            </div>
 
-                  return (
-                    <div
-                      key={prod.id}
-                      className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between hover:border-amber-400 dark:hover:border-amber-600 transition"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border border-amber-200/60 dark:border-stone-700 flex-shrink-0 text-2xl">
-                              {prod.imagen_url ? (
-                                <img
-                                  src={prod.imagen_url}
-                                  alt={prod.nombre}
-                                  className="w-full h-full object-cover"
-                                />
+            {/* VISTA 1: GRID DE TARJETAS */}
+            {vistaProductosModo === "tarjetas" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {productos
+                  .filter((p) => {
+                    const matchCat =
+                      filtroCategoria === "todas" || p.categoria_id === filtroCategoria;
+                    const matchSearch = p.nombre
+                      .toLowerCase()
+                      .includes(busquedaProducto.toLowerCase()) ||
+                      (p.descripcion || "").toLowerCase().includes(busquedaProducto.toLowerCase());
+                    return matchCat && matchSearch;
+                  })
+                  .map((prod) => {
+                    const margen = prod.precio > 0
+                      ? Math.round(((prod.precio - prod.costo) / prod.precio) * 100)
+                      : 0;
+
+                    return (
+                      <div
+                        key={prod.id}
+                        className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between hover:border-amber-400 dark:hover:border-amber-600 transition group"
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                              {/* Foto Interactiva con botón de cambio */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  soundManager.playClick();
+                                  setProductoParaGaleria(prod);
+                                  setGaleriaFotosAbierta(true);
+                                }}
+                                title="Click para cambiar foto desde las fotos reales del menú"
+                                className="relative group/img w-14 h-14 rounded-2xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border border-amber-200/60 dark:border-stone-700 shrink-0 text-2xl cursor-pointer hover:ring-2 hover:ring-amber-500 transition"
+                              >
+                                {prod.imagen_url ? (
+                                  <img
+                                    src={prod.imagen_url}
+                                    alt={prod.nombre}
+                                    className="w-full h-full object-cover group-hover/img:scale-110 transition duration-300"
+                                  />
+                                ) : (
+                                  categorias.find((c) => c.id === prod.categoria_id)?.emoji || "🥐"
+                                )}
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                                  <ImageIcon size={16} />
+                                  <span className="text-[8px] font-bold mt-0.5">Cambiar</span>
+                                </div>
+                              </button>
+
+                              <div>
+                                <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100 line-clamp-1 group-hover:text-amber-800 dark:group-hover:text-amber-400 transition">
+                                  {prod.nombre}
+                                </h4>
+                                <span className="text-[11px] text-stone-400 capitalize flex items-center gap-1">
+                                  Estación: {prod.estacion}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Editor de Precio Rápido Inline */}
+                            <div className="text-right">
+                              {editandoPrecioId === prod.id ? (
+                                <div className="flex items-center gap-1 justify-end">
+                                  <span className="text-xs font-bold text-stone-500">Bs</span>
+                                  <input
+                                    type="number"
+                                    step="0.5"
+                                    autoFocus
+                                    value={nuevoPrecioInput}
+                                    onChange={(e) => setNuevoPrecioInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        const num = parseFloat(nuevoPrecioInput);
+                                        if (!isNaN(num) && num >= 0) {
+                                          updateProducto(prod.id, { precio: num });
+                                          soundManager.playSuccessTone();
+                                        }
+                                        setEditandoPrecioId(null);
+                                      } else if (e.key === "Escape") {
+                                        setEditandoPrecioId(null);
+                                      }
+                                    }}
+                                    className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold rounded-lg border-2 border-amber-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-right focus:outline-none"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const num = parseFloat(nuevoPrecioInput);
+                                      if (!isNaN(num) && num >= 0) {
+                                        updateProducto(prod.id, { precio: num });
+                                        soundManager.playSuccessTone();
+                                      }
+                                      setEditandoPrecioId(null);
+                                    }}
+                                    className="p-1 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
+                                    title="Guardar precio"
+                                  >
+                                    <Check size={12} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditandoPrecioId(null)}
+                                    className="p-1 rounded-md bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 cursor-pointer"
+                                    title="Cancelar"
+                                  >
+                                    <X size={12} />
+                                  </button>
+                                </div>
                               ) : (
-                                categorias.find((c) => c.id === prod.categoria_id)?.emoji || "🥐"
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    soundManager.playTactileClick();
+                                    setEditandoPrecioId(prod.id);
+                                    setNuevoPrecioInput(prod.precio.toString());
+                                  }}
+                                  title="Click para editar precio rápido"
+                                  className="group/price text-right hover:bg-amber-50 dark:hover:bg-amber-950/40 p-1.5 rounded-xl transition cursor-pointer"
+                                >
+                                  <span className="font-serif font-black text-base text-amber-900 dark:text-amber-400 block font-mono group-hover/price:text-amber-600 flex items-center justify-end gap-1">
+                                    Bs {prod.precio.toFixed(2)}
+                                    <Edit2 size={11} className="opacity-0 group-hover/price:opacity-100 transition text-amber-600" />
+                                  </span>
+                                  <span className="text-[10px] text-emerald-600 font-bold block">
+                                    Margen: {margen}%
+                                  </span>
+                                </button>
                               )}
                             </div>
-                            <div>
-                              <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100 line-clamp-1">
+                          </div>
+
+                          {prod.descripcion && (
+                            <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">
+                              {prod.descripcion}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Footer Producto */}
+                        <div className="pt-3 mt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
+                          <button
+                            onClick={() => toggleProductoDisponible(prod.id)}
+                            className={`text-[11px] font-bold px-3 py-1 rounded-full transition cursor-pointer ${
+                              prod.disponible
+                                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                : "bg-stone-100 text-stone-400 dark:bg-stone-800"
+                            }`}
+                          >
+                            {prod.disponible ? "Disponible ✓" : "Agotado"}
+                          </button>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => abrirModalEditarProducto(prod)}
+                              className="p-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs cursor-pointer"
+                              title="Editar detalles completos"
+                            >
+                              <Edit2 size={13} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(`¿Eliminar ${prod.nombre}?`)) {
+                                  deleteProducto(prod.id);
+                                  soundManager.playSuccessTone();
+                                }
+                              }}
+                              className="p-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs cursor-pointer"
+                              title="Eliminar producto"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            ) : (
+              /* VISTA 2: PLANILLA / TABLA RÁPIDA DE PRECIOS */
+              <div className="overflow-x-auto rounded-3xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-xs">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-stone-50 dark:bg-stone-950/70 border-b border-stone-200 dark:border-stone-800 text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider">
+                    <tr>
+                      <th className="py-3.5 px-4 w-16">Foto</th>
+                      <th className="py-3.5 px-4">Producto & Receta</th>
+                      <th className="py-3.5 px-4">Categoría</th>
+                      <th className="py-3.5 px-4">Estación</th>
+                      <th className="py-3.5 px-4 text-right">Precio Venta</th>
+                      <th className="py-3.5 px-4 text-right">Costo</th>
+                      <th className="py-3.5 px-4 text-center">Margen</th>
+                      <th className="py-3.5 px-4 text-center">Disponibilidad</th>
+                      <th className="py-3.5 px-4 text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100 dark:divide-stone-800/80">
+                    {productos
+                      .filter((p) => {
+                        const matchCat =
+                          filtroCategoria === "todas" || p.categoria_id === filtroCategoria;
+                        const matchSearch = p.nombre
+                          .toLowerCase()
+                          .includes(busquedaProducto.toLowerCase()) ||
+                          (p.descripcion || "").toLowerCase().includes(busquedaProducto.toLowerCase());
+                        return matchCat && matchSearch;
+                      })
+                      .map((prod) => {
+                        const margen = prod.precio > 0
+                          ? Math.round(((prod.precio - prod.costo) / prod.precio) * 100)
+                          : 0;
+                        const cat = categorias.find((c) => c.id === prod.categoria_id);
+
+                        return (
+                          <tr key={prod.id} className="hover:bg-amber-500/5 transition">
+                            {/* Foto interactiva */}
+                            <td className="py-2.5 px-4">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  soundManager.playClick();
+                                  setProductoParaGaleria(prod);
+                                  setGaleriaFotosAbierta(true);
+                                }}
+                                title="Click para cambiar foto desde las 169 fotos reales"
+                                className="relative group w-11 h-11 rounded-xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border border-stone-200 dark:border-stone-700 cursor-pointer hover:ring-2 hover:ring-amber-500 transition shrink-0"
+                              >
+                                {prod.imagen_url ? (
+                                  <img
+                                    src={prod.imagen_url}
+                                    alt={prod.nombre}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition"
+                                  />
+                                ) : (
+                                  <span className="text-base">{cat?.emoji || "🥐"}</span>
+                                )}
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                  <ImageIcon size={14} />
+                                </div>
+                              </button>
+                            </td>
+
+                            {/* Nombre y descripción */}
+                            <td className="py-2.5 px-4 max-w-xs">
+                              <div className="font-bold text-stone-900 dark:text-stone-100 truncate">
                                 {prod.nombre}
-                              </h4>
-                              <span className="text-[11px] text-stone-400 capitalize">
-                                Estación: {prod.estacion}
+                              </div>
+                              {prod.descripcion && (
+                                <div className="text-[11px] text-stone-400 truncate max-w-xs">
+                                  {prod.descripcion}
+                                </div>
+                              )}
+                            </td>
+
+                            {/* Categoría */}
+                            <td className="py-2.5 px-4 whitespace-nowrap">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-[11px]">
+                                <span>{cat?.emoji}</span>
+                                <span>{cat?.nombre}</span>
                               </span>
-                            </div>
-                          </div>
+                            </td>
 
-                          <div className="text-right">
-                            <span className="font-serif font-black text-base text-amber-900 dark:text-amber-400 block font-mono">
-                              Bs {prod.precio.toFixed(2)}
-                            </span>
-                            <span className="text-[10px] text-emerald-600 font-bold">
-                              Margen: {margen}%
-                            </span>
-                          </div>
-                        </div>
+                            {/* Estación */}
+                            <td className="py-2.5 px-4 whitespace-nowrap">
+                              <span className="capitalize text-stone-500 text-[11px] font-medium">
+                                {prod.estacion}
+                              </span>
+                            </td>
 
-                        {prod.descripcion && (
-                          <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">
-                            {prod.descripcion}
-                          </p>
-                        )}
-                      </div>
+                            {/* Precio Venta Inline Editable */}
+                            <td className="py-2.5 px-4 text-right whitespace-nowrap">
+                              {editandoPrecioId === prod.id ? (
+                                <div className="flex items-center justify-end gap-1">
+                                  <span className="text-[11px] font-bold text-stone-500">Bs</span>
+                                  <input
+                                    type="number"
+                                    step="0.5"
+                                    autoFocus
+                                    value={nuevoPrecioInput}
+                                    onChange={(e) => setNuevoPrecioInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        const num = parseFloat(nuevoPrecioInput);
+                                        if (!isNaN(num) && num >= 0) {
+                                          updateProducto(prod.id, { precio: num });
+                                          soundManager.playSuccessTone();
+                                        }
+                                        setEditandoPrecioId(null);
+                                      } else if (e.key === "Escape") {
+                                        setEditandoPrecioId(null);
+                                      }
+                                    }}
+                                    className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold rounded-lg border-2 border-amber-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-right focus:outline-none"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const num = parseFloat(nuevoPrecioInput);
+                                      if (!isNaN(num) && num >= 0) {
+                                        updateProducto(prod.id, { precio: num });
+                                        soundManager.playSuccessTone();
+                                      }
+                                      setEditandoPrecioId(null);
+                                    }}
+                                    className="p-1 rounded bg-emerald-600 text-white cursor-pointer"
+                                  >
+                                    <Check size={11} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditandoPrecioId(null)}
+                                    className="p-1 rounded bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 cursor-pointer"
+                                  >
+                                    <X size={11} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    soundManager.playTactileClick();
+                                    setEditandoPrecioId(prod.id);
+                                    setNuevoPrecioInput(prod.precio.toString());
+                                  }}
+                                  className="group/p inline-flex items-center gap-1 font-mono font-black text-amber-900 dark:text-amber-400 hover:text-amber-600 px-2 py-1 rounded-lg hover:bg-amber-100/60 dark:hover:bg-amber-950/60 transition cursor-pointer"
+                                  title="Click para editar precio de venta"
+                                >
+                                  <span>Bs {prod.precio.toFixed(2)}</span>
+                                  <Edit2 size={10} className="opacity-0 group-hover/p:opacity-100 transition text-amber-600" />
+                                </button>
+                              )}
+                            </td>
 
-                      {/* Footer Producto */}
-                      <div className="pt-3 mt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
-                        <button
-                          onClick={() => toggleProductoDisponible(prod.id)}
-                          className={`text-[11px] font-bold px-3 py-1 rounded-full transition ${
-                            prod.disponible
-                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                              : "bg-stone-100 text-stone-400 dark:bg-stone-800"
-                          }`}
-                        >
-                          {prod.disponible ? "Disponible ✓" : "Agotado"}
-                        </button>
+                            {/* Costo */}
+                            <td className="py-2.5 px-4 text-right font-mono text-stone-500 whitespace-nowrap">
+                              Bs {prod.costo.toFixed(2)}
+                            </td>
 
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => abrirModalEditarProducto(prod)}
-                            className="p-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs"
-                          >
-                            <Edit2 size={13} />
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (confirm(`¿Eliminar ${prod.nombre}?`)) {
-                                deleteProducto(prod.id);
-                                soundManager.playSuccessTone();
-                              }
-                            }}
-                            className="p-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                            {/* Margen */}
+                            <td className="py-2.5 px-4 text-center whitespace-nowrap">
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                margen >= 50
+                                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20"
+                                  : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-400/20"
+                              }`}>
+                                {margen}%
+                              </span>
+                            </td>
+
+                            {/* Disponibilidad */}
+                            <td className="py-2.5 px-4 text-center whitespace-nowrap">
+                              <button
+                                onClick={() => toggleProductoDisponible(prod.id)}
+                                className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full transition cursor-pointer ${
+                                  prod.disponible
+                                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                    : "bg-stone-100 text-stone-400 dark:bg-stone-800"
+                                }`}
+                              >
+                                {prod.disponible ? "Disponible" : "Agotado"}
+                              </button>
+                            </td>
+
+                            {/* Acciones */}
+                            <td className="py-2.5 px-4 text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => abrirModalEditarProducto(prod)}
+                                  className="p-1.5 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 transition cursor-pointer"
+                                  title="Editar producto completo"
+                                >
+                                  <Edit2 size={12} />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (confirm(`¿Eliminar ${prod.nombre}?`)) {
+                                      deleteProducto(prod.id);
+                                      soundManager.playSuccessTone();
+                                    }
+                                  }}
+                                  className="p-1.5 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition cursor-pointer"
+                                  title="Eliminar producto"
+                                >
+                                  <Trash2 size={12} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── TAB: FACTURACIÓN ELECTRÓNICA SIAT / IMPUESTOS BOLIVIA ── */}
+        {tabActiva === "siat" && (
+          <div className="space-y-6">
+            {/* Header SIAT con diseño institucional */}
+            <div className="p-6 bg-gradient-to-r from-blue-950 via-slate-900 to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-6 border border-blue-900/40">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs font-mono text-blue-300 tracking-wider uppercase">
+                  <ShieldCheck size={16} className="text-blue-400" />
+                  <span>Servicio de Impuestos Nacionales (SIN) • Bolivia</span>
+                </div>
+                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                  Facturación Computarizada / Electrónica en Línea
+                  <span className={`text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full ${
+                    formSiat.activa
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
+                      : "bg-stone-700 text-stone-300"
+                  }`}>
+                    {formSiat.activa ? "SIAT Habilitado" : "Modo Pruebas / Desactivado"}
+                  </span>
+                </h2>
+                <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
+                  Pega aquí el enlace o token proporcionado por tu contador para vincular la emisión legal con CUFD, generación de CUF y QR de verificación tributaria oficial.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const actualizado = { ...formSiat, activa: !formSiat.activa };
+                    setFormSiat(actualizado);
+                    setFacturacionSiatConfig(actualizado);
+                    soundManager.playSuccessTone();
+                  }}
+                  className={`px-4 py-2.5 rounded-2xl font-bold text-xs shadow-md transition flex items-center gap-2 cursor-pointer ${
+                    formSiat.activa
+                      ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                      : "bg-white/10 hover:bg-white/20 text-stone-200"
+                  }`}
+                >
+                  <Receipt size={16} />
+                  <span>{formSiat.activa ? "Facturación Activa ✓" : "Activar Emisión SIAT"}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Formulario de Configuración SIAT */}
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-6">
+              <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-4">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <KeyRound size={18} className="text-amber-600" />
+                    Parámetros Tributarios de Casa Matriz
+                  </h3>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    Datos fiscales de Dencker Pan para los comprobantes electrónicos
+                  </p>
+                </div>
+
+                {siatGuardadoExitoso && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800"
+                  >
+                    <CheckCircle2 size={15} />
+                    <span>Configuración SIAT guardada ✓</span>
+                  </motion.div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                {/* NIT Emisor */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    NIT Emisor *
+                  </label>
+                  <input
+                    type="text"
+                    value={formSiat.nitEmisor}
+                    onChange={(e) => setFormSiat({ ...formSiat, nitEmisor: e.target.value })}
+                    placeholder="1028492023"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
+                  />
+                </div>
+
+                {/* Razón Social */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Razón Social Registrada *
+                  </label>
+                  <input
+                    type="text"
+                    value={formSiat.razonSocialEmisor}
+                    onChange={(e) => setFormSiat({ ...formSiat, razonSocialEmisor: e.target.value })}
+                    placeholder="DENCKER PAN S.R.L."
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
+                  />
+                </div>
+
+                {/* Modalidad de Facturación */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Modalidad SIAT *
+                  </label>
+                  <select
+                    value={formSiat.modalidad}
+                    onChange={(e) => setFormSiat({ ...formSiat, modalidad: e.target.value as any })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
+                  >
+                    <option value="computarizada_linea">Computarizada en Línea (Token/CUFD)</option>
+                    <option value="electronica_linea">Electrónica en Línea (Firma Digital)</option>
+                    <option value="recibo_oficial">Recibo Oficial Tributario</option>
+                  </select>
+                </div>
+
+                {/* Punto de Venta */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Código Punto de Venta (0 = Casa Matriz)
+                  </label>
+                  <input
+                    type="number"
+                    value={formSiat.codigoPuntoVenta}
+                    onChange={(e) => setFormSiat({ ...formSiat, codigoPuntoVenta: parseInt(e.target.value) || 0 })}
+                    placeholder="0"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
+                  />
+                </div>
+
+                {/* Código CUFD */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-stone-700 dark:text-stone-300">
+                      CUFD (Vigente Diario)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nuevoCufd = "B" + Math.random().toString(36).substring(2, 10).toUpperCase() + Date.now().toString(36).toUpperCase();
+                        setFormSiat({ ...formSiat, cufd: nuevoCufd });
+                        soundManager.playTactileClick();
+                      }}
+                      className="text-[10px] text-amber-600 hover:underline cursor-pointer"
+                    >
+                      Renovar código
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={formSiat.cufd}
+                    onChange={(e) => setFormSiat({ ...formSiat, cufd: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
+                  />
+                </div>
+
+                {/* URL Consulta / Validación QR */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Enlace Oficial de Consulta QR Tributario
+                  </label>
+                  <input
+                    type="url"
+                    value={formSiat.linkImpuestos}
+                    onChange={(e) => setFormSiat({ ...formSiat, linkImpuestos: e.target.value })}
+                    placeholder="https://siat.impuestos.gob.bo/consulta/QR"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
+                  />
+                </div>
+
+                {/* Token SIAT o Enlace del Contador */}
+                <div className="md:col-span-3">
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Token Delegado SIAT o Clave de Acceso (Provista por el Contador)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={formSiat.tokenSiat}
+                    onChange={(e) => setFormSiat({ ...formSiat, tokenSiat: e.target.value })}
+                    placeholder="Pega aquí el token SIAT o código provisto por tu contador..."
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-stone-200 dark:border-stone-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFacturacionSiatConfig(formSiat);
+                    soundManager.playSuccessTone();
+                    setSiatGuardadoExitoso(true);
+                    setTimeout(() => setSiatGuardadoExitoso(false), 3000);
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-blue-900 dark:bg-blue-600 hover:bg-blue-950 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <Save size={16} />
+                  <span>Guardar Parámetros SIAT</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Listado de Facturas Emitidas */}
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <Receipt size={18} className="text-blue-600" />
+                    Historial de Facturas Emitidas ({facturasEmitidas.length})
+                  </h3>
+                  <p className="text-xs text-stone-500">
+                    Registro de comprobantes fiscales emitidos con validación CUF
+                  </p>
+                </div>
+
+                <div className="relative">
+                  <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                  <input
+                    type="text"
+                    placeholder="Buscar por Nº, Cliente o NIT..."
+                    value={busquedaFactura}
+                    onChange={(e) => setBusquedaFactura(e.target.value)}
+                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-60"
+                  />
+                </div>
+              </div>
+
+              {facturasEmitidas.length === 0 ? (
+                <div className="py-12 text-center space-y-3 bg-stone-50 dark:bg-stone-800/40 rounded-2xl border border-dashed border-stone-200 dark:border-stone-700">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+                    <Receipt size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-serif font-bold text-sm text-stone-800 dark:text-stone-200">
+                      No hay facturas emitidas todavía
+                    </h4>
+                    <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
+                      Cuando el cajero cobre un pedido en Caja POS con la opción "Factura SIAT", se generará automáticamente el CUF y el código QR de validación tributaria.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-500 font-bold uppercase tracking-wider text-[10px]">
+                        <th className="py-2.5 px-3">Nº Factura</th>
+                        <th className="py-2.5 px-3">Fecha & Hora</th>
+                        <th className="py-2.5 px-3">Cliente / Razón Social</th>
+                        <th className="py-2.5 px-3">NIT / CI</th>
+                        <th className="py-2.5 px-3">Total (Bs)</th>
+                        <th className="py-2.5 px-3">CUF</th>
+                        <th className="py-2.5 px-3 text-right">Verificación</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                      {facturasEmitidas
+                        .filter((f) => {
+                          const query = busquedaFactura.toLowerCase();
+                          return (
+                            f.numeroFactura.toString().includes(query) ||
+                            f.clienteNombre.toLowerCase().includes(query) ||
+                            f.clienteNitCi.toLowerCase().includes(query)
+                          );
+                        })
+                        .map((f) => (
+                          <tr key={f.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/50">
+                            <td className="py-3 px-3 font-mono font-bold text-blue-900 dark:text-blue-400">
+                              #{f.numeroFactura}
+                            </td>
+                            <td className="py-3 px-3 text-stone-500">
+                              {new Date(f.fechaEmision).toLocaleString("es-BO")}
+                            </td>
+                            <td className="py-3 px-3 font-semibold text-stone-800 dark:text-stone-200">
+                              {f.clienteNombre}
+                            </td>
+                            <td className="py-3 px-3 font-mono text-stone-600 dark:text-stone-400">
+                              {f.clienteNitCi}
+                            </td>
+                            <td className="py-3 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                              Bs {f.montoTotal.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-3 font-mono text-[10px] text-stone-400 truncate max-w-xs">
+                              {f.cuf}
+                            </td>
+                            <td className="py-3 px-3 text-right">
+                              <a
+                                href={f.urlQrVerificacion}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 underline"
+                              >
+                                <span>SIAT QR</span>
+                                <ExternalLink size={12} />
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -2505,12 +3217,25 @@ export default function AdminPage() {
                     className="hidden"
                   />
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playClick();
+                        setProductoParaGaleria(productoAEditar);
+                        setGaleriaFotosAbierta(true);
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500/20 text-amber-900 dark:text-amber-200 font-bold text-xs border border-amber-500/40 hover:bg-amber-500/30 transition flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <ImageIcon size={14} className="text-amber-600" />
+                      <span>Elegir Foto Real ({REAL_PRODUCT_PHOTOS.length})</span>
+                    </button>
+
                     <button
                       type="button"
                       disabled={subiendoImgBB}
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 disabled:opacity-50"
+                      className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                     >
                       <Upload size={14} />
                       <span>{subiendoImgBB ? "Subiendo..." : "Subir desde PC"}</span>
@@ -2523,7 +3248,7 @@ export default function AdminPage() {
                       onChange={(e) =>
                         setFormProducto({ ...formProducto, imagen_url: e.target.value })
                       }
-                      className="flex-1 p-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800"
+                      className="flex-1 min-w-[140px] p-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800"
                     />
                   </div>
 
@@ -2896,6 +3621,402 @@ export default function AdminPage() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal Visualizador del Menú Oficial PDF (6 Páginas) ── */}
+      <AnimatePresence>
+        {modalPdfAbierto && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-5xl bg-stone-900 text-stone-100 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-800 overflow-hidden"
+            >
+              {/* Header Modal */}
+              <div className="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between gap-4 bg-stone-950/80">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                    <FileText size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                      Menú Original Dencker Pan
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                        Documento Oficial
+                      </span>
+                    </h3>
+                    <p className="text-xs text-stone-400">
+                      Página {paginaPdfActiva + 1} de {MENU_PDF_PAGES.length}: {MENU_PDF_PAGES[paginaPdfActiva]?.title}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/menu-pdf"
+                    target="_blank"
+                    className="px-3 py-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition"
+                  >
+                    <ExternalLink size={14} />
+                    <span className="hidden sm:inline">Página Completa</span>
+                  </Link>
+                  <button
+                    onClick={() => setModalPdfAbierto(false)}
+                    className="p-2 rounded-full text-stone-400 hover:text-white hover:bg-stone-800 transition cursor-pointer"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Selector de Páginas Tabs */}
+              <div className="p-2 bg-stone-950/60 border-b border-stone-800 flex items-center gap-2 overflow-x-auto text-xs">
+                {MENU_PDF_PAGES.map((pag, idx) => (
+                  <button
+                    key={pag.page}
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setPaginaPdfActiva(idx);
+                    }}
+                    className={`px-3 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
+                      paginaPdfActiva === idx
+                        ? "bg-amber-500 text-stone-950 shadow-md font-extrabold"
+                        : "bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-800"
+                    }`}
+                  >
+                    <span className="w-5 h-5 rounded-full bg-black/20 flex items-center justify-center text-[10px]">
+                      {pag.page}
+                    </span>
+                    <span>{pag.title}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Visualizador de la Página con Zoom/Scroll */}
+              <div className="flex-1 overflow-auto p-4 sm:p-6 bg-stone-950 flex items-center justify-center">
+                <div className="max-w-3xl w-full rounded-2xl overflow-hidden shadow-2xl border border-stone-800 bg-black">
+                  <img
+                    src={MENU_PDF_PAGES[paginaPdfActiva]?.url}
+                    alt={MENU_PDF_PAGES[paginaPdfActiva]?.title}
+                    className="w-full h-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Footer con Descripción y Navegación */}
+              <div className="p-4 border-t border-stone-800 bg-stone-950/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-stone-400 italic">
+                    Menú oficial de cafetería & panadería artesanal Dencker Pan — Página {MENU_PDF_PAGES[paginaPdfActiva]?.page}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playClick();
+                      const pageToCategory: Record<number, string> = {
+                        1: "todas",
+                        2: "c_desayunos",
+                        3: "c_chocolates_tes",
+                        4: "c_pasteleria",
+                        5: "c_sandwiches",
+                        6: "c_pizzas",
+                      };
+                      const catTarget = pageToCategory[MENU_PDF_PAGES[paginaPdfActiva]?.page] || "todas";
+                      setFiltroCategoria(catTarget);
+                      setTabActiva("productos");
+                      setModalPdfAbierto(false);
+                    }}
+                    className="ml-2 px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 font-bold border border-amber-500/30 transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <UtensilsCrossed size={12} />
+                    <span>Ver Productos de esta Página en Administrador</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={paginaPdfActiva === 0}
+                    onClick={() => setPaginaPdfActiva((p) => Math.max(0, p - 1))}
+                    className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 disabled:opacity-40 text-stone-300 font-bold cursor-pointer"
+                  >
+                    ← Anterior
+                  </button>
+                  <button
+                    disabled={paginaPdfActiva === MENU_PDF_PAGES.length - 1}
+                    onClick={() => setPaginaPdfActiva((p) => Math.min(MENU_PDF_PAGES.length - 1, p + 1))}
+                    className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 disabled:opacity-40 text-stone-300 font-bold cursor-pointer"
+                  >
+                    Siguiente →
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal Galería de Fotos Reales de Panadería (169 Imágenes) ── */}
+      <AnimatePresence>
+        {galeriaFotosAbierta && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-6xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-200 dark:border-stone-800 overflow-hidden text-stone-900 dark:text-stone-100"
+            >
+              {/* Header Galería */}
+              <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4 bg-stone-50 dark:bg-stone-950/80">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/30">
+                    <ImageIcon size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      Galería de Fotos Reales del Local
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30">
+                        {REAL_PRODUCT_PHOTOS.length} Fotos Reales
+                      </span>
+                    </h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      {productoParaGaleria
+                        ? `Asignando foto para: "${productoParaGaleria.nombre}" — Haz click en una foto para seleccionarla al instante.`
+                        : "Explora o haz click en cualquier foto para asignarla a cualquier producto del menú o copiar su enlace."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por archivo..."
+                      value={busquedaFoto}
+                      onChange={(e) => setBusquedaFoto(e.target.value)}
+                      className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-44 sm:w-56"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setGaleriaFotosAbierta(false);
+                      setProductoParaGaleria(null);
+                      setFotoSeleccionadaGaleria(null);
+                    }}
+                    className="p-2 rounded-full text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800 transition cursor-pointer"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Barra de Filtros de Fotos */}
+              <div className="px-4 py-2 bg-stone-100/70 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center gap-2 overflow-x-auto text-xs">
+                <button
+                  type="button"
+                  onClick={() => setFiltroTipoFoto("todas")}
+                  className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
+                    filtroTipoFoto === "todas"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white"
+                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
+                  }`}
+                >
+                  Todas ({REAL_PRODUCT_PHOTOS.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltroTipoFoto("productos")}
+                  className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
+                    filtroTipoFoto === "productos"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white"
+                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
+                  }`}
+                >
+                  Platos & Masas Reales ({REAL_PRODUCT_PHOTOS.filter((u) => u.includes("/img/products/")).length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltroTipoFoto("marca")}
+                  className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
+                    filtroTipoFoto === "marca"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white"
+                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
+                  }`}
+                >
+                  Marca & Don Dencker ({REAL_PRODUCT_PHOTOS.filter((u) => u.includes("/img/brand/")).length})
+                </button>
+              </div>
+
+              {/* Grid Scrollable de Fotos */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-stone-100 dark:bg-stone-950">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {REAL_PRODUCT_PHOTOS
+                    .filter((fotoUrl) => {
+                      const matchBusqueda = fotoUrl.toLowerCase().includes(busquedaFoto.toLowerCase());
+                      if (!matchBusqueda) return false;
+                      if (filtroTipoFoto === "productos") return fotoUrl.includes("/img/products/");
+                      if (filtroTipoFoto === "marca") return fotoUrl.includes("/img/brand/");
+                      return true;
+                    })
+                    .map((fotoUrl, idx) => {
+                      const fileName = fotoUrl.split("/").pop() || fotoUrl;
+                      const prodUsando = productos.find((p) => p.imagen_url === fotoUrl);
+                      const esSeleccionada = fotoSeleccionadaGaleria === fotoUrl;
+
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            if (productoParaGaleria) {
+                              soundManager.playSuccessTone();
+                              updateProducto(productoParaGaleria.id, { imagen_url: fotoUrl });
+                              setFormProducto((prev) => ({ ...prev, imagen_url: fotoUrl }));
+                              setGaleriaFotosAbierta(false);
+                              setProductoParaGaleria(null);
+                            } else {
+                              soundManager.playTactileClick();
+                              setFotoSeleccionadaGaleria(fotoUrl);
+                              if (prodUsando) {
+                                setProductoDestinoFotoId(prodUsando.id);
+                              }
+                            }
+                          }}
+                          className={`group relative flex flex-col bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border shadow-xs transition text-left cursor-pointer ${
+                            esSeleccionada
+                              ? "ring-3 ring-amber-500 border-amber-500"
+                              : "border-stone-200 dark:border-stone-800 hover:border-amber-500 dark:hover:border-amber-500"
+                          }`}
+                        >
+                          <div className="relative aspect-square w-full overflow-hidden bg-stone-200 dark:bg-stone-800">
+                            <img
+                              src={fotoUrl}
+                              alt={fileName}
+                              loading="lazy"
+                              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                            />
+                            <div className="absolute inset-0 bg-amber-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-2 text-center">
+                              <CheckCircle2 size={24} className="text-amber-300 mb-1" />
+                              <span className="text-[11px] font-bold">
+                                {productoParaGaleria ? "Asignar Ahora" : "Seleccionar"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="p-2 space-y-0.5">
+                            <span className="text-[10px] font-mono text-stone-500 dark:text-stone-400 truncate block">
+                              {fileName}
+                            </span>
+                            {prodUsando ? (
+                              <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 truncate block">
+                                ✓ {prodUsando.nombre}
+                              </span>
+                            ) : (
+                              <span className="text-[9px] text-stone-400 dark:text-stone-500 truncate block">
+                                Disponible
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+
+              {/* Panel de Asignación si se seleccionó una foto sin producto previo */}
+              {fotoSeleccionadaGaleria && !productoParaGaleria && (
+                <div className="p-3.5 bg-amber-500/10 border-t border-amber-500/20 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src={fotoSeleccionadaGaleria}
+                      alt="Seleccionada"
+                      className="w-10 h-10 rounded-xl object-cover border border-amber-400"
+                    />
+                    <div>
+                      <span className="font-bold text-amber-950 dark:text-amber-200 block">
+                        Foto: {fotoSeleccionadaGaleria.split("/").pop()}
+                      </span>
+                      <span className="text-[11px] text-stone-500 dark:text-stone-400">
+                        {productos.find((p) => p.imagen_url === fotoSeleccionadaGaleria)
+                          ? `Asignada a: ${productos.find((p) => p.imagen_url === fotoSeleccionadaGaleria)?.nombre}`
+                          : "Foto sin asignar a ningún producto"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={productoDestinoFotoId}
+                      onChange={(e) => setProductoDestinoFotoId(e.target.value)}
+                      className="p-2 text-xs rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 max-w-xs focus:outline-none"
+                    >
+                      <option value="">-- Asignar esta foto a un producto --</option>
+                      {productos.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.nombre} (Bs {p.precio.toFixed(2)})
+                        </option>
+                      ))}
+                    </select>
+
+                    <button
+                      type="button"
+                      disabled={!productoDestinoFotoId}
+                      onClick={() => {
+                        if (productoDestinoFotoId) {
+                          updateProducto(productoDestinoFotoId, { imagen_url: fotoSeleccionadaGaleria });
+                          soundManager.playSuccessTone();
+                          setFotoSeleccionadaGaleria(null);
+                          setProductoDestinoFotoId("");
+                        }
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold hover:bg-amber-950 disabled:opacity-40 transition cursor-pointer"
+                    >
+                      ✓ Asignar Foto
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(fotoSeleccionadaGaleria);
+                        soundManager.playTactileClick();
+                      }}
+                      className="p-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-300 transition cursor-pointer"
+                      title="Copiar ruta"
+                    >
+                      <Copy size={14} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFotoSeleccionadaGaleria(null)}
+                      className="p-2 rounded-xl text-stone-400 hover:text-stone-700 cursor-pointer"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Footer con acción de cierre */}
+              <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/80 flex items-center justify-between text-xs">
+                <span className="text-stone-500">
+                  Mostrando {REAL_PRODUCT_PHOTOS.length} imágenes auténticas de Dencker Pan
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGaleriaFotosAbierta(false);
+                    setProductoParaGaleria(null);
+                    setFotoSeleccionadaGaleria(null);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold hover:bg-stone-300 cursor-pointer"
+                >
+                  Cerrar Galería
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
