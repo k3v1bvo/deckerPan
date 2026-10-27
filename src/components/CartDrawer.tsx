@@ -16,6 +16,9 @@ import {
   Sparkles,
   Calendar,
   Clock,
+  Banknote,
+  QrCode,
+  CreditCard,
 } from "lucide-react";
 import { useCartStore, useUIStore, useSystemStore } from "@/store";
 import { soundManager } from "@/lib/sound";
@@ -42,6 +45,8 @@ export default function CartDrawer() {
   const [horaReserva, setHoraReserva] = useState<string>("16:30");
   const [personasReserva, setPersonasReserva] = useState<number>(2);
   const [notas, setNotas] = useState("");
+  const [metodoPago, setMetodoPago] = useState<"efectivo" | "qr" | "tarjeta">("efectivo");
+  const [montoPagoEfectivo, setMontoPagoEfectivo] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [enviadoExitoso, setEnviadoExitoso] = useState(false);
 
@@ -182,8 +187,16 @@ export default function CartDrawer() {
         }
       });
 
+      const detallePago =
+        metodoPago === "efectivo"
+          ? `💵 Efectivo${montoPagoEfectivo ? ` (Paga con Bs ${montoPagoEfectivo}, Cambio: Bs ${(Math.max(0, parseFloat(montoPagoEfectivo) - subtotal)).toFixed(2)})` : " (Monto exacto)"}`
+          : metodoPago === "qr"
+          ? "📱 QR Simple Bancario (Transferencia directa)"
+          : "💳 Datáfono / Tarjeta (Visa / Mastercard)";
+
       texto += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
       texto += `💰 *TOTAL A PAGAR:* Bs ${subtotal.toFixed(2)}\n`;
+      texto += `💳 *FORMA DE PAGO:* ${detallePago}\n`;
       if (notas.trim()) {
         texto += `📝 *Observaciones:* ${notas.trim()}\n`;
       }
@@ -298,6 +311,14 @@ export default function CartDrawer() {
               </div>
             ) : (
               <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                {/* Banner Reasegurador: Ordenar sin escanear QR */}
+                <div className="p-3.5 rounded-2xl bg-[#EBF3EA] border border-[#527953]/20 flex items-start gap-2.5 shadow-xs">
+                  <Sparkles size={16} className="text-[#527953] shrink-0 mt-0.5" />
+                  <div className="text-[11px] text-[#2D452E] leading-relaxed">
+                    <strong>¿No escaneaste código QR?</strong> ¡No hay problema! Selecciona si estás sentado en <strong>Mesa</strong> en el salón, para <strong>Retiro</strong> en vitrina o para <strong>Delivery</strong> a tu puerta e ingresa tus datos.
+                  </div>
+                </div>
+
                 {/* 1. Modalidad de Entrega */}
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
@@ -680,6 +701,93 @@ export default function CartDrawer() {
                       onChange={(e) => setNotas(e.target.value)}
                       className="w-full p-3 rounded-xl bg-white border border-[#EAE2D5] focus:outline-none focus:ring-2 focus:ring-[#527953] placeholder:text-[#A8988D] text-[#1E130C] resize-none"
                     />
+                  </div>
+
+                  {/* 4. Método de Pago Preferido */}
+                  <div className="space-y-2.5 pt-3 border-t border-[#EAE2D5]">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#785E4F]">
+                        Forma de Pago
+                      </label>
+                      <span className="text-[10px] text-[#A8988D]">Elige cómo pagarás</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          setMetodoPago("efectivo");
+                        }}
+                        className={`p-2.5 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                          metodoPago === "efectivo"
+                            ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-sm"
+                            : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
+                        }`}
+                      >
+                        <Banknote size={16} className={metodoPago === "efectivo" ? "text-emerald-400" : "text-stone-500"} />
+                        <span className="text-[11px] font-bold">Efectivo</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          setMetodoPago("qr");
+                        }}
+                        className={`p-2.5 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                          metodoPago === "qr"
+                            ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-sm"
+                            : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
+                        }`}
+                      >
+                        <QrCode size={16} className={metodoPago === "qr" ? "text-amber-400" : "text-stone-500"} />
+                        <span className="text-[11px] font-bold">QR Simple</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          setMetodoPago("tarjeta");
+                        }}
+                        className={`p-2.5 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                          metodoPago === "tarjeta"
+                            ? "bg-[#1E130C] text-[#FAF7F2] border-[#1E130C] shadow-sm"
+                            : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
+                        }`}
+                      >
+                        <CreditCard size={16} className={metodoPago === "tarjeta" ? "text-blue-400" : "text-stone-500"} />
+                        <span className="text-[11px] font-bold">Datáfono</span>
+                      </button>
+                    </div>
+
+                    {metodoPago === "efectivo" && (
+                      <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE2D5] flex items-center gap-2">
+                        <span className="text-xs text-[#785E4F] shrink-0 font-medium">¿Pagas con cuánto?</span>
+                        <input
+                          type="number"
+                          placeholder={`Bs ${subtotal.toFixed(0)} o más (para cambio)`}
+                          value={montoPagoEfectivo}
+                          onChange={(e) => setMontoPagoEfectivo(e.target.value)}
+                          className="w-full p-1.5 rounded-lg bg-white border border-[#EAE2D5] text-xs font-mono font-bold text-[#1E130C] focus:outline-none focus:ring-1 focus:ring-[#527953]"
+                        />
+                      </div>
+                    )}
+
+                    {metodoPago === "qr" && (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 flex items-center gap-2">
+                        <QrCode size={15} className="text-amber-600 shrink-0" />
+                        <span className="text-[11px]">Te enviaremos el código QR bancario al confirmar tu orden.</span>
+                      </div>
+                    )}
+
+                    {metodoPago === "tarjeta" && (
+                      <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-950 flex items-center gap-2">
+                        <CreditCard size={15} className="text-blue-600 shrink-0" />
+                        <span className="text-[11px]">Llevamos el datáfono inalámbrico (Visa y Mastercard).</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

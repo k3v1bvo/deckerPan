@@ -24,6 +24,7 @@ import { useSystemStore } from "@/store";
 import { DENCKER_ASSETS, SEED_CATEGORIAS, SEED_PRODUCTOS, SEED_MESAS } from "@/lib/seed-data";
 import { Producto, Categoria, Mesa } from "@/types";
 import { soundManager } from "@/lib/sound";
+import { getStaffSession } from "@/lib/auth";
 
 type TipoDocumento = "menu" | "carpas" | "takeaway";
 type EstiloColor = "kraft" | "blanco_negro";
@@ -45,6 +46,14 @@ export default function MenuPdfPage() {
   const [mesaFiltro, setMesaFiltro] = useState<number | "todas">("todas");
   const [estiloColor, setEstiloColor] = useState<EstiloColor>("kraft");
   const [copiadoLink, setCopiadoLink] = useState(false);
+  const [esAdmin, setEsAdmin] = useState(false);
+
+  useEffect(() => {
+    const session = getStaffSession();
+    if (session?.user?.role === "admin") {
+      setEsAdmin(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -199,20 +208,22 @@ export default function MenuPdfPage() {
               <span>📜 Carta Completa A4</span>
             </button>
 
-            <button
-              onClick={() => {
-                soundManager.playTactileClick();
-                setTipoDocumento("carpas");
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
-                tipoDocumento === "carpas"
-                  ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
-                  : "text-[#785E4F] hover:text-[#1E130C]"
-              }`}
-            >
-              <QrCode size={15} />
-              <span>🏷️ Carpas de Mesa con QR Individual</span>
-            </button>
+            {esAdmin && (
+              <button
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setTipoDocumento("carpas");
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                  tipoDocumento === "carpas"
+                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
+                    : "text-[#785E4F] hover:text-[#1E130C]"
+                }`}
+              >
+                <QrCode size={15} />
+                <span>🏷️ Carpas de Mesa con QR (Admin)</span>
+              </button>
+            )}
 
             <button
               onClick={() => {
@@ -232,7 +243,7 @@ export default function MenuPdfPage() {
 
           {/* Opciones de Estilo y Selector de Mesas */}
           <div className="flex flex-wrap items-center gap-3">
-            {tipoDocumento === "carpas" && (
+            {esAdmin && tipoDocumento === "carpas" && (
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-bold text-[#785E4F]">Mesa:</span>
                 <select
@@ -422,8 +433,9 @@ export default function MenuPdfPage() {
 
       {/* ═════════════════════════════════════════════════════════════════════
           DOCUMENTO 2: CARPAS DE MESA CON QR INDIVIDUAL (10x15 CM O STAND ACRÍLICO)
+          [SOLO ACCESIBLE PARA GERENCIA / ADMIN]
       ═════════════════════════════════════════════════════════════════════ */}
-      {tipoDocumento === "carpas" && (
+      {esAdmin && tipoDocumento === "carpas" && (
         <div className="max-w-5xl mx-auto space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:block">
             {mesasAImprimir.map((mesa, idx) => {
