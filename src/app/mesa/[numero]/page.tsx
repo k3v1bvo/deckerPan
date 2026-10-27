@@ -321,7 +321,7 @@ export default function MesaPage({ params }: PageProps) {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                src="/img/logo/logo.png"
                 alt="Dencker Pan"
                 className="w-full h-full object-contain drop-shadow"
               />

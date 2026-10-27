@@ -150,7 +150,7 @@ export default function AdminPage() {
 
   // Estados Configuración QR Bancario Simple (Generado en App Banco)
   const [formQr, setFormQr] = useState({
-    url: qrBancarioUrl || "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+    url: qrBancarioUrl || "/img/logo/logo.png",
     titular: qrBancarioTitular || "Dencker Pan S.R.L.",
     banco: qrBancarioBanco || "Banco Nacional de Bolivia (BNB) / BCP Simple",
   });
@@ -583,7 +583,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1.5 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                src="/img/logo/logo.png"
                 alt="Dencker Pan"
                 className="w-full h-full object-contain drop-shadow"
               />
@@ -1976,7 +1976,7 @@ export default function AdminPage() {
                 <div className="p-4 bg-white rounded-3xl border-2 border-dashed border-amber-300 shadow-md inline-block max-w-[280px] w-full">
                   <div className="aspect-square w-full rounded-2xl overflow-hidden bg-stone-50 flex items-center justify-center relative">
                     <img
-                      src={formQr.url || "https://i.ibb.co/qMkf00HN/dencker-logo.png"}
+                      src={formQr.url || "/img/logo/logo.png"}
                       alt="QR Bancario Dencker Pan"
                       className="w-full h-full object-contain p-2"
                     />
@@ -2173,7 +2173,7 @@ export default function AdminPage() {
                   >
                     <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100">
                       <img
-                        src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                        src="/img/logo/logo.png"
                         alt="Logo"
                         className="w-7 h-7 object-contain"
                       />
@@ -2594,7 +2594,7 @@ export default function AdminPage() {
               <div className="flex items-center justify-between pb-3 border-b border-dashed border-stone-300 dark:border-stone-700">
                 <div className="flex items-center gap-2">
                   <img
-                    src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                    src="/img/logo/logo.png"
                     alt="Logo Dencker Pan"
                     className="w-7 h-7 object-contain"
                   />

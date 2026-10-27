@@ -165,7 +165,7 @@ export default function CajaPage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="https://i.ibb.co/qMkf00HN/dencker-logo.png"
+                src="/img/logo/logo.png"
                 alt="Dencker Pan"
                 className="w-full h-full object-contain drop-shadow"
               />
@@ -563,7 +563,7 @@ export default function CajaPage() {
 
                   <div className="w-52 h-52 bg-white p-3 rounded-2xl border border-amber-300 shadow-md mx-auto flex flex-col items-center justify-center relative overflow-hidden">
                     <img
-                      src={qrBancarioUrl || "https://i.ibb.co/qMkf00HN/dencker-logo.png"}
+                      src={qrBancarioUrl || "/img/logo/logo.png"}
                       alt="QR Bancario Oficial"
                       className="w-full h-full object-contain"
                     />

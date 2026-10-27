@@ -6,7 +6,7 @@
 import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja, UsuarioStaff } from '@/types';
 
 export const DENCKER_ASSETS = {
-  logo: "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+  logo: "/img/logo/logo.png",
   banners: [
   "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg",
   "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg"

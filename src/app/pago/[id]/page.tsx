@@ -214,7 +214,7 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                 <div className="p-4 bg-white rounded-3xl border-2 border-amber-300 inline-block shadow-lg">
                   <div className="w-56 h-56 bg-stone-50 rounded-2xl flex flex-col items-center justify-center relative p-2 overflow-hidden">
                     <img
-                      src={qrBancarioUrl || "https://i.ibb.co/qMkf00HN/dencker-logo.png"}
+                      src={qrBancarioUrl || "/img/logo/logo.png"}
                       alt="QR Bancario Oficial"
                       className="w-full h-full object-contain"
                     />

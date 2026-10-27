@@ -569,7 +569,7 @@ export const useSystemStore = create<SystemStore>()(
         })),
 
       // --- Configuración QR Bancario Simple (Generado en App de Banco) ---
-      qrBancarioUrl: "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+      qrBancarioUrl: "/img/logo/logo.png",
       qrBancarioTitular: "Dencker Pan S.R.L.",
       qrBancarioBanco: "Banco Nacional de Bolivia (BNB) / BCP Simple",
 
@@ -623,7 +623,7 @@ export const useSystemStore = create<SystemStore>()(
           usuariosStaff: SEED_USUARIOS_STAFF,
           pagos: SEED_PAGOS,
           historialSesiones: SEED_HISTORIAL_SESIONES,
-          qrBancarioUrl: "https://i.ibb.co/qMkf00HN/dencker-logo.png",
+          qrBancarioUrl: "/img/logo/logo.png",
           qrBancarioTitular: "Dencker Pan S.R.L.",
           qrBancarioBanco: "Banco Nacional de Bolivia (BNB) / BCP Simple",
         }),
