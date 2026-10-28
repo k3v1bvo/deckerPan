@@ -1367,7 +1367,7 @@ export default function AdminPage() {
                       ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
                       : "bg-stone-700 text-stone-300"
                   }`}>
-                    {formSiat.activa ? "SIAT Habilitado" : "Modo Pruebas / Desactivado"}
+                    {formSiat.activa ? "SIAT Oficial Habilitado ✓" : "Solo Comprobante Interno"}
                   </span>
                 </h2>
                 <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
