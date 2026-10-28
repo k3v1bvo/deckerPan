@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { supabase, SUPABASE_CONFIGURED } from "@/lib/supabase";
-import { useSystemStore, useUIStore } from "@/store";
+import { useSystemStore, useUIStore, useCartStore } from "@/store";
 import { subscribeToSync, markEventHandled, SyncMessage } from "@/lib/broadcast";
 import { soundManager } from "@/lib/sound";
 import { Pedido, Mesa, AlertaMesero, Producto, Categoria, Zona } from "@/types";
@@ -138,6 +138,20 @@ export default function SupabaseSync() {
           break;
         }
 
+        case "PRODUCTOS_UPDATED": {
+          const prodsActualizados = payload as Producto[];
+          if (Array.isArray(prodsActualizados) && prodsActualizados.length > 0) {
+            useSystemStore.setState({ productos: prodsActualizados });
+            useCartStore.setState((cartState) => ({
+              items: cartState.items.map((it) => {
+                const live = prodsActualizados.find((p) => p.id === it.producto.id);
+                return live ? { ...it, producto: live } : it;
+              }),
+            }));
+          }
+          break;
+        }
+
         case "QR_CONFIG_UPDATED": {
           const { url, titular, banco } = payload;
           useSystemStore.setState((state) => ({
@@ -177,19 +191,25 @@ export default function SupabaseSync() {
           setMesas(mData as Mesa[]);
         }
 
-        // Cargar Categorías
+        // Cargar Categorías (solo si son las categorías oficiales de Dencker Pan)
         const { data: cData } = await supabase.from("categorias").select("*").order("orden");
         if (cData && cData.length > 0 && mounted) {
-          useSystemStore.setState({ categorias: cData as Categoria[] });
+          const esValida = cData.some((c: any) => c.id === "c_desayunos" || c.id === "c_cafes");
+          if (esValida) {
+            useSystemStore.setState({ categorias: cData as Categoria[] });
+          }
         }
 
-        // Cargar Productos
+        // Cargar Productos (solo si coinciden con el menú oficial Dencker Pan)
         const { data: pData } = await supabase
           .from("productos")
           .select("*, categoria:categorias(*)")
           .order("nombre");
         if (pData && pData.length > 0 && mounted) {
-          setProductos(pData as Producto[]);
+          const esOficial = pData.some((p: any) => p.id === "prod_rise_shine" || (typeof p.id === "string" && p.id.startsWith("prod_")));
+          if (esOficial) {
+            setProductos(pData as Producto[]);
+          }
         }
 
         // Cargar Pedidos Activos

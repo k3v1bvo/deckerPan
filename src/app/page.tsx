@@ -41,6 +41,8 @@ import {
   Phone,
   FileText,
   Receipt,
+  Download,
+  BookOpen,
 } from "lucide-react";
 import CoffeeLab from "@/components/CoffeeLab";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
@@ -194,103 +196,67 @@ interface SeccionMenu {
 
 const SECCIONES_MENU: SeccionMenu[] = [
   {
-    id: "pasteleria",
-    categoriaId: "reposteria",
-    titulo: "Pastelería & Hojaldres de Autor",
-    subtitulo: "72 capas de hojaldre francés, pistacho siciliano y manjar cocido a leña",
-    badge: "100% Mantequilla",
-    icon: Cake,
-    match: (p) => {
-      const n = p.nombre.toLowerCase();
-      return (
-        p.categoria_id === "c4" ||
-        n.includes("roll") ||
-        n.includes("croissant") ||
-        n.includes("alfajor") ||
-        n.includes("berlin") ||
-        n.includes("milhojas") ||
-        n.includes("pie")
-      );
-    },
-  },
-  {
-    id: "panaderia",
-    categoriaId: "horneados",
-    titulo: "Horneados de Masa Madre & Panes Tradicionales",
-    subtitulo: "Fermentación lenta de 24 horas, baguettes a la leña y panes clásicos vallunos",
-    badge: "Masa Madre 24h",
-    icon: Flame,
-    match: (p) => {
-      const n = p.nombre.toLowerCase();
-      return (
-        (p.categoria_id === "c3" || p.categoria_id === "c1") &&
-        !n.includes("roll") &&
-        !n.includes("croissant") &&
-        !n.includes("alfajor")
-      );
-    },
-  },
-  {
-    id: "salados",
-    categoriaId: "horneados",
-    titulo: "Masitas Saladas & Bocaditos Calientes",
-    subtitulo: "Cuñapés calientes con queso criollo seleccionado, empanadas y pizzas",
-    badge: "Queso Criollo",
+    id: "desayunos",
+    categoriaId: "c_desayunos",
+    titulo: "Desayunos Dencker & Huevos de Campo",
+    subtitulo: "Rise & Shine, Omelettes, Benedictinos, Continental y Golosa y Caprichosa con café o té",
+    badge: "Incluye Café o Té",
     icon: UtensilsCrossed,
-    match: (p) => {
-      const n = p.nombre.toLowerCase();
-      return (
-        p.categoria_id === "c2" ||
-        p.categoria_id === "c6" ||
-        n.includes("cuñap") ||
-        n.includes("cunap") ||
-        n.includes("pizza") ||
-        n.includes("esfiha")
-      );
-    },
+    match: (p) => p.categoria_id === "c_desayunos" || p.nombre.toLowerCase().includes("desayuno") || p.nombre.toLowerCase().includes("huevos") || p.nombre.toLowerCase().includes("omelette"),
   },
   {
     id: "cafeteria",
-    categoriaId: "cafe",
-    titulo: "Cafetería de Especialidad & Batidos Naturales",
-    subtitulo: "Extracciones dobles Caranavi a 1,600 msnm y batidos cremosos",
-    badge: "La Marzocco",
+    categoriaId: "c_cafes",
+    titulo: "Cafetería de Especialidad 4 Llamas & Lattes",
+    subtitulo: "Granos bolivianos 4 Llamas de Caranavi (1,700 msnm), expressos puros, cappuccinos y lattes",
+    badge: "Café 4 Llamas",
     icon: Coffee,
-    match: (p) => {
-      const n = p.nombre.toLowerCase();
-      const esEnvasada =
-        n.includes("agua") || n.includes("aquarius") || n.includes("coca") || n.includes("soda") || n.includes("aloe");
-      return (
-        (p.categoria_id === "c7" ||
-          n.includes("café") ||
-          n.includes("cappuccino") ||
-          n.includes("espresso") ||
-          n.includes("latte") ||
-          n.includes("batido")) &&
-        !esEnvasada
-      );
-    },
+    match: (p) => p.categoria_id === "c_cafes" || p.categoria_id === "c_lattes" || p.nombre.toLowerCase().includes("café") || p.nombre.toLowerCase().includes("espresso") || p.nombre.toLowerCase().includes("latte"),
+  },
+  {
+    id: "dulces_postres",
+    categoriaId: "c_dulces",
+    titulo: "Pastelería Fina, Hojaldres & Postres",
+    subtitulo: "Alfajores de maicena, New York rolls, medialunas, tortas vascas, cheesecakes y tartaletas",
+    badge: "100% Mantequilla",
+    icon: Cake,
+    match: (p) => p.categoria_id === "c_dulces" || p.categoria_id === "c_postres" || p.nombre.toLowerCase().includes("roll") || p.nombre.toLowerCase().includes("torta") || p.nombre.toLowerCase().includes("alfajor"),
+  },
+  {
+    id: "salados",
+    categoriaId: "c_saladas",
+    titulo: "Masitas Saladas Calientes & Cuñapés",
+    subtitulo: "Cuñapés recién horneados, empanadas de queso, llauchas paceñas, sonsos y croissants de queso",
+    badge: "Queso Criollo",
+    icon: Flame,
+    match: (p) => p.categoria_id === "c_saladas" || p.nombre.toLowerCase().includes("cuñap") || p.nombre.toLowerCase().includes("llaucha") || p.nombre.toLowerCase().includes("sonso"),
+  },
+  {
+    id: "sandwiches",
+    categoriaId: "c_sandwiches",
+    titulo: "Sándwiches Gourmet & Ensaladas",
+    subtitulo: "Sándwich especial Dencker (a tu gusto), lomito, pesto, St. Germain y ensaladas frescas",
+    badge: "Pan a Elección",
+    icon: UtensilsCrossed,
+    match: (p) => p.categoria_id === "c_sandwiches" || p.categoria_id === "c_ensaladas" || p.categoria_id === "c_extras",
+  },
+  {
+    id: "pizzas",
+    categoriaId: "c_pizzas",
+    titulo: "Pizzas al Horno de Piedra (4, 6 y 8 Porciones)",
+    subtitulo: "Pizza especial Dencker (a tu gusto), Margarita, Hawaiana, Bacon, Criolla y Pollo Catupiri",
+    badge: "Horno de Piedra",
+    icon: Flame,
+    match: (p) => p.categoria_id === "c_pizzas" || p.nombre.toLowerCase().includes("pizza"),
   },
   {
     id: "bebidas",
-    categoriaId: "bebidas",
-    titulo: "Bebidas Refrescantes & Aguas de Manantial",
-    subtitulo: "Aguas naturales purificadas, aloe vera e hidratación para la mesa",
-    badge: "Frías & Puras",
+    categoriaId: "c_jugos",
+    titulo: "Chocolates, Tés, Frappés & Bebidas",
+    subtitulo: "Chocolate con marshmallow, tés de frutos rojos, frappés helados con oreo y jugos naturales",
+    badge: "Frías & Calientes",
     icon: Droplets,
-    match: (p) => {
-      const n = p.nombre.toLowerCase();
-      return (
-        n.includes("agua") ||
-        n.includes("aquarius") ||
-        n.includes("coca") ||
-        n.includes("fanta") ||
-        n.includes("sprite") ||
-        n.includes("soda") ||
-        n.includes("aloe") ||
-        n.includes("gaseosa")
-      );
-    },
+    match: (p) => p.categoria_id === "c_chocolates" || p.categoria_id === "c_tes" || p.categoria_id === "c_frappes" || p.categoria_id === "c_jugos" || p.categoria_id === "c_refrescos" || p.categoria_id === "c_helados",
   },
 ];
 
@@ -507,35 +473,26 @@ export default function HomePage() {
 
       if (categoriaActiva === "todos") return true;
       if (categoriaActiva === "favoritos") return Boolean(p.es_mas_vendido);
-      if (categoriaActiva === "horneados") {
-        return (
-          p.categoria_id === "c2" ||
-          p.categoria_id === "c3" ||
-          p.categoria_id === "c6" ||
-          p.nombre.toLowerCase().includes("pan") ||
-          p.nombre.toLowerCase().includes("cauka") ||
-          p.nombre.toLowerCase().includes("croissant") ||
-          p.nombre.toLowerCase().includes("marraqueta")
-        );
+      if (categoriaActiva === "c_desayunos") {
+        return p.categoria_id === "c_desayunos" || p.nombre.toLowerCase().includes("desayuno") || p.nombre.toLowerCase().includes("huevos") || p.nombre.toLowerCase().includes("omelette");
       }
-      if (categoriaActiva === "reposteria") {
-        return (
-          p.categoria_id === "c4" ||
-          p.categoria_id === "c7" ||
-          p.nombre.toLowerCase().includes("torta") ||
-          p.nombre.toLowerCase().includes("alfajor") ||
-          p.nombre.toLowerCase().includes("pie") ||
-          p.nombre.toLowerCase().includes("roll")
-        );
+      if (categoriaActiva === "c_cafes") {
+        return p.categoria_id === "c_cafes" || p.categoria_id === "c_lattes" || p.nombre.toLowerCase().includes("café") || p.nombre.toLowerCase().includes("espresso") || p.nombre.toLowerCase().includes("latte");
       }
-      if (categoriaActiva === "cafe") {
-        return (
-          p.categoria_id === "c7" ||
-          p.nombre.toLowerCase().includes("café") ||
-          p.nombre.toLowerCase().includes("espresso") ||
-          p.nombre.toLowerCase().includes("cappuccino") ||
-          p.nombre.toLowerCase().includes("latte")
-        );
+      if (categoriaActiva === "c_dulces") {
+        return p.categoria_id === "c_dulces" || p.categoria_id === "c_postres" || p.nombre.toLowerCase().includes("roll") || p.nombre.toLowerCase().includes("torta") || p.nombre.toLowerCase().includes("alfajor");
+      }
+      if (categoriaActiva === "c_saladas") {
+        return p.categoria_id === "c_saladas" || p.nombre.toLowerCase().includes("cuñap") || p.nombre.toLowerCase().includes("llaucha") || p.nombre.toLowerCase().includes("sonso");
+      }
+      if (categoriaActiva === "c_sandwiches") {
+        return p.categoria_id === "c_sandwiches" || p.categoria_id === "c_ensaladas" || p.categoria_id === "c_extras";
+      }
+      if (categoriaActiva === "c_pizzas") {
+        return p.categoria_id === "c_pizzas" || p.nombre.toLowerCase().includes("pizza");
+      }
+      if (categoriaActiva === "c_jugos") {
+        return p.categoria_id === "c_chocolates" || p.categoria_id === "c_tes" || p.categoria_id === "c_frappes" || p.categoria_id === "c_jugos" || p.categoria_id === "c_refrescos" || p.categoria_id === "c_helados";
       }
       return p.categoria_id === categoriaActiva;
     });
@@ -655,6 +612,16 @@ export default function HomePage() {
                   <ArrowRight size={15} />
                 </a>
 
+                {/* Botón Destacado: Carta Oficial PDF (6 Páginas Reales) */}
+                <Link
+                  href="/menu-pdf"
+                  onClick={() => soundManager.playPastryCrinkle()}
+                  className="px-5 py-3.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold text-xs flex items-center gap-2 transition shadow-md active:scale-95 border border-red-400/30"
+                >
+                  <FileText size={16} className="text-amber-300" />
+                  <span>Carta Oficial PDF (6 Págs)</span>
+                </Link>
+
                 <a
                   href={DENCKER_ASSETS.whatsapp}
                   target="_blank"
@@ -662,7 +629,7 @@ export default function HomePage() {
                   className="px-5 py-3.5 rounded-2xl bg-white hover:bg-[#F5EFEB] border border-[#D9CDBF] text-[#1E130C] font-semibold text-xs flex items-center gap-2 transition shadow-xs active:scale-95"
                 >
                   <MessageCircle size={16} className="text-emerald-600" />
-                  <span>Pedir por WhatsApp</span>
+                  <span>WhatsApp</span>
                 </a>
 
                 <button
@@ -690,7 +657,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                  <ShieldCheck size={16} className="text-[#527953] shrink-0" />
+                  <ShieldCheck size={16} className="text-[#991B24] shrink-0" />
                   <div>
                     <span className="font-bold text-[#1E130C] block leading-tight">100% Mantequilla</span>
                     <span className="text-[11px] text-[#A8988D]">Hojaldre noble</span>
@@ -698,50 +665,169 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                  <Coffee size={16} className="text-[#C4844D] shrink-0" />
+                  <Coffee size={16} className="text-[#D97706] shrink-0" />
                   <div>
-                    <span className="font-bold text-[#1E130C] block leading-tight">Café de Altura</span>
-                    <span className="text-[11px] text-[#A8988D]">Caranavi & Samaipata</span>
+                    <span className="font-bold text-[#1E130C] block leading-tight">Café 4 Llamas</span>
+                    <span className="text-[11px] text-[#A8988D]">Caranavi 1,700 msnm</span>
                   </div>
                 </div>
               </div>
 
             </div>
 
-            {/* Columna Derecha: Foto Real de la Panadería & Vitrina (Sin widgets artificiales) */}
-            <div className="lg:col-span-5">
+            {/* Columna Derecha: Foto Real de la Panadería & Vitrina + Mascota y Sello Café 4 Llamas */}
+            <div className="lg:col-span-5 relative">
+              
+              {/* Mascota Croissant Oficial Flotante */}
+              <div className="absolute -top-6 -right-4 w-20 h-20 sm:w-24 sm:h-24 z-20 drop-shadow-2xl transform rotate-6 hover:rotate-12 transition-transform select-none pointer-events-none">
+                <img
+                  src={DENCKER_ASSETS.mascotCroissant}
+                  alt="Mascota Croissant Dencker"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
               <div className="relative rounded-3xl overflow-hidden border-2 border-[#EAE0D3] shadow-2xl group bg-[#1E130C]">
                 <img
                   src="/img/hero/pastries_coffee_table.jpg"
                   alt="Croissants, New York Roll y Café en Dencker Pan"
                   className="w-full h-[400px] sm:h-[460px] object-cover group-hover:scale-103 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
                 {/* Sello Flotante Superior */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#1E130C] shadow-sm border border-[#D9CDBF]">
-                    🥖 Horneado Diario a Mano
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#1E130C] shadow-sm border border-[#D9CDBF] flex items-center gap-1.5">
+                    <span>🥖</span> Horneado Diario a Mano
                   </span>
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-900/80 backdrop-blur-md text-emerald-200 border border-emerald-500/30">
+                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-[#991B24]/90 backdrop-blur-md text-white border border-red-400/40">
                     Abierto 07:00 – 21:30
                   </span>
                 </div>
 
-                {/* Pie de Foto Editorial */}
-                <div className="absolute bottom-5 left-5 right-5 text-white space-y-1">
-                  <div className="flex items-center gap-2 text-xs text-amber-300 font-semibold">
-                    <Sparkles size={14} />
-                    <span>Nuestra Mesa de Especialidades</span>
+                {/* Pie de Foto Editorial con Mini Badge Don Dencker */}
+                <div className="absolute bottom-5 left-5 right-5 text-white space-y-2 z-10">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 p-0.5 overflow-hidden shrink-0">
+                      <img
+                        src={DENCKER_ASSETS.badgeClean}
+                        alt="Don Dencker"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5 text-xs text-amber-300 font-semibold">
+                        <Sparkles size={13} />
+                        <span>Especialidades Dencker Pan & Café</span>
+                      </div>
+                      <h3 className="font-serif text-lg sm:text-xl font-bold leading-tight">
+                        Pastelería Fina & Café 4 Llamas de Especialidad
+                      </h3>
+                    </div>
                   </div>
-                  <h3 className="font-serif text-xl sm:text-2xl font-bold leading-tight">
-                    Croissants, New York Rolls & Café de Especialidad
-                  </h3>
-                  <p className="text-xs text-stone-300 line-clamp-1">
-                    Av. Daniel Salamanca, Cochabamba, Bolivia
+                  <p className="text-[11px] text-stone-300 line-clamp-1">
+                    Av. Daniel Salamanca, Cochabamba • Tueste fresco y masa madre de 24 horas
                   </p>
                 </div>
               </div>
+
+              {/* Sello Flotante Inferior: Café 4 Llamas de Altura */}
+              <div className="absolute -bottom-5 -left-4 bg-[#1E130C]/95 border-2 border-amber-500/50 p-2.5 sm:p-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-md z-20">
+                <div className="w-11 h-11 rounded-xl bg-amber-950/60 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+                  <img
+                    src={DENCKER_ASSETS.cafeCatuai}
+                    alt="Café 4 Llamas"
+                    className="w-full h-full object-contain drop-shadow"
+                  />
+                </div>
+                <div>
+                  <span className="text-[9px] font-mono text-amber-400 font-bold uppercase tracking-wider block">
+                    Café de Especialidad Boliviano
+                  </span>
+                  <h4 className="font-serif font-black text-xs text-white">
+                    4 Llamas • Caranavi 1,700 msnm
+                  </h4>
+                  <span className="text-[10px] text-stone-300 block">Variedad Catuaí Lavado</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── 1.2. BANNER OFICIAL: LA CARTA FÍSICA AUTÉNTICA DE 6 PÁGINAS ── */}
+      <section className="w-full bg-[#1E130C] text-white py-12 border-y border-amber-950/50 relative overflow-hidden flex flex-col items-center">
+        {/* Patrón de fondo sutil */}
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D97706_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
+
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+          <div className="bg-gradient-to-r from-[#991B24]/95 via-[#7F1D1D] to-[#1E130C] rounded-3xl p-6 sm:p-10 border-2 border-amber-500/30 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
+            
+            <div className="space-y-3.5 text-left max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-amber-400/30 text-amber-300 text-xs font-bold shadow-xs">
+                <FileText size={14} />
+                <span>Menú Oficial Impreso • Edición Fiel</span>
+              </div>
+              
+              <h2 className="font-serif text-2xl sm:text-4xl font-black text-white leading-tight">
+                La Carta Oficial de Dencker Coffee & Pan (6 Páginas)
+              </h2>
+              
+              <p className="text-xs sm:text-sm text-amber-100/90 leading-relaxed">
+                Visualiza el menú físico auténtico tal como lo recibes impreso en nuestras mesas. Explora las 6 páginas completas en alta definición, o consulta el menú digital interactivo donde los precios se actualizan en vivo.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Link
+                  href="/menu-pdf"
+                  onClick={() => soundManager.playPastryCrinkle()}
+                  className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs sm:text-sm shadow-lg flex items-center gap-2 transition active:scale-95 cursor-pointer"
+                >
+                  <Eye size={16} />
+                  <span>Ver las 6 Páginas Reales</span>
+                </Link>
+
+                <a
+                  href="/menu-dencker.pdf"
+                  download="MENU_DENCKER_OFICIAL.pdf"
+                  onClick={() => soundManager.playPastryCrinkle()}
+                  className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition flex items-center gap-2 active:scale-95 cursor-pointer"
+                >
+                  <Download size={15} />
+                  <span>Descargar Carta PDF</span>
+                </a>
+
+                <Link
+                  href="/admin?tab=productos"
+                  className="text-xs text-amber-200/80 hover:text-white underline underline-offset-4 ml-1 transition"
+                >
+                  Editar Precios en Admin ↗
+                </Link>
+              </div>
+            </div>
+
+            {/* Abanico Visual de las 6 Páginas del Menú Físico */}
+            <div className="flex items-center -space-x-8 sm:-space-x-12 overflow-x-auto py-4 px-2 max-w-full">
+              {[1, 2, 3, 4, 5, 6].map((num) => (
+                <Link
+                  key={num}
+                  href="/menu-pdf"
+                  onClick={() => soundManager.playPastryCrinkle()}
+                  className="relative w-24 sm:w-28 h-36 sm:h-44 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-300/40 transform hover:-translate-y-3 hover:scale-110 hover:z-20 transition-all duration-300 shrink-0 bg-white group cursor-pointer"
+                  title={`Página ${num}: Ver en Menú Oficial`}
+                >
+                  <img
+                    src={`/img/menu-pdf/page_${num}.png`}
+                    alt={`Menú Oficial Página ${num}`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span className="absolute bottom-1 right-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/85 text-amber-300 border border-amber-500/30">
+                    Pág {num}
+                  </span>
+                </Link>
+              ))}
             </div>
 
           </div>
@@ -1125,16 +1211,19 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Fila 4: Pestañas de Categoría (Visible en Modo Categoría o al buscar) */}
+            {/* Fila 4: Pestañas de Categoría con Mascotas Auténticas */}
             {(modoPresentacion === "categoria" || busqueda !== "") && (
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center pt-2">
                 {[
-                  { id: "todos", label: "Todos", icon: UtensilsCrossed, sound: "tactile" },
-                  { id: "horneados", label: "Horneados de Masa Madre", icon: Flame, sound: "bread" },
-                  { id: "reposteria", label: "Pastelería & Hojaldres", icon: Cake, sound: "pastry" },
-                  { id: "cafe", label: "Cafetería & Barismo", icon: Coffee, sound: "porcelain" },
-                  { id: "bebidas", label: "Bebidas & Refrescos", icon: Droplets, sound: "tactile" },
-                  { id: "favoritos", label: "Estrellas de la Casa", icon: Star, sound: "tactile" },
+                  { id: "todos", label: "Todos (114)", icon: UtensilsCrossed, sound: "tactile" },
+                  { id: "c_desayunos", label: "Desayunos", mascot: DENCKER_ASSETS.mascotCroissant, sound: "pastry" },
+                  { id: "c_cafes", label: "Cafés 4 Llamas", mascot: DENCKER_ASSETS.mascotCoffee, sound: "porcelain" },
+                  { id: "c_dulces", label: "Pastelería & Tortas", mascot: DENCKER_ASSETS.mascotCroissant, sound: "pastry" },
+                  { id: "c_saladas", label: "Masitas Saladas", icon: Flame, sound: "bread" },
+                  { id: "c_sandwiches", label: "Sándwiches Gourmet", mascot: DENCKER_ASSETS.mascotBread, sound: "bread" },
+                  { id: "c_pizzas", label: "Pizzas al Horno", mascot: DENCKER_ASSETS.mascotPizza, sound: "bread" },
+                  { id: "c_jugos", label: "Bebidas & Frappés", icon: Droplets, sound: "tactile" },
+                  { id: "favoritos", label: "Más Vendidos ★", icon: Star, sound: "tactile" },
                 ].map((cat) => {
                   const Icon = cat.icon;
                   const isSel = categoriaActiva === cat.id;
@@ -1152,11 +1241,15 @@ export default function HomePage() {
                       }}
                       className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap flex items-center gap-2 transition-all select-none cursor-pointer ${
                         isSel
-                          ? "bg-[#1E130C] text-[#FAF7F2] shadow-md border border-[#1E130C]"
+                          ? "bg-[#991B24] text-white shadow-md border border-[#7F1D1D]"
                           : "bg-white text-[#785E4F] border border-[#EAE2D5] hover:bg-[#F5EFEB] hover:text-[#1E130C]"
                       }`}
                     >
-                      <Icon size={14} className={isSel ? "text-[#87A987]" : "text-[#785E4F]"} />
+                      {cat.mascot ? (
+                        <img src={cat.mascot} alt={cat.label} className="w-5 h-5 object-contain" />
+                      ) : (
+                        Icon && <Icon size={14} className={isSel ? "text-amber-300" : "text-[#785E4F]"} />
+                      )}
                       <span>{cat.label}</span>
                     </motion.button>
                   );

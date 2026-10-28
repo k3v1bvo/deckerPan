@@ -31,6 +31,7 @@ const springButton = { type: "spring", stiffness: 400, damping: 15 } as const;
 export default function CartDrawer() {
   const { cartOpen, setCartOpen } = useUIStore();
   const { items, updateCantidad, removeItem, clearCart, total, count, mesaNumero, setMesa } = useCartStore();
+  const storeProductos = useSystemStore((state) => state.productos);
 
   const [tipoEntrega, setTipoEntrega] = useState<"retiro" | "delivery" | "mesa" | "reserva">(
     mesaNumero ? "mesa" : "retiro"
@@ -75,21 +76,24 @@ export default function CartDrawer() {
             ? `Mesa ${mesaAsignada}`
             : "Reserva Salón"),
         es_ronda: false,
-        items: items.map((i, idx) => ({
-          id: `item-web-${Date.now()}-${idx}`,
-          pedido_id: `ped-web-${Date.now()}`,
-          producto_id: i.producto.id,
-          producto_nombre: i.producto.nombre,
-          cantidad: i.cantidad,
-          precio_unitario: i.producto.precio,
-          subtotal: i.cantidad * i.producto.precio,
-          chips_seleccionados: i.chips_seleccionados,
-          notas: i.notas,
-          estacion: i.producto.estacion || "vitrina",
-          estado: "pendiente" as const,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })),
+        items: items.map((i, idx) => {
+          const live = storeProductos.find((p) => p.id === i.producto.id) || i.producto;
+          return {
+            id: `item-web-${Date.now()}-${idx}`,
+            pedido_id: `ped-web-${Date.now()}`,
+            producto_id: live.id,
+            producto_nombre: live.nombre,
+            cantidad: i.cantidad,
+            precio_unitario: live.precio,
+            subtotal: i.cantidad * live.precio,
+            chips_seleccionados: i.chips_seleccionados,
+            notas: i.notas,
+            estacion: live.estacion || "vitrina",
+            estado: "pendiente" as const,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+        }),
       };
 
       useSystemStore.getState().addPedido(nuevoPedido);
@@ -177,8 +181,9 @@ export default function CartDrawer() {
       texto += `📋 *PRODUCTOS SELECCIONADOS:*\n`;
 
       items.forEach((item, idx) => {
-        texto += `\n${idx + 1}. *${item.cantidad}x ${item.producto.nombre}*\n`;
-        texto += `   • Subtotal: Bs ${(item.cantidad * item.producto.precio).toFixed(2)}\n`;
+        const live = storeProductos.find((p) => p.id === item.producto.id) || item.producto;
+        texto += `\n${idx + 1}. *${item.cantidad}x ${live.nombre}*\n`;
+        texto += `   • Subtotal: Bs ${(item.cantidad * live.precio).toFixed(2)}\n`;
         if (item.chips_seleccionados && item.chips_seleccionados.length > 0) {
           texto += `   • Opciones: ${item.chips_seleccionados.join(", ")}\n`;
         }
@@ -281,15 +286,22 @@ export default function CartDrawer() {
             {/* Contenido Principal */}
             {items.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-5">
-                <div className="w-24 h-24 rounded-full bg-[#EAE2D5]/80 text-[#3D271D] flex items-center justify-center text-4xl shadow-inner border border-[#D9CDBF]">
-                  🥐
+                <div className="w-28 h-28 rounded-3xl bg-[#EAE2D5]/60 p-2 text-[#3D271D] flex items-center justify-center shadow-inner border border-[#D9CDBF] relative">
+                  <img
+                    src={DENCKER_ASSETS.mascotClean}
+                    alt="Don Dencker Mascota"
+                    className="w-full h-full object-contain drop-shadow"
+                  />
+                  <span className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-full bg-[#991B24] text-white text-[9px] font-bold font-mono">
+                    Café 4 Llamas ☕
+                  </span>
                 </div>
                 <div className="space-y-1.5 max-w-xs">
                   <h4 className="font-serif font-bold text-xl text-[#1E130C]">
                     Tu canasta aún reposa vacía
                   </h4>
                   <p className="text-xs text-[#785E4F] leading-relaxed">
-                    Añade un New York Roll de Pistacho, caukas recién salidas del horno o nuestro café de altura Caranavi.
+                    Don Dencker te espera con café de altura Caranavi, masitas recién horneadas y pan crujiente.
                   </p>
                 </div>
                 <motion.button
@@ -424,73 +436,78 @@ export default function CartDrawer() {
                   </div>
 
                   <div className="space-y-2.5">
-                    {items.map((item) => (
-                      <motion.div
-                        layout
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={springTransition}
-                        key={item.producto.id}
-                        className="p-3.5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs flex items-center gap-3.5"
-                      >
-                        <div className="w-14 h-14 rounded-xl bg-[#F5EFEB] overflow-hidden shrink-0 border border-[#EAE2D5] flex items-center justify-center">
-                          {item.producto.imagen_url ? (
-                            <img
-                              src={item.producto.imagen_url}
-                              alt={item.producto.nombre}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-2xl">🥐</span>
-                          )}
-                        </div>
+                    {items.map((item) => {
+                      const live = storeProductos.find((p) => p.id === item.producto.id) || item.producto;
+                      return (
+                        <motion.div
+                          layout
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={springTransition}
+                          key={item.producto.id}
+                          className="p-3.5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs flex items-center gap-3.5"
+                        >
+                          <div className="w-14 h-14 rounded-xl bg-[#F5EFEB] overflow-hidden shrink-0 border border-[#EAE2D5] flex items-center justify-center">
+                            {live.imagen_url ? (
+                              <img
+                                src={live.imagen_url}
+                                alt={live.nombre}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-2xl">🥐</span>
+                            )}
+                          </div>
 
-                        <div className="flex-1 min-w-0">
-                          <h5 className="font-serif font-bold text-xs text-[#1E130C] truncate">
-                            {item.producto.nombre}
-                          </h5>
-                          <span className="text-xs font-mono font-bold text-[#1E130C] block mt-0.5">
-                            Bs {(item.producto.precio * item.cantidad).toFixed(2)}
-                          </span>
-                          {item.chips_seleccionados && item.chips_seleccionados.length > 0 && (
-                            <p className="text-[10px] text-[#527953] truncate mt-0.5 font-medium">
-                              {item.chips_seleccionados.join(" • ")}
-                            </p>
-                          )}
-                        </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-serif font-bold text-xs text-[#1E130C] truncate">
+                              {live.nombre}
+                            </h5>
+                            <span className="text-xs font-mono font-bold text-[#991B24] block mt-0.5">
+                              Bs {(live.precio * item.cantidad).toFixed(2)}
+                            </span>
+                            {item.chips_seleccionados && item.chips_seleccionados.length > 0 && (
+                              <p className="text-[10px] text-[#527953] truncate mt-0.5 font-medium">
+                                {item.chips_seleccionados.join(" • ")}
+                              </p>
+                            )}
+                          </div>
 
-                        <div className="flex items-center gap-1 bg-[#FAF7F2] rounded-xl p-1 border border-[#EAE2D5]">
-                          <motion.button
-                            whileTap={{ scale: 0.85 }}
-                            transition={springButton}
-                            onClick={() => {
-                              soundManager.playTactileClick();
-                              updateCantidad(item.producto.id, item.cantidad - 1);
-                            }}
-                            className="w-6 h-6 rounded-lg bg-white text-[#1E130C] flex items-center justify-center shadow-xs"
-                            aria-label="Disminuir"
-                          >
-                            <Minus size={12} />
-                          </motion.button>
-                          <span className="w-5 text-center text-xs font-mono font-bold text-[#1E130C]">
-                            {item.cantidad}
-                          </span>
-                          <motion.button
-                            whileTap={{ scale: 0.85 }}
-                            transition={springButton}
-                            onClick={() => {
-                              soundManager.playPastryCrinkle();
-                              updateCantidad(item.producto.id, item.cantidad + 1);
-                            }}
-                            className="w-6 h-6 rounded-lg bg-[#1E130C] text-[#FAF7F2] flex items-center justify-center shadow-xs"
-                            aria-label="Aumentar"
-                          >
-                            <Plus size={12} />
-                          </motion.button>
-                        </div>
-                      </motion.div>
-                    ))}
+                          <div className="flex items-center gap-1 bg-[#FAF7F2] rounded-xl p-1 border border-[#EAE2D5]">
+                            <motion.button
+                              whileTap={{ scale: 0.85 }}
+                              transition={springButton}
+                              onClick={() => {
+                                soundManager.playTactileClick();
+                                updateCantidad(item.producto.id, item.cantidad - 1);
+                              }}
+                              className="w-7 h-7 rounded-lg bg-white border border-[#EAE2D5] text-[#1E130C] flex items-center justify-center hover:bg-[#F5EFEB] transition-colors"
+                              aria-label="Restar una unidad"
+                            >
+                              <Minus size={13} />
+                            </motion.button>
+
+                            <span className="w-7 text-center font-mono font-bold text-xs text-[#1E130C]">
+                              {item.cantidad}
+                            </span>
+
+                            <motion.button
+                              whileTap={{ scale: 0.85 }}
+                              transition={springButton}
+                              onClick={() => {
+                                soundManager.playTactileClick();
+                                updateCantidad(item.producto.id, item.cantidad + 1);
+                              }}
+                              className="w-7 h-7 rounded-lg bg-[#991B24] text-white flex items-center justify-center hover:bg-[#7F1D1D] transition-colors"
+                              aria-label="Sumar una unidad"
+                            >
+                              <Plus size={13} />
+                            </motion.button>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </div>
 

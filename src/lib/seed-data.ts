@@ -12,13 +12,22 @@ export const DENCKER_ASSETS = {
   mascotClean: "/img/brand/don-dencker-mascot-clean.png",
   badgeClean: "/img/brand/don-dencker-badge.png",
   coffeeVintage: "/img/brand/don-dencker-coffee-vintage.png",
+  mascotCoffee: "/img/brand/mascot-coffee.png",
+  mascotCroissant: "/img/brand/mascot-croissant.png",
+  mascotBread: "/img/brand/mascot-bread.png",
+  mascotPizza: "/img/brand/mascot-pizza.png",
+  cafe4Llamas: "/img/brand/cafe-4llamas-pack.png",
+  cafeCatuai: "/img/brand/cafe-catuai-badge.png",
+  menuPdfDownload: "/menu-dencker.pdf",
   banners: [
-  "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg",
-  "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg"
-],
+    "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg",
+    "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg"
+  ],
   barcodeSound: "https://tienda.denckerpan.com/pedido/sounds/barcode.mp3",
   whatsapp: "https://wa.me/59176911000",
-  whatsappNumber: "+591 76911000"
+  whatsappNumber: "+591 76911000",
+  googleMaps: "https://maps.app.goo.gl/xn24aVhPQEC9dUf16",
+  direccion: "Av. Daniel Salamanca, Cochabamba, Bolivia",
 };
 
 export const SEED_ZONAS: Zona[] = [
@@ -72,7 +81,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 2,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_lattes",
@@ -82,7 +91,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 3,
     "activa": true,
-    "imagen_url": "/img/brand/cafe-catuai-badge.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_chocolates",
@@ -92,7 +101,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 4,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_tes",
@@ -102,7 +111,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 5,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_frappes",
@@ -112,7 +121,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 6,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_helados",
@@ -122,7 +131,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 7,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_jugos",
@@ -132,7 +141,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 8,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_refrescos",
@@ -142,7 +151,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "vitrina",
     "orden": 9,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-coffee.png"
   },
   {
     "id": "c_dulces",
@@ -162,7 +171,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "vitrina",
     "orden": 11,
     "activa": true,
-    "imagen_url": "/img/brand/don-dencker.png"
+    "imagen_url": "/img/brand/mascot-croissant.png"
   },
   {
     "id": "c_saladas",
@@ -172,7 +181,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "vitrina",
     "orden": 12,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-bread.png"
+    "imagen_url": "/img/brand/mascot-croissant.png"
   },
   {
     "id": "c_sandwiches",
@@ -2767,10 +2776,10 @@ export const REAL_PRODUCT_PHOTOS: string[] = [
 
 
 export const MENU_PDF_PAGES = [
-  { page: 1, title: 'Portada & Don Dencker', url: '/img/menu_pdf/page_1.png' },
-  { page: 2, title: 'Desayunos, Cafés & Lattes', url: '/img/menu_pdf/page_2.png' },
-  { page: 3, title: 'Chocolates, Tés, Frappés & Jugos', url: '/img/menu_pdf/page_3.png' },
-  { page: 4, title: 'Pastelería Dulce, Postres & Saladas', url: '/img/menu_pdf/page_4.png' },
-  { page: 5, title: 'Sándwiches Gourmet & Ensaladas', url: '/img/menu_pdf/page_5.png' },
-  { page: 6, title: 'Pizzas al Horno Dencker', url: '/img/menu_pdf/page_6.png' },
+  { page: 1, title: 'Portada ME NU & Don Dencker', url: '/img/menu-pdf/page_1.png', desc: 'Toldo vintage rojo, Don Dencker con taza de café humeante y Dencker Coffee' },
+  { page: 2, title: 'Desayunos, Cafés & Lattes', url: '/img/menu-pdf/page_2.png', desc: 'Desayunos completos, Café 4 Llamas de especialidad, Lattes y mascota taza sonriente' },
+  { page: 3, title: 'Chocolates, Tés, Jugos & Frappés', url: '/img/menu-pdf/page_3.png', desc: 'Chocolates marshmallow, tés naturales, frappés oreo, helados artesanales y jugos' },
+  { page: 4, title: 'Dulces, Postres & Masitas Saladas', url: '/img/menu-pdf/page_4.png', desc: 'Alfajores, New York roll, cheesecake, cuñapés calientes y croissant con lentes de sol' },
+  { page: 5, title: 'Sándwiches, Extras & Ensaladas', url: '/img/menu-pdf/page_5.png', desc: 'Arma tu sándwich (2 proteínas + 3 complementos), pan a elección y mascota tostada feliz' },
+  { page: 6, title: 'Pizzas Artesanales Dencker', url: '/img/menu-pdf/page_6.png', desc: 'Arma tu pizza, porciones 4/6/8 porciones y mascota pizza skater con lentes' },
 ];

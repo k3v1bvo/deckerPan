@@ -1,59 +1,80 @@
 "use client";
 import React from "react";
-import Image from "next/image";
+
+export type DenckerLogoVariant =
+  | "chef-hat"
+  | "mascot"
+  | "vintage-badge"
+  | "badge-clean"
+  | "mascot-coffee"
+  | "mascot-croissant"
+  | "mascot-bread"
+  | "mascot-pizza"
+  | "cafe-4llamas"
+  | "cafe-catuai";
 
 interface DenckerLogoProps {
   className?: string;
-  variant?: "chef-hat" | "mascot" | "vintage-badge";
-  size?: number | string;
-  fill?: string;
+  variant?: DenckerLogoVariant;
   monochrome?: boolean;
+  alt?: string;
 }
 
 /**
  * Componente oficial de identidad visual Dencker Pan.
- * Renderiza los logos oficiales auténticos en formato vectorial nítido o PNG de alta fidelidad.
+ * Renderiza todos los logos y mascotas auténticos del cliente:
+ * - Chef Hat Logo (con bigote y tipografía retro)
+ * - Don Dencker Vintage & Badge circular
+ * - Mascota Taza de Café sonriente
+ * - Mascota Croissant con lentes oscuros
+ * - Mascota Pan Tostada alegre
+ * - Mascota Pizza skater
+ * - Café 4 Llamas Caranavi
  */
 export default function DenckerLogo({
   className = "w-12 h-12",
   variant = "chef-hat",
-  size,
   monochrome = false,
+  alt = "Dencker Pan Logo",
 }: DenckerLogoProps) {
-  if (variant === "mascot") {
-    return (
-      <div className={`relative inline-flex items-center justify-center shrink-0 ${className}`}>
-        <img
-          src="/img/brand/don-dencker.png"
-          alt="Don Dencker Mascota"
-          className="w-full h-full object-contain select-none"
-        />
-      </div>
-    );
-  }
+  const getAssetSrc = () => {
+    switch (variant) {
+      case "mascot":
+        return "/img/brand/don-dencker-mascot-clean.png";
+      case "vintage-badge":
+        return "/img/brand/don-dencker-coffee-vintage.png";
+      case "badge-clean":
+        return "/img/brand/don-dencker-badge.png";
+      case "mascot-coffee":
+        return "/img/brand/mascot-coffee.png";
+      case "mascot-croissant":
+        return "/img/brand/mascot-croissant.png";
+      case "mascot-bread":
+        return "/img/brand/mascot-bread.png";
+      case "mascot-pizza":
+        return "/img/brand/mascot-pizza.png";
+      case "cafe-4llamas":
+        return "/img/brand/cafe-4llamas-pack.png";
+      case "cafe-catuai":
+        return "/img/brand/cafe-catuai-badge.png";
+      case "chef-hat":
+      default:
+        return "/img/brand/dencker-chef-hat-logo.svg";
+    }
+  };
 
-  if (variant === "vintage-badge") {
-    return (
-      <div className={`relative inline-flex items-center justify-center shrink-0 ${className}`}>
-        <img
-          src="/img/brand/don-dencker-coffee-vintage.png"
-          alt="Dencker Coffee"
-          className="w-full h-full object-contain rounded-xl select-none"
-        />
-      </div>
-    );
-  }
+  const src = getAssetSrc();
 
-  // Por defecto: Logo Sombrero de Chef + Letras DENCKER + Bigote Artesanal (Vector SVG de Alta Resolución)
   return (
     <div className={`relative inline-flex items-center justify-center shrink-0 ${className}`}>
       <img
-        src="/img/brand/dencker-chef-hat-logo.svg"
-        alt="Dencker Pan Logo"
-        className={`w-full h-full object-contain select-none ${
+        src={src}
+        alt={alt}
+        className={`w-full h-full object-contain select-none transition-transform ${
           monochrome ? "grayscale contrast-200" : ""
         }`}
       />
     </div>
   );
 }
+

@@ -41,26 +41,31 @@ export default function RoleNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#160E09]/95 backdrop-blur-xl border-b border-amber-900/30 text-white transition-all shadow-xl">
+      <header className="sticky top-0 z-40 bg-[#1E130C]/95 backdrop-blur-xl border-b border-amber-950/40 text-white transition-all shadow-xl">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
-          {/* Logo Oficial de Dencker Pan */}
+          {/* Logo Oficial de Dencker Pan con Chef Hat + Badge Don Dencker */}
           <Link
             href="/"
             onClick={() => soundManager.playSuccessTone()}
             className="flex items-center gap-3 group shrink-0"
           >
-            <div className="relative">
+            <div className="relative w-11 h-11 rounded-2xl bg-white/10 p-1.5 border border-amber-500/30 flex items-center justify-center overflow-hidden group-hover:border-amber-400 transition">
               <img
                 src={DENCKER_ASSETS.logo}
                 alt="Dencker Pan Logo Oficial"
-                className="w-10 h-10 sm:w-11 sm:h-11 object-contain filter drop-shadow-[0_4px_12px_rgba(217,119,6,0.35)] group-hover:scale-105 transition-transform"
+                className="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(217,119,6,0.35)] group-hover:scale-105 transition-transform"
               />
             </div>
 
             <div className="leading-tight">
-              <span className="font-serif font-black text-lg sm:text-xl text-white tracking-wide flex items-center gap-1.5">
-                Dencker Pan
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-black text-lg sm:text-xl text-white tracking-wide">
+                  Dencker Pan
+                </span>
+                <span className="hidden sm:inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-red-400/30">
+                  Café 4 Llamas
+                </span>
+              </div>
               <span className="text-[10px] text-amber-300/80 font-sans uppercase tracking-widest block font-medium">
                 Panadería & Café • Cochabamba
               </span>
@@ -68,35 +73,36 @@ export default function RoleNav() {
           </Link>
 
           {/* Navegación Principal para Clientes (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-medium text-stone-300">
+          <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-stone-300">
             <a
               href="#catalogo"
               className="hover:text-amber-400 transition-colors flex items-center gap-1.5 py-1"
             >
-              <Coffee size={14} className="text-amber-500/80" />
-              <span>Catálogo & Menú</span>
+              <Coffee size={14} className="text-amber-400" />
+              <span>Catálogo & Precios</span>
             </a>
             <a
               href="#catering"
               className="hover:text-amber-400 transition-colors flex items-center gap-1.5 py-1"
             >
-              <Calendar size={14} className="text-amber-500/80" />
+              <Calendar size={14} className="text-amber-400" />
               <span>Catering & Eventos</span>
             </a>
             <a
               href="#contacto"
               className="hover:text-amber-400 transition-colors flex items-center gap-1.5 py-1"
             >
-              <MapPin size={14} className="text-amber-500/80" />
+              <MapPin size={14} className="text-amber-400" />
               <span>Nuestra Casa</span>
             </a>
+            
+            {/* Botón Destacado: Carta Oficial PDF (6 Páginas Reales) */}
             <Link
               href="/menu-pdf"
-              target="_blank"
-              className="text-amber-300/90 hover:text-amber-200 transition-colors flex items-center gap-1.5 py-1 px-3 rounded-full bg-white/5 border border-amber-500/20"
+              className="text-white hover:text-amber-200 transition-all flex items-center gap-1.5 py-1.5 px-3.5 rounded-full bg-[#991B24] hover:bg-[#7F1D1D] border border-red-400/30 shadow-sm font-bold active:scale-95"
             >
-              <FileText size={13} className="text-amber-400" />
-              <span>Menú Carta PDF</span>
+              <FileText size={13} className="text-amber-300" />
+              <span>Carta Oficial PDF (6 Págs)</span>
             </Link>
           </nav>
 
@@ -107,7 +113,7 @@ export default function RoleNav() {
               href={DENCKER_ASSETS.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-emerald-600/90 hover:bg-emerald-500 text-white text-xs font-semibold transition shadow-sm active:scale-95"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold transition shadow-sm active:scale-95"
             >
               <MessageCircle size={14} />
               <span>WhatsApp</span>
@@ -120,16 +126,16 @@ export default function RoleNav() {
                 soundManager.playClick();
                 setCartOpen(true);
               }}
-              className="relative px-3.5 sm:px-4 py-2 rounded-full bg-[#24170F] hover:bg-[#2C1C13] border border-amber-600/30 text-amber-200 font-semibold text-xs shadow-md flex items-center gap-2 active:scale-95 transition cursor-pointer"
+              className="relative px-3.5 sm:px-4 py-2 rounded-full bg-[#991B24] hover:bg-[#7F1D1D] border border-red-400/40 text-white font-semibold text-xs shadow-md flex items-center gap-2 active:scale-95 transition cursor-pointer"
             >
-              <ShoppingBag size={15} className="text-amber-400" />
+              <ShoppingBag size={15} className="text-amber-300" />
               <span className="hidden sm:inline">Canasta</span>
               {cartCount > 0 ? (
-                <span className="px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 font-mono text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[10px] font-bold">
                   {cartCount} • Bs {cartTotal.toFixed(0)}
                 </span>
               ) : (
-                <span className="px-1.5 py-0.5 rounded-full bg-white/10 text-stone-400 font-mono text-[10px]">
+                <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono text-[10px]">
                   0
                 </span>
               )}
@@ -173,7 +179,7 @@ export default function RoleNav() {
                   className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-amber-100 font-semibold flex items-center gap-2.5"
                 >
                   <Coffee size={16} className="text-amber-400" />
-                  <span>Catálogo & Menú Completo (240 Productos)</span>
+                  <span>Catálogo & Precios (114 Productos Oficiales)</span>
                 </a>
                 <a
                   href="#catering"
@@ -193,12 +199,11 @@ export default function RoleNav() {
                 </a>
                 <Link
                   href="/menu-pdf"
-                  target="_blank"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold flex items-center gap-2.5 border border-amber-500/20"
+                  className="p-3 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold flex items-center gap-2.5 border border-red-400/30"
                 >
-                  <FileText size={16} className="text-amber-400" />
-                  <span>Menú Carta en PDF (Imprimible)</span>
+                  <FileText size={16} className="text-amber-300" />
+                  <span>Carta Oficial PDF (Ver las 6 Páginas Reales)</span>
                 </Link>
               </div>
 

@@ -346,6 +346,16 @@ export const useSystemStore = create<SystemStore>()(
             p.id === id ? { ...p, ...data, updated_at: new Date().toISOString() } : p
           );
           broadcastSync('PRODUCTOS_UPDATED', updated);
+          // Sincronizar inmediatamente los productos en el carrito para reflejar nuevo precio/foto/nombre
+          try {
+            useCartStore.setState((cartState) => ({
+              items: cartState.items.map((it) =>
+                it.producto.id === id ? { ...it, producto: { ...it.producto, ...data } } : it
+              ),
+            }));
+          } catch {
+            // Noop
+          }
           return { productos: updated };
         }),
 
@@ -353,6 +363,13 @@ export const useSystemStore = create<SystemStore>()(
         set((state) => {
           const updated = state.productos.filter((p) => p.id !== id);
           broadcastSync('PRODUCTOS_UPDATED', updated);
+          try {
+            useCartStore.setState((cartState) => ({
+              items: cartState.items.filter((it) => it.producto.id !== id),
+            }));
+          } catch {
+            // Noop
+          }
           return { productos: updated };
         }),
 
@@ -824,7 +841,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
   clearCart: () => set({ items: [], pedidoId: null }),
   setMesa: (numero) => set({ mesaNumero: numero }),
   setPedidoId: (id) => set({ pedidoId: id }),
-  total: () => get().items.reduce((sum, i) => sum + i.producto.precio * i.cantidad, 0),
+  total: () => {
+    const liveProds = useSystemStore.getState().productos;
+    return get().items.reduce((sum, i) => {
+      const live = liveProds?.find((p) => p.id === i.producto.id);
+      const precio = live ? live.precio : i.producto.precio;
+      return sum + precio * i.cantidad;
+    }, 0);
+  },
   count: () => get().items.reduce((sum, i) => sum + i.cantidad, 0),
 }));
 

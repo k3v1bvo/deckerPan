@@ -22,8 +22,8 @@ import {
   Wallet,
 } from "lucide-react";
 import { Producto, Categoria, CartItem, ItemPedido } from "@/types";
-import { useCartStore, useUIStore } from "@/store";
-import { SEED_CATEGORIAS, SEED_PRODUCTOS } from "@/lib/seed-data";
+import { useSystemStore, useCartStore, useUIStore } from "@/store";
+import { SEED_CATEGORIAS, SEED_PRODUCTOS, DENCKER_ASSETS } from "@/lib/seed-data";
 import { supabase } from "@/lib/supabase";
 import { soundManager } from "@/lib/sound";
 
@@ -68,8 +68,10 @@ const ESTADO_LABELS: Record<EstadoPedido, { label: string; step: number; color: 
 
 export default function MesaPage({ params }: PageProps) {
   const [numero, setNumero] = useState<string>("1");
-  const [categorias, setCategorias] = useState<Categoria[]>(SEED_CATEGORIAS);
-  const [productos, setProductos] = useState<Producto[]>(SEED_PRODUCTOS);
+  const storeCategorias = useSystemStore((state) => state.categorias);
+  const storeProductos = useSystemStore((state) => state.productos);
+  const categorias: Categoria[] = storeCategorias && storeCategorias.length > 0 ? storeCategorias : SEED_CATEGORIAS;
+  const productos: Producto[] = storeProductos && storeProductos.length > 0 ? storeProductos : SEED_PRODUCTOS;
   const [categoriaActiva, setCategoriaActiva] = useState<string>("todos");
   const [busqueda, setBusqueda] = useState("");
   const [mesaId, setMesaId] = useState<string | null>(null);
@@ -111,20 +113,6 @@ export default function MesaPage({ params }: PageProps) {
   useEffect(() => {
     async function load() {
       if (!supabase) return;
-      const { data: cats } = await supabase
-        .from("categorias")
-        .select("*")
-        .eq("activa", true)
-        .order("orden");
-      if (cats?.length) setCategorias(cats);
-
-      const { data: prods } = await supabase
-        .from("productos")
-        .select("*, categoria:categorias(*)")
-        .eq("disponible", true)
-        .order("nombre");
-      if (prods?.length) setProductos(prods);
-
       const { data: mesa } = await supabase
         .from("mesas")
         .select("id")

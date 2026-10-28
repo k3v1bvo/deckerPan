@@ -97,7 +97,7 @@ export default function AdminPage() {
     setFacturacionSiatConfig,
   } = useSystemStore();
 
-  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "personal" | "qr_mesas" | "reservas" | "metricas" | "qr" | "siat">("mesas");
+  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "personal" | "qr_mesas" | "reservas" | "metricas" | "qr" | "siat">("productos");
   const [baseUrlMesas, setBaseUrlMesas] = useState("https://decker-pan.vercel.app");
 
   // Estados Edición Rápida de Precios & Galería de Fotos Reales
@@ -153,6 +153,15 @@ export default function AdminPage() {
   useEffect(() => {
     setFechaHoyTimestamp(Date.now());
     if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab");
+      if (
+        tabParam &&
+        ["productos", "mesas", "personal", "qr_mesas", "reservas", "metricas", "qr", "siat"].includes(tabParam)
+      ) {
+        setTabActiva(tabParam as any);
+      }
+
       if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
         setBaseUrlMesas("https://decker-pan.vercel.app");
       } else {
@@ -666,8 +675,8 @@ export default function AdminPage() {
         <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/80 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-5xl overflow-x-auto shadow-xs">
           {(
             [
+              { id: "productos", label: "Catálogo & Precios", icon: UtensilsCrossed },
               { id: "mesas", label: "Mesas", icon: Layers },
-              { id: "productos", label: "Menú", icon: UtensilsCrossed },
               { id: "siat", label: "Facturas SIAT", icon: Receipt },
               { id: "personal", label: "Personal", icon: Users },
               { id: "qr_mesas", label: "QRs Mesas", icon: QrCode },
@@ -813,9 +822,46 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ── TAB 2: GESTIÓN DE PRODUCTOS & MENÚ OFICIAL ── */}
+        {/* ── TAB: GESTIÓN DE PRODUCTOS & PRECIOS (SINCRONIZACIÓN TOTAL) ── */}
         {tabActiva === "productos" && (
           <div className="space-y-6">
+            {/* Banner Central de Sincronización en Vivo */}
+            <div className="p-5 rounded-3xl bg-gradient-to-r from-[#991B24] via-[#7F1D1D] to-[#1E130C] text-white shadow-lg border border-red-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-amber-300">
+                    Sincronización en Tiempo Real Activa
+                  </span>
+                </div>
+                <h2 className="font-serif text-xl sm:text-2xl font-black tracking-tight text-white">
+                  Editor Central de Catálogo, Montos & Fotos
+                </h2>
+                <p className="text-xs text-amber-100/90 max-w-2xl leading-relaxed">
+                  Cualquier edición de <strong>precio, fotografía o nombre</strong> se refleja de inmediato en todo el sistema: en el <strong>Carrito de Compras</strong> (con recalculo instantáneo del total), en el <strong>Menú Carta PDF</strong>, en la <strong>Portada Web</strong> y en los <strong>POS de Caja y Mesas</strong>.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <Link
+                  href="/menu-pdf"
+                  target="_blank"
+                  className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition flex items-center gap-1.5 active:scale-95"
+                >
+                  <FileText size={14} className="text-amber-300" />
+                  <span>Ver Menú PDF</span>
+                </Link>
+
+                <button
+                  onClick={abrirModalNuevoProducto}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-black shadow-md transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                >
+                  <Plus size={15} />
+                  <span>Crear Producto</span>
+                </button>
+              </div>
+            </div>
+
             <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
                 <button
