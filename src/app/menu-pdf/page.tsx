@@ -1341,6 +1341,68 @@ export default function MenuPdfPage() {
 
           </div>
 
+          {/* ── COLOFÓN OFICIAL DENCKER: LOS 3 EMBLEMAS DE LA CASA ── */}
+          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/30 p-6 sm:p-10 space-y-6 text-center">
+            <div className="max-w-2xl mx-auto space-y-2">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-[#991B24]">
+                Identidad & Tradición Familiar
+              </span>
+              <h3 className="font-serif font-black text-2xl sm:text-3xl text-[#1E130C]">
+                Dencker Coffee & Panadería Artesanal
+              </h3>
+              <p className="text-xs text-[#785E4F] leading-relaxed">
+                Cada receta es fruto de la dedicación, la masa madre viva y los granos de café de altura seleccionados en Caranavi. Gracias por compartir la mesa con nosotros.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 items-center">
+              {/* Logo 1 */}
+              <div className="p-4 rounded-2xl bg-white border border-[#E7DFD5] flex flex-col items-center space-y-2 shadow-2xs">
+                <div className="w-16 h-14 flex items-center justify-center">
+                  <img
+                    src="/img/brand/logo-1-chef-hat.svg"
+                    alt="Sombrero Chef Dencker"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="font-serif font-bold text-xs text-[#1E130C]">Insignia de Obrador</span>
+                <span className="text-[10px] text-[#785E4F]">Panadería y repostería artesanal</span>
+              </div>
+
+              {/* Logo 2 */}
+              <div className="p-4 rounded-2xl bg-white border border-[#E7DFD5] flex flex-col items-center space-y-2 shadow-2xs">
+                <div className="w-24 h-14 rounded-lg overflow-hidden flex items-center justify-center shadow-xs">
+                  <img
+                    src="/img/brand/logo-2-dencker-coffee-vintage.png"
+                    alt="Boleto Vintage Dencker Coffee"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="font-serif font-bold text-xs text-[#1E130C]">Boleto Nostálgico</span>
+                <span className="text-[10px] text-[#785E4F]">Dencker Coffee & Tradición</span>
+              </div>
+
+              {/* Logo 3 */}
+              <div className="p-4 rounded-2xl bg-white border border-[#E7DFD5] flex flex-col items-center space-y-2 shadow-2xs">
+                <div className="w-14 h-14 flex items-center justify-center">
+                  <img
+                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    alt="Sello Don Dencker"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="font-serif font-bold text-xs text-[#1E130C]">Sello de Autenticidad</span>
+                <span className="text-[10px] text-[#785E4F]">Garantía de sabor y calidad</span>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[#E7DFD5] flex flex-wrap items-center justify-between gap-3 text-xs text-[#785E4F]">
+              <span>Av. Daniel Salamanca, Cochabamba • Bolivia</span>
+              <span>Pedidos & Reservas: +591 76911000</span>
+              <span className="font-mono font-bold text-[#991B24]">www.denckerpan.com</span>
+            </div>
+          </div>
+
         </main>
       )}
 

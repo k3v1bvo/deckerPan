@@ -1931,6 +1931,17 @@ export default function AdminPage() {
                         <p className="text-[9px] font-bold text-stone-800">
                           Fecha Límite de Emisión: {facturaSeleccionadaModal.fechaLimiteEmision || facturacionSiatConfig.fechaLimiteEmision}
                         </p>
+                        <div className="flex items-center justify-center gap-2 pt-2 pb-1">
+                          <img
+                            src="/img/brand/logo-3-don-dencker-badge.png"
+                            alt="Sello Oficial Don Dencker"
+                            className="w-9 h-9 object-contain shrink-0"
+                          />
+                          <div className="text-left leading-tight">
+                            <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
+                            <p className="text-[8px] text-stone-500 font-mono">Tradición & Calidad Dencker</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
 

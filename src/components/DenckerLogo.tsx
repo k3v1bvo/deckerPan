@@ -3,9 +3,12 @@ import React from "react";
 
 export type DenckerLogoVariant =
   | "chef-hat"
-  | "mascot"
+  | "logo-1-chef-hat"
   | "vintage-badge"
+  | "logo-2-vintage-ticket"
   | "badge-clean"
+  | "logo-3-badge"
+  | "mascot"
   | "mascot-coffee"
   | "mascot-croissant"
   | "mascot-bread"
@@ -23,8 +26,9 @@ interface DenckerLogoProps {
 /**
  * Componente oficial de identidad visual Dencker Pan.
  * Renderiza todos los logos y mascotas auténticos del cliente:
- * - Chef Hat Logo (con bigote y tipografía retro)
- * - Don Dencker Vintage & Badge circular
+ * - Logo 1: Chef Hat Logo (con bigote y tipografía retro DENCKER)
+ * - Logo 2: Boleto Vintage Dencker Coffee (ticket vintage terracota)
+ * - Logo 3: Don Dencker Badge circular (sello con taza humeante)
  * - Mascota Taza de Café sonriente
  * - Mascota Croissant con lentes oscuros
  * - Mascota Pan Tostada alegre
@@ -39,12 +43,17 @@ export default function DenckerLogo({
 }: DenckerLogoProps) {
   const getAssetSrc = () => {
     switch (variant) {
+      case "logo-1-chef-hat":
+      case "chef-hat":
+        return "/img/brand/logo-1-chef-hat.svg";
+      case "logo-2-vintage-ticket":
+      case "vintage-badge":
+        return "/img/brand/logo-2-dencker-coffee-vintage.png";
+      case "logo-3-badge":
+      case "badge-clean":
+        return "/img/brand/logo-3-don-dencker-badge.png";
       case "mascot":
         return "/img/brand/don-dencker-mascot-clean.png";
-      case "vintage-badge":
-        return "/img/brand/don-dencker-coffee-vintage.png";
-      case "badge-clean":
-        return "/img/brand/don-dencker-badge.png";
       case "mascot-coffee":
         return "/img/brand/mascot-coffee.png";
       case "mascot-croissant":
@@ -57,9 +66,8 @@ export default function DenckerLogo({
         return "/img/brand/cafe-4llamas-pack.png";
       case "cafe-catuai":
         return "/img/brand/cafe-catuai-badge.png";
-      case "chef-hat":
       default:
-        return "/img/brand/dencker-chef-hat-logo.svg";
+        return "/img/brand/logo-1-chef-hat.svg";
     }
   };
 

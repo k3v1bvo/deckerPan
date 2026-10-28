@@ -135,7 +135,7 @@ const HERO_PASTRY_SHOWCASE = [
     desc: "Tapas suaves que se deshacen en boca, abundante manjar casero cocido a fuego lento y lluvia de nueces seleccionadas.",
     imagen: "/images/products/alfajor_boliviano_cut.jpg",
     badge: "Favorito de la Tarde",
-    badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    badgeColor: "bg-[#C86464]/20 text-[#C86464] border-[#C86464]/30",
   },
 ];
 
@@ -558,7 +558,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#FAF7F2] text-[#1E130C] selection:bg-[#E2EBDC] selection:text-[#2D452E] overflow-x-hidden font-sans flex flex-col items-center">
+    <div className="w-full min-h-screen bg-[#FAF7F2] text-[#1E130C] selection:bg-[#FEE2E2] selection:text-[#991B24] overflow-x-hidden font-sans flex flex-col items-center">
       
       {/* ── 1. HERO ARTESANAL DENCKER PAN (CÁLIDO, EDITORIAL, AUTÉNTICO) ── */}
       <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] relative overflow-hidden flex flex-col items-center">
@@ -831,6 +831,54 @@ export default function HomePage() {
             </div>
 
           </div>
+
+          {/* ── Banner de los 3 Emblemas Oficiales Dencker ── */}
+          <div className="w-full mt-6 pt-6 border-t border-white/15 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+            {/* Emblema 1 */}
+            <div className="flex items-center gap-3.5 bg-black/35 p-3.5 rounded-2xl border border-white/10 shadow-sm">
+              <div className="w-12 h-12 rounded-xl bg-white/10 p-1.5 flex items-center justify-center shrink-0 border border-white/10">
+                <img
+                  src="/img/brand/logo-1-chef-hat.svg"
+                  alt="Sombrero Chef Dencker"
+                  className="w-full h-full object-contain filter drop-shadow"
+                />
+              </div>
+              <div className="text-left">
+                <h4 className="font-serif font-bold text-xs text-amber-200 uppercase tracking-wider">Insignia Maestra</h4>
+                <p className="text-[11px] text-stone-300">Sombrero Chef & Bigote Dencker</p>
+              </div>
+            </div>
+
+            {/* Emblema 2 */}
+            <div className="flex items-center gap-3.5 bg-black/35 p-3.5 rounded-2xl border border-white/10 shadow-sm">
+              <div className="w-16 h-10 rounded-xl overflow-hidden shadow-sm shrink-0 border border-white/10">
+                <img
+                  src="/img/brand/logo-2-dencker-coffee-vintage.png"
+                  alt="Boleto Vintage Dencker Coffee"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="text-left">
+                <h4 className="font-serif font-bold text-xs text-amber-200 uppercase tracking-wider">Boleto Clásico</h4>
+                <p className="text-[11px] text-stone-300">Dencker Coffee & Panadería Vintage</p>
+              </div>
+            </div>
+
+            {/* Emblema 3 */}
+            <div className="flex items-center gap-3.5 bg-black/35 p-3.5 rounded-2xl border border-white/10 shadow-sm">
+              <div className="w-12 h-12 rounded-xl bg-white/10 p-1 flex items-center justify-center shrink-0 border border-white/10">
+                <img
+                  src="/img/brand/logo-3-don-dencker-badge.png"
+                  alt="Don Dencker Sello"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="text-left">
+                <h4 className="font-serif font-bold text-xs text-amber-200 uppercase tracking-wider">Sello de Tradición</h4>
+                <p className="text-[11px] text-stone-300">Don Dencker con Taza Humeante</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -841,7 +889,7 @@ export default function HomePage() {
           {/* Cabecera Limpia */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1">
-              <span className="text-[11px] uppercase font-bold tracking-widest text-[#527953]">
+              <span className="text-[11px] uppercase font-bold tracking-widest text-[#991B24]">
                 Atención Flexible • Dencker Pan
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1E130C] tracking-tight">
@@ -866,13 +914,13 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             
             {/* 1. Para Recoger (Takeaway) */}
-            <div className="p-5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs hover:border-[#527953]/60 transition flex flex-col justify-between space-y-4">
+            <div className="p-5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs hover:border-[#991B24]/60 transition flex flex-col justify-between space-y-4">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-xl bg-[#EBF3EA] text-[#527953] flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#FDF6EE] text-[#991B24] flex items-center justify-center">
                     <Store size={20} />
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EBF3EA] text-[#527953]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF6EE] text-[#991B24]">
                     Sin Filas
                   </span>
                 </div>
@@ -884,7 +932,7 @@ export default function HomePage() {
                     Pide antes de salir. Empacamos tus panes y café caliente para retirar directo por vitrina.
                   </p>
                 </div>
-                <div className="text-[10px] text-[#527953] font-medium flex items-center gap-1.5 pt-1 border-t border-[#F5EFEB]">
+                <div className="text-[10px] text-[#991B24] font-medium flex items-center gap-1.5 pt-1 border-t border-[#F5EFEB]">
                   <Clock size={12} />
                   <span>Tandas calientes 07:30 y 16:30</span>
                 </div>
@@ -897,7 +945,7 @@ export default function HomePage() {
                   const el = document.getElementById("catalogo");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="w-full py-2.5 px-3 rounded-xl bg-[#527953] hover:bg-[#436444] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                className="w-full py-2.5 px-3 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <span>Pedir para Recoger</span>
                 <ArrowRight size={13} />
@@ -1012,13 +1060,13 @@ export default function HomePage() {
             </div>
 
             {/* 4. Reservar Mesa en Salón */}
-            <div className="p-5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs hover:border-blue-400/60 transition flex flex-col justify-between space-y-4">
+            <div className="p-5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs hover:border-amber-400/60 transition flex flex-col justify-between space-y-4">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center">
                     <Calendar size={20} />
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-800">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-900">
                     Anticipado
                   </span>
                 </div>
@@ -1031,7 +1079,7 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div className="text-[10px] text-[#785E4F] font-medium flex items-center gap-1.5 pt-1 border-t border-[#F5EFEB]">
-                  <Users size={12} className="text-blue-600" />
+                  <Users size={12} className="text-amber-800" />
                   <span>Mesas para 2, 4, 6 o grupos</span>
                 </div>
               </div>
@@ -1042,7 +1090,7 @@ export default function HomePage() {
                   soundManager.playTactileClick();
                   setReservaModalOpen(true);
                 }}
-                className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-blue-50 text-blue-900 border border-blue-300 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-amber-50 text-amber-950 border border-amber-300 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Calendar size={13} />
                 <span>Solicitar Reserva</span>
@@ -1067,7 +1115,7 @@ export default function HomePage() {
           
           {/* Cabecera Editorial del Menú */}
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs uppercase font-bold tracking-widest text-[#527953] bg-[#EBF3EA] px-4 py-1.5 rounded-full inline-block border border-[#527953]/20 shadow-xs">
+            <span className="text-xs uppercase font-bold tracking-widest text-[#991B24] bg-[#FDF6EE] px-4 py-1.5 rounded-full inline-block border border-[#991B24]/20 shadow-xs">
               Vitrina & Especialidades • Cochabamba
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#1E130C] tracking-tight">
@@ -1148,11 +1196,11 @@ export default function HomePage() {
                     }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                       vistaGlobalFotos === "corte"
-                        ? "bg-[#527953] text-white shadow-sm"
+                        ? "bg-[#991B24] text-white shadow-sm"
                         : "text-[#785E4F] hover:text-[#1E130C]"
                     }`}
                   >
-                    <Sparkles size={12} className="text-[#87A987]" />
+                    <Sparkles size={12} className="text-[#D97706]" />
                     <span>🔪 Corte Interior (IA)</span>
                   </button>
                 </div>
@@ -1167,7 +1215,7 @@ export default function HomePage() {
                 placeholder="Buscar por especialidad (New York Roll, cauka, croissant, espresso, cuñapé)..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                className="w-full pl-11 pr-10 py-3.5 rounded-[22px] bg-white border border-[#EAE2D5] shadow-xs text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#527953] placeholder:text-[#A8988D] text-[#1E130C] transition"
+                className="w-full pl-11 pr-10 py-3.5 rounded-[22px] bg-white border border-[#EAE2D5] shadow-xs text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#991B24] placeholder:text-[#A8988D] text-[#1E130C] transition"
               />
               {busqueda && (
                 <button
@@ -1202,8 +1250,8 @@ export default function HomePage() {
                   }}
                   className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] font-semibold transition border cursor-pointer select-none ${
                     busqueda === chip.tag
-                      ? "bg-[#527953] text-white border-[#527953] shadow-xs"
-                      : "bg-white text-[#785E4F] border-[#EAE2D5] hover:border-[#527953] hover:text-[#1E130C]"
+                      ? "bg-[#991B24] text-white border-[#991B24] shadow-xs"
+                      : "bg-white text-[#785E4F] border-[#EAE2D5] hover:border-[#991B24] hover:text-[#1E130C]"
                   }`}
                 >
                   {chip.label}
@@ -1272,7 +1320,7 @@ export default function HomePage() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={springCard}
-                    className="col-span-1 md:col-span-2 lg:col-span-2 md:row-span-2 group rounded-2xl overflow-hidden bg-gradient-to-br from-[#1A110B] via-[#241810] to-[#120B07] text-white p-8 border border-[#527953]/40 shadow-xl flex flex-col justify-between relative hover:border-[#87A987]/60 transition-colors min-h-[460px]"
+                    className="col-span-1 md:col-span-2 lg:col-span-2 md:row-span-2 group rounded-2xl overflow-hidden bg-gradient-to-br from-[#1A110B] via-[#241810] to-[#120B07] text-white p-8 border border-[#991B24]/40 shadow-xl flex flex-col justify-between relative hover:border-[#D97706]/60 transition-colors min-h-[460px]"
                   >
                     {/* Imagen Exterior */}
                     <img
@@ -1298,8 +1346,8 @@ export default function HomePage() {
                     <div className="relative z-10 space-y-4 max-w-md">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#527953]/40 text-[#CDE0C9] text-xs font-bold border border-[#527953]/60 backdrop-blur-md">
-                            <Sparkles size={13} className="text-[#87A987]" />
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#991B24]/40 text-[#FDF3E7] text-xs font-bold border border-[#991B24]/60 backdrop-blur-md">
+                            <Sparkles size={13} className="text-[#D97706]" />
                             Insignia • Pistacho Siciliano
                           </span>
                           <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 text-white/80 font-medium">
@@ -1313,14 +1361,14 @@ export default function HomePage() {
                           onClick={(e) => toggleVistaProducto(starProduct.id, e)}
                           className="px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/60 text-white hover:bg-black/80 border-white/20 shadow-md"
                         >
-                          <Eye size={12} className={getVistaActual(starProduct.id) === "corte" ? "text-[#E6AE68]" : "text-[#87A987]"} />
+                          <Eye size={12} className={getVistaActual(starProduct.id) === "corte" ? "text-[#E6AE68]" : "text-[#D97706]"} />
                           <span>{getVistaActual(starProduct.id) === "corte" ? "Corte Interior" : "Exterior"}</span>
                         </button>
                       </div>
 
                       <h3
                         onClick={() => abrirModalProducto(starProduct)}
-                        className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight cursor-pointer hover:text-[#CDE0C9] transition-colors"
+                        className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight cursor-pointer hover:text-[#FDF3E7] transition-colors"
                       >
                         {starProduct.nombre}
                       </h3>
@@ -1329,10 +1377,10 @@ export default function HomePage() {
                         Rueda de hojaldre francés laminada con 72 capas de mantequilla noble. Corazón untuoso de crema pastelera de pistacho de Bronte y topping de chocolate blanco belga con praliné tostado.
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-[#A3B899]">
+                      <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-[#D8C7B8]">
                         <span className="px-2.5 py-1 rounded-xl bg-white/10 border border-white/10">Textura Ultra Crujiente</span>
                         <span className="px-2.5 py-1 rounded-xl bg-white/10 border border-white/10">Horneado Diario</span>
-                        <span className="px-2.5 py-1 rounded-xl bg-[#527953]/30 text-[#CDE0C9] border border-[#527953]/50">
+                        <span className="px-2.5 py-1 rounded-xl bg-[#991B24]/30 text-[#FDF3E7] border border-[#991B24]/50">
                           {getVistaActual(starProduct.id) === "corte" ? "🔪 Vista: Corte Interior (IA)" : "🥐 Vista: Exterior Dorado"}
                         </span>
                       </div>
@@ -1372,7 +1420,7 @@ export default function HomePage() {
                               soundManager.playPastryCrinkle();
                               updateCantidad(starProduct.id, getItemCantidadEnCarrito(starProduct.id) + 1);
                             }}
-                            className="w-8 h-8 rounded-xl bg-[#527953] text-white flex items-center justify-center font-bold text-xs shadow-md cursor-pointer"
+                            className="w-8 h-8 rounded-xl bg-[#991B24] text-white flex items-center justify-center font-bold text-xs shadow-md cursor-pointer"
                           >
                             <Plus size={14} />
                           </motion.button>
@@ -1383,7 +1431,7 @@ export default function HomePage() {
                           whileTap={{ scale: 0.95, y: 2 }}
                           transition={springPhysics}
                           onClick={(e) => agregarAlCarritoRapido(starProduct, e)}
-                          className="px-6 py-3.5 rounded-full bg-gradient-to-r from-[#527953] to-[#6A9368] hover:from-[#6A9368] hover:to-[#527953] text-white font-extrabold text-xs shadow-[0_6px_20px_rgba(82,121,83,0.4)] flex items-center gap-2 select-none cursor-pointer"
+                          className="px-6 py-3.5 rounded-full bg-gradient-to-r from-[#991B24] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B24] text-white font-extrabold text-xs shadow-[0_6px_20px_rgba(82,121,83,0.4)] flex items-center gap-2 select-none cursor-pointer"
                         >
                           <Plus size={16} />
                           <span>Añadir al Pedido</span>
@@ -1403,7 +1451,7 @@ export default function HomePage() {
                   className="col-span-1 md:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden bg-gradient-to-br from-[#241710] to-[#1A1009] text-white p-8 border border-[#3D271D] shadow-xl flex flex-col justify-between relative min-h-[340px]"
                 >
                   <div className="space-y-3 relative z-10">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#527953]/20 text-[#87A987] text-xs font-bold border border-[#527953]/30">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#991B24]/20 text-[#D97706] text-xs font-bold border border-[#991B24]/30">
                       <Coffee size={13} />
                       Barismo de Autor • 1,600 msnm
                     </span>
@@ -1428,7 +1476,7 @@ export default function HomePage() {
                         setModoPresentacion("categoria");
                         setCategoriaActiva("cafe");
                       }}
-                      className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-[#CDE0C9] text-xs font-bold border border-white/15 flex items-center gap-1.5 cursor-pointer"
+                      className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-[#FDF3E7] text-xs font-bold border border-white/15 flex items-center gap-1.5 cursor-pointer"
                     >
                       <span>Ver Variedades</span>
                       <ChevronRight size={14} />
@@ -1451,10 +1499,10 @@ export default function HomePage() {
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#EAE2D5] pb-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="p-1.5 rounded-xl bg-[#1E130C] text-[#CDE0C9]">
+                          <span className="p-1.5 rounded-xl bg-[#1E130C] text-[#FDF3E7]">
                             <SecIcon size={16} />
                           </span>
-                          <span className="text-[11px] uppercase font-bold tracking-wider text-[#527953] bg-[#EBF3EA] px-2.5 py-0.5 rounded-md">
+                          <span className="text-[11px] uppercase font-bold tracking-wider text-[#991B24] bg-[#FDF6EE] px-2.5 py-0.5 rounded-md">
                             {sec.badge}
                           </span>
                           <span className="text-xs text-[#A8988D]">
@@ -1476,7 +1524,7 @@ export default function HomePage() {
                           setModoPresentacion("categoria");
                           setCategoriaActiva(sec.categoriaId);
                         }}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#527953] hover:text-[#1E130C] transition py-1 cursor-pointer self-start sm:self-auto"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#991B24] hover:text-[#1E130C] transition py-1 cursor-pointer self-start sm:self-auto"
                       >
                         <span>Explorar todos ({itemsSeccion.length})</span>
                         <ChevronRight size={14} />
@@ -1530,7 +1578,7 @@ export default function HomePage() {
                             <div className="absolute top-4 inset-x-4 flex items-center justify-between z-20 pointer-events-auto">
                               <div>
                                 {prod.es_mas_vendido ? (
-                                  <span className="px-2.5 py-1 rounded-full bg-[#1E130C]/90 text-[#87A987] font-bold text-[10px] backdrop-blur-md border border-white/10 shadow-xs">
+                                  <span className="px-2.5 py-1 rounded-full bg-[#1E130C]/90 text-[#D97706] font-bold text-[10px] backdrop-blur-md border border-white/10 shadow-xs">
                                     ★ Destacado
                                   </span>
                                 ) : (
@@ -1547,7 +1595,7 @@ export default function HomePage() {
                                 className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/65 text-white hover:bg-black/85 border-white/20 shadow-md"
                                 title="Alternar entre Vista Exterior y Corte Interior"
                               >
-                                <Eye size={11} className={vistaActual === "corte" ? "text-[#E6AE68]" : "text-[#87A987]"} />
+                                <Eye size={11} className={vistaActual === "corte" ? "text-[#E6AE68]" : "text-[#D97706]"} />
                                 <span>{vistaActual === "corte" ? "Corte Interior" : "Exterior"}</span>
                               </button>
                             </div>
@@ -1556,7 +1604,7 @@ export default function HomePage() {
                             <div className="relative z-10 space-y-2 text-white">
                               <h4
                                 onClick={() => abrirModalProducto(prod)}
-                                className="font-serif font-bold text-base sm:text-lg text-white hover:text-[#CDE0C9] transition cursor-pointer line-clamp-1"
+                                className="font-serif font-bold text-base sm:text-lg text-white hover:text-[#FDF3E7] transition cursor-pointer line-clamp-1"
                               >
                                 {prod.nombre}
                               </h4>
@@ -1603,7 +1651,7 @@ export default function HomePage() {
                                         soundManager.playPastryCrinkle();
                                         updateCantidad(prod.id, cantidadEnCarrito + 1);
                                       }}
-                                      className="w-6 h-6 rounded-lg bg-[#527953] text-white flex items-center justify-center font-bold text-xs cursor-pointer"
+                                      className="w-6 h-6 rounded-lg bg-[#991B24] text-white flex items-center justify-center font-bold text-xs cursor-pointer"
                                     >
                                       <Plus size={12} />
                                     </motion.button>
@@ -1616,7 +1664,7 @@ export default function HomePage() {
                                     onClick={(e) => agregarAlCarritoRapido(prod, e)}
                                     className="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs flex items-center gap-1.5 backdrop-blur-md border border-white/20 select-none cursor-pointer"
                                   >
-                                    <Plus size={13} className="text-[#87A987]" />
+                                    <Plus size={13} className="text-[#D97706]" />
                                     <span>Añadir</span>
                                   </motion.button>
                                 )}
@@ -1641,7 +1689,7 @@ export default function HomePage() {
                   Mostrando {remainingProducts.length} de {productosFiltrados.length} delicias
                   {busqueda && ` para "${busqueda}"`}
                 </span>
-                <span className="text-xs text-[#527953] font-semibold">
+                <span className="text-xs text-[#991B24] font-semibold">
                   Fotos interactivas: Hover para ver corte interior
                 </span>
               </div>
@@ -1656,7 +1704,7 @@ export default function HomePage() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={springCard}
-                    className="col-span-1 md:col-span-2 lg:col-span-2 md:row-span-2 group rounded-2xl overflow-hidden bg-gradient-to-br from-[#1A110B] via-[#241810] to-[#120B07] text-white p-8 border border-[#527953]/40 shadow-xl flex flex-col justify-between relative hover:border-[#87A987]/60 transition-colors min-h-[460px]"
+                    className="col-span-1 md:col-span-2 lg:col-span-2 md:row-span-2 group rounded-2xl overflow-hidden bg-gradient-to-br from-[#1A110B] via-[#241810] to-[#120B07] text-white p-8 border border-[#991B24]/40 shadow-xl flex flex-col justify-between relative hover:border-[#D97706]/60 transition-colors min-h-[460px]"
                   >
                     {/* Imagen Exterior */}
                     <img
@@ -1680,8 +1728,8 @@ export default function HomePage() {
 
                     <div className="relative z-10 space-y-4 max-w-md">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#527953]/40 text-[#CDE0C9] text-xs font-bold border border-[#527953]/60 backdrop-blur-md">
-                          <Sparkles size={13} className="text-[#87A987]" />
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#991B24]/40 text-[#FDF3E7] text-xs font-bold border border-[#991B24]/60 backdrop-blur-md">
+                          <Sparkles size={13} className="text-[#D97706]" />
                           Insignia • Pistacho Siciliano
                         </span>
 
@@ -1690,14 +1738,14 @@ export default function HomePage() {
                           onClick={(e) => toggleVistaProducto(starProduct.id, e)}
                           className="px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/60 text-white hover:bg-black/80 border-white/20 shadow-md"
                         >
-                          <Eye size={12} className={getVistaActual(starProduct.id) === "corte" ? "text-[#E6AE68]" : "text-[#87A987]"} />
+                          <Eye size={12} className={getVistaActual(starProduct.id) === "corte" ? "text-[#E6AE68]" : "text-[#D97706]"} />
                           <span>{getVistaActual(starProduct.id) === "corte" ? "Corte Interior" : "Exterior"}</span>
                         </button>
                       </div>
 
                       <h3
                         onClick={() => abrirModalProducto(starProduct)}
-                        className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight cursor-pointer hover:text-[#CDE0C9] transition-colors"
+                        className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight cursor-pointer hover:text-[#FDF3E7] transition-colors"
                       >
                         {starProduct.nombre}
                       </h3>
@@ -1722,7 +1770,7 @@ export default function HomePage() {
                         whileTap={{ scale: 0.95, y: 2 }}
                         transition={springPhysics}
                         onClick={(e) => agregarAlCarritoRapido(starProduct, e)}
-                        className="px-6 py-3.5 rounded-full bg-gradient-to-r from-[#527953] to-[#6A9368] hover:from-[#6A9368] hover:to-[#527953] text-white font-extrabold text-xs shadow-md flex items-center gap-2 cursor-pointer"
+                        className="px-6 py-3.5 rounded-full bg-gradient-to-r from-[#991B24] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B24] text-white font-extrabold text-xs shadow-md flex items-center gap-2 cursor-pointer"
                       >
                         <Plus size={16} />
                         <span>Añadir al Pedido</span>
@@ -1776,7 +1824,7 @@ export default function HomePage() {
                       <div className="absolute top-4 inset-x-4 flex items-center justify-between z-20 pointer-events-auto">
                         <div>
                           {prod.es_mas_vendido && (
-                            <span className="px-2.5 py-1 rounded-full bg-[#1E130C]/90 text-[#87A987] font-bold text-[10px] backdrop-blur-md border border-white/10 shadow-xs">
+                            <span className="px-2.5 py-1 rounded-full bg-[#1E130C]/90 text-[#D97706] font-bold text-[10px] backdrop-blur-md border border-white/10 shadow-xs">
                               ★ Destacado
                             </span>
                           )}
@@ -1789,7 +1837,7 @@ export default function HomePage() {
                           className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/65 text-white hover:bg-black/85 border-white/20 shadow-md"
                           title="Alternar entre Vista Exterior y Corte Interior"
                         >
-                          <Eye size={11} className={vistaActual === "corte" ? "text-[#E6AE68]" : "text-[#87A987]"} />
+                          <Eye size={11} className={vistaActual === "corte" ? "text-[#E6AE68]" : "text-[#D97706]"} />
                           <span>{vistaActual === "corte" ? "Corte Interior" : "Exterior"}</span>
                         </button>
                       </div>
@@ -1798,7 +1846,7 @@ export default function HomePage() {
                       <div className="relative z-10 space-y-2 text-white">
                         <h4
                           onClick={() => abrirModalProducto(prod)}
-                          className="font-serif font-bold text-base sm:text-lg text-white hover:text-[#CDE0C9] transition cursor-pointer line-clamp-1"
+                          className="font-serif font-bold text-base sm:text-lg text-white hover:text-[#FDF3E7] transition cursor-pointer line-clamp-1"
                         >
                           {prod.nombre}
                         </h4>
@@ -1845,7 +1893,7 @@ export default function HomePage() {
                                   soundManager.playPastryCrinkle();
                                   updateCantidad(prod.id, cantidadEnCarrito + 1);
                                 }}
-                                className="w-6 h-6 rounded-lg bg-[#527953] text-white flex items-center justify-center font-bold text-xs cursor-pointer"
+                                className="w-6 h-6 rounded-lg bg-[#991B24] text-white flex items-center justify-center font-bold text-xs cursor-pointer"
                               >
                                 <Plus size={12} />
                               </motion.button>
@@ -1858,7 +1906,7 @@ export default function HomePage() {
                               onClick={(e) => agregarAlCarritoRapido(prod, e)}
                               className="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs flex items-center gap-1.5 backdrop-blur-md border border-white/20 select-none cursor-pointer"
                             >
-                              <Plus size={13} className="text-[#87A987]" />
+                              <Plus size={13} className="text-[#D97706]" />
                               <span>Añadir</span>
                             </motion.button>
                           )}
@@ -1897,7 +1945,7 @@ export default function HomePage() {
         <div className="w-full max-w-5xl mx-auto px-6 md:px-12 space-y-8">
           <div className="bg-white p-6 sm:p-10 rounded-3xl border border-[#EAE2D5] shadow-lg space-y-6">
             <div className="text-center space-y-2 max-w-xl mx-auto">
-              <span className="text-xs uppercase font-bold tracking-widest text-[#527953] bg-[#EBF3EA] px-3.5 py-1.5 rounded-full inline-block border border-[#527953]/20">
+              <span className="text-xs uppercase font-bold tracking-widest text-[#991B24] bg-[#FDF6EE] px-3.5 py-1.5 rounded-full inline-block border border-[#991B24]/20">
                 Catering & Mesas Dulces
               </span>
               <h3 className="font-serif text-2xl sm:text-4xl font-bold text-[#1E130C]">
@@ -1923,15 +1971,15 @@ export default function HomePage() {
                     }}
                     className={`p-4 rounded-2xl border text-left transition-all ${
                       isSel
-                        ? "bg-[#FAF7F2] border-[#527953] ring-2 ring-[#527953]/20 shadow-xs"
+                        ? "bg-[#FAF7F2] border-[#991B24] ring-2 ring-[#991B24]/20 shadow-xs"
                         : "bg-[#FBF9F6] border-[#EAE2D5] hover:bg-[#F5EFEB]"
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#527953]/15 text-[#527953] flex items-center justify-center mb-2">
+                    <div className="w-8 h-8 rounded-xl bg-[#991B24]/15 text-[#991B24] flex items-center justify-center mb-2">
                       <Icon size={16} />
                     </div>
                     <p className="font-bold text-xs text-[#1E130C]">{ev.label}</p>
-                    <span className="text-xs font-mono font-bold text-[#527953] block mt-1">
+                    <span className="text-xs font-mono font-bold text-[#991B24] block mt-1">
                       Bs {ev.precioPersona} / pers.
                     </span>
                   </motion.button>
@@ -1981,7 +2029,7 @@ export default function HomePage() {
                 whileTap={{ scale: 0.96 }}
                 transition={springPhysics}
                 onClick={() => soundManager.playVintageRegisterDing()}
-                className="px-6 py-2.5 rounded-2xl bg-[#527953] hover:bg-[#436444] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                className="px-6 py-2.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm"
               >
                 <MessageCircle size={15} />
                 <span>Coordinar por WhatsApp</span>
@@ -2001,9 +2049,9 @@ export default function HomePage() {
             transition={springPhysics}
             className="fixed bottom-6 inset-x-0 z-40 flex justify-center px-4 pointer-events-none"
           >
-            <div className="pointer-events-auto bg-[#18100A]/95 backdrop-blur-2xl border border-[#527953]/40 shadow-2xl rounded-full px-5 py-3 flex items-center gap-4 text-white">
+            <div className="pointer-events-auto bg-[#18100A]/95 backdrop-blur-2xl border border-[#991B24]/40 shadow-2xl rounded-full px-5 py-3 flex items-center gap-4 text-white">
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-full bg-[#527953] text-[#FAF7F2] font-bold text-xs flex items-center justify-center">
+                <span className="w-8 h-8 rounded-full bg-[#991B24] text-[#FAF7F2] font-bold text-xs flex items-center justify-center">
                   {cartCount}
                 </span>
                 <div className="text-xs leading-tight">
@@ -2025,7 +2073,7 @@ export default function HomePage() {
                 className="px-5 py-2 rounded-full bg-[#FAF7F2] hover:bg-white text-[#1E130C] font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
               >
                 <span>Ver Canasta & Pedir</span>
-                <ArrowRight size={14} className="text-[#527953]" />
+                <ArrowRight size={14} className="text-[#991B24]" />
               </motion.button>
             </div>
           </motion.div>
@@ -2080,11 +2128,11 @@ export default function HomePage() {
                       }}
                       className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                         vistaModal === "corte"
-                          ? "bg-[#527953] text-white shadow-sm"
+                          ? "bg-[#991B24] text-white shadow-sm"
                           : "text-white/80 hover:text-white"
                       }`}
                     >
-                      <Sparkles size={12} className="text-[#87A987]" />
+                      <Sparkles size={12} className="text-[#D97706]" />
                       <span>🔪 Corte Interior (IA)</span>
                     </button>
                   </div>
@@ -2152,7 +2200,7 @@ export default function HomePage() {
                   placeholder="Nota especial (ej. tibio de horno, sin azúcar)..."
                   value={notaPersonalizada}
                   onChange={(e) => setNotaPersonalizada(e.target.value)}
-                  className="w-full text-xs p-3 rounded-xl border border-[#EAE2D5] bg-[#FAF7F2] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#527953]"
+                  className="w-full text-xs p-3 rounded-xl border border-[#EAE2D5] bg-[#FAF7F2] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#991B24]"
                 />
               </div>
 
@@ -2167,7 +2215,7 @@ export default function HomePage() {
                 }}
                 className="w-full py-3.5 rounded-2xl bg-[#1E130C] hover:bg-[#2C1C12] text-[#FAF7F2] font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Plus size={16} className="text-[#87A987]" />
+                <Plus size={16} className="text-[#D97706]" />
                 <span>Agregar al Pedido • Bs {productoModal.precio.toFixed(2)}</span>
               </motion.button>
             </motion.div>
@@ -2363,11 +2411,11 @@ export default function HomePage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={springPhysics}
-              className="relative w-full max-w-lg bg-gradient-to-b from-[#1C130D] to-[#120B07] border border-[#527953]/40 rounded-3xl p-6 sm:p-7 shadow-[0_20px_70px_rgba(0,0,0,0.8)] z-10 text-white space-y-5"
+              className="relative w-full max-w-lg bg-gradient-to-b from-[#1C130D] to-[#120B07] border border-[#991B24]/40 rounded-3xl p-6 sm:p-7 shadow-[0_20px_70px_rgba(0,0,0,0.8)] z-10 text-white space-y-5"
             >
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-[#527953]/25 border border-[#527953]/40 flex items-center justify-center text-[#87A987]">
+                  <div className="w-10 h-10 rounded-2xl bg-[#991B24]/25 border border-[#991B24]/40 flex items-center justify-center text-[#D97706]">
                     <Calendar size={20} />
                   </div>
                   <div>
@@ -2405,7 +2453,7 @@ export default function HomePage() {
                 <div className="space-y-4 text-xs">
                   {/* Selector de Zona */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#FDF3E7] mb-1.5">
                       Zona Preferida:
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -2423,7 +2471,7 @@ export default function HomePage() {
                           }}
                           className={`py-2 px-3 rounded-xl font-semibold border text-center transition cursor-pointer ${
                             reservaData.zona === z.id
-                              ? "bg-[#527953] border-[#87A987] text-white shadow-md"
+                              ? "bg-[#991B24] border-[#D97706] text-white shadow-md"
                               : "bg-white/5 border-white/10 text-stone-300 hover:bg-white/10"
                           }`}
                         >
@@ -2436,13 +2484,13 @@ export default function HomePage() {
                   {/* Fecha y Hora */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#FDF3E7] mb-1.5">
                         Día:
                       </label>
                       <select
                         value={reservaData.fecha}
                         onChange={(e) => setReservaData({ ...reservaData, fecha: e.target.value })}
-                        className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white font-medium focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                        className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white font-medium focus:outline-none focus:ring-1 focus:ring-[#D97706]"
                       >
                         <option value="Hoy" className="bg-[#1C130D]">Hoy</option>
                         <option value="Mañana" className="bg-[#1C130D]">Mañana</option>
@@ -2452,13 +2500,13 @@ export default function HomePage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#FDF3E7] mb-1.5">
                         Turno / Hora:
                       </label>
                       <select
                         value={reservaData.hora}
                         onChange={(e) => setReservaData({ ...reservaData, hora: e.target.value })}
-                        className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white font-medium focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                        className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white font-medium focus:outline-none focus:ring-1 focus:ring-[#D97706]"
                       >
                         <option value="08:30 (Desayuno)" className="bg-[#1C130D]">08:30 (Desayuno)</option>
                         <option value="10:00 (Brunch)" className="bg-[#1C130D]">10:00 (Brunch)</option>
@@ -2471,7 +2519,7 @@ export default function HomePage() {
 
                   {/* Cantidad de personas */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#CDE0C9] mb-1.5">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#FDF3E7] mb-1.5">
                       Número de Comensales:
                     </label>
                     <div className="grid grid-cols-6 gap-1.5">
@@ -2502,14 +2550,14 @@ export default function HomePage() {
                       placeholder="Tu Nombre Completo"
                       value={reservaData.nombre}
                       onChange={(e) => setReservaData({ ...reservaData, nombre: e.target.value })}
-                      className="w-full p-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                      className="w-full p-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#D97706]"
                     />
                     <input
                       type="tel"
                       placeholder="WhatsApp (ej. 76911000)"
                       value={reservaData.telefono}
                       onChange={(e) => setReservaData({ ...reservaData, telefono: e.target.value })}
-                      className="w-full p-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#87A987]"
+                      className="w-full p-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#D97706]"
                     />
                   </div>
 
@@ -2519,7 +2567,7 @@ export default function HomePage() {
                     placeholder="Ocasión especial (cumpleaños, reunión) o requerimientos..."
                     value={reservaData.notas}
                     onChange={(e) => setReservaData({ ...reservaData, notas: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#87A987] resize-none"
+                    className="w-full p-2.5 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#D97706] resize-none"
                   />
 
                   {/* Botón Enviar */}
@@ -2528,7 +2576,7 @@ export default function HomePage() {
                     whileTap={{ scale: 0.96 }}
                     transition={springPhysics}
                     onClick={handleEnviarReserva}
-                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#527953] to-[#3E5F3F] hover:from-[#5C865D] hover:to-[#456A46] text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-xl shadow-[#527953]/25 flex items-center justify-center gap-2 cursor-pointer border border-[#87A987]/30"
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#991B24] to-[#7F1D1D] hover:from-[#B91C1C] hover:to-[#7F1D1D] text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-xl shadow-[#991B24]/25 flex items-center justify-center gap-2 cursor-pointer border border-[#D97706]/30"
                   >
                     <MessageCircle size={17} />
                     <span>Confirmar Reserva vía WhatsApp</span>
@@ -2583,11 +2631,11 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
             {/* Columna Izquierda: Partner Oficial Café 4 Llamas (5 cols) */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-[#1E292B] to-[#121B1C] text-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden border border-emerald-950/40">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="lg:col-span-5 bg-gradient-to-br from-[#2B1810] via-[#1E130C] to-[#140D08] text-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden border border-amber-900/40">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
               <div className="space-y-4 relative z-10">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold">
                   <Coffee size={14} />
                   <span>Café de Especialidad Oficial</span>
                 </div>
@@ -2608,7 +2656,7 @@ export default function HomePage() {
                   </div>
                   <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
                     <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Altura</span>
-                    <span className="text-sm font-black text-emerald-300">1,700 m.s.n.m.</span>
+                    <span className="text-sm font-black text-amber-400">1,700 m.s.n.m.</span>
                   </div>
                   <div className="col-span-2 p-3 rounded-2xl bg-white/5 border border-white/10">
                     <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Notas de Cata</span>

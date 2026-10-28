@@ -805,10 +805,18 @@ export default function CajaPage() {
                   <p className="text-[8px] text-stone-500 italic">
                     {facturaEmitidaActual?.leyendaLey453 || facturacionSiatConfig.leyendaLey453 || "Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad."}
                   </p>
-                  <p className="text-[9px] font-bold text-stone-800">
-                    Fecha Límite de Emisión: {facturaEmitidaActual?.fechaLimiteEmision || facturacionSiatConfig.fechaLimiteEmision || "30/04/2027"}
-                  </p>
-                  <p className="text-[10px] text-amber-900 font-serif font-bold pt-1">
+                  <div className="flex items-center justify-center gap-2 pt-2 pb-1">
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Sello Oficial Don Dencker"
+                      className="w-9 h-9 object-contain shrink-0"
+                    />
+                    <div className="text-left leading-tight">
+                      <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
+                      <p className="text-[8px] text-stone-500 font-mono">Tradición & Calidad Dencker</p>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-amber-950 font-serif font-bold pt-1">
                     ¡Gracias por su visita a Dencker Pan!
                   </p>
                 </div>

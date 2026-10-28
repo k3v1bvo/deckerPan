@@ -6,12 +6,21 @@
 import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja, UsuarioStaff } from '@/types';
 
 export const DENCKER_ASSETS = {
-  logo: "/img/brand/dencker-chef-hat-logo.svg",
-  logoPng: "/img/brand/dencker-chef-hat-logo.png",
-  logoSvg: "/img/brand/dencker-chef-hat-logo.svg",
+  // ── Los 3 Logos Oficiales Vectorizados & Alta Resolución ──
+  logo1ChefHatSvg: "/img/brand/logo-1-chef-hat.svg",
+  logo1ChefHatPng: "/img/brand/logo-1-chef-hat.png",
+  logo2VintageTicketPng: "/img/brand/logo-2-dencker-coffee-vintage.png",
+  logo2VintageTicketSvg: "/img/brand/logo-2-dencker-coffee-vintage.svg",
+  logo3DonDenckerBadgePng: "/img/brand/logo-3-don-dencker-badge.png",
+  logo3DonDenckerBadgeSvg: "/img/brand/logo-3-don-dencker-badge.svg",
+
+  // Compatibilidad con código existente
+  logo: "/img/brand/logo-1-chef-hat.svg",
+  logoPng: "/img/brand/logo-1-chef-hat.png",
+  logoSvg: "/img/brand/logo-1-chef-hat.svg",
   mascotClean: "/img/brand/don-dencker-mascot-clean.png",
-  badgeClean: "/img/brand/don-dencker-badge.png",
-  coffeeVintage: "/img/brand/don-dencker-coffee-vintage.png",
+  badgeClean: "/img/brand/logo-3-don-dencker-badge.png",
+  coffeeVintage: "/img/brand/logo-2-dencker-coffee-vintage.png",
   mascotCoffee: "/img/brand/mascot-coffee.png",
   mascotCroissant: "/img/brand/mascot-croissant.png",
   mascotBread: "/img/brand/mascot-bread.png",
