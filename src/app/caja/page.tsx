@@ -184,7 +184,7 @@ export default function CajaPage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/logo/logo.png"
+                src="/img/brand/dencker-chef-hat-logo.svg"
                 alt="Dencker Pan"
                 className="w-full h-full object-contain drop-shadow"
               />
@@ -679,70 +679,138 @@ export default function CajaPage() {
             >
               {/* Ticket Térmico Styling */}
               <div id="recibo-termico" className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
-                <div className="text-center space-y-0.5">
-                  <h4 className="font-bold text-base font-serif">
-                    {facturacionSiatConfig.razonSocialEmisor || "DENCKER PAN"}
+                {/* Logo Oficial Vectorizado */}
+                <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
+                  <img
+                    src="/img/brand/dencker-chef-hat-logo.svg"
+                    alt="Dencker Pan"
+                    className="h-12 w-auto object-contain mx-auto mb-1"
+                  />
+                  <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
+                    {facturacionSiatConfig.razonSocialEmisor || "DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."}
                   </h4>
-                  <p className="text-[11px]">CAFETERÍA & PANADERÍA ARTESANAL</p>
-                  <p className="text-[10px] text-stone-600">Casa Matriz: 0 • Av. Daniel Salamanca, Cochabamba</p>
-                  <p className="text-[10px] text-stone-600 font-bold">NIT: {facturacionSiatConfig.nitEmisor || "389201024"}</p>
+                  <p className="text-[10px] font-bold text-stone-700">CASA MATRIZ: 0</p>
+                  <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba - Bolivia</p>
+                  <p className="text-[9px] text-stone-600">Teléfono: (591) 4-4251234</p>
+                  <p className="text-[10px] text-stone-900 font-bold mt-1">NIT: {facturacionSiatConfig.nitEmisor || "389201024"}</p>
+                  <p className="text-[8px] text-stone-500 italic max-w-[240px] mx-auto leading-tight">
+                    {facturacionSiatConfig.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
+                  </p>
+
                   {facturaEmitidaActual && (
-                    <div className="pt-1 text-[10px] text-stone-700">
-                      <p className="font-bold text-stone-900">FACTURA N°: {facturaEmitidaActual.numeroFactura}</p>
-                      <p className="break-all text-[8px] font-mono text-stone-500 leading-tight">CUF: {facturaEmitidaActual.cuf}</p>
+                    <div className="pt-2 text-[10px] text-stone-800 space-y-0.5 border-t border-dashed border-stone-300 mt-2 w-full">
+                      <p className="font-black text-sm text-stone-950 tracking-wide">
+                        FACTURA N°: {facturaEmitidaActual.numeroFactura}
+                      </p>
+                      <p className="text-[9px] font-bold text-stone-700">
+                        CÓD. AUTORIZACIÓN: {facturacionSiatConfig.autorizacionDosificacion || "48A9C102BF"}
+                      </p>
+                      <div className="pt-1">
+                        <span className="text-[8px] font-bold text-stone-500 block">CUF (Código Único de Factura):</span>
+                        <p className="break-all text-[8px] font-mono text-stone-600 leading-tight bg-stone-50 p-1 rounded border border-stone-200">
+                          {facturaEmitidaActual.cuf}
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
 
                 <div className="border-t border-dashed border-stone-300 pt-2 text-[11px] space-y-0.5">
-                  <p>Mesa: {pedidoSeleccionado.mesa_numero || "Mostrador"}</p>
-                  <p>Fecha: {new Date().toLocaleDateString("es-BO")} {new Date().toLocaleTimeString("es-BO")}</p>
-                  <p>Cajero: {sesionCaja?.cajero || "Caja Principal"}</p>
-                  <p>NIT/CI: {facturaEmitidaActual?.clienteNitCi || nitCiCliente || "0"}</p>
-                  <p>Señor(es): {facturaEmitidaActual?.clienteNombre || razonSocialCliente || pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}</p>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Mesa:</span>
+                    <span className="font-bold">{pedidoSeleccionado.mesa_numero ? `Mesa ${pedidoSeleccionado.mesa_numero}` : "Venta Mostrador"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Fecha y Hora:</span>
+                    <span>{new Date().toLocaleDateString("es-BO")} {new Date().toLocaleTimeString("es-BO")}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Cajero / Operador:</span>
+                    <span>{sesionCaja?.cajero || "Caja Principal"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">NIT / CI:</span>
+                    <span className="font-bold font-mono">{facturaEmitidaActual?.clienteNitCi || nitCiCliente || "0"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Señor(es):</span>
+                    <span className="font-bold uppercase text-right truncate max-w-[170px]">
+                      {facturaEmitidaActual?.clienteNombre || razonSocialCliente || pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}
+                    </span>
+                  </div>
                 </div>
 
+                {/* Detalle de Productos */}
                 <div className="border-t border-dashed border-stone-300 pt-2 space-y-1">
+                  <div className="flex justify-between text-[10px] font-bold text-stone-500 border-b border-stone-200 pb-0.5">
+                    <span>CANT / DETALLE</span>
+                    <span>SUBTOTAL</span>
+                  </div>
                   {pedidoSeleccionado.items?.map((it, idx) => (
-                    <div key={idx} className="flex justify-between">
+                    <div key={idx} className="flex justify-between text-[11px] leading-tight">
                       <span>{it.cantidad}x {it.producto_nombre}</span>
-                      <span>Bs {it.subtotal.toFixed(2)}</span>
+                      <span className="font-mono">Bs {it.subtotal.toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
 
+                {/* Totales y Monto Literal Oficial */}
                 <div className="border-t border-dashed border-stone-300 pt-2 space-y-1 font-bold">
-                  <div className="flex justify-between text-sm">
-                    <span>TOTAL:</span>
-                    <span>Bs {totalPagar.toFixed(2)}</span>
+                  <div className="flex justify-between text-sm text-stone-950">
+                    <span>TOTAL A PAGAR:</span>
+                    <span className="font-mono text-base">Bs {totalPagar.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-[11px] font-normal">
-                    <span>Método:</span>
-                    <span className="capitalize">{metodoPago}</span>
+
+                  {/* Expresión en palabras requerida por el SIN */}
+                  <div className="text-[10px] text-stone-700 bg-stone-100/80 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
+                    {facturaEmitidaActual?.montoLiteral || `Son: ${totalPagar.toFixed(2)} Bolivianos`}
+                  </div>
+
+                  <div className="flex justify-between text-[11px] font-normal pt-1">
+                    <span>Método de Pago:</span>
+                    <span className="capitalize font-semibold">{metodoPago}</span>
                   </div>
                   {metodoPago === "efectivo" && (
-                    <div className="flex justify-between text-[11px] font-normal">
-                      <span>Cambio devuelto:</span>
-                      <span>Bs {cambio.toFixed(2)}</span>
-                    </div>
+                    <>
+                      <div className="flex justify-between text-[11px] font-normal">
+                        <span>Efectivo Recibido:</span>
+                        <span className="font-mono">Bs {montoRecibido.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-[11px] font-normal text-emerald-800">
+                        <span>Cambio / Vuelto:</span>
+                        <span className="font-mono font-bold">Bs {cambio.toFixed(2)}</span>
+                      </div>
+                    </>
                   )}
                 </div>
 
                 {facturaEmitidaActual && (
                   <div className="border-t border-dashed border-stone-300 pt-2 flex flex-col items-center justify-center space-y-1 text-center">
-                    <QRCodeSVG
-                      value={facturaEmitidaActual.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
-                      size={85}
-                      level="M"
-                    />
-                    <p className="text-[8px] text-stone-500 font-mono">Código de Control / QR SIAT</p>
+                    <div className="p-2 bg-white rounded-lg border border-stone-300 shadow-2xs">
+                      <QRCodeSVG
+                        value={facturaEmitidaActual.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
+                        size={92}
+                        level="M"
+                      />
+                    </div>
+                    <p className="text-[8px] text-stone-500 font-mono">Código de Control Tributario / QR SIAT</p>
                   </div>
                 )}
 
-                <div className="text-center pt-2 text-[10px] text-stone-500 space-y-0.5">
-                  <p>¡Gracias por su preferencia en Dencker Pan!</p>
-                  <p className="font-bold">ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS</p>
-                  <p className="text-[8px] text-stone-400">Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad.</p>
+                {/* Textos y Leyendas Obligatorias Ley N° 453 */}
+                <div className="text-center pt-2 text-[9px] text-stone-600 space-y-1 leading-tight border-t border-dashed border-stone-300">
+                  <p className="font-bold text-stone-900">
+                    "ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE ACUERDO A LEY"
+                  </p>
+                  <p className="text-[8px] text-stone-500 italic">
+                    {facturaEmitidaActual?.leyendaLey453 || facturacionSiatConfig.leyendaLey453 || "Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad."}
+                  </p>
+                  <p className="text-[9px] font-bold text-stone-800">
+                    Fecha Límite de Emisión: {facturaEmitidaActual?.fechaLimiteEmision || facturacionSiatConfig.fechaLimiteEmision || "30/04/2027"}
+                  </p>
+                  <p className="text-[10px] text-amber-900 font-serif font-bold pt-1">
+                    ¡Gracias por su visita a Dencker Pan!
+                  </p>
                 </div>
               </div>
 

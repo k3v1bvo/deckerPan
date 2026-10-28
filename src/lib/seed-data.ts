@@ -6,7 +6,12 @@
 import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja, UsuarioStaff } from '@/types';
 
 export const DENCKER_ASSETS = {
-  logo: "/img/brand/dencker-logo.png",
+  logo: "/img/brand/dencker-chef-hat-logo.svg",
+  logoPng: "/img/brand/dencker-chef-hat-logo.png",
+  logoSvg: "/img/brand/dencker-chef-hat-logo.svg",
+  mascotClean: "/img/brand/don-dencker-mascot-clean.png",
+  badgeClean: "/img/brand/don-dencker-badge.png",
+  coffeeVintage: "/img/brand/don-dencker-coffee-vintage.png",
   banners: [
   "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg",
   "https://i.ibb.co/bjzqQPhh/dencker-banner-1.jpg"

@@ -52,6 +52,7 @@ import {
   EyeOff,
   UserPlus,
   Lock,
+  Download,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSystemStore } from "@/store";
@@ -60,6 +61,7 @@ import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja, UsuarioS
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, REAL_PRODUCT_PHOTOS, MENU_PDF_PAGES } from "@/lib/seed-data";
+import { parsearLinkContadora, exportarLibroVentasCsv } from "@/lib/siat-utils";
 
 export default function AdminPage() {
   const {
@@ -113,8 +115,17 @@ export default function AdminPage() {
 
   // Estados Facturación SIAT / Impuestos Bolivia
   const [formSiat, setFormSiat] = useState(facturacionSiatConfig);
+  const [linkContadoraInput, setLinkContadoraInput] = useState(facturacionSiatConfig.linkContadora || "");
+  const [facturaSeleccionadaModal, setFacturaSeleccionadaModal] = useState<FacturaEmitida | null>(null);
   const [siatGuardadoExitoso, setSiatGuardadoExitoso] = useState(false);
   const [busquedaFactura, setBusquedaFactura] = useState("");
+
+  useEffect(() => {
+    setFormSiat(facturacionSiatConfig);
+    if (facturacionSiatConfig.linkContadora) {
+      setLinkContadoraInput(facturacionSiatConfig.linkContadora);
+    }
+  }, [facturacionSiatConfig]);
 
   // Estados Gestión de Personal & Accesos PIN
   const [modalStaffAbierto, setModalStaffAbierto] = useState(false);
@@ -605,7 +616,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1.5 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/logo/logo.png"
+                src="/img/brand/dencker-chef-hat-logo.svg"
                 alt="Dencker Pan"
                 className="w-full h-full object-contain drop-shadow"
               />
@@ -1350,7 +1361,7 @@ export default function AdminPage() {
                   <span>Servicio de Impuestos Nacionales (SIN) • Bolivia</span>
                 </div>
                 <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-                  Facturación Computarizada / Electrónica en Línea
+                  Facturación Computarizada & En Línea SIAT
                   <span className={`text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full ${
                     formSiat.activa
                       ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
@@ -1360,7 +1371,7 @@ export default function AdminPage() {
                   </span>
                 </h2>
                 <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
-                  Pega aquí el enlace o token proporcionado por tu contador para vincular la emisión legal con CUFD, generación de CUF y QR de verificación tributaria oficial.
+                  Configura aquí los parámetros fiscales obligatorios de Bolivia: numeración correlativa sin saltos, CUF en Base 16 (Módulo 11), montos en palabras y el enlace de la contadora para renovar la vigencia cada ciertos meses.
                 </p>
               </div>
 
@@ -1383,6 +1394,58 @@ export default function AdminPage() {
                   <span>{formSiat.activa ? "Facturación Activa ✓" : "Activar Emisión SIAT"}</span>
                 </button>
               </div>
+            </div>
+
+            {/* ── CARD: VINCULACIÓN AUTOMÁTICA CON ENLACE DE LA CONTADORA ── */}
+            <div className="p-6 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent rounded-3xl border-2 border-amber-500/30 dark:border-amber-500/20 shadow-md space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">
+                    <Sparkles size={16} />
+                    <span>Conexión Rápida Contable (Actualización Periódica)</span>
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                    Pega aquí el enlace o token que te pasa la contadora
+                  </h3>
+                  <p className="text-xs text-stone-600 dark:text-stone-400 max-w-2xl">
+                    Cada ciertos meses, cuando tu contadora renueve la dosificación o enlace de consulta de Impuestos, solo debes pegar aquí el link o token y hacer clic en <strong>"Vincular Enlace"</strong>. El sistema extraerá automáticamente el NIT, CUFD y configurará los QRs legales sin pasos técnicos complicados.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <input
+                  type="text"
+                  value={linkContadoraInput}
+                  onChange={(e) => setLinkContadoraInput(e.target.value)}
+                  placeholder="Ej: https://siat.impuestos.gob.bo/consulta/QR?nit=389201024 o token de la contadora..."
+                  className="flex-1 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 font-mono text-xs shadow-xs focus:ring-2 focus:ring-amber-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!linkContadoraInput.trim()) return;
+                    const parsed = parsearLinkContadora(linkContadoraInput);
+                    const updated = { ...formSiat, ...parsed };
+                    setFormSiat(updated);
+                    setFacturacionSiatConfig(updated);
+                    soundManager.playSuccessTone();
+                    setSiatGuardadoExitoso(true);
+                    setTimeout(() => setSiatGuardadoExitoso(false), 3000);
+                  }}
+                  className="px-5 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
+                >
+                  <Check size={16} />
+                  <span>Vincular Enlace de la Contadora</span>
+                </button>
+              </div>
+
+              {formSiat.linkContadora && (
+                <div className="text-[11px] text-amber-800 dark:text-amber-300/90 font-mono flex items-center gap-2 bg-amber-100/60 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-800">
+                  <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+                  <span className="truncate">Enlace activo de la contadora: <strong>{formSiat.linkContadora}</strong></span>
+                </div>
+              )}
             </div>
 
             {/* Formulario de Configuración SIAT */}
@@ -1420,7 +1483,7 @@ export default function AdminPage() {
                     type="text"
                     value={formSiat.nitEmisor}
                     onChange={(e) => setFormSiat({ ...formSiat, nitEmisor: e.target.value })}
-                    placeholder="1028492023"
+                    placeholder="389201024"
                     className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
                   />
                 </div>
@@ -1434,9 +1497,24 @@ export default function AdminPage() {
                     type="text"
                     value={formSiat.razonSocialEmisor}
                     onChange={(e) => setFormSiat({ ...formSiat, razonSocialEmisor: e.target.value })}
-                    placeholder="DENCKER PAN S.R.L."
+                    placeholder="DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."
                     className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
                   />
+                </div>
+
+                {/* Siguiente Número de Factura (Correlativo) */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Siguiente Nº de Factura (Correlativo SIN) *
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={formSiat.siguienteNumeroFactura || 1}
+                    onChange={(e) => setFormSiat({ ...formSiat, siguienteNumeroFactura: parseInt(e.target.value) || 1 })}
+                    className="w-full p-2.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50/40 dark:bg-stone-800 text-amber-950 dark:text-amber-300 font-mono font-bold text-sm"
+                  />
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400">Control estricto consecutivo</span>
                 </div>
 
                 {/* Modalidad de Facturación */}
@@ -1466,6 +1544,34 @@ export default function AdminPage() {
                     onChange={(e) => setFormSiat({ ...formSiat, codigoPuntoVenta: parseInt(e.target.value) || 0 })}
                     placeholder="0"
                     className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
+                  />
+                </div>
+
+                {/* Fecha Límite de Emisión */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Fecha Límite de Emisión (Vigencia) *
+                  </label>
+                  <input
+                    type="text"
+                    value={formSiat.fechaLimiteEmision || "2027-04-30"}
+                    onChange={(e) => setFormSiat({ ...formSiat, fechaLimiteEmision: e.target.value })}
+                    placeholder="YYYY-MM-DD o DD/MM/YYYY"
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
+                  />
+                  <span className="text-[10px] text-stone-500">Tope fijado por la contadora</span>
+                </div>
+
+                {/* Número de Autorización / Dosificación */}
+                <div>
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Nº Autorización / Dosificación
+                  </label>
+                  <input
+                    type="text"
+                    value={formSiat.autorizacionDosificacion || "48A9C102BF"}
+                    onChange={(e) => setFormSiat({ ...formSiat, autorizacionDosificacion: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
                   />
                 </div>
 
@@ -1509,17 +1615,29 @@ export default function AdminPage() {
                   />
                 </div>
 
-                {/* Token SIAT o Enlace del Contador */}
+                {/* Actividad Económica SIN */}
+                <div className="md:col-span-2">
+                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    Actividad Económica Principal (SIN)
+                  </label>
+                  <input
+                    type="text"
+                    value={formSiat.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
+                    onChange={(e) => setFormSiat({ ...formSiat, actividadEconomica: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
+                  />
+                </div>
+
+                {/* Leyenda Obligatoria Ley 453 */}
                 <div className="md:col-span-3">
                   <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Token Delegado SIAT o Clave de Acceso (Provista por el Contador)
+                    Leyenda Ley N° 453 de Protección al Consumidor
                   </label>
-                  <textarea
-                    rows={2}
-                    value={formSiat.tokenSiat}
-                    onChange={(e) => setFormSiat({ ...formSiat, tokenSiat: e.target.value })}
-                    placeholder="Pega aquí el token SIAT o código provisto por tu contador..."
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-xs"
+                  <input
+                    type="text"
+                    value={formSiat.leyendaLey453 || "Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad."}
+                    onChange={(e) => setFormSiat({ ...formSiat, leyendaLey453: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
                   />
                 </div>
               </div>
@@ -1550,19 +1668,43 @@ export default function AdminPage() {
                     Historial de Facturas Emitidas ({facturasEmitidas.length})
                   </h3>
                   <p className="text-xs text-stone-500">
-                    Registro de comprobantes fiscales emitidos con validación CUF
+                    Registro de comprobantes fiscales emitidos con validación CUF en Base 16
                   </p>
                 </div>
 
-                <div className="relative">
-                  <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por Nº, Cliente o NIT..."
-                    value={busquedaFactura}
-                    onChange={(e) => setBusquedaFactura(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-60"
-                  />
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por Nº, Cliente o NIT..."
+                      value={busquedaFactura}
+                      onChange={(e) => setBusquedaFactura(e.target.value)}
+                      className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-52 sm:w-60"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (facturasEmitidas.length === 0) {
+                        alert("No hay facturas emitidas todavía para exportar.");
+                        return;
+                      }
+                      const csv = exportarLibroVentasCsv(facturasEmitidas, facturacionSiatConfig);
+                      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `Libro_Ventas_IVA_DenckerPan_${new Date().toISOString().slice(0, 10)}.csv`;
+                      a.click();
+                      soundManager.playSuccessTone();
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs"
+                  >
+                    <Download size={14} />
+                    <span>Libro de Ventas IVA (Para Contadora CSV)</span>
+                  </button>
                 </div>
               </div>
 
@@ -1576,7 +1718,7 @@ export default function AdminPage() {
                       No hay facturas emitidas todavía
                     </h4>
                     <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
-                      Cuando el cajero cobre un pedido en Caja POS con la opción "Factura SIAT", se generará automáticamente el CUF y el código QR de validación tributaria.
+                      Cuando el cajero cobre un pedido en Caja POS con la opción "Factura SIAT", se generará automáticamente el CUF correlativo y el código QR de validación tributaria con el logo oficial.
                     </p>
                   </div>
                 </div>
@@ -1591,7 +1733,7 @@ export default function AdminPage() {
                         <th className="py-2.5 px-3">NIT / CI</th>
                         <th className="py-2.5 px-3">Total (Bs)</th>
                         <th className="py-2.5 px-3">CUF</th>
-                        <th className="py-2.5 px-3 text-right">Verificación</th>
+                        <th className="py-2.5 px-3 text-right">Acciones</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
@@ -1625,15 +1767,25 @@ export default function AdminPage() {
                               {f.cuf}
                             </td>
                             <td className="py-3 px-3 text-right">
-                              <a
-                                href={f.urlQrVerificacion}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 underline"
-                              >
-                                <span>SIAT QR</span>
-                                <ExternalLink size={12} />
-                              </a>
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setFacturaSeleccionadaModal(f)}
+                                  className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 dark:text-amber-400 hover:underline cursor-pointer"
+                                >
+                                  <Eye size={12} />
+                                  <span>Ver Ticket</span>
+                                </button>
+                                <a
+                                  href={f.urlQrVerificacion}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 underline"
+                                >
+                                  <span>SIAT QR</span>
+                                  <ExternalLink size={12} />
+                                </a>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -1642,6 +1794,118 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+
+            {/* ── Modal de Vista Previa de Factura Fiscal Oficial con Logo Vectorizado ── */}
+            <AnimatePresence>
+              {facturaSeleccionadaModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden p-6 space-y-4"
+                  >
+                    <div className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
+                      {/* Logo Oficial Vectorizado */}
+                      <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
+                        <img
+                          src="/img/brand/dencker-chef-hat-logo.svg"
+                          alt="Dencker Pan"
+                          className="h-12 w-auto object-contain mx-auto mb-1"
+                        />
+                        <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
+                          {facturacionSiatConfig.razonSocialEmisor}
+                        </h4>
+                        <p className="text-[10px] font-bold text-stone-700">CASA MATRIZ: 0</p>
+                        <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba - Bolivia</p>
+                        <p className="text-[10px] text-stone-900 font-bold mt-1">NIT: {facturacionSiatConfig.nitEmisor}</p>
+                        <p className="text-[8px] text-stone-500 italic max-w-[240px] mx-auto leading-tight">
+                          {facturacionSiatConfig.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
+                        </p>
+
+                        <div className="pt-2 text-[10px] text-stone-800 space-y-0.5 border-t border-dashed border-stone-300 mt-2 w-full">
+                          <p className="font-black text-sm text-stone-950 tracking-wide">
+                            FACTURA N°: {facturaSeleccionadaModal.numeroFactura}
+                          </p>
+                          <p className="text-[9px] font-bold text-stone-700">
+                            CÓD. AUTORIZACIÓN: {facturacionSiatConfig.autorizacionDosificacion || "48A9C102BF"}
+                          </p>
+                          <div className="pt-1">
+                            <span className="text-[8px] font-bold text-stone-500 block">CUF:</span>
+                            <p className="break-all text-[8px] font-mono text-stone-600 leading-tight bg-stone-50 p-1 rounded border border-stone-200">
+                              {facturaSeleccionadaModal.cuf}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-dashed border-stone-300 pt-2 text-[11px] space-y-0.5">
+                        <div className="flex justify-between">
+                          <span className="text-stone-500">Fecha y Hora:</span>
+                          <span>{new Date(facturaSeleccionadaModal.fechaEmision).toLocaleString("es-BO")}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-stone-500">NIT / CI:</span>
+                          <span className="font-bold font-mono">{facturaSeleccionadaModal.clienteNitCi}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-stone-500">Señor(es):</span>
+                          <span className="font-bold uppercase truncate max-w-[170px]">{facturaSeleccionadaModal.clienteNombre}</span>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-dashed border-stone-300 pt-2 space-y-1 font-bold">
+                        <div className="flex justify-between text-sm text-stone-950">
+                          <span>TOTAL A PAGAR:</span>
+                          <span className="font-mono text-base">Bs {facturaSeleccionadaModal.montoTotal.toFixed(2)}</span>
+                        </div>
+                        <div className="text-[10px] text-stone-700 bg-stone-100/80 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
+                          {facturaSeleccionadaModal.montoLiteral || `Son: ${facturaSeleccionadaModal.montoTotal.toFixed(2)} Bolivianos`}
+                        </div>
+                      </div>
+
+                      <div className="border-t border-dashed border-stone-300 pt-2 flex flex-col items-center justify-center space-y-1 text-center">
+                        <div className="p-2 bg-white rounded-lg border border-stone-300 shadow-2xs">
+                          <QRCodeSVG
+                            value={facturaSeleccionadaModal.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
+                            size={92}
+                            level="M"
+                          />
+                        </div>
+                        <p className="text-[8px] text-stone-500 font-mono">Código de Control Tributario / QR SIAT</p>
+                      </div>
+
+                      <div className="text-center pt-2 text-[9px] text-stone-600 space-y-1 leading-tight border-t border-dashed border-stone-300">
+                        <p className="font-bold text-stone-900">
+                          "ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE ACUERDO A LEY"
+                        </p>
+                        <p className="text-[8px] text-stone-500 italic">
+                          {facturaSeleccionadaModal.leyendaLey453 || facturacionSiatConfig.leyendaLey453}
+                        </p>
+                        <p className="text-[9px] font-bold text-stone-800">
+                          Fecha Límite de Emisión: {facturaSeleccionadaModal.fechaLimiteEmision || facturacionSiatConfig.fechaLimiteEmision}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <button
+                        onClick={() => window.print()}
+                        className="py-2.5 rounded-xl bg-amber-900 text-white font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-amber-950 transition cursor-pointer"
+                      >
+                        <Printer size={14} /> Imprimir Factura
+                      </button>
+                      <button
+                        onClick={() => setFacturaSeleccionadaModal(null)}
+                        className="py-2.5 rounded-xl bg-stone-100 text-stone-700 font-semibold text-xs hover:bg-stone-200 transition cursor-pointer"
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 

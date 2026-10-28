@@ -205,13 +205,18 @@ export const BILLETES_BOLIVIANOS: BilleteBoliviano[] = [
 export interface FacturacionSiatConfig {
   tokenSiat: string;
   linkImpuestos: string;
+  linkContadora: string;
   cufd: string;
+  autorizacionDosificacion?: string;
   codigoPuntoVenta: number;
   razonSocialEmisor: string;
   nitEmisor: string;
   activa: boolean;
   modalidad: 'electronica_linea' | 'computarizada_linea' | 'recibo_oficial';
   leyendaLey453: string;
+  siguienteNumeroFactura: number;
+  fechaLimiteEmision: string;
+  actividadEconomica: string;
 }
 
 export interface FacturaEmitida {
@@ -220,10 +225,13 @@ export interface FacturaEmitida {
   cuf: string;
   cufd: string;
   fechaEmision: string;
+  fechaLimiteEmision?: string;
   clienteNombre: string;
   clienteNitCi: string;
   clienteComplemento?: string;
   montoTotal: number;
+  montoLiteral?: string;
+  leyendaLey453?: string;
   codigoControl?: string;
   urlQrVerificacion: string;
   pedidoId: string;

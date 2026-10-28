@@ -19,6 +19,7 @@ import {
   FacturacionSiatConfig,
   FacturaEmitida,
 } from '@/types';
+import { convertirNumeroALiteral, generarCufSiat, generarUrlQrSiat } from '@/lib/siat-utils';
 import {
   SEED_ZONAS,
   SEED_MESAS,
@@ -638,13 +639,18 @@ export const useSystemStore = create<SystemStore>()(
       facturacionSiatConfig: {
         tokenSiat: '',
         linkImpuestos: 'https://siat.impuestos.gob.bo/consulta/QR',
+        linkContadora: 'https://siat.impuestos.gob.bo/consulta/QR?nit=389201024',
         cufd: 'B98F7A1E2D4C3B890F',
+        autorizacionDosificacion: '3892010240001',
         codigoPuntoVenta: 1,
-        razonSocialEmisor: 'DENCKER PAN S.R.L.',
-        nitEmisor: '1029384021',
+        razonSocialEmisor: 'DENCKER PAN CAFETERÍA & PANADERÍA S.R.L.',
+        nitEmisor: '389201024',
         activa: true,
         modalidad: 'computarizada_linea',
-        leyendaLey453: 'Ley N° 453: El proveedor debe exhibir el precio total del bien o servicio en moneda nacional.',
+        leyendaLey453: 'Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad.',
+        siguienteNumeroFactura: 1,
+        fechaLimiteEmision: '2027-04-30',
+        actividadEconomica: '561000 - Servicios de restaurantes, cafeterías y panaderías',
       },
       facturasEmitidas: [],
 
@@ -658,31 +664,59 @@ export const useSystemStore = create<SystemStore>()(
       emitirFacturaSiat: ({ clienteNombre, clienteNitCi, clienteComplemento, montoTotal, pedidoId }) => {
         const state = get();
         const cfg = state.facturacionSiatConfig;
-        const num = (state.facturasEmitidas.length || 0) + 1042;
-        const fecha = new Date().toISOString();
-        const cuf = `CUF-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-        const codigoControl = `${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-        const baseLink = cfg.linkImpuestos.trim() || 'https://siat.impuestos.gob.bo/consulta/QR';
-        const urlQr = `${baseLink}?nit=${cfg.nitEmisor}&cuf=${cuf}&numero=${num}&t=${montoTotal}`;
+        const numFactura = cfg.siguienteNumeroFactura || (state.facturasEmitidas.length + 1);
+        const now = new Date();
+
+        // Generar CUF oficial algorítmico del SIN
+        const cuf = generarCufSiat({
+          nitEmisor: cfg.nitEmisor,
+          fechaHora: now,
+          sucursal: 0,
+          numeroFactura: numFactura,
+          puntoVenta: cfg.codigoPuntoVenta || 1,
+        });
+
+        // Convertir monto a literal oficial
+        const montoLiteral = convertirNumeroALiteral(montoTotal);
+
+        // Generar URL del QR tributario
+        const urlQr = generarUrlQrSiat({
+          config: cfg,
+          factura: {
+            numeroFactura: numFactura,
+            cuf,
+            fechaEmision: now.toISOString(),
+            montoTotal,
+            clienteNitCi: clienteNitCi || '0',
+          },
+        });
 
         const nueva: FacturaEmitida = {
           id: 'fac-' + Date.now(),
-          numeroFactura: num,
+          numeroFactura: numFactura,
           cuf,
-          cufd: cfg.cufd || 'B98F7A1E2D4C3B',
-          fechaEmision: fecha,
+          cufd: cfg.cufd || 'B98F7A1E2D4C3B890F',
+          fechaEmision: now.toISOString(),
+          fechaLimiteEmision: cfg.fechaLimiteEmision || '2027-04-30',
           clienteNombre: clienteNombre || 'Sin Nombre',
           clienteNitCi: clienteNitCi || '0',
           clienteComplemento,
           montoTotal,
-          codigoControl,
+          montoLiteral,
+          leyendaLey453: cfg.leyendaLey453,
+          codigoControl: cuf.substring(Math.max(0, cuf.length - 8)),
           urlQrVerificacion: urlQr,
           pedidoId,
           estado: 'emitida',
         };
 
+        // Incremento automático de número correlativo
         set((s) => ({
           facturasEmitidas: [nueva, ...s.facturasEmitidas],
+          facturacionSiatConfig: {
+            ...s.facturacionSiatConfig,
+            siguienteNumeroFactura: numFactura + 1,
+          },
         }));
 
         return nueva;
@@ -697,25 +731,30 @@ export const useSystemStore = create<SystemStore>()(
           usuariosStaff: SEED_USUARIOS_STAFF,
           pagos: SEED_PAGOS,
           historialSesiones: SEED_HISTORIAL_SESIONES,
-          qrBancarioUrl: "/img/brand/dencker-logo.png",
+          qrBancarioUrl: "/img/brand/dencker-chef-hat-logo.png",
           qrBancarioTitular: "Dencker Pan S.R.L.",
           qrBancarioBanco: "Banco Nacional de Bolivia (BNB) / BCP Simple",
           facturacionSiatConfig: {
             tokenSiat: '',
             linkImpuestos: 'https://siat.impuestos.gob.bo/consulta/QR',
+            linkContadora: 'https://siat.impuestos.gob.bo/consulta/QR?nit=389201024',
             cufd: 'B98F7A1E2D4C3B890F',
+            autorizacionDosificacion: '3892010240001',
             codigoPuntoVenta: 1,
-            razonSocialEmisor: 'DENCKER PAN S.R.L.',
-            nitEmisor: '1029384021',
+            razonSocialEmisor: 'DENCKER PAN CAFETERÍA & PANADERÍA S.R.L.',
+            nitEmisor: '389201024',
             activa: true,
             modalidad: 'computarizada_linea',
-            leyendaLey453: 'Ley N° 453: El proveedor debe exhibir el precio total del bien o servicio en moneda nacional.',
+            leyendaLey453: 'Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad.',
+            siguienteNumeroFactura: 1,
+            fechaLimiteEmision: '2027-04-30',
+            actividadEconomica: '561000 - Servicios de restaurantes, cafeterías y panaderías',
           },
           facturasEmitidas: [],
         }),
     }),
     {
-      name: 'dencker-pan-system-v3-oficial',
+      name: 'dencker-pan-system-v4-logos-siat',
     }
   )
 );
