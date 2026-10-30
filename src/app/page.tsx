@@ -2588,23 +2588,23 @@ export default function HomePage() {
           
           {/* Encabezado con Don Dencker */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-[#E6D9C8] pb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-3xl bg-[#F0E4D4] border border-[#DFCBB5] p-2 flex items-center justify-center shadow-xs shrink-0">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="w-20 h-24 sm:w-24 sm:h-28 shrink-0 flex items-center justify-center">
                 <img
-                  src="/img/brand/don-dencker.png"
-                  alt="Don Dencker"
-                  className="w-full h-full object-contain"
+                  src="/img/brand/don-dencker-mascot-clean.png"
+                  alt="Don Dencker - Mascota Oficial"
+                  className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <div>
-                <span className="text-xs uppercase tracking-widest font-extrabold text-[#785E4F] block">
+                <span className="text-xs uppercase tracking-widest font-extrabold text-[#991B24] block">
                   Visítanos en Cochabamba
                 </span>
-                <h2 className="font-serif text-3xl sm:text-4xl font-black text-[#1E130C]">
+                <h2 className="font-serif text-3xl sm:text-4xl font-black text-[#1E130C] tracking-tight">
                   Nuestra Casa & Café de Especialidad
                 </h2>
                 <p className="text-xs sm:text-sm text-[#6E5547] mt-1">
-                  Av. Daniel Salamanca, Cochabamba • Granos 4 Llamas de Caranavi (1700 m.s.n.m.)
+                  Av. Daniel Salamanca, Cochabamba • Granos 4 Llamas de Caranavi (1,700 msnm)
                 </p>
               </div>
             </div>
@@ -2642,43 +2642,80 @@ export default function HomePage() {
                   En Dencker Pan servimos exclusivamente café boliviano de origen único, cultivado en las alturas de Caranavi bajo sombra natural y tostado con precisión de autor.
                 </p>
 
-                {/* Ficha Técnica del Café */}
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
-                    <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Variedad</span>
-                    <span className="text-sm font-black text-amber-300">Catuaí Lavado</span>
+                {/* Ficha Técnica del Café (Alto Contraste y Tipografía Legible) */}
+                <div className="space-y-3 pt-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3.5 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-xs">
+                      <span className="text-[11px] text-amber-300/80 block uppercase font-mono font-bold tracking-wider">Variedad</span>
+                      <span className="text-base font-serif font-black text-white block mt-0.5">Catuaí Lavado</span>
+                      <span className="text-[10.5px] text-stone-300 block">Grano 100% Arábica</span>
+                    </div>
+                    <div className="p-3.5 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-xs">
+                      <span className="text-[11px] text-amber-300/80 block uppercase font-mono font-bold tracking-wider">Altitud</span>
+                      <span className="text-base font-serif font-black text-amber-300 block mt-0.5">1,700 msnm</span>
+                      <span className="text-[10.5px] text-stone-300 block">Cosecha de altura</span>
+                    </div>
                   </div>
-                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
-                    <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Altura</span>
-                    <span className="text-sm font-black text-amber-400">1,700 m.s.n.m.</span>
-                  </div>
-                  <div className="col-span-2 p-3 rounded-2xl bg-white/5 border border-white/10">
-                    <span className="text-[10px] text-stone-400 block uppercase font-bold tracking-wider">Notas de Cata</span>
-                    <span className="text-xs font-bold text-stone-200">Chocolate negro, naranja sutil y caramelo</span>
+
+                  {/* Notas de Cata Destacadas con Pills Sensoriales */}
+                  <div className="p-4 rounded-2xl bg-black/50 border border-amber-500/30 backdrop-blur-sm space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <Sparkles size={13} className="text-amber-300" />
+                        Notas de Cata Oficiales
+                      </span>
+                      <span className="text-[10px] text-stone-400 font-mono">Perfil Sensorial</span>
+                    </div>
+                    <p className="font-serif font-bold text-base text-white leading-snug">
+                      Chocolate negro puro, naranja sutil y caramelo artesanal
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      <span className="px-2.5 py-1 rounded-lg bg-amber-950/60 border border-amber-500/30 text-amber-200 text-xs font-semibold flex items-center gap-1">
+                        🍫 Cacao 70%
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-amber-950/60 border border-amber-500/30 text-amber-200 text-xs font-semibold flex items-center gap-1">
+                        🍊 Cítricos suaves
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-amber-950/60 border border-amber-500/30 text-amber-200 text-xs font-semibold flex items-center gap-1">
+                        🍯 Caramelo tostado
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Imagen del empaque y badge */}
-              <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between gap-4 relative z-10">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/img/brand/cafe-catuai-badge.png"
-                    alt="Sello Catuaí Lavado"
-                    className="w-14 h-14 object-contain rounded-full shadow-md"
-                  />
+              {/* Imagen del empaque y sello de origen */}
+              <div className="pt-6 mt-6 border-t border-amber-500/20 flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 relative z-10">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border-2 border-amber-400/50 shadow-md shrink-0 bg-stone-900 p-0.5">
+                    <img
+                      src="/img/brand/cafe-catuai-badge-hd.png"
+                      alt="Sello Catuaí Lavado Caranavi"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                   <div>
-                    <span className="text-xs font-bold text-white block">Zona Caranavi</span>
-                    <span className="text-[11px] text-stone-400">Yungas, Bolivia</span>
+                    <span className="font-serif font-black text-base sm:text-lg text-white block leading-tight">
+                      Zona Caranavi
+                    </span>
+                    <span className="text-xs font-mono font-bold text-amber-400 block mt-0.5">
+                      Los Yungas &bull; La Paz, Bolivia
+                    </span>
+                    <span className="text-[11px] text-stone-300 block mt-0.5">
+                      Tostado exclusivo para Dencker Pan
+                    </span>
                   </div>
                 </div>
 
-                <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-xl group">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-amber-400/50 shadow-2xl shrink-0 group relative">
                   <img
                     src="/img/products/cafe_4llamas_pack_gourmet.jpg"
                     alt="Café 4 Llamas Empaque Gourmet"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+                  <span className="absolute bottom-1 right-1 bg-black/75 backdrop-blur-xs text-[9px] font-mono text-amber-300 px-1.5 py-0.5 rounded font-bold">
+                    250g / 1kg
+                  </span>
                 </div>
               </div>
             </div>

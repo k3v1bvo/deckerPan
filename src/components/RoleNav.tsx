@@ -45,30 +45,30 @@ export default function RoleNav() {
       <header className="sticky top-0 z-40 bg-[#160D08] backdrop-blur-2xl border-b border-amber-500/20 text-white shadow-xl print:hidden">
         <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-3">
 
-          {/* ── LOGO ── */}
+          {/* ── LOGO & BRAND IDENTITY ── */}
           <Link
             href="/"
             onClick={() => soundManager.playSuccessTone()}
-            className="flex items-center gap-3 group shrink-0 min-w-0"
+            className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0 min-w-0"
           >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+            <div className="h-13 sm:h-14 w-auto flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
               <img
                 src={DENCKER_ASSETS.logoLight}
                 alt="Don Dencker"
-                className="w-full h-full object-contain select-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                className="h-full w-auto max-h-13 sm:max-h-14 object-contain select-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]"
               />
             </div>
-            <div className="leading-none hidden sm:block">
-              <div className="flex items-baseline gap-2">
-                <span className="font-serif font-black text-[1.15rem] text-white tracking-wide">
+            <div className="leading-tight flex flex-col justify-center">
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-black text-lg sm:text-xl text-white tracking-wide group-hover:text-amber-200 transition-colors">
                   Dencker Pan
                 </span>
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                <span className="text-[9.5px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30 whitespace-nowrap shadow-xs">
                   Café 4 Llamas
                 </span>
               </div>
-              <span className="text-[10px] text-amber-300/80 font-sans uppercase tracking-widest font-semibold">
-                Panadería & Café · Cochabamba
+              <span className="text-[9.5px] sm:text-[10.5px] text-amber-300/80 font-mono tracking-wider font-semibold">
+                Panadería & Café &bull; Cochabamba
               </span>
             </div>
           </Link>
