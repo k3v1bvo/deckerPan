@@ -502,7 +502,7 @@ export default function MenuPdfPage() {
 
           {/* SUB-VISTA A: TIRA CONTINUA DE LAS 6 PÁGINAS ESCANEADAS */}
           {subVistaPdf === "tira_continua" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1560px] mx-auto py-2 print:block print:space-y-0">
+            <div className="w-full flex flex-col items-center space-y-12 max-w-4xl mx-auto py-2 print:block print:space-y-0">
               {MENU_PDF_PAGES.map((p) => (
                 <div
                   key={p.page}
@@ -606,10 +606,10 @@ export default function MenuPdfPage() {
 
 
           {/* ── GRID DOBLE PÁGINA (EDITORIAL BISTRO EN PANTALLAS ANCHAS) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-10 items-start print:block print:space-y-0">
+          <div className="w-full flex flex-col items-center space-y-12 sm:space-y-16 print:space-y-0">
           
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
-          <div id="menu-pagina-1" className="bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col items-center justify-between min-h-[920px] p-6 sm:p-10 text-center print-page">
+          <div id="menu-pagina-1" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 text-center print-page">
             
             {/* Toldo a rayas rojas y crema */}
             <div className="w-full h-24 sm:h-28 -mt-6 sm:-mt-10 rounded-b-[36px] overflow-hidden shadow-md flex relative border-b-4 border-[#7F1D1D]">
@@ -659,13 +659,20 @@ export default function MenuPdfPage() {
 
             </div>
 
-            {/* Tira de Especialidades con Fotografía */}
+            {/* Vitrina de Especialidades de la Casa (4 Iconos en Grid Equilibrado) */}
             {mostrarFotos && (
-              <div className="w-full my-4 p-4 rounded-2xl bg-white/80 border border-[#991B24]/20 shadow-xs print:my-2 print:border-black/20">
-                <span className="text-[11px] font-mono font-bold tracking-widest text-[#991B24] uppercase block mb-3 text-center">
-                  ✨ Nuevas Especialidades & Íconos de la Casa
-                </span>
-                <div className="grid grid-cols-3 gap-3">
+              <div className="w-full my-4 p-4 sm:p-5 rounded-2xl bg-white/90 border border-[#991B24]/20 shadow-xs print:my-2 print:border-black/20 text-left">
+                <div className="flex items-center justify-between mb-3 border-b border-[#991B24]/15 pb-2">
+                  <span className="text-[11px] font-mono font-bold tracking-widest text-[#991B24] uppercase">
+                    ✨ Iconos &amp; Especialidades de la Casa
+                  </span>
+                  <span className="text-[10px] text-[#785E4F] font-semibold hidden sm:inline">
+                    Horneado fresco a mano cada mañana
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {/* Item 1: Tartaleta */}
                   <div
                     onClick={() => setFotoModal({
                       url: "/img/products/tartaleta_chocolate_artesanal.jpg",
@@ -675,19 +682,20 @@ export default function MenuPdfPage() {
                       desc: "Masa sablée crujiente dorada, ganache puro de chocolate oscuro belga, quenelles suaves de mousse y disco sablé con cacao fino.",
                       precio: 20
                     })}
-                    className="flex flex-col items-center text-center cursor-pointer group"
+                    className="flex flex-col items-center text-center cursor-pointer group p-2 rounded-xl hover:bg-stone-50 transition"
                   >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-[#991B24] shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#991B24] shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
                       <img
                         src="/img/products/tartaleta_chocolate_artesanal.jpg"
                         alt="Tartaleta de Chocolate"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight">Tartaleta Chocolate</span>
+                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight block truncate w-full">Tartaleta Belga</span>
                     <span className="text-[10px] text-[#991B24] font-bold">Bs 20</span>
                   </div>
 
+                  {/* Item 2: Queque Japonés */}
                   <div
                     onClick={() => setFotoModal({
                       url: "/img/products/queque_japones_artesanal.jpg",
@@ -697,19 +705,20 @@ export default function MenuPdfPage() {
                       desc: "Famoso soufflé cake japonés ultra esponjoso y aireado con textura de nube que se deshace en boca. Horneado al baño maría.",
                       precio: 25
                     })}
-                    className="flex flex-col items-center text-center cursor-pointer group"
+                    className="flex flex-col items-center text-center cursor-pointer group p-2 rounded-xl hover:bg-stone-50 transition"
                   >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-amber-600 shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-600 shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
                       <img
                         src="/img/products/queque_japones_artesanal.jpg"
                         alt="Queque Japonés"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight">Queque Japonés</span>
+                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight block truncate w-full">Queque Japonés</span>
                     <span className="text-[10px] text-[#991B24] font-bold">Bs 25</span>
                   </div>
 
+                  {/* Item 3: Expresso 4 Llamas */}
                   <div
                     onClick={() => setFotoModal({
                       url: "/img/products/espresso_4_llamas.jpg",
@@ -719,36 +728,72 @@ export default function MenuPdfPage() {
                       desc: "Extracción pura de 30cc con granos bolivianos 4 Llamas de Caranavi (1,700 msnm). Crema color avellana atigrada.",
                       precio: 15
                     })}
-                    className="flex flex-col items-center text-center cursor-pointer group"
+                    className="flex flex-col items-center text-center cursor-pointer group p-2 rounded-xl hover:bg-stone-50 transition"
                   >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-amber-800 shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-800 shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
                       <img
                         src="/img/products/espresso_4_llamas.jpg"
                         alt="Expresso 4 Llamas"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight">Café 4 Llamas</span>
+                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight block truncate w-full">Café 4 Llamas</span>
                     <span className="text-[10px] text-[#991B24] font-bold">Bs 15</span>
+                  </div>
+
+                  {/* Item 4: Cuñapé Tradicional */}
+                  <div
+                    onClick={() => setFotoModal({
+                      url: "/img/products/cunape_caliente_tradicional.jpg",
+                      originalUrl: "/img/products/cunape_caliente_tradicional.jpg",
+                      corteUrl: "/img/products/cunape_tradicional_real.jpg",
+                      titulo: "Cuñapé Caliente Tradicional",
+                      desc: "Almidón de yuca y queso criollo fundido recién horneado, crocante por fuera y elástico por dentro.",
+                      precio: 8.5
+                    })}
+                    className="flex flex-col items-center text-center cursor-pointer group p-2 rounded-xl hover:bg-stone-50 transition"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-600 shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
+                      <img
+                        src="/img/products/cunape_caliente_tradicional.jpg"
+                        alt="Cuñapé Caliente"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight block truncate w-full">Cuñapé Caliente</span>
+                    <span className="text-[10px] text-[#991B24] font-bold">Bs 8.5</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Barra Inferior DENCKER COFFEE */}
-            <div className="w-full bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex flex-wrap items-center justify-between gap-3">
-              <span className="font-serif font-black tracking-widest text-lg sm:text-xl uppercase">
+            {/* Sello de Esencia Artesanal Dencker Pan */}
+            <div className="w-full my-2 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-[#991B24]/15 flex items-center justify-between text-xs text-[#785E4F] shrink-0">
+              <span className="font-serif font-bold text-[#1E130C]">
+                Masa Madre &bull; Fermentación 24h &bull; Mantequilla Pura
+              </span>
+              <span className="font-mono text-[11px] font-bold text-[#991B24]">
+                Cochabamba &bull; Bolivia
+              </span>
+            </div>
+
+            {/* Barra Inferior DENCKER COFFEE (Armonizada con Pág. 02) */}
+            <div className="w-full mt-auto bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex items-center justify-between gap-3 shrink-0">
+              <span className="font-serif font-black tracking-widest text-base sm:text-lg uppercase">
                 DENCKER COFFEE
               </span>
-              <span className="text-xs font-sans tracking-wide text-amber-200">
+              <span className="text-xs font-sans tracking-wide text-amber-200 hidden sm:inline">
                 Av. Daniel Salamanca, Cochabamba • Bolivia
+              </span>
+              <span className="font-serif font-bold text-xs px-3 py-1 rounded-full bg-white/20 text-white shadow-xs">
+                Pág. 01
               </span>
             </div>
 
           </div>
 
           {/* ── PÁGINA 2: DESAYUNOS, CAFÉS (4 LLAMAS) & LATTES ── */}
-          <div id="menu-pagina-2" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-2" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Café Barista & Sello Catuaí Caranavi */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -978,10 +1023,22 @@ export default function MenuPdfPage() {
 
             </div>
 
+                      {/* Barra Inferior Pág. 02 */}
+            <div className="w-full mt-auto bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex items-center justify-between gap-3 shrink-0">
+              <span className="font-serif font-black tracking-widest text-base sm:text-lg uppercase">
+                DENCKER COFFEE
+              </span>
+              <span className="text-xs font-sans tracking-wide text-amber-200 hidden sm:inline">
+                Café 4 Llamas de Especialidad &bull; Caranavi (1,700 msnm)
+              </span>
+              <span className="font-serif font-bold text-xs px-3 py-1 rounded-full bg-white/20 text-white shadow-xs">
+                Pág. 02
+              </span>
+            </div>
           </div>
 
           {/* ── PÁGINA 3: CHOCOLATES, TÉS, JUGOS, FRAPPÉS, HELADOS & REFRESCOS ── */}
-          <div id="menu-pagina-3" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-3" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Don Dencker & Bebidas Artesanales */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1166,10 +1223,22 @@ export default function MenuPdfPage() {
 
             </div>
 
+                      {/* Barra Inferior Pág. 03 */}
+            <div className="w-full mt-auto bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex items-center justify-between gap-3 shrink-0">
+              <span className="font-serif font-black tracking-widest text-base sm:text-lg uppercase">
+                DENCKER COFFEE
+              </span>
+              <span className="text-xs font-sans tracking-wide text-amber-200 hidden sm:inline">
+                Infusiones Botánicas &bull; Tés en Hebras &bull; Chocolates de Autor
+              </span>
+              <span className="font-serif font-bold text-xs px-3 py-1 rounded-full bg-white/20 text-white shadow-xs">
+                Pág. 03
+              </span>
+            </div>
           </div>
 
           {/* ── PÁGINA 4: DULCES, POSTRES & MASITAS SALADAS ── */}
-          <div id="menu-pagina-4" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-4" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Croissant & Hojaldres de Mantequilla */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1477,10 +1546,22 @@ export default function MenuPdfPage() {
 
             </div>
 
+                      {/* Barra Inferior Pág. 04 */}
+            <div className="w-full mt-auto bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex items-center justify-between gap-3 shrink-0">
+              <span className="font-serif font-black tracking-widest text-base sm:text-lg uppercase">
+                DENCKER COFFEE
+              </span>
+              <span className="text-xs font-sans tracking-wide text-amber-200 hidden sm:inline">
+                Pastelería Francesa &bull; 100% Pura Mantequilla Noble
+              </span>
+              <span className="font-serif font-bold text-xs px-3 py-1 rounded-full bg-white/20 text-white shadow-xs">
+                Pág. 04
+              </span>
+            </div>
           </div>
 
           {/* ── PÁGINA 5: SÁNDWICHES, EXTRAS & ENSALADAS ── */}
-          <div id="menu-pagina-5" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-5" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Pan Tostada & Masa Madre */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1715,10 +1796,22 @@ export default function MenuPdfPage() {
 
             </div>
 
+                      {/* Barra Inferior Pág. 05 */}
+            <div className="w-full mt-auto bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex items-center justify-between gap-3 shrink-0">
+              <span className="font-serif font-black tracking-widest text-base sm:text-lg uppercase">
+                DENCKER COFFEE
+              </span>
+              <span className="text-xs font-sans tracking-wide text-amber-200 hidden sm:inline">
+                Panes de Masa Madre &bull; Fermentación Natural 24h
+              </span>
+              <span className="font-serif font-bold text-xs px-3 py-1 rounded-full bg-white/20 text-white shadow-xs">
+                Pág. 05
+              </span>
+            </div>
           </div>
 
           {/* ── PÁGINA 6: PIZZAS ARTESANALES (PORCIONES 4, 6 Y 8) ── */}
-          <div id="menu-pagina-6" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-6" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Pizza Skater & Horno de Piedra */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1977,9 +2070,21 @@ export default function MenuPdfPage() {
               <span>Pedidos & Reservas: +591 76911000</span>
               <span className="font-mono font-bold text-[#991B24]">www.denckerpan.com</span>
             </div>
+                      {/* Barra Inferior Pág. 06 */}
+            <div className="w-full mt-auto bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex items-center justify-between gap-3 shrink-0">
+              <span className="font-serif font-black tracking-widest text-base sm:text-lg uppercase">
+                DENCKER COFFEE
+              </span>
+              <span className="text-xs font-sans tracking-wide text-amber-200 hidden sm:inline">
+                Pizzas al Horno de Piedra &bull; Salsa Pomodoro Casera
+              </span>
+              <span className="font-serif font-bold text-xs px-3 py-1 rounded-full bg-white/20 text-white shadow-xs">
+                Pág. 06
+              </span>
+            </div>
           </div>
 
-          </div> {/* Cierre del grid doble página */}
+          </div> {/* Cierre del contenedor de páginas verticales */}
 
         </main>
       )}
