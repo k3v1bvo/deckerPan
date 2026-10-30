@@ -232,150 +232,185 @@ export default function MenuPdfPage() {
   }, [mesas, mesaFiltroCarpas]);
 
   return (
-    <div className="min-h-screen bg-[#F7F2EB] text-[#1E130C] font-sans print:bg-white print:p-0 selection:bg-[#EAE0D3]">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] font-sans print:bg-white print:p-0 selection:bg-[#EAE0D3] relative">
+      {/* Textura sutil y cálida de panadería (idéntica al landing page) */}
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#1E130C_1px,transparent_1px)] [background-size:16px_16px] print:hidden" />
       
-      {/* ─── BARRA SUPERIOR DE CONTROL (NO SE IMPRIME) ─── */}
-      <header className="sticky top-0 z-50 bg-[#1E130C] border-b border-amber-900/30 text-white print:hidden">
-        <div className="px-4 py-2">
-          <div className="max-w-[1720px] mx-auto flex items-center gap-2">
+      {/* ── SUB-BARRA DE CONTROL EDITORIAL (DEBAJO DE ROLENAV) ── */}
+      <section className="w-full bg-[#1E130C] border-b border-amber-900/30 text-white py-3 px-4 sm:px-6 lg:px-8 print:hidden shadow-md">
+        <div className="w-full max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+          
+          {/* Identidad de la Carta */}
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <div className="leading-tight">
+              <div className="flex items-center gap-2">
+                <span className="font-serif text-sm font-bold text-white tracking-wide">
+                  Carta Oficial &amp; Menú Físico
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 hidden sm:inline">
+                  6 Páginas Reales
+                </span>
+              </div>
+              <span className="text-[10px] text-amber-200/70 font-sans block">
+                Café 4 Llamas de Especialidad &bull; Panadería Artesanal Cochabamba
+              </span>
+            </div>
+          </div>
 
-            {/* Logo + Volver */}
-            <div className="flex items-center gap-2 shrink-0">
+          {/* Selector de Modo */}
+          <div className="flex items-center gap-1 bg-black/50 p-1 rounded-xl border border-white/10 overflow-x-auto scrollbar-none">
+            <button
+              onClick={() => { soundManager.playTactileClick(); setModo("dinamico_vivo"); }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                modo === "dinamico_vivo"
+                  ? "bg-[#991B24] text-white shadow-xs"
+                  : "text-stone-300 hover:text-white"
+              }`}
+            >
+              <Sparkles size={13} className="text-amber-300 shrink-0" />
+              <span>Carta Editorial + Fotos</span>
+            </button>
+            <button
+              onClick={() => { soundManager.playTactileClick(); setModo("oficial_pdf"); }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                modo === "oficial_pdf"
+                  ? "bg-[#991B24] text-white shadow-xs"
+                  : "text-stone-300 hover:text-white"
+              }`}
+            >
+              <BookOpen size={13} className="shrink-0" />
+              <span>PDF Escaneado</span>
+            </button>
+            <button
+              onClick={() => { soundManager.playTactileClick(); setModo("carpas_qr"); }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap hidden md:flex ${
+                modo === "carpas_qr"
+                  ? "bg-[#991B24] text-white shadow-xs"
+                  : "text-stone-300 hover:text-white"
+              }`}
+            >
+              <QrCode size={13} className="shrink-0" />
+              <span>Carpas QR</span>
+            </button>
+          </div>
+
+          {/* Acciones de Exportación */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={handleImprimir}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer active:scale-95"
+              title="Imprimir en hojas A4 limpias"
+            >
+              <Printer size={14} className="text-amber-300 shrink-0" />
+              <span className="hidden sm:inline">Imprimir A4</span>
+            </button>
+
+            <a
+              href={DENCKER_ASSETS.menuPdfDownload}
+              download="MENU_DENCKER_OFICIAL.pdf"
+              onClick={() => soundManager.playPastryCrinkle()}
+              className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs active:scale-95 whitespace-nowrap"
+            >
+              <Download size={14} className="shrink-0" />
+              <span className="hidden sm:inline">Descargar PDF</span>
+              <span className="sm:hidden">PDF</span>
+            </a>
+
+            <button
+              onClick={handleCopiarLink}
+              className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+              title="Copiar enlace del menú"
+            >
+              {copiadoLink ? <CheckCircle2 size={15} className="text-emerald-400" /> : <Copy size={15} />}
+            </button>
+
+            {esAdmin && (
               <Link
-                href="/"
-                onClick={() => soundManager.playTactileClick()}
-                className="flex items-center gap-1 text-[11px] font-semibold text-amber-300/80 hover:text-amber-200 transition whitespace-nowrap"
+                href="/admin?tab=productos"
+                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+                title="Editar precios en el Administrador"
               >
-                <ArrowLeft size={13} />
-                <span className="hidden sm:inline">Inicio</span>
+                <Settings size={15} />
               </Link>
-              <div className="w-px h-4 bg-white/15 hidden sm:block" />
-              <div className="w-6 h-6 rounded-md bg-white/10 border border-amber-500/30 flex items-center justify-center shrink-0">
-                <img src={DENCKER_ASSETS.logoSvg} alt="Dencker Pan" className="w-full h-full object-contain" />
-              </div>
-              <span className="font-serif text-[13px] font-bold text-white hidden md:inline whitespace-nowrap">Menú Oficial</span>
-            </div>
-
-            {/* Selector de Modo */}
-            <div className="flex-1 flex items-center justify-center min-w-0 overflow-hidden">
-              <div className="flex items-center gap-0.5 bg-black/40 p-0.5 rounded-xl border border-white/10 overflow-x-auto scrollbar-none">
-                <button
-                  onClick={() => { soundManager.playTactileClick(); setModo("dinamico_vivo"); }}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${
-                    modo === "dinamico_vivo" ? "bg-[#991B24] text-white shadow-sm" : "text-stone-300 hover:text-white"
-                  }`}
-                >
-                  <Sparkles size={12} className="text-amber-300 shrink-0" />
-                  <span>Carta + Fotos</span>
-                </button>
-                <button
-                  onClick={() => { soundManager.playTactileClick(); setModo("oficial_pdf"); }}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${
-                    modo === "oficial_pdf" ? "bg-[#991B24] text-white shadow-sm" : "text-stone-300 hover:text-white"
-                  }`}
-                >
-                  <BookOpen size={12} className="shrink-0" />
-                  <span>PDF Escaneado</span>
-                </button>
-                <button
-                  onClick={() => { soundManager.playTactileClick(); setModo("carpas_qr"); }}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap hidden md:flex ${
-                    modo === "carpas_qr" ? "bg-[#991B24] text-white shadow-sm" : "text-stone-300 hover:text-white"
-                  }`}
-                >
-                  <QrCode size={12} className="shrink-0" />
-                  <span>Carpas QR</span>
-                </button>
-                {modo === "dinamico_vivo" && (
-                  <button
-                    onClick={() => { soundManager.playTactileClick(); setMostrarFotos((prev) => !prev); }}
-                    className={`px-2 py-1.5 rounded-lg text-[11px] font-semibold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${
-                      mostrarFotos ? "text-amber-300 hover:text-amber-200" : "text-stone-400 hover:text-white"
-                    }`}
-                    title="Mostrar/ocultar fotos"
-                  >
-                    <Eye size={12} className="shrink-0" />
-                    <span>{mostrarFotos ? "Fotos ON" : "Sin fotos"}</span>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Acciones derecha */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button
-                type="button"
-                onClick={() => { soundManager.playClick(); setCartOpen(true); }}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] border border-amber-400/40 text-white text-[11px] font-bold transition active:scale-95 cursor-pointer whitespace-nowrap"
-              >
-                <ShoppingBag size={13} className="text-amber-300 shrink-0" />
-                <span>Canasta</span>
-                {cartCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[10px] font-black">
-                    {cartCount} &middot; Bs {cartTotal.toFixed(0)}
-                  </span>
-                )}
-              </button>
-              <button
-                onClick={handleImprimir}
-                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
-                title="Imprimir"
-              >
-                <Printer size={14} />
-              </button>
-              <a
-                href={DENCKER_ASSETS.menuPdfDownload}
-                download="MENU_DENCKER_OFICIAL.pdf"
-                onClick={() => soundManager.playPastryCrinkle()}
-                className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-bold transition active:scale-95 whitespace-nowrap"
-              >
-                <Download size={13} />
-                <span>PDF</span>
-              </a>
-              <button
-                onClick={handleCopiarLink}
-                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
-                title="Copiar enlace"
-              >
-                {copiadoLink ? <CheckCircle2 size={14} className="text-emerald-400" /> : <Copy size={14} />}
-              </button>
-              {esAdmin && (
-                <Link
-                  href="/admin?tab=productos"
-                  className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
-                  title="Administrador"
-                >
-                  <Settings size={14} />
-                </Link>
-              )}
-            </div>
-
+            )}
           </div>
         </div>
-      </header>
+      </section>
 
-      {/* Banner en vivo */}
-      <div className="bg-[#7B1818]/90 text-amber-100 text-[10px] py-1 px-4 print:hidden">
-        <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 font-medium">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <span className="hidden sm:inline"><strong>Menú Oficial</strong> &middot; Dencker Coffee &amp; Panadería &middot; Precios sincronizados en tiempo real</span>
-            <span className="sm:hidden font-bold">Menú Oficial &middot; En Vivo</span>
+      {/* ── BARRA STICKY DE SECCIONES (IDÉNTICA A LA NAVEGACIÓN DEL LANDING) ── */}
+      <nav className="sticky top-16 z-30 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#EAE2D5] py-2.5 px-4 sm:px-6 lg:px-8 shadow-xs print:hidden">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+            <span className="text-[11px] font-bold text-[#785E4F] uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
+              Secciones:
+            </span>
+            <button
+              type="button"
+              onClick={() => document.getElementById("menu-pagina-1")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-3 py-1 rounded-full bg-white hover:bg-[#991B24] hover:text-white border border-[#EAE2D5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+            >
+              <span>🏠 Portada</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => document.getElementById("menu-pagina-2")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-3 py-1 rounded-full bg-white hover:bg-[#991B24] hover:text-white border border-[#EAE2D5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+            >
+              <span>☕ Cafés &amp; Desayunos</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => document.getElementById("menu-pagina-3")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-3 py-1 rounded-full bg-white hover:bg-[#991B24] hover:text-white border border-[#EAE2D5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+            >
+              <span>🧃 Tés &amp; Refrescos</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => document.getElementById("menu-pagina-4")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-3 py-1 rounded-full bg-white hover:bg-[#991B24] hover:text-white border border-[#EAE2D5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+            >
+              <span>🥐 Pastelería</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => document.getElementById("menu-pagina-5")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-3 py-1 rounded-full bg-white hover:bg-[#991B24] hover:text-white border border-[#EAE2D5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+            >
+              <span>🥪 Sándwiches</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => document.getElementById("menu-pagina-6")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-3 py-1 rounded-full bg-white hover:bg-[#991B24] hover:text-white border border-[#EAE2D5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+            >
+              <span>🍕 Pizzas</span>
+            </button>
           </div>
-          <Link
-            href="/admin?tab=productos"
-            className="text-[10px] font-bold text-amber-300 hover:text-white transition whitespace-nowrap"
-          >
-            Editar en Admin ↗
-          </Link>
+
+          {modo === "dinamico_vivo" && (
+            <button
+              onClick={() => { soundManager.playTactileClick(); setMostrarFotos((prev) => !prev); }}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shrink-0 border ${
+                mostrarFotos
+                  ? "bg-amber-500/15 text-amber-900 border-amber-500/30"
+                  : "bg-white text-stone-500 border-stone-300"
+              }`}
+              title="Mostrar u ocultar fotos gastronómicas"
+            >
+              <Eye size={13} />
+              <span>{mostrarFotos ? "Fotos ON" : "Fotos OFF"}</span>
+            </button>
+          )}
         </div>
-      </div>
+      </nav>
 
       {/* ══════════════════════════════════════════════════════════════
           MODO 1: VISUALIZADOR OFICIAL DEL PDF (6 PÁGINAS ESCANEADAS)
       ══════════════════════════════════════════════════════════════ */}
       {modo === "oficial_pdf" && (
-        <main className="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-6">
+        <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
           
           {/* Barra de Control de Visualización (Tira Continua vs Página por Página) */}
           <div className="p-4 rounded-3xl bg-white border border-[#E5DACD] shadow-sm flex flex-wrap items-center justify-between gap-4">
@@ -467,7 +502,7 @@ export default function MenuPdfPage() {
 
           {/* SUB-VISTA A: TIRA CONTINUA DE LAS 6 PÁGINAS ESCANEADAS */}
           {subVistaPdf === "tira_continua" && (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 max-w-[1720px] mx-auto py-2 print:block print:space-y-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-2 print:block print:space-y-0">
               {MENU_PDF_PAGES.map((p) => (
                 <div
                   key={p.page}
@@ -566,70 +601,12 @@ export default function MenuPdfPage() {
           MODO 2: MENÚ DINÁMICO EN VIVO (ESTILO EXACTO AL PDF + LIVE PRECIOS)
       ══════════════════════════════════════════════════════════════ */}
       {modo === "dinamico_vivo" && (
-        <main className="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-6">
+        <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
 
-          {/* ── BARRA DE NAVEGACIÓN RÁPIDA DE SECCIONES (STICKY DESKTOP) ── */}
-          <nav className="sticky top-[52px] z-30 bg-[#FAF6EF]/95 backdrop-blur-md border border-[#E7DFD5] rounded-2xl p-2.5 shadow-sm hidden md:flex items-center justify-between gap-2 print:hidden">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
-              <span className="text-[11px] font-bold text-[#785E4F] uppercase tracking-wider px-2 shrink-0">
-                Secciones:
-              </span>
-              <button
-                type="button"
-                onClick={() => document.getElementById("menu-pagina-1")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
-              >
-                <span>🏠 Portada</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => document.getElementById("menu-pagina-2")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
-              >
-                <span>☕ Cafés & Desayunos</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => document.getElementById("menu-pagina-3")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
-              >
-                <span>🧃 Tés & Refrescos</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => document.getElementById("menu-pagina-4")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
-              >
-                <span>🥐 Pastelería & Masitas</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => document.getElementById("menu-pagina-5")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
-              >
-                <span>🥪 Sándwiches Gourmet</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => document.getElementById("menu-pagina-6")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
-              >
-                <span>🍕 Pizzas Artesanales</span>
-              </button>
-            </div>
 
-            <div className="flex items-center gap-2 shrink-0 pr-1">
-              <span className="text-[11px] text-[#785E4F] font-semibold hidden xl:inline">
-                📖 Vista Editorial Doble Página
-              </span>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-950 border border-amber-400/40">
-                6 Páginas Oficiales
-              </span>
-            </div>
-          </nav>
 
           {/* ── GRID DOBLE PÁGINA (EDITORIAL BISTRO EN PANTALLAS ANCHAS) ── */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start print:block print:space-y-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start print:block print:space-y-0">
           
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
           <div id="menu-pagina-1" className="bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col items-center justify-between min-h-[920px] p-6 sm:p-10 text-center print-page">

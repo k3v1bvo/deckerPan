@@ -29,20 +29,20 @@ export default function RoleNav() {
 
   // ─────────────────────────────────────────────────────────────
   // REGLA DE PRODUCCIÓN:
-  // RoleNav SOLO se muestra en la página web pública principal ("/").
-  // En las pantallas de comensal sentado en mesa (/mesa/[numero]),
-  // en el documento imprimible (/menu-pdf) y en los terminales de
-  // personal (/admin, /caja, /mesero, /kds), RoleNav devuelve null
-  // para evitar fugas de navegación o barras redundantes.
+  // RoleNav se muestra en la página web pública principal ("/")
+  // y en la Carta Oficial digital ("/menu-pdf").
+  // En las pantallas de comensal sentado en mesa (/mesa/[numero])
+  // y en los terminales de personal (/admin, /caja, /mesero, /kds),
+  // RoleNav devuelve null para evitar fugas de navegación.
   // ─────────────────────────────────────────────────────────────
-  if (pathname !== "/") {
+  if (pathname !== "/" && pathname !== "/menu-pdf") {
     return null;
   }
 
   return (
     <>
       {/* ── NAVBAR ── */}
-      <header className="sticky top-0 z-40 bg-[#160D08] backdrop-blur-2xl border-b border-amber-500/20 text-white shadow-xl">
+      <header className="sticky top-0 z-40 bg-[#160D08] backdrop-blur-2xl border-b border-amber-500/20 text-white shadow-xl print:hidden">
         <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-3">
 
           {/* ── LOGO ── */}
@@ -76,21 +76,21 @@ export default function RoleNav() {
           {/* ── NAV LINKS (Desktop ≥ lg) ── */}
           <nav className="hidden lg:flex items-center gap-0.5 text-[13px] font-semibold text-stone-200">
             <a
-              href="#catalogo"
+              href="/#catalogo"
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"
             >
               <Coffee size={15} className="text-amber-400 shrink-0" />
               Catálogo & Precios
             </a>
             <a
-              href="#catering"
+              href="/#catering"
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"
             >
               <Calendar size={15} className="text-amber-400 shrink-0" />
               Catering & Eventos
             </a>
             <a
-              href="#contacto"
+              href="/#contacto"
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"
             >
               <MapPin size={15} className="text-amber-400 shrink-0" />
@@ -98,7 +98,11 @@ export default function RoleNav() {
             </a>
             <Link
               href="/menu-pdf"
-              className="ml-1 flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#991B24] hover:bg-[#b91c1c] text-white font-bold text-[12px] border border-amber-400/40 shadow transition-all active:scale-95 whitespace-nowrap"
+              className={`ml-1 flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-[12px] border shadow transition-all active:scale-95 whitespace-nowrap ${
+                pathname === "/menu-pdf"
+                  ? "bg-[#991B24] text-white border-amber-400 ring-2 ring-amber-400/50"
+                  : "bg-[#991B24] hover:bg-[#b91c1c] text-white border-amber-400/40"
+              }`}
             >
               <FileText size={14} className="text-amber-300 shrink-0" />
               Carta Oficial PDF
