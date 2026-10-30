@@ -625,7 +625,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1.5 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/brand/dencker-chef-hat-logo.svg"
+                src="/img/brand/logo-3-don-dencker-badge.png"
                 alt="Dencker Pan"
                 className="w-full h-full object-contain drop-shadow"
               />
@@ -1855,7 +1855,7 @@ export default function AdminPage() {
                       {/* Logo Oficial Vectorizado */}
                       <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
                         <img
-                          src="/img/brand/dencker-chef-hat-logo.svg"
+                          src="/img/brand/logo-3-don-dencker-badge.png"
                           alt="Dencker Pan"
                           className="h-12 w-auto object-contain mx-auto mb-1"
                         />

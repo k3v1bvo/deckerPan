@@ -748,7 +748,7 @@ export const useSystemStore = create<SystemStore>()(
           usuariosStaff: SEED_USUARIOS_STAFF,
           pagos: SEED_PAGOS,
           historialSesiones: SEED_HISTORIAL_SESIONES,
-          qrBancarioUrl: "/img/brand/dencker-chef-hat-logo.png",
+          qrBancarioUrl: "/img/brand/logo-3-don-dencker-badge.png",
           qrBancarioTitular: "Dencker Pan S.R.L.",
           qrBancarioBanco: "Banco Nacional de Bolivia (BNB) / BCP Simple",
           facturacionSiatConfig: {
@@ -771,7 +771,7 @@ export const useSystemStore = create<SystemStore>()(
         }),
     }),
     {
-      name: 'dencker-pan-system-v6-coffee-update',
+      name: 'dencker-pan-system-v8-brand-navbar-update',
     }
   )
 );

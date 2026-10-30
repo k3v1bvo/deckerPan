@@ -293,26 +293,14 @@ export default function HomePage() {
   // Helper para obtener imagen de corte / textura interior de cada delicia
   const getImagenInterior = (prod: Producto): string => {
     if (prod.imagen_interior_url) return prod.imagen_interior_url;
-    const n = prod.nombre.toLowerCase();
-    if (n.includes("pistacho")) return "/images/products/ny_roll_pistacho_cut.jpg";
-    if (n.includes("croissant")) return "/images/products/croissant_french_cut.jpg";
-    if (n.includes("cuñap") || n.includes("cunap") || n.includes("abizcochado")) return "/images/products/cunape_abizcochado_cut.jpg";
-    if (n.includes("alfajor")) return "/images/products/alfajor_boliviano_cut.jpg";
-    if (n.includes("tartaleta")) return "/img/products/tartaleta_chocolate_corte.jpg";
-    if (n.includes("queque") || n.includes("japon") || n.includes("souffl")) return "/img/products/queque_japones_corte.jpg";
-    if (n.includes("baguette") || n.includes("pan") || n.includes("marraqueta")) {
-      return "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=1000&q=85";
-    }
-    if (n.includes("café") || n.includes("cappuccino") || n.includes("espresso") || n.includes("latte")) {
-      return "/img/products/cafe_4llamas_pack_gourmet.jpg";
-    }
-    if (n.includes("pizza") || n.includes("esfiha") || n.includes("empanada")) {
-      return "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1000&q=85";
-    }
-    if (n.includes("queque") || n.includes("bizcocho") || n.includes("torta") || n.includes("milhojas")) {
-      return "https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=1000&q=85";
-    }
-    return prod.imagen_url || "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80";
+    if (prod.id === "prod_tartaleta_chocolate") return "/img/products/tartaleta_chocolate_corte.jpg";
+    if (prod.id === "prod_queque_japones") return "/img/products/queque_japones_corte.jpg";
+    if (prod.id === "prod_expresso") return "/img/products/cafe_4llamas_pack_gourmet.jpg";
+    if (prod.id === "prod_cunape") return "/img/products/cunape_tradicional_real.jpg";
+    if (prod.id === "prod_galletas_chips") return "/img/products/galletas_chips_real.jpg";
+    if (prod.id === "prod_mini_cake") return "/img/products/mini_cake_corona_real.jpg";
+    if (prod.id === "prod_empanada_queso") return "/img/products/empanada_queso_real.jpg";
+    return prod.imagen_url || "/img/products/1711660195.jpg";
   };
 
   const getVistaActual = (prodId: string): "exterior" | "corte" => {
@@ -1569,7 +1557,7 @@ export default function HomePage() {
                               alt={`${prod.nombre} corte interior`}
                               loading="lazy"
                               className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 pointer-events-none ${
-                                vistaActual === "corte" ? "opacity-100 scale-100" : "opacity-0 group-hover:opacity-100 group-hover:scale-105"
+                                vistaActual === "corte" ? "opacity-100 scale-100" : "opacity-0 pointer-events-none"
                               }`}
                             />
 
@@ -1590,16 +1578,18 @@ export default function HomePage() {
                                 )}
                               </div>
 
-                              {/* Botón para alternar entre Vista Exterior y Corte Interior */}
-                              <button
-                                type="button"
-                                onClick={(e) => toggleVistaProducto(prod.id, e)}
-                                className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/65 text-white hover:bg-black/85 border-white/20 shadow-md"
-                                title="Alternar entre Vista Exterior y Corte Interior"
-                              >
-                                <Eye size={11} className={vistaActual === "corte" ? "text-[#E6AE68]" : "text-[#D97706]"} />
-                                <span>{vistaActual === "corte" ? "Corte Interior" : "Exterior"}</span>
-                              </button>
+                              {/* Botón para alternar entre Vista Exterior y Corte Interior (Solo si existe vista interior auténtica) */}
+                              {imgInterior !== imgExterior && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => toggleVistaProducto(prod.id, e)}
+                                  className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/75 text-white hover:bg-black/90 border-amber-400/40 shadow-md"
+                                  title="Alternar entre Vista Exterior y Corte Interior"
+                                >
+                                  <Eye size={11} className={vistaActual === "corte" ? "text-amber-300" : "text-amber-400"} />
+                                  <span>{vistaActual === "corte" ? "Corte / Artesanal" : "Ver Corte"}</span>
+                                </button>
+                              )}
                             </div>
 
                             {/* Contenido en relative z-10 */}
@@ -1816,7 +1806,7 @@ export default function HomePage() {
                         alt={`${prod.nombre} corte interior`}
                         loading="lazy"
                         className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 pointer-events-none ${
-                          vistaActual === "corte" ? "opacity-100 scale-100" : "opacity-0 group-hover:opacity-100 group-hover:scale-105"
+                          vistaActual === "corte" ? "opacity-100 scale-100" : "opacity-0 pointer-events-none"
                         }`}
                       />
 
@@ -1832,16 +1822,18 @@ export default function HomePage() {
                           )}
                         </div>
 
-                        {/* Botón para alternar entre Vista Exterior y Corte Interior */}
-                        <button
-                          type="button"
-                          onClick={(e) => toggleVistaProducto(prod.id, e)}
-                          className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/65 text-white hover:bg-black/85 border-white/20 shadow-md"
-                          title="Alternar entre Vista Exterior y Corte Interior"
-                        >
-                          <Eye size={11} className={vistaActual === "corte" ? "text-[#E6AE68]" : "text-[#D97706]"} />
-                          <span>{vistaActual === "corte" ? "Corte Interior" : "Exterior"}</span>
-                        </button>
+                        {/* Botón para alternar entre Vista Exterior y Corte Interior (Solo si existe vista interior auténtica) */}
+                        {imgInterior !== imgExterior && (
+                          <button
+                            type="button"
+                            onClick={(e) => toggleVistaProducto(prod.id, e)}
+                            className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md border flex items-center gap-1.5 transition-all cursor-pointer select-none bg-black/75 text-white hover:bg-black/90 border-amber-400/40 shadow-md"
+                            title="Alternar entre Vista Exterior y Corte Interior"
+                          >
+                            <Eye size={11} className={vistaActual === "corte" ? "text-amber-300" : "text-amber-400"} />
+                            <span>{vistaActual === "corte" ? "Corte / Artesanal" : "Ver Corte"}</span>
+                          </button>
+                        )}
                       </div>
 
                       {/* Contenido en relative z-10 */}

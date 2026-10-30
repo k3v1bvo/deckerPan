@@ -1206,43 +1206,47 @@ export default function MenuPdfPage() {
                   <div className="grid grid-cols-2 gap-2.5 pb-1">
                     <div
                       onClick={() => setFotoModal({
-                        url: "/img/products/medialuna_hojaldrada.jpg",
-                        titulo: "Media Luna Hojaldrada",
-                        desc: "Masa hojaldrada tradicional en forma de croissant con 100% mantequilla noble y almíbar aromático.",
-                        precio: 10.5
+                        url: "/img/products/galletas_chips_chocolate.jpg",
+                        originalUrl: "/img/products/galletas_chips_chocolate.jpg",
+                        corteUrl: "/img/products/galletas_chips_real.jpg",
+                        titulo: "Galletas con Chips de Chocolate",
+                        desc: "Galleta horneada artesanal con trozos de chocolate oscuro derretido y centro suave.",
+                        precio: 9.5
                       })}
                       className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
                     >
                       <img
-                        src="/img/products/medialuna_hojaldrada.jpg"
-                        alt="Medialuna Hojaldrada"
+                        src="/img/products/galletas_chips_chocolate.jpg"
+                        alt="Galletas con Chips"
                         className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                       />
                       <div className="min-w-0">
-                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Media Luna</span>
-                        <span className="text-[10px] text-[#785E4F] block">100% Mantequilla</span>
-                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 10.5</span>
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Cookies Choco</span>
+                        <span className="text-[10px] text-[#785E4F] block">Chips belgas</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 9.5</span>
                       </div>
                     </div>
 
                     <div
                       onClick={() => setFotoModal({
-                        url: "/img/products/1711824502.jpg",
-                        titulo: "New York Roll Artesanal",
-                        desc: "Masa hojaldrada circular rellena y bañada en pistacho o chocolate.",
-                        precio: 21
+                        url: "/img/products/mini_cake_corona_glaseado.jpg",
+                        originalUrl: "/img/products/mini_cake_corona_glaseado.jpg",
+                        corteUrl: "/img/products/mini_cake_corona_real.jpg",
+                        titulo: "Mini Cake Corona Glaseado",
+                        desc: "Queque corona artesanal esponjoso con chispas y glaseado royal de limón y vainilla.",
+                        precio: 17
                       })}
                       className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
                     >
                       <img
-                        src="/img/products/1711824502.jpg"
-                        alt="New York Roll"
+                        src="/img/products/mini_cake_corona_glaseado.jpg"
+                        alt="Mini Cake Corona"
                         className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                       />
                       <div className="min-w-0">
-                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">New York Roll</span>
-                        <span className="text-[10px] text-[#785E4F] block">Pistacho/Choco</span>
-                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 21</span>
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Corona Glaseada</span>
+                        <span className="text-[10px] text-[#785E4F] block">Glaseado limón</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 17</span>
                       </div>
                     </div>
                   </div>
@@ -1401,42 +1405,46 @@ export default function MenuPdfPage() {
                     <div className="grid grid-cols-2 gap-2.5 pb-1">
                       <div
                         onClick={() => setFotoModal({
-                          url: "/img/products/1712588982.jpg",
+                          url: "/img/products/cunape_caliente_tradicional.jpg",
+                          originalUrl: "/img/products/cunape_caliente_tradicional.jpg",
+                          corteUrl: "/img/products/cunape_tradicional_real.jpg",
                           titulo: "Cuñapé Caliente Tradicional",
-                          desc: "Almidón de yuca y queso criollo fundido recién horneado.",
+                          desc: "Almidón de yuca y queso criollo fundido recién horneado, crocante por fuera y elástico por dentro.",
                           precio: 8.5
                         })}
                         className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
                       >
                         <img
-                          src="/img/products/1712588982.jpg"
+                          src="/img/products/cunape_caliente_tradicional.jpg"
                           alt="Cuñapé Caliente"
                           className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                         />
                         <div className="min-w-0">
                           <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Cuñapé Caliente</span>
-                          <span className="text-[10px] text-[#785E4F] block">Recién horneado</span>
+                          <span className="text-[10px] text-[#785E4F] block">Queso criollo</span>
                           <span className="font-serif font-bold text-xs text-[#991B24]">Bs 8.5</span>
                         </div>
                       </div>
 
                       <div
                         onClick={() => setFotoModal({
-                          url: "/img/products/1712588932.jpg",
-                          titulo: "Empanada de Queso",
-                          desc: "Empanada dorada crocante rellena de abundante queso derretido.",
+                          url: "/img/products/empanada_queso_boliviana.jpg",
+                          originalUrl: "/img/products/empanada_queso_boliviana.jpg",
+                          corteUrl: "/img/products/empanada_queso_real.jpg",
+                          titulo: "Empanada de Queso Tradicional",
+                          desc: "Empanada artesanal dorada con repulgue trenzado y abundante queso derretido.",
                           precio: 8.5
                         })}
                         className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
                       >
                         <img
-                          src="/img/products/1712588932.jpg"
+                          src="/img/products/empanada_queso_boliviana.jpg"
                           alt="Empanada de Queso"
                           className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                         />
                         <div className="min-w-0">
                           <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Empanada Queso</span>
-                          <span className="text-[10px] text-[#785E4F] block">Crocante & dorada</span>
+                          <span className="text-[10px] text-[#785E4F] block">Repulgue casero</span>
                           <span className="font-serif font-bold text-xs text-[#991B24]">Bs 8.5</span>
                         </div>
                       </div>

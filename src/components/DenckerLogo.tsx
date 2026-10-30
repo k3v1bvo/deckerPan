@@ -37,21 +37,21 @@ interface DenckerLogoProps {
  */
 export default function DenckerLogo({
   className = "w-12 h-12",
-  variant = "chef-hat",
+  variant = "logo-3-badge",
   monochrome = false,
   alt = "Dencker Pan Logo",
 }: DenckerLogoProps) {
   const getAssetSrc = () => {
     switch (variant) {
-      case "logo-1-chef-hat":
-      case "chef-hat":
-        return "/img/brand/logo-1-chef-hat.svg";
-      case "logo-2-vintage-ticket":
-      case "vintage-badge":
-        return "/img/brand/logo-2-dencker-coffee-vintage.png";
       case "logo-3-badge":
       case "badge-clean":
         return "/img/brand/logo-3-don-dencker-badge.png";
+      case "logo-2-vintage-ticket":
+      case "vintage-badge":
+        return "/img/brand/logo-2-dencker-coffee-vintage.png";
+      case "logo-1-chef-hat":
+      case "chef-hat":
+        return "/img/brand/logo-1-chef-hat.svg";
       case "mascot":
         return "/img/brand/don-dencker-mascot-clean.png";
       case "mascot-coffee":
@@ -67,7 +67,7 @@ export default function DenckerLogo({
       case "cafe-catuai":
         return "/img/brand/cafe-catuai-badge.png";
       default:
-        return "/img/brand/logo-1-chef-hat.svg";
+        return "/img/brand/logo-3-don-dencker-badge.png";
     }
   };
 
