@@ -238,7 +238,7 @@ export default function MenuPdfPage() {
       
       {/* ── SUB-BARRA DE CONTROL EDITORIAL (DEBAJO DE ROLENAV) ── */}
       <section className="w-full bg-[#1E130C] border-b border-amber-900/30 text-white py-3 px-4 sm:px-6 lg:px-8 print:hidden shadow-md">
-        <div className="w-full max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+        <div className="w-full max-w-[1560px] mx-auto flex flex-wrap items-center justify-between gap-3">
           
           {/* Identidad de la Carta */}
           <div className="flex items-center gap-2.5">
@@ -340,7 +340,7 @@ export default function MenuPdfPage() {
 
       {/* ── BARRA STICKY DE SECCIONES (IDÉNTICA A LA NAVEGACIÓN DEL LANDING) ── */}
       <nav className="sticky top-16 z-30 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#EAE2D5] py-2.5 px-4 sm:px-6 lg:px-8 shadow-xs print:hidden">
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div className="w-full max-w-[1560px] mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
             <span className="text-[11px] font-bold text-[#785E4F] uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
               Secciones:
@@ -410,7 +410,7 @@ export default function MenuPdfPage() {
           MODO 1: VISUALIZADOR OFICIAL DEL PDF (6 PÁGINAS ESCANEADAS)
       ══════════════════════════════════════════════════════════════ */}
       {modo === "oficial_pdf" && (
-        <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
+        <main className="w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 space-y-8 relative z-10">
           
           {/* Barra de Control de Visualización (Tira Continua vs Página por Página) */}
           <div className="p-4 rounded-3xl bg-white border border-[#E5DACD] shadow-sm flex flex-wrap items-center justify-between gap-4">
@@ -502,7 +502,7 @@ export default function MenuPdfPage() {
 
           {/* SUB-VISTA A: TIRA CONTINUA DE LAS 6 PÁGINAS ESCANEADAS */}
           {subVistaPdf === "tira_continua" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-2 print:block print:space-y-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1560px] mx-auto py-2 print:block print:space-y-0">
               {MENU_PDF_PAGES.map((p) => (
                 <div
                   key={p.page}
@@ -573,7 +573,7 @@ export default function MenuPdfPage() {
 
               <div className="flex justify-center overflow-auto py-2">
                 <div
-                  style={{ width: `${zoomLevel}%`, maxWidth: "900px" }}
+                  style={{ width: `${zoomLevel}%`, maxWidth: "1150px" }}
                   className="bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden transition-all duration-200 relative group"
                 >
                   <img
@@ -601,12 +601,12 @@ export default function MenuPdfPage() {
           MODO 2: MENÚ DINÁMICO EN VIVO (ESTILO EXACTO AL PDF + LIVE PRECIOS)
       ══════════════════════════════════════════════════════════════ */}
       {modo === "dinamico_vivo" && (
-        <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
+        <main className="w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 space-y-8 relative z-10">
 
 
 
           {/* ── GRID DOBLE PÁGINA (EDITORIAL BISTRO EN PANTALLAS ANCHAS) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start print:block print:space-y-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-10 items-start print:block print:space-y-0">
           
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
           <div id="menu-pagina-1" className="bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col items-center justify-between min-h-[920px] p-6 sm:p-10 text-center print-page">
@@ -752,20 +752,23 @@ export default function MenuPdfPage() {
             
             {/* Header Oficial: Mascota Café Barista & Sello Catuaí Caranavi */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
-              <div className="flex items-center gap-3.5">
-                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
                     src="/img/brand/mascot-coffee.png"
                     alt="Mascota Café Barista Dencker"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div>
-                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-[#991B24] uppercase block">
+                    Cochabamba &bull; 4 Llamas Specialty Coffee
+                  </span>
+                  <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase text-[#991B24] tracking-tight">
                     DESAYUNOS & CAFÉS
                   </h2>
-                  <p className="text-xs text-[#785E4F]">
-                    Granos de altura Caranavi "Café 4 Llamas" (1,700 msnm) & horneados frescos
+                  <p className="text-xs sm:text-sm text-[#785E4F]">
+                    Granos de altura Caranavi "Café 4 Llamas" (1,700 msnm) &amp; horneados frescos
                   </p>
                 </div>
               </div>
@@ -796,43 +799,45 @@ export default function MenuPdfPage() {
                   <div className="grid grid-cols-2 gap-2.5 pb-1">
                     <div
                       onClick={() => setFotoModal({
-                        url: "/img/products/1711660195.jpg",
-                        titulo: "Rise & Shine",
-                        desc: "Huevos revueltos, tostadas, tomate, queso criollo, granola con yogurt, café o té.",
-                        precio: 45
+                        url: "/img/products/medialuna_hojaldrada.jpg",
+                        originalUrl: "/img/products/medialuna_hojaldrada.jpg",
+                        titulo: "Medialuna Hojaldrada de Desayuno",
+                        desc: "Clásica medialuna artesanal de masa hojaldrada con 100% mantequilla pura, dorada y brillante para acompañar tu café matutino.",
+                        precio: 10.5
                       })}
-                      className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      className="bg-white/90 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2.5 cursor-pointer hover:border-[#991B24]/40 transition group shadow-2xs"
                     >
                       <img
-                        src="/img/products/1711660195.jpg"
-                        alt="Rise & Shine"
+                        src="/img/products/medialuna_hojaldrada.jpg"
+                        alt="Medialuna Hojaldrada"
                         className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                       />
                       <div className="min-w-0">
-                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Rise & Shine</span>
-                        <span className="text-[10px] text-[#785E4F] block">Completo</span>
-                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 45</span>
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Medialuna Noble</span>
+                        <span className="text-[10px] text-[#785E4F] block">100% Mantequilla</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 10.5</span>
                       </div>
                     </div>
 
                     <div
                       onClick={() => setFotoModal({
-                        url: "/img/products/1711663068.jpg",
-                        titulo: "Huevos Benedictinos",
-                        desc: "Huevos escalfados con espinacas, jamón y salsa de queso sobre pan molde tostado.",
-                        precio: 40
+                        url: "/img/products/croissant_queso_real.jpg",
+                        originalUrl: "/img/products/croissant_queso_real.jpg",
+                        titulo: "Croissant de Queso Caliente",
+                        desc: "Hojaldre francés crujiente con abundante queso fundido al calor del horno, perfecto para el desayuno.",
+                        precio: 10
                       })}
-                      className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      className="bg-white/90 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2.5 cursor-pointer hover:border-[#991B24]/40 transition group shadow-2xs"
                     >
                       <img
-                        src="/img/products/1711663068.jpg"
-                        alt="Benedictinos"
+                        src="/img/products/croissant_queso_real.jpg"
+                        alt="Croissant de Queso"
                         className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                       />
                       <div className="min-w-0">
-                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Benedictinos</span>
-                        <span className="text-[10px] text-[#785E4F] block">Salsa de queso</span>
-                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 40</span>
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Croissant Queso</span>
+                        <span className="text-[10px] text-[#785E4F] block">Recién horneado</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 10</span>
                       </div>
                     </div>
                   </div>
@@ -908,22 +913,23 @@ export default function MenuPdfPage() {
 
                       <div
                         onClick={() => setFotoModal({
-                          url: "/img/products/1711663751.jpg",
-                          titulo: "Cappuccino Tradicional",
-                          desc: "Expresso de especialidad, leche texturizada sedosa y canela de Ceilán.",
-                          precio: 22
+                          url: "/img/products/cafe_4llamas_pack_gourmet.jpg",
+                          originalUrl: "/img/products/cafe_4llamas_pack_gourmet.jpg",
+                          titulo: "Café 4 Llamas Pack Gourmet Caranavi",
+                          desc: "Paquete oficial de café de especialidad en grano entero o molido (1,700 msnm), perfil achocolatado con notas cítricas para disfrutar en casa.",
+                          precio: 65
                         })}
-                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                        className="bg-white/90 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2.5 cursor-pointer hover:border-[#991B24]/40 transition group shadow-2xs"
                       >
                         <img
-                          src="/img/products/1711663751.jpg"
-                          alt="Cappuccino"
+                          src="/img/products/cafe_4llamas_pack_gourmet.jpg"
+                          alt="Café 4 Llamas Pack"
                           className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                         />
                         <div className="min-w-0">
-                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Cappuccino</span>
-                          <span className="text-[10px] text-[#785E4F] block">Espuma sedosa</span>
-                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 22</span>
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Pack 4 Llamas</span>
+                          <span className="text-[10px] text-[#785E4F] block">Grano Gourmet</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 65</span>
                         </div>
                       </div>
                     </div>
@@ -979,19 +985,22 @@ export default function MenuPdfPage() {
             
             {/* Header Oficial: Mascota Don Dencker & Bebidas Artesanales */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
-              <div className="flex items-center gap-3.5">
-                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/don-dencker-mascot-clean.png"
+                    src={DENCKER_ASSETS.mascotClean}
                     alt="Don Dencker Mascota"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div>
-                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-[#991B24] uppercase block">
+                    Bebidas Frías, Tés en Hebras &amp; Barra
+                  </span>
+                  <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase text-[#991B24] tracking-tight">
                     CHOCOLATES, TÉS & BEBIDAS
                   </h2>
-                  <p className="text-xs text-[#785E4F]">
+                  <p className="text-xs sm:text-sm text-[#785E4F]">
                     Infusiones botánicas, chocolates espesos, helados artesanales y jugos de pura fruta
                   </p>
                 </div>
@@ -1016,47 +1025,17 @@ export default function MenuPdfPage() {
                   </h3>
 
                   {mostrarFotos && (
-                    <div className="grid grid-cols-2 gap-2.5 pb-1">
-                      <div
-                        onClick={() => setFotoModal({
-                          url: "/img/products/1711668187.jpg",
-                          titulo: "Chocolate con Marshmallow",
-                          desc: "Chocolate artesanal caliente, leche texturizada y marshmallow tostado.",
-                          precio: 25
-                        })}
-                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
-                      >
-                        <img
-                          src="/img/products/1711668187.jpg"
-                          alt="Chocolate con Marshmallow"
-                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
-                        />
-                        <div className="min-w-0">
-                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Choc. Marshmallow</span>
-                          <span className="text-[10px] text-[#785E4F] block">Tostado</span>
-                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 25</span>
-                        </div>
+                    <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-600/20 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#991B24] text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <Coffee size={20} className="text-amber-200" />
                       </div>
-
-                      <div
-                        onClick={() => setFotoModal({
-                          url: "/img/products/1711823470.jpg",
-                          titulo: "Jugo Frutilla y Naranja",
-                          desc: "Jugo natural recién exprimido combinado con frutillas frescas de Cochabamba.",
-                          precio: 22
-                        })}
-                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
-                      >
-                        <img
-                          src="/img/products/1711823470.jpg"
-                          alt="Jugo Frutilla y Naranja"
-                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
-                        />
-                        <div className="min-w-0">
-                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Frutilla Naranja</span>
-                          <span className="text-[10px] text-[#785E4F] block">100% Natural</span>
-                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 22</span>
-                        </div>
+                      <div className="min-w-0">
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block">
+                          Chocolates Calientes &amp; Tés en Hebras
+                        </span>
+                        <span className="text-[10.5px] text-[#785E4F] block leading-tight">
+                          Elaborados con cacao puro boliviano y hojas seleccionadas servidas en tetera bistro.
+                        </span>
                       </div>
                     </div>
                   )}
@@ -1130,47 +1109,17 @@ export default function MenuPdfPage() {
                   </h3>
 
                   {mostrarFotos && (
-                    <div className="grid grid-cols-2 gap-2.5 pb-1">
-                      <div
-                        onClick={() => setFotoModal({
-                          url: "/img/products/1711813236.jpg",
-                          titulo: "Frappé Oreo",
-                          desc: "Frappé cremoso licuado con galletas Oreo, leche entera y crema batida.",
-                          precio: 25
-                        })}
-                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
-                      >
-                        <img
-                          src="/img/products/1711813236.jpg"
-                          alt="Frappé Oreo"
-                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
-                        />
-                        <div className="min-w-0">
-                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Frappé Oreo</span>
-                          <span className="text-[10px] text-[#785E4F] block">Con crema batida</span>
-                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 25</span>
-                        </div>
+                    <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-600/20 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#991B24] text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <Sparkles size={20} className="text-amber-200" />
                       </div>
-
-                      <div
-                        onClick={() => setFotoModal({
-                          url: "/img/products/1711813593.jpg",
-                          titulo: "Copa Vienesa / Copa Melva",
-                          desc: "Helado artesanal en copa decorada con salsas finas y barquillos.",
-                          precio: 25
-                        })}
-                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
-                      >
-                        <img
-                          src="/img/products/1711813593.jpg"
-                          alt="Copa Melva"
-                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
-                        />
-                        <div className="min-w-0">
-                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Copa Melva</span>
-                          <span className="text-[10px] text-[#785E4F] block">Helado artesanal</span>
-                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 25</span>
-                        </div>
+                      <div className="min-w-0">
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block">
+                          Frappés Batidos &amp; Helados de la Casa
+                        </span>
+                        <span className="text-[10.5px] text-[#785E4F] block leading-tight">
+                          Licuados al momento con hielo frappé, espresso 4 Llamas y coronados con crema Chantilly.
+                        </span>
                       </div>
                     </div>
                   )}
@@ -1224,20 +1173,23 @@ export default function MenuPdfPage() {
             
             {/* Header Oficial: Mascota Croissant & Hojaldres de Mantequilla */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
-              <div className="flex items-center gap-3.5">
-                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
                     src="/img/brand/mascot-croissant.png"
                     alt="Croissant Mascota Dencker"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div>
-                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-[#991B24] uppercase block">
+                    Panadería Francesa &bull; 100% Pura Mantequilla
+                  </span>
+                  <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase text-[#991B24] tracking-tight">
                     DULCES, POSTRES & SALADAS
                   </h2>
-                  <p className="text-xs text-[#785E4F]">
-                    100% pura mantequilla, tortas de vitrina y masitas saladas tradicionales
+                  <p className="text-xs sm:text-sm text-[#785E4F]">
+                    100% pura mantequilla noble, tortas de vitrina y masitas saladas tradicionales
                   </p>
                 </div>
               </div>
@@ -1255,19 +1207,19 @@ export default function MenuPdfPage() {
               <div className="space-y-4">
                 
                 {/* Mascota Croissant Cool */}
-                <div className="flex items-center gap-4 bg-white/70 p-3 rounded-2xl border border-[#E7DFD5]">
-                  <div className="w-20 h-20 shrink-0">
+                <div className="flex items-center gap-4 bg-white/80 p-3.5 rounded-2xl border border-[#E7DFD5] shadow-2xs">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                     <img
                       src={DENCKER_ASSETS.mascotCroissant}
                       alt="Croissant con gafas Dencker"
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition duration-300"
                     />
                   </div>
                   <div>
-                    <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C]">
+                    <h3 className="font-serif font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#1E130C]">
                       DULCES
                     </h3>
-                    <p className="text-[11px] text-[#785E4F]">Hojaldres 100% mantequilla noble y masas finas horneadas</p>
+                    <p className="text-xs text-[#785E4F]">Hojaldres 100% mantequilla noble y masas finas horneadas a mano</p>
                   </div>
                 </div>
 
@@ -1532,20 +1484,23 @@ export default function MenuPdfPage() {
             
             {/* Header Oficial: Mascota Pan Tostada & Masa Madre */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
-              <div className="flex items-center gap-3.5">
-                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
                     src="/img/brand/mascot-bread.png"
                     alt="Pan Tostada Mascota Dencker"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div>
-                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
-                    SANDWICHES & ENSALADAS
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-[#991B24] uppercase block">
+                    Masa Madre &bull; Fermentación Natural 24h
+                  </span>
+                  <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase text-[#991B24] tracking-tight">
+                    SANDWICHES &amp; ENSALADAS
                   </h2>
-                  <p className="text-xs text-[#785E4F]">
-                    Pan de masa madre con 24h de fermentación, vegetales frescos y guarniciones
+                  <p className="text-xs sm:text-sm text-[#785E4F]">
+                    Pan de masa madre horneado hoy, vegetales frescos, carnes selectas y guarniciones
                   </p>
                 </div>
               </div>
@@ -1704,43 +1659,45 @@ export default function MenuPdfPage() {
                     <div className="grid grid-cols-2 gap-2.5 pb-1">
                       <div
                         onClick={() => setFotoModal({
-                          url: "/img/products/1712680987.jpg",
-                          titulo: "Ensalada César con Pollo",
-                          desc: "Hojas tiernas de lechuga, crutons crujientes, pollo grillado y aderezo césar artesanal.",
-                          precio: 30
+                          url: "/img/products/sandwich_dencker_especial.jpg",
+                          originalUrl: "/img/products/sandwich_dencker_especial.jpg",
+                          titulo: "Sándwich Especial Dencker Gourmet",
+                          desc: "Exclusivo sándwich en pan artesanal de masa madre recién horneado, jamón seleccionado, queso fundido, vegetales frescos y aderezo especial de la casa.",
+                          precio: 35
                         })}
-                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                        className="bg-white/90 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2.5 cursor-pointer hover:border-[#991B24]/40 transition group shadow-2xs"
                       >
                         <img
-                          src="/img/products/1712680987.jpg"
-                          alt="Ensalada César"
+                          src="/img/products/sandwich_dencker_especial.jpg"
+                          alt="Sándwich Especial Dencker"
                           className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                         />
                         <div className="min-w-0">
-                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Ensalada César</span>
-                          <span className="text-[10px] text-[#785E4F] block">Pollo grillado</span>
-                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 30</span>
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Sándwich Dencker</span>
+                          <span className="text-[10px] text-[#785E4F] block">Masa Madre</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 35</span>
                         </div>
                       </div>
 
                       <div
                         onClick={() => setFotoModal({
-                          url: "/img/products/1712760039.jpg",
-                          titulo: "Porción de Papas Fritas",
-                          desc: "Papas fritas crujientes doradas al momento con sal marina.",
-                          precio: 15
+                          url: "/img/products/palitos_queso_real.jpg",
+                          originalUrl: "/img/products/palitos_queso_real.jpg",
+                          titulo: "Palitos de Queso Crujientes",
+                          desc: "Crujientes palitos horneados a mano con masa hojaldrada y queso parmesano gratinado, ideales para picar.",
+                          precio: 7.5
                         })}
-                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                        className="bg-white/90 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2.5 cursor-pointer hover:border-[#991B24]/40 transition group shadow-2xs"
                       >
                         <img
-                          src="/img/products/1712760039.jpg"
-                          alt="Papas Fritas"
+                          src="/img/products/palitos_queso_real.jpg"
+                          alt="Palitos de Queso"
                           className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
                         />
                         <div className="min-w-0">
-                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Papas Fritas</span>
-                          <span className="text-[10px] text-[#785E4F] block">Crocantes</span>
-                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 15</span>
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Palitos de Queso</span>
+                          <span className="text-[10px] text-[#785E4F] block">Hojaldre y queso</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 7.5</span>
                         </div>
                       </div>
                     </div>
@@ -1765,19 +1722,22 @@ export default function MenuPdfPage() {
             
             {/* Header Oficial: Mascota Pizza Skater & Horno de Piedra */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
-              <div className="flex items-center gap-3.5">
-                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
                     src="/img/brand/mascot-pizza.png"
                     alt="Pizza Mascota Dencker"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div>
-                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-[#991B24] uppercase block">
+                    Horno de Piedra &bull; Masa Madurada 24 Horas
+                  </span>
+                  <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase text-[#991B24] tracking-tight">
                     PIZZAS ARTESANALES
                   </h2>
-                  <p className="text-xs text-[#785E4F]">
+                  <p className="text-xs sm:text-sm text-[#785E4F]">
                     Masa madurada 24 horas, salsa pomodoro casera y queso Catupiri fundido
                   </p>
                 </div>
