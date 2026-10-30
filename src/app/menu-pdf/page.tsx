@@ -234,190 +234,139 @@ export default function MenuPdfPage() {
   return (
     <div className="min-h-screen bg-[#F7F2EB] text-[#1E130C] font-sans print:bg-white print:p-0 selection:bg-[#EAE0D3]">
       
-      {/* ── BARRA SUPERIOR DE CONTROL (NO SE IMPRIME) ── */}
-      <header className="sticky top-0 z-50 bg-[#1E130C]/95 backdrop-blur-md border-b border-amber-950/40 text-[#F5EBE1] px-4 py-3 shadow-lg print:hidden">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-          
-          {/* Logo & Marca */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              onClick={() => soundManager.playTactileClick()}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF6EF] transition flex items-center gap-1.5 text-xs font-semibold"
-              title="Volver a la portada principal"
-            >
-              <ArrowLeft size={16} />
-              <span className="hidden sm:inline">Inicio</span>
-            </Link>
+      {/* ─── BARRA SUPERIOR DE CONTROL (NO SE IMPRIME) ─── */}
+      <header className="sticky top-0 z-50 bg-[#1E130C] border-b border-amber-900/30 text-white print:hidden">
+        <div className="px-4 py-2">
+          <div className="max-w-7xl mx-auto flex items-center gap-2">
 
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center">
-                <img
-                  src={DENCKER_ASSETS.logoSvg}
-                  alt="Dencker Pan"
-                  className="w-full h-full object-contain drop-shadow"
-                />
+            {/* Logo + Volver */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/"
+                onClick={() => soundManager.playTactileClick()}
+                className="flex items-center gap-1 text-[11px] font-semibold text-amber-300/80 hover:text-amber-200 transition whitespace-nowrap"
+              >
+                <ArrowLeft size={13} />
+                <span className="hidden sm:inline">Inicio</span>
+              </Link>
+              <div className="w-px h-4 bg-white/15 hidden sm:block" />
+              <div className="w-6 h-6 rounded-md bg-white/10 border border-amber-500/30 flex items-center justify-center shrink-0">
+                <img src={DENCKER_ASSETS.logoSvg} alt="Dencker Pan" className="w-full h-full object-contain" />
               </div>
-              <div>
-                <h1 className="font-serif text-sm sm:text-base font-bold tracking-tight text-white flex items-center gap-2">
-                  Menú Oficial Dencker Coffee & Pan
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 hidden md:inline">
-                    En Vivo & Sincronizado
-                  </span>
-                </h1>
-                <p className="text-[11px] text-amber-200/80 hidden sm:block">
-                  Carta fiel a la edición impresa • Café 4 Llamas de Especialidad
-                </p>
+              <span className="font-serif text-[13px] font-bold text-white hidden md:inline whitespace-nowrap">Menú Oficial</span>
+            </div>
+
+            {/* Selector de Modo */}
+            <div className="flex-1 flex items-center justify-center min-w-0 overflow-hidden">
+              <div className="flex items-center gap-0.5 bg-black/40 p-0.5 rounded-xl border border-white/10 overflow-x-auto scrollbar-none">
+                <button
+                  onClick={() => { soundManager.playTactileClick(); setModo("dinamico_vivo"); }}
+                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${
+                    modo === "dinamico_vivo" ? "bg-[#991B24] text-white shadow-sm" : "text-stone-300 hover:text-white"
+                  }`}
+                >
+                  <Sparkles size={12} className="text-amber-300 shrink-0" />
+                  <span>Carta + Fotos</span>
+                </button>
+                <button
+                  onClick={() => { soundManager.playTactileClick(); setModo("oficial_pdf"); }}
+                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${
+                    modo === "oficial_pdf" ? "bg-[#991B24] text-white shadow-sm" : "text-stone-300 hover:text-white"
+                  }`}
+                >
+                  <BookOpen size={12} className="shrink-0" />
+                  <span>PDF Escaneado</span>
+                </button>
+                <button
+                  onClick={() => { soundManager.playTactileClick(); setModo("carpas_qr"); }}
+                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap hidden md:flex ${
+                    modo === "carpas_qr" ? "bg-[#991B24] text-white shadow-sm" : "text-stone-300 hover:text-white"
+                  }`}
+                >
+                  <QrCode size={12} className="shrink-0" />
+                  <span>Carpas QR</span>
+                </button>
+                {modo === "dinamico_vivo" && (
+                  <button
+                    onClick={() => { soundManager.playTactileClick(); setMostrarFotos((prev) => !prev); }}
+                    className={`px-2 py-1.5 rounded-lg text-[11px] font-semibold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${
+                      mostrarFotos ? "text-amber-300 hover:text-amber-200" : "text-stone-400 hover:text-white"
+                    }`}
+                    title="Mostrar/ocultar fotos"
+                  >
+                    <Eye size={12} className="shrink-0" />
+                    <span>{mostrarFotos ? "Fotos ON" : "Sin fotos"}</span>
+                  </button>
+                )}
               </div>
             </div>
-          </div>
 
-          {/* Selector de Modo */}
-          <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10">
-            <button
-              onClick={() => {
-                soundManager.playTactileClick();
-                setModo("dinamico_vivo");
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                modo === "dinamico_vivo"
-                  ? "bg-[#991B24] text-white shadow-sm"
-                  : "text-stone-300 hover:text-white"
-              }`}
-            >
-              <Sparkles size={13} className="text-amber-300" />
-              <span>Carta Editorial con Fotos (Imprimir PDF)</span>
-            </button>
-
-            <button
-              onClick={() => {
-                soundManager.playTactileClick();
-                setModo("oficial_pdf");
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                modo === "oficial_pdf"
-                  ? "bg-[#991B24] text-white shadow-sm"
-                  : "text-stone-300 hover:text-white"
-              }`}
-            >
-              <BookOpen size={13} className="text-amber-300" />
-              <span>PDF Escaneado (6 Páginas)</span>
-            </button>
-
-            <button
-              onClick={() => {
-                soundManager.playTactileClick();
-                setModo("carpas_qr");
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer hidden md:flex ${
-                modo === "carpas_qr"
-                  ? "bg-[#991B24] text-white shadow-sm"
-                  : "text-stone-300 hover:text-white"
-              }`}
-            >
-              <QrCode size={13} />
-              <span>Carpas de Mesa</span>
-            </button>
-
-            {modo === "dinamico_vivo" && (
+            {/* Acciones derecha */}
+            <div className="flex items-center gap-1.5 shrink-0">
               <button
-                onClick={() => {
-                  soundManager.playTactileClick();
-                  setMostrarFotos((prev) => !prev);
-                }}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer border ${
-                  mostrarFotos
-                    ? "bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30"
-                    : "bg-white/5 text-stone-400 border-white/10 hover:text-white"
-                }`}
-                title="Mostrar u ocultar fotos gastronómicas"
+                type="button"
+                onClick={() => { soundManager.playClick(); setCartOpen(true); }}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] border border-amber-400/40 text-white text-[11px] font-bold transition active:scale-95 cursor-pointer whitespace-nowrap"
               >
-                <Eye size={13} />
-                <span>{mostrarFotos ? "Fotos: Sí" : "Fotos: No (Ahorro Tinta)"}</span>
+                <ShoppingBag size={13} className="text-amber-300 shrink-0" />
+                <span>Canasta</span>
+                {cartCount > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[10px] font-black">
+                    {cartCount} &middot; Bs {cartTotal.toFixed(0)}
+                  </span>
+                )}
               </button>
-            )}
-          </div>
-
-          {/* Acciones: Imprimir, Descargar, Admin */}
-          <div className="flex items-center gap-2">
-            {/* Botón Canasta en Barra Superior */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playClick();
-                setCartOpen(true);
-              }}
-              className="relative px-3.5 py-1.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] border border-amber-400/50 text-white text-xs font-bold transition flex items-center gap-2 shadow-md active:scale-95 cursor-pointer print:hidden"
-            >
-              <ShoppingBag size={14} className="text-amber-300" />
-              <span>Canasta</span>
-              {cartCount > 0 ? (
-                <span className="px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[10px] font-black">
-                  {cartCount} • Bs {cartTotal.toFixed(0)}
-                </span>
-              ) : (
-                <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono text-[10px]">
-                  0
-                </span>
+              <button
+                onClick={handleImprimir}
+                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+                title="Imprimir"
+              >
+                <Printer size={14} />
+              </button>
+              <a
+                href={DENCKER_ASSETS.menuPdfDownload}
+                download="MENU_DENCKER_OFICIAL.pdf"
+                onClick={() => soundManager.playPastryCrinkle()}
+                className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-bold transition active:scale-95 whitespace-nowrap"
+              >
+                <Download size={13} />
+                <span>PDF</span>
+              </a>
+              <button
+                onClick={handleCopiarLink}
+                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+                title="Copiar enlace"
+              >
+                {copiadoLink ? <CheckCircle2 size={14} className="text-emerald-400" /> : <Copy size={14} />}
+              </button>
+              {esAdmin && (
+                <Link
+                  href="/admin?tab=productos"
+                  className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+                  title="Administrador"
+                >
+                  <Settings size={14} />
+                </Link>
               )}
-            </button>
+            </div>
 
-            <button
-              onClick={handleImprimir}
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer active:scale-95"
-              title="Imprimir menú actual"
-            >
-              <Printer size={14} className="text-amber-300" />
-              <span className="hidden sm:inline">Imprimir</span>
-            </button>
-
-            <a
-              href={DENCKER_ASSETS.menuPdfDownload}
-              download="MENU_DENCKER_OFICIAL.pdf"
-              onClick={() => soundManager.playPastryCrinkle()}
-              className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95"
-            >
-              <Download size={14} />
-              <span>Descargar PDF Original</span>
-            </a>
-
-            <button
-              onClick={handleCopiarLink}
-              className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
-              title="Copiar enlace del menú"
-            >
-              {copiadoLink ? <CheckCircle2 size={15} className="text-emerald-400" /> : <Copy size={15} />}
-            </button>
-
-            <Link
-              href="/admin?tab=productos"
-              className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
-              title="Ir a Administrador para editar precios y productos"
-            >
-              <Settings size={15} />
-            </Link>
           </div>
-
         </div>
       </header>
 
-      {/* ── BANNER EN VIVO: SINCRONIZACIÓN CON EL ADMIN ── */}
-      <div className="bg-[#991B24] text-white text-xs py-2 px-4 shadow-sm print:hidden">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      {/* Banner en vivo */}
+      <div className="bg-[#7B1818]/90 text-amber-100 text-[10px] py-1 px-4 print:hidden">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 font-medium">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>
-              <strong>Menú Oficial Físico & Digital:</strong> Carta fiel de Dencker Coffee & Panadería Artesanal.
-            </span>
-            <span className="opacity-80 hidden lg:inline">
-              Si editas precios o fotos en el Administrador, se sincronizan de inmediato en todo el sistema.
-            </span>
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="hidden sm:inline"><strong>Menú Oficial</strong> &middot; Dencker Coffee &amp; Panadería &middot; Precios sincronizados en tiempo real</span>
+            <span className="sm:hidden font-bold">Menú Oficial &middot; En Vivo</span>
           </div>
           <Link
             href="/admin?tab=productos"
-            className="text-[11px] font-bold underline underline-offset-2 hover:text-amber-200 transition"
+            className="text-[10px] font-bold text-amber-300 hover:text-white transition whitespace-nowrap"
           >
-            Editar Precios & Productos en Admin ↗
+            Editar en Admin ↗
           </Link>
         </div>
       </div>
