@@ -2744,18 +2744,23 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Columna 1: Marca & Esencia */}
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <img
-                  src={DENCKER_ASSETS.logoLight}
-                  alt="Dencker Pan"
-                  className="w-11 h-11 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
-                />
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
+                  <img
+                    src={DENCKER_ASSETS.logoLight}
+                    alt="Don Dencker"
+                    className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] select-none"
+                  />
+                </div>
                 <div>
-                  <span className="font-serif font-black text-xl text-white block">
+                  <span className="font-serif font-black text-2xl sm:text-3xl text-white block tracking-wide">
                     Dencker Pan
                   </span>
-                  <span className="text-[10px] text-amber-300/80 uppercase tracking-widest font-semibold">
+                  <span className="text-xs text-amber-300 font-bold uppercase tracking-widest font-mono block mt-1">
                     Cochabamba • Bolivia
+                  </span>
+                  <span className="text-[11px] text-amber-200/80 font-sans block mt-0.5">
+                    Masa Madre &bull; Café 4 Llamas de Especialidad
                   </span>
                 </div>
               </div>

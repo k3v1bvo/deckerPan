@@ -51,7 +51,7 @@ export default function RoleNav() {
             onClick={() => soundManager.playSuccessTone()}
             className="flex items-center gap-3 group shrink-0 min-w-0"
           >
-            <div className="w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
               <img
                 src={DENCKER_ASSETS.logoLight}
                 alt="Don Dencker"
