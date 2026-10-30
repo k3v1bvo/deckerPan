@@ -694,7 +694,7 @@ export default function AdminPage() {
                   soundManager.playClick();
                   setTabActiva(tab.id);
                 }}
-                className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all z-10 cursor-pointer ${
+                className={`relative flex-1 flex items-center justify-center gap-2 py-2.5 px-2.5 rounded-xl text-xs font-bold transition-all z-10 cursor-pointer whitespace-nowrap ${
                   isActive ? "text-stone-950 dark:text-white font-extrabold" : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200"
                 }`}
               >

@@ -127,7 +127,7 @@ export default function KDSPage() {
               />
             </div>
             <div>
-              <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-wide text-amber-100 flex items-center gap-2">
+              <h1 className="font-serif text-base lg:text-xl font-bold tracking-tight text-amber-100 flex items-center gap-2 flex-wrap">
                 KDS — Cocina & Barismo Dencker Pan
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" /> EN VIVO

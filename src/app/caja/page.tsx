@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -179,7 +179,7 @@ export default function CajaPage() {
     <StaffAuthGuard requiredRole="caja" roleTitle="Caja POS & Facturación">
       <div className="min-h-screen bg-[#FDFBF7] text-amber-950 pb-24">
       {/* Header Caja */}
-      <div className="bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 text-white px-6 py-4 shadow-lg">
+      <header className="sticky top-0 z-40 bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 text-white px-4 lg:px-6 py-3 shadow-lg backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
@@ -190,7 +190,7 @@ export default function CajaPage() {
               />
             </div>
             <div>
-              <h1 className="font-serif text-2xl font-bold tracking-wide text-amber-100 flex items-center gap-2">
+              <h1 className="font-serif text-base lg:text-xl font-bold tracking-tight text-amber-100 truncate max-w-[220px] sm:max-w-none">
                 Caja & Facturación POS — Dencker Pan
               </h1>
               <p className="text-amber-200/60 text-xs">
@@ -216,7 +216,7 @@ export default function CajaPage() {
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Columna Izquierda: Cola de Mesas y Pedidos Pendientes */}

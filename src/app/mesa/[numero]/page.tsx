@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -419,7 +419,7 @@ export default function MesaPage({ params }: PageProps) {
               title="Pedir que traigan la cuenta a la mesa"
             >
               <Receipt size={14} className={avisoCuentaEnviado ? "animate-bounce" : ""} />
-              <span>{avisoCuentaEnviado ? "Cuenta Pedida ✓" : "Traer Cuenta"}</span>
+              <span className="whitespace-nowrap">{avisoCuentaEnviado ? "Cuenta Pedida ✓" : "Traer Cuenta"}</span>
             </motion.button>
 
             <motion.button

@@ -774,7 +774,7 @@ export default function CartDrawer() {
                             : "bg-white text-[#3D271D] border-[#EAE2D5] hover:bg-[#F5EFEB]"
                         }`}
                       >
-                        <CreditCard size={16} className={metodoPago === "tarjeta" ? "text-blue-400" : "text-stone-500"} />
+                        <CreditCard size={16} className={metodoPago === "tarjeta" ? "text-amber-400" : "text-stone-500"} />
                         <span className="text-[11px] font-bold">Datáfono</span>
                       </button>
                     </div>
@@ -800,8 +800,8 @@ export default function CartDrawer() {
                     )}
 
                     {metodoPago === "tarjeta" && (
-                      <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-950 flex items-center gap-2">
-                        <CreditCard size={15} className="text-blue-600 shrink-0" />
+                      <div className="p-2.5 rounded-xl bg-[#F5EFEB] border border-[#E7DFD5] text-xs text-[#785E4F] flex items-center gap-2">
+                        <CreditCard size={15} className="text-[#785E4F] shrink-0" />
                         <span className="text-[11px]">Llevamos el datáfono inalámbrico (Visa y Mastercard).</span>
                       </div>
                     )}
@@ -844,7 +844,7 @@ export default function CartDrawer() {
                   transition={springButton}
                   onClick={handleEnviarWhatsApp}
                   disabled={enviando || enviadoExitoso}
-                  className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#1E130C] via-[#2A1910] to-[#1E130C] hover:from-[#2A1910] hover:to-[#382216] text-[#FAF7F2] font-bold text-xs shadow-[0_6px_20px_rgba(30,19,12,0.35)] flex items-center justify-center gap-2.5 transition-all disabled:opacity-60 border border-[#527953]/30"
+                  className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#1E130C] via-[#2A1910] to-[#1E130C] hover:from-[#2A1910] hover:to-[#382216] text-[#FAF7F2] font-bold text-xs shadow-[0_6px_20px_rgba(30,19,12,0.35)] flex items-center justify-center gap-2.5 transition-all disabled:opacity-60 disabled:cursor-not-allowed border border-[#527953]/30"
                 >
                   {enviadoExitoso ? (
                     <>

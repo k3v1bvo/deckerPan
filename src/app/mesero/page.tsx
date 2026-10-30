@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -330,7 +330,7 @@ export default function MeseroPage() {
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={() => setFiltroEstado(filtroEstado === "libre" ? "todas" : "libre")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ${
                 filtroEstado === "libre"
                   ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-105"
                   : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
@@ -342,7 +342,7 @@ export default function MeseroPage() {
 
             <button
               onClick={() => setFiltroEstado(filtroEstado === "ocupada" ? "todas" : "ocupada")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ${
                 filtroEstado === "ocupada"
                   ? "bg-amber-500 text-stone-950 shadow-lg shadow-amber-500/30 scale-105"
                   : "bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
