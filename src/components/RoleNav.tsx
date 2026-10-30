@@ -41,124 +41,123 @@ export default function RoleNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#160D08]/98 backdrop-blur-2xl border-b-2 border-amber-500/30 text-white transition-all shadow-2xl">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-22 flex items-center justify-between gap-4">
-          {/* Logo Oficial de Dencker Pan con Don Dencker Badge */}
+      {/* ── NAVBAR ── */}
+      <header className="sticky top-0 z-40 bg-[#160D08] backdrop-blur-2xl border-b border-amber-500/20 text-white shadow-xl">
+        <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-3">
+
+          {/* ── LOGO ── */}
           <Link
             href="/"
             onClick={() => soundManager.playSuccessTone()}
-            className="flex items-center gap-3.5 group shrink-0"
+            className="flex items-center gap-3 group shrink-0 min-w-0"
           >
-            <div className="relative w-13 h-13 sm:w-15 sm:h-15 rounded-full bg-white p-1 border-2 border-amber-400/90 shadow-[0_0_15px_rgba(245,158,11,0.35)] flex items-center justify-center overflow-hidden group-hover:scale-105 group-hover:border-amber-300 transition-all">
+            <div className="w-11 h-11 rounded-full bg-white p-0.5 border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.30)] flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform shrink-0">
               <img
                 src={DENCKER_ASSETS.logo}
-                alt="Don Dencker Sello Oficial"
+                alt="Dencker Pan"
                 className="w-full h-full object-contain select-none"
               />
             </div>
-
-            <div className="leading-tight">
-              <div className="flex items-center gap-2">
-                <span className="font-serif font-black text-xl sm:text-2xl text-white tracking-wide drop-shadow-sm">
+            <div className="leading-none hidden sm:block">
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif font-black text-[1.15rem] text-white tracking-wide">
                   Dencker Pan
                 </span>
-                <span className="hidden sm:inline-flex items-center text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#991B24] to-[#B91C1C] text-white border border-amber-400/40 shadow-xs">
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
                   Café 4 Llamas
                 </span>
               </div>
-              <span className="text-[11px] sm:text-xs text-amber-300 font-sans uppercase tracking-widest block font-semibold mt-0.5">
-                Panadería & Café • Cochabamba
+              <span className="text-[10px] text-amber-300/80 font-sans uppercase tracking-widest font-semibold">
+                Panadería & Café · Cochabamba
               </span>
             </div>
           </Link>
 
-          {/* Navegación Principal para Clientes (Desktop) con Iconos más Grandes y Alto Contraste */}
-          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2 text-sm font-semibold text-stone-100">
+          {/* ── NAV LINKS (Desktop ≥ lg) ── */}
+          <nav className="hidden lg:flex items-center gap-0.5 text-[13px] font-semibold text-stone-200">
             <a
               href="#catalogo"
-              className="hover:text-amber-300 hover:bg-white/10 transition-all flex items-center gap-2 py-2 px-3 rounded-xl"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"
             >
-              <Coffee size={19} className="text-amber-400 shrink-0" />
-              <span>Catálogo & Precios</span>
+              <Coffee size={15} className="text-amber-400 shrink-0" />
+              Catálogo & Precios
             </a>
             <a
               href="#catering"
-              className="hover:text-amber-300 hover:bg-white/10 transition-all flex items-center gap-2 py-2 px-3 rounded-xl"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"
             >
-              <Calendar size={19} className="text-amber-400 shrink-0" />
-              <span>Catering & Eventos</span>
+              <Calendar size={15} className="text-amber-400 shrink-0" />
+              Catering & Eventos
             </a>
             <a
               href="#contacto"
-              className="hover:text-amber-300 hover:bg-white/10 transition-all flex items-center gap-2 py-2 px-3 rounded-xl"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"
             >
-              <MapPin size={19} className="text-amber-400 shrink-0" />
-              <span>Nuestra Casa</span>
+              <MapPin size={15} className="text-amber-400 shrink-0" />
+              Nuestra Casa
             </a>
-            
-            {/* Botón Destacado: Carta Oficial PDF (6 Páginas Reales) */}
             <Link
               href="/menu-pdf"
-              className="text-white hover:text-amber-100 transition-all flex items-center gap-2 py-2.5 px-4 rounded-full bg-gradient-to-r from-[#991B24] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B24] border border-amber-400/50 shadow-md font-bold text-xs active:scale-95 ml-1 cursor-pointer"
+              className="ml-1 flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#991B24] hover:bg-[#b91c1c] text-white font-bold text-[12px] border border-amber-400/40 shadow transition-all active:scale-95 whitespace-nowrap"
             >
-              <FileText size={18} className="text-amber-300 shrink-0" />
-              <span>Carta Oficial PDF (6 Págs)</span>
+              <FileText size={14} className="text-amber-300 shrink-0" />
+              Carta Oficial PDF
             </Link>
           </nav>
 
-          {/* Acciones de Cabecera: Carrito, WhatsApp & Acceso Discreto */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Botón WhatsApp Oficial Verde */}
+          {/* ── ACCIONES DERECHA ── */}
+          <div className="flex items-center gap-2">
+            {/* WhatsApp */}
             <a
               href={DENCKER_ASSETS.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white text-[12px] font-bold transition-all shadow active:scale-95 whitespace-nowrap"
             >
-              <MessageCircle size={18} className="shrink-0" />
-              <span>WhatsApp</span>
+              <MessageCircle size={15} className="shrink-0" />
+              WhatsApp
             </a>
 
-            {/* Carrito de Compras Flotante / Badge Alto Contraste */}
+            {/* Carrito */}
             <motion.button
-              whileTap={{ scale: 0.94 }}
+              whileTap={{ scale: 0.93 }}
               onClick={() => {
                 soundManager.playClick();
                 setCartOpen(true);
               }}
-              className="relative px-4 sm:px-5 py-2.5 rounded-full bg-stone-900 hover:bg-stone-800 border-2 border-amber-400/80 text-white font-bold text-xs shadow-lg flex items-center gap-2.5 active:scale-95 transition cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-stone-900 hover:bg-stone-800 border-2 border-amber-400/70 text-white text-[12px] font-bold shadow transition-all active:scale-95 cursor-pointer whitespace-nowrap"
             >
-              <ShoppingBag size={18} className="text-amber-400 shrink-0" />
+              <ShoppingBag size={15} className="text-amber-400 shrink-0" />
               <span className="hidden sm:inline">Canasta</span>
               {cartCount > 0 ? (
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-xs font-black shadow-xs">
-                  {cartCount} • Bs {cartTotal.toFixed(0)}
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[11px] font-black">
+                  {cartCount} <span className="text-stone-700">·</span> Bs {cartTotal.toFixed(0)}
                 </span>
               ) : (
-                <span className="px-2 py-0.5 rounded-full bg-white/20 text-white font-mono text-xs font-bold">
+                <span className="w-5 h-5 rounded-full bg-white/15 text-white font-mono text-[11px] font-bold flex items-center justify-center">
                   0
                 </span>
               )}
             </motion.button>
 
-            {/* Acceso Discreto a Terminales de Personal (Producción) */}
+            {/* Staff access */}
             <Link
               href="/admin"
               onClick={() => soundManager.playClick()}
-              title="Acceso seguro al Terminal de Personal"
+              title="Acceso al Personal"
               aria-label="Acceso al Personal"
-              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-stone-200 hover:text-amber-300 flex items-center justify-center transition active:scale-95 cursor-pointer"
+              className="w-9 h-9 rounded-full bg-white/8 hover:bg-white/15 border border-white/15 text-stone-300 hover:text-amber-300 flex items-center justify-center transition active:scale-95 cursor-pointer"
             >
-              <Lock size={17} />
+              <Lock size={15} />
             </Link>
 
-            {/* Menú Hamburguesa para Móvil */}
+            {/* Hamburger (mobile) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Abrir menú"
-              className="lg:hidden w-10 h-10 rounded-full bg-white/15 text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
+              className="lg:hidden w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center transition active:scale-95"
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
