@@ -596,8 +596,10 @@ export default function MenuPdfPage() {
                   <div
                     onClick={() => setFotoModal({
                       url: "/img/products/espresso_4_llamas.jpg",
-                      titulo: "Café Expresso 4 Llamas",
-                      desc: "Extracción pura de 30cc con granos bolivianos 4 Llamas de Caranavi. Crema color avellana atigrada.",
+                      originalUrl: "/img/products/espresso_4_llamas.jpg",
+                      corteUrl: "/img/products/cafe_4llamas_pack_gourmet.jpg",
+                      titulo: "Café Expresso 4 Llamas de Especialidad",
+                      desc: "Extracción pura de 30cc con granos bolivianos 4 Llamas de Caranavi (1,700 msnm). Crema color avellana atigrada.",
                       precio: 15
                     })}
                     className="flex flex-col items-center text-center cursor-pointer group"
@@ -767,6 +769,8 @@ export default function MenuPdfPage() {
                       <div
                         onClick={() => setFotoModal({
                           url: "/img/products/espresso_4_llamas.jpg",
+                          originalUrl: "/img/products/espresso_4_llamas.jpg",
+                          corteUrl: "/img/products/cafe_4llamas_pack_gourmet.jpg",
                           titulo: "Expresso 4 Llamas (30cc)",
                           desc: "Extracción pura de 30cc con granos bolivianos 4 Llamas de Caranavi. Crema color avellana atigrada.",
                           precio: 15

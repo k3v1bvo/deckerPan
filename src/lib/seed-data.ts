@@ -382,6 +382,7 @@ export const SEED_PRODUCTOS: Producto[] = [
     "precio": 15,
     "costo": 4.5,
     "imagen_url": "/img/products/espresso_4_llamas.jpg",
+    "imagen_interior_url": "/img/products/cafe_4llamas_pack_gourmet.jpg",
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 100,

@@ -304,7 +304,7 @@ export default function HomePage() {
       return "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=1000&q=85";
     }
     if (n.includes("café") || n.includes("cappuccino") || n.includes("espresso") || n.includes("latte")) {
-      return "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=85";
+      return "/img/products/cafe_4llamas_pack_gourmet.jpg";
     }
     if (n.includes("pizza") || n.includes("esfiha") || n.includes("empanada")) {
       return "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1000&q=85";
@@ -2681,11 +2681,11 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="w-20 h-24 rounded-2xl overflow-hidden border border-white/20 shadow-lg">
+                <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-xl group">
                   <img
-                    src="/img/brand/cafe-4llamas-pack.png"
-                    alt="Bolsa 4 Llamas"
-                    className="w-full h-full object-cover"
+                    src="/img/products/cafe_4llamas_pack_gourmet.jpg"
+                    alt="Café 4 Llamas Empaque Gourmet"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
