@@ -771,7 +771,7 @@ export const useSystemStore = create<SystemStore>()(
         }),
     }),
     {
-      name: 'dencker-pan-system-v4-logos-siat',
+      name: 'dencker-pan-system-v5-postres',
     }
   )
 );

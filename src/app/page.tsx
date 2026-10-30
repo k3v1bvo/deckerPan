@@ -298,6 +298,8 @@ export default function HomePage() {
     if (n.includes("croissant")) return "/images/products/croissant_french_cut.jpg";
     if (n.includes("cuñap") || n.includes("cunap") || n.includes("abizcochado")) return "/images/products/cunape_abizcochado_cut.jpg";
     if (n.includes("alfajor")) return "/images/products/alfajor_boliviano_cut.jpg";
+    if (n.includes("tartaleta")) return "/img/products/tartaleta_chocolate_corte.jpg";
+    if (n.includes("queque") || n.includes("japon") || n.includes("souffl")) return "/img/products/queque_japones_corte.jpg";
     if (n.includes("baguette") || n.includes("pan") || n.includes("marraqueta")) {
       return "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=1000&q=85";
     }

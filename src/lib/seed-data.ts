@@ -1388,10 +1388,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "id": "prod_tartaleta_chocolate",
     "categoria_id": "c_postres",
     "nombre": "Tartaleta de Chocolate",
-    "descripcion": "Masa quebrada crocante rellena de ganache puro de chocolate oscuro belga con toque brillante.",
+    "descripcion": "Masa quebrada crocante rellena de ganache puro de chocolate oscuro belga, quenelles suaves de mousse y disco sablé con fino cacao.",
     "precio": 20,
     "costo": 7,
-    "imagen_url": "/img/products/1712114164.jpg",
+    "imagen_url": "/img/products/tartaleta_chocolate_artesanal.jpg",
+    "imagen_interior_url": "/img/products/tartaleta_chocolate_corte.jpg",
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 30,
@@ -1401,6 +1402,27 @@ export const SEED_PRODUCTOS: Producto[] = [
     ],
     "estacion": "vitrina"
   },
+  {
+    "id": "prod_queque_japones",
+    "categoria_id": "c_postres",
+    "nombre": "Queque Japonés (Cotton Soufflé)",
+    "descripcion": "Auténtico cheesecake soufflé japonés de textura de algodón ultra esponjosa, horneado al baño maría con dorado suave que se derrite en boca.",
+    "precio": 25,
+    "costo": 8,
+    "imagen_url": "/img/products/queque_japones_artesanal.jpg",
+    "imagen_interior_url": "/img/products/queque_japones_corte.jpg",
+    "disponible": true,
+    "es_mas_vendido": true,
+    "stock": 25,
+    "chips_personalizacion": [
+      "Porción personal",
+      "Queque entero",
+      "Para comer en salón",
+      "Para llevar en domo"
+    ],
+    "estacion": "vitrina"
+  },
+
   {
     "id": "prod_cheesecake",
     "categoria_id": "c_postres",

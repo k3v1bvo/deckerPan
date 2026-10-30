@@ -53,7 +53,17 @@ export default function MenuPdfPage() {
   const mesas: Mesa[] =
     storeMesas && storeMesas.length > 0 ? storeMesas : SEED_MESAS;
 
-  const [modo, setModo] = useState<ModoMenu>("oficial_pdf");
+  const [modo, setModo] = useState<ModoMenu>("dinamico_vivo");
+  const [mostrarFotos, setMostrarFotos] = useState<boolean>(true);
+  const [fotoModal, setFotoModal] = useState<{
+    url: string;
+    originalUrl?: string;
+    corteUrl?: string;
+    titulo: string;
+    desc?: string;
+    precio?: number | string;
+    viendoCorte?: boolean;
+  } | null>(null);
   const [subVistaPdf, setSubVistaPdf] = useState<"tira_continua" | "por_pagina">("tira_continua");
   const [paginaActiva, setPaginaActiva] = useState<number>(1);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
@@ -161,21 +171,6 @@ export default function MenuPdfPage() {
             <button
               onClick={() => {
                 soundManager.playTactileClick();
-                setModo("oficial_pdf");
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                modo === "oficial_pdf"
-                  ? "bg-[#991B24] text-white shadow-sm"
-                  : "text-stone-300 hover:text-white"
-              }`}
-            >
-              <BookOpen size={13} className="text-amber-300" />
-              <span>PDF Original (6 Páginas Reales)</span>
-            </button>
-
-            <button
-              onClick={() => {
-                soundManager.playTactileClick();
                 setModo("dinamico_vivo");
               }}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
@@ -185,7 +180,22 @@ export default function MenuPdfPage() {
               }`}
             >
               <Sparkles size={13} className="text-amber-300" />
-              <span>Menú Dinámico (Precios en Vivo)</span>
+              <span>Carta Editorial con Fotos (Imprimir PDF)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                soundManager.playTactileClick();
+                setModo("oficial_pdf");
+              }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                modo === "oficial_pdf"
+                  ? "bg-[#991B24] text-white shadow-sm"
+                  : "text-stone-300 hover:text-white"
+              }`}
+            >
+              <BookOpen size={13} className="text-amber-300" />
+              <span>PDF Escaneado (6 Páginas)</span>
             </button>
 
             <button
@@ -202,6 +212,24 @@ export default function MenuPdfPage() {
               <QrCode size={13} />
               <span>Carpas de Mesa</span>
             </button>
+
+            {modo === "dinamico_vivo" && (
+              <button
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setMostrarFotos((prev) => !prev);
+                }}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer border ${
+                  mostrarFotos
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30"
+                    : "bg-white/5 text-stone-400 border-white/10 hover:text-white"
+                }`}
+                title="Mostrar u ocultar fotos gastronómicas"
+              >
+                <Eye size={13} />
+                <span>{mostrarFotos ? "Fotos: Sí" : "Fotos: No (Ahorro Tinta)"}</span>
+              </button>
+            )}
           </div>
 
           {/* Acciones: Imprimir, Descargar, Admin */}
@@ -464,7 +492,7 @@ export default function MenuPdfPage() {
         <main className="max-w-4xl mx-auto px-4 py-8 space-y-12">
           
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-2xl border-4 border-[#991B24]/20 overflow-hidden relative flex flex-col items-center justify-between min-h-[920px] p-6 sm:p-10 text-center">
+          <div className="bg-[#FAF6EF] rounded-3xl shadow-2xl border-4 border-[#991B24]/20 overflow-hidden relative flex flex-col items-center justify-between min-h-[920px] p-6 sm:p-10 text-center print-page">
             
             {/* Toldo a rayas rojas y crema */}
             <div className="w-full h-24 sm:h-28 -mt-6 sm:-mt-10 rounded-b-[36px] overflow-hidden shadow-md flex relative border-b-4 border-[#7F1D1D]">
@@ -514,6 +542,80 @@ export default function MenuPdfPage() {
 
             </div>
 
+            {/* Tira de Especialidades con Fotografía */}
+            {mostrarFotos && (
+              <div className="w-full my-4 p-4 rounded-2xl bg-white/80 border border-[#991B24]/20 shadow-xs print:my-2 print:border-black/20">
+                <span className="text-[11px] font-mono font-bold tracking-widest text-[#991B24] uppercase block mb-3 text-center">
+                  ✨ Nuevas Especialidades & Íconos de la Casa
+                </span>
+                <div className="grid grid-cols-3 gap-3">
+                  <div
+                    onClick={() => setFotoModal({
+                      url: "/img/products/tartaleta_chocolate_artesanal.jpg",
+                      originalUrl: "/img/products/tartaleta_chocolate_artesanal.jpg",
+                      corteUrl: "/img/products/tartaleta_chocolate_corte.jpg",
+                      titulo: "Tartaleta de Chocolate Belga",
+                      desc: "Masa sablée crujiente dorada, ganache puro de chocolate oscuro belga, quenelles suaves de mousse y disco sablé con cacao fino.",
+                      precio: 20
+                    })}
+                    className="flex flex-col items-center text-center cursor-pointer group"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-[#991B24] shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
+                      <img
+                        src="/img/products/tartaleta_chocolate_artesanal.jpg"
+                        alt="Tartaleta de Chocolate"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight">Tartaleta Chocolate</span>
+                    <span className="text-[10px] text-[#991B24] font-bold">Bs 20</span>
+                  </div>
+
+                  <div
+                    onClick={() => setFotoModal({
+                      url: "/img/products/queque_japones_artesanal.jpg",
+                      originalUrl: "/img/products/queque_japones_artesanal.jpg",
+                      corteUrl: "/img/products/queque_japones_corte.jpg",
+                      titulo: "Queque Japonés (Cotton Soufflé)",
+                      desc: "Famoso soufflé cake japonés ultra esponjoso y aireado con textura de nube que se deshace en boca. Horneado al baño maría.",
+                      precio: 25
+                    })}
+                    className="flex flex-col items-center text-center cursor-pointer group"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-amber-600 shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
+                      <img
+                        src="/img/products/queque_japones_artesanal.jpg"
+                        alt="Queque Japonés"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight">Queque Japonés</span>
+                    <span className="text-[10px] text-[#991B24] font-bold">Bs 25</span>
+                  </div>
+
+                  <div
+                    onClick={() => setFotoModal({
+                      url: "/img/products/espresso_4_llamas.jpg",
+                      titulo: "Café Expresso 4 Llamas",
+                      desc: "Extracción pura de 30cc con granos bolivianos 4 Llamas de Caranavi. Crema color avellana atigrada.",
+                      precio: 15
+                    })}
+                    className="flex flex-col items-center text-center cursor-pointer group"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-amber-800 shadow-sm mb-1.5 bg-stone-100 group-hover:scale-105 transition">
+                      <img
+                        src="/img/products/espresso_4_llamas.jpg"
+                        alt="Expresso 4 Llamas"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="font-serif font-bold text-xs text-[#1E130C] leading-tight">Café 4 Llamas</span>
+                    <span className="text-[10px] text-[#991B24] font-bold">Bs 15</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Barra Inferior DENCKER COFFEE */}
             <div className="w-full bg-[#991B24] text-white py-3.5 px-6 rounded-2xl shadow-md flex flex-wrap items-center justify-between gap-3">
               <span className="font-serif font-black tracking-widest text-lg sm:text-xl uppercase">
@@ -527,7 +629,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 2: DESAYUNOS, CAFÉS (4 LLAMAS) & LATTES ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8">
+          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header con Logo Chef Hat */}
             <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
@@ -555,6 +657,52 @@ export default function MenuPdfPage() {
                     DESAYUNOS
                   </h3>
                 </div>
+
+                {mostrarFotos && (
+                  <div className="grid grid-cols-2 gap-2.5 pb-1">
+                    <div
+                      onClick={() => setFotoModal({
+                        url: "/img/products/1711660195.jpg",
+                        titulo: "Rise & Shine",
+                        desc: "Huevos revueltos, tostadas, tomate, queso criollo, granola con yogurt, café o té.",
+                        precio: 45
+                      })}
+                      className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                    >
+                      <img
+                        src="/img/products/1711660195.jpg"
+                        alt="Rise & Shine"
+                        className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                      />
+                      <div className="min-w-0">
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Rise & Shine</span>
+                        <span className="text-[10px] text-[#785E4F] block">Completo</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 45</span>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setFotoModal({
+                        url: "/img/products/1711663068.jpg",
+                        titulo: "Huevos Benedictinos",
+                        desc: "Huevos escalfados con espinacas, jamón y salsa de queso sobre pan molde tostado.",
+                        precio: 40
+                      })}
+                      className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                    >
+                      <img
+                        src="/img/products/1711663068.jpg"
+                        alt="Benedictinos"
+                        className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                      />
+                      <div className="min-w-0">
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Benedictinos</span>
+                        <span className="text-[10px] text-[#785E4F] block">Salsa de queso</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 40</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-4">
                   {[
@@ -613,6 +761,52 @@ export default function MenuPdfPage() {
                       Café 4 Llamas
                     </span>
                   </div>
+
+                  {mostrarFotos && (
+                    <div className="grid grid-cols-2 gap-2.5 pb-1">
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/espresso_4_llamas.jpg",
+                          titulo: "Expresso 4 Llamas (30cc)",
+                          desc: "Extracción pura de 30cc con granos bolivianos 4 Llamas de Caranavi. Crema color avellana atigrada.",
+                          precio: 15
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#991B24]/30 flex items-center gap-2 cursor-pointer hover:border-[#991B24] transition group"
+                      >
+                        <img
+                          src="/img/products/espresso_4_llamas.jpg"
+                          alt="Expresso 4 Llamas"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Expresso 4 Llamas</span>
+                          <span className="text-[10px] text-amber-700 font-bold block">Caranavi</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 15</span>
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1711663751.jpg",
+                          titulo: "Cappuccino Tradicional",
+                          desc: "Expresso de especialidad, leche texturizada sedosa y canela de Ceilán.",
+                          precio: 22
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1711663751.jpg"
+                          alt="Cappuccino"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Cappuccino</span>
+                          <span className="text-[10px] text-[#785E4F] block">Espuma sedosa</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 22</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-2.5">
                     {[
@@ -686,7 +880,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 3: CHOCOLATES, TÉS, JUGOS, FRAPPÉS, HELADOS & REFRESCOS ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8">
+          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header con Logo Chef Hat */}
             <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
@@ -715,6 +909,52 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     CHOCOLATES
                   </h3>
+
+                  {mostrarFotos && (
+                    <div className="grid grid-cols-2 gap-2.5 pb-1">
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1711668187.jpg",
+                          titulo: "Chocolate con Marshmallow",
+                          desc: "Chocolate artesanal caliente, leche texturizada y marshmallow tostado.",
+                          precio: 25
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1711668187.jpg"
+                          alt="Chocolate con Marshmallow"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Choc. Marshmallow</span>
+                          <span className="text-[10px] text-[#785E4F] block">Tostado</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 25</span>
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1711823470.jpg",
+                          titulo: "Jugo Frutilla y Naranja",
+                          desc: "Jugo natural recién exprimido combinado con frutillas frescas de Cochabamba.",
+                          precio: 22
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1711823470.jpg"
+                          alt="Jugo Frutilla y Naranja"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Frutilla Naranja</span>
+                          <span className="text-[10px] text-[#785E4F] block">100% Natural</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 22</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {[
                     { id: "prod_choc_leche", nombre: "Chocolate con leche", desc: "Chocolate, leche texturizada", precio: 22 },
                     { id: "prod_choc_marshmallow", nombre: "Chocolate con marshmallow", desc: "Chocolate, leche texturizada, marshmallow tostado", precio: 25 },
@@ -804,6 +1044,52 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     FRAPPÉS
                   </h3>
+
+                  {mostrarFotos && (
+                    <div className="grid grid-cols-2 gap-2.5 pb-1">
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1711813236.jpg",
+                          titulo: "Frappé Oreo",
+                          desc: "Frappé cremoso licuado con galletas Oreo, leche entera y crema batida.",
+                          precio: 25
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1711813236.jpg"
+                          alt="Frappé Oreo"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Frappé Oreo</span>
+                          <span className="text-[10px] text-[#785E4F] block">Con crema batida</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 25</span>
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1711813593.jpg",
+                          titulo: "Copa Vienesa / Copa Melva",
+                          desc: "Helado artesanal en copa decorada con salsas finas y barquillos.",
+                          precio: 25
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1711813593.jpg"
+                          alt="Copa Melva"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Copa Melva</span>
+                          <span className="text-[10px] text-[#785E4F] block">Helado artesanal</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 25</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {[
                     { id: "prod_frappe_light", nombre: "Light", desc: "Expresso, leche, hielo, edulcorante o azúcar", precio: 24 },
                     { id: "prod_frappe_vainilla", nombre: "Vainilla", desc: "Expresso, leche, hielo, crema, salsa de caramelo", precio: 25 },
@@ -871,7 +1157,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 4: DULCES, POSTRES & MASITAS SALADAS ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8">
+          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header con Logo Chef Hat */}
             <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
@@ -911,6 +1197,52 @@ export default function MenuPdfPage() {
                     <p className="text-[11px] text-[#785E4F]">Hojaldres 100% mantequilla noble y masas finas horneadas</p>
                   </div>
                 </div>
+
+                {mostrarFotos && (
+                  <div className="grid grid-cols-2 gap-2.5 pb-1">
+                    <div
+                      onClick={() => setFotoModal({
+                        url: "/img/products/medialuna_hojaldrada.jpg",
+                        titulo: "Media Luna Hojaldrada",
+                        desc: "Masa hojaldrada tradicional en forma de croissant con 100% mantequilla noble y almíbar aromático.",
+                        precio: 10.5
+                      })}
+                      className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                    >
+                      <img
+                        src="/img/products/medialuna_hojaldrada.jpg"
+                        alt="Medialuna Hojaldrada"
+                        className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                      />
+                      <div className="min-w-0">
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Media Luna</span>
+                        <span className="text-[10px] text-[#785E4F] block">100% Mantequilla</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 10.5</span>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setFotoModal({
+                        url: "/img/products/1711824502.jpg",
+                        titulo: "New York Roll Artesanal",
+                        desc: "Masa hojaldrada circular rellena y bañada en pistacho o chocolate.",
+                        precio: 21
+                      })}
+                      className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                    >
+                      <img
+                        src="/img/products/1711824502.jpg"
+                        alt="New York Roll"
+                        className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                      />
+                      <div className="min-w-0">
+                        <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">New York Roll</span>
+                        <span className="text-[10px] text-[#785E4F] block">Pistacho/Choco</span>
+                        <span className="font-serif font-bold text-xs text-[#991B24]">Bs 21</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2.5">
                   {[
@@ -952,8 +1284,85 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     POSTRES
                   </h3>
+
+                  {mostrarFotos && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-2">
+                      {/* Tartaleta de Chocolate */}
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/tartaleta_chocolate_artesanal.jpg",
+                          originalUrl: "/img/products/tartaleta_chocolate_artesanal.jpg",
+                          corteUrl: "/img/products/tartaleta_chocolate_corte.jpg",
+                          titulo: "Tartaleta de Chocolate Belga",
+                          desc: "Masa sablée crujiente dorada, ganache puro de chocolate oscuro belga, quenelles suaves de mousse y disco sablé con cacao fino.",
+                          precio: 20
+                        })}
+                        className="bg-white/95 p-3 rounded-2xl border-2 border-[#991B24]/40 shadow-xs flex flex-col justify-between overflow-hidden cursor-pointer hover:border-[#991B24] transition group"
+                      >
+                        <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 border border-stone-200 mb-2">
+                          <img
+                            src="/img/products/tartaleta_chocolate_artesanal.jpg"
+                            alt="Tartaleta de Chocolate"
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                          />
+                          <span className="absolute top-2 left-2 bg-[#991B24] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                            ★ Especialidad
+                          </span>
+                          <span className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1">
+                            🔍 Ver corte
+                          </span>
+                        </div>
+                        <div>
+                          <div className="flex items-baseline justify-between">
+                            <h4 className="font-serif font-black text-sm text-[#1E130C]">Tartaleta de Chocolate</h4>
+                            <span className="font-serif font-black text-sm text-[#991B24]">Bs 20</span>
+                          </div>
+                          <p className="text-[10.5px] text-[#785E4F] leading-tight mt-0.5">
+                            Masa sablée crocante, ganache belga brillante y mousse sedoso.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Queque Japonés */}
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/queque_japones_artesanal.jpg",
+                          originalUrl: "/img/products/queque_japones_artesanal.jpg",
+                          corteUrl: "/img/products/queque_japones_corte.jpg",
+                          titulo: "Queque Japonés (Cotton Soufflé)",
+                          desc: "Auténtico cheesecake soufflé japonés de textura de algodón ultra esponjosa, horneado al baño maría con dorado suave que se derrite en boca.",
+                          precio: 25
+                        })}
+                        className="bg-white/95 p-3 rounded-2xl border-2 border-amber-500/50 shadow-xs flex flex-col justify-between overflow-hidden cursor-pointer hover:border-amber-600 transition group"
+                      >
+                        <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 border border-stone-200 mb-2">
+                          <img
+                            src="/img/products/queque_japones_artesanal.jpg"
+                            alt="Queque Japonés"
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                          />
+                          <span className="absolute top-2 left-2 bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                            ✨ Novedad
+                          </span>
+                          <span className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1">
+                            🔍 Ver corte
+                          </span>
+                        </div>
+                        <div>
+                          <div className="flex items-baseline justify-between">
+                            <h4 className="font-serif font-black text-sm text-[#1E130C]">Queque Japonés</h4>
+                            <span className="font-serif font-black text-sm text-[#991B24]">Bs 25</span>
+                          </div>
+                          <p className="text-[10.5px] text-[#785E4F] leading-tight mt-0.5">
+                            Soufflé de algodón ultra esponjoso horneado al baño maría.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {[
                     { id: "prod_tartaleta_chocolate", nombre: "Tartaleta de chocolate", precio: 20 },
+                    { id: "prod_queque_japones", nombre: "Queque japonés", precio: 25 },
                     { id: "prod_cheesecake", nombre: "Cheesecake", precio: 27 },
                     { id: "prod_torta_vasca", nombre: "Torta vasca", precio: 27 },
                     { id: "prod_torta_cafe", nombre: "Torta de café", precio: 17 },
@@ -983,6 +1392,52 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     MASITAS SALADAS
                   </h3>
+
+                  {mostrarFotos && (
+                    <div className="grid grid-cols-2 gap-2.5 pb-1">
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1712588982.jpg",
+                          titulo: "Cuñapé Caliente Tradicional",
+                          desc: "Almidón de yuca y queso criollo fundido recién horneado.",
+                          precio: 8.5
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1712588982.jpg"
+                          alt="Cuñapé Caliente"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Cuñapé Caliente</span>
+                          <span className="text-[10px] text-[#785E4F] block">Recién horneado</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 8.5</span>
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1712588932.jpg",
+                          titulo: "Empanada de Queso",
+                          desc: "Empanada dorada crocante rellena de abundante queso derretido.",
+                          precio: 8.5
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1712588932.jpg"
+                          alt="Empanada de Queso"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Empanada Queso</span>
+                          <span className="text-[10px] text-[#785E4F] block">Crocante & dorada</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 8.5</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {[
                     { id: "prod_empanada_queso", nombre: "Empanada de queso", precio: 8.5 },
                     { id: "prod_cunape", nombre: "Cuñape", precio: 8.5 },
@@ -1013,7 +1468,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 5: SÁNDWICHES, EXTRAS & ENSALADAS ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8">
+          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header con Logo Chef Hat */}
             <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
@@ -1038,7 +1493,27 @@ export default function MenuPdfPage() {
               <div className="space-y-6">
                 
                 {/* Sándwich especial Dencker */}
-                <div className="p-5 rounded-2xl bg-white/80 border-2 border-[#991B24]/40 shadow-sm space-y-4">
+                <div className="p-5 rounded-2xl bg-white/95 border-2 border-[#991B24]/40 shadow-sm space-y-4">
+                  {mostrarFotos && (
+                    <div
+                      onClick={() => setFotoModal({
+                        url: "/img/products/sandwich_dencker_especial.jpg",
+                        titulo: "Sándwich Especial Dencker",
+                        desc: "Arma tu sándwich con DOS proteínas (pollo, tocino, jamón, salame) y TRES complementos en pan a elección.",
+                        precio: 35
+                      })}
+                      className="relative aspect-16/9 rounded-xl overflow-hidden bg-stone-100 border border-stone-200 cursor-pointer group"
+                    >
+                      <img
+                        src="/img/products/sandwich_dencker_especial.jpg"
+                        alt="Sándwich Especial Dencker"
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      />
+                      <span className="absolute top-2 left-2 bg-[#991B24] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                        ⭐ Especial Dencker
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-baseline justify-between border-b border-[#991B24] pb-2">
                     <span className="font-serif font-black text-lg text-[#991B24]">
                       Sándwich especial Dencker
@@ -1169,6 +1644,52 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     ENSALADAS
                   </h3>
+
+                  {mostrarFotos && (
+                    <div className="grid grid-cols-2 gap-2.5 pb-1">
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1712680987.jpg",
+                          titulo: "Ensalada César con Pollo",
+                          desc: "Hojas tiernas de lechuga, crutons crujientes, pollo grillado y aderezo césar artesanal.",
+                          precio: 30
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1712680987.jpg"
+                          alt="Ensalada César"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Ensalada César</span>
+                          <span className="text-[10px] text-[#785E4F] block">Pollo grillado</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 30</span>
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => setFotoModal({
+                          url: "/img/products/1712760039.jpg",
+                          titulo: "Porción de Papas Fritas",
+                          desc: "Papas fritas crujientes doradas al momento con sal marina.",
+                          precio: 15
+                        })}
+                        className="bg-white/80 p-2 rounded-xl border border-[#E7DFD5] flex items-center gap-2 cursor-pointer hover:border-[#991B24]/40 transition group"
+                      >
+                        <img
+                          src="/img/products/1712760039.jpg"
+                          alt="Papas Fritas"
+                          className="w-12 h-12 rounded-lg object-cover shrink-0 group-hover:scale-105 transition"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-serif font-bold text-xs text-[#1E130C] block truncate">Papas Fritas</span>
+                          <span className="text-[10px] text-[#785E4F] block">Crocantes</span>
+                          <span className="font-serif font-bold text-xs text-[#991B24]">Bs 15</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {[
                     { id: "prod_ensalada_cesar", nombre: "Ensalada César", desc: "Lechuga, crutons, pollo y salsa cesar", precio: 30 },
                     { id: "prod_ensalada_thai", nombre: "Ensalada Thai", desc: "Lechuga, col, zanahoria, tomate cherry, gajos de naranja, pimentón caramelizado, pollo y tortilla tostada", precio: 30 },
@@ -1194,7 +1715,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 6: PIZZAS ARTESANALES (PORCIONES 4, 6 Y 8) ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8">
+          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header con Logo Chef Hat */}
             <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
@@ -1219,7 +1740,27 @@ export default function MenuPdfPage() {
               <div className="space-y-6">
                 
                 {/* Pizza Especial Dencker */}
-                <div className="p-5 rounded-2xl bg-white/80 border-2 border-[#991B24]/40 shadow-sm space-y-4">
+                <div className="p-5 rounded-2xl bg-white/95 border-2 border-[#991B24]/40 shadow-sm space-y-4">
+                  {mostrarFotos && (
+                    <div
+                      onClick={() => setFotoModal({
+                        url: "/img/products/1712700679.jpg",
+                        titulo: "Pizza Especial Dencker",
+                        desc: "Arma tu pizza con DOS proteínas y TRES complementos. Masa fermentada en horno de piedra.",
+                        precio: 95
+                      })}
+                      className="relative aspect-16/9 rounded-xl overflow-hidden bg-stone-100 border border-stone-200 cursor-pointer group"
+                    >
+                      <img
+                        src="/img/products/1712700679.jpg"
+                        alt="Pizza Especial Dencker"
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      />
+                      <span className="absolute top-2 left-2 bg-[#991B24] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                        🔥 Horno de Piedra
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-baseline justify-between border-b border-[#991B24] pb-2">
                     <span className="font-serif font-black text-lg text-[#991B24]">
                       PIZZA ESPECIAL DENCKER
@@ -1503,6 +2044,106 @@ export default function MenuPdfPage() {
 
         </main>
       )}
+
+      {/* ── MODAL DE FOTO GASTRONÓMICA EN ALTA RESOLUCIÓN (EXTERIOR VS CORTE) ── */}
+      {fotoModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 print:hidden animate-fade-in"
+          onClick={() => setFotoModal(null)}
+        >
+          <div
+            className="bg-[#FAF6EF] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border-2 border-[#991B24]/40"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative aspect-4/3 bg-stone-900">
+              <img
+                src={fotoModal.url}
+                alt={fotoModal.titulo}
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={() => setFotoModal(null)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition cursor-pointer"
+              >
+                ✕
+              </button>
+              {fotoModal.corteUrl && (
+                <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/70 backdrop-blur-md p-1 rounded-xl border border-white/20">
+                  <button
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setFotoModal((prev) => prev ? { ...prev, url: prev.originalUrl || prev.url, viendoCorte: false } : null);
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                      !fotoModal.viendoCorte ? "bg-[#991B24] text-white" : "text-stone-300 hover:text-white"
+                    }`}
+                  >
+                    Exterior
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setFotoModal((prev) => prev ? { ...prev, url: prev.corteUrl!, viendoCorte: true } : null);
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                      fotoModal.viendoCorte ? "bg-[#991B24] text-white" : "text-stone-300 hover:text-white"
+                    }`}
+                  >
+                    Corte Interior
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif font-black text-xl text-[#1E130C]">{fotoModal.titulo}</h3>
+                {fotoModal.precio && (
+                  <span className="font-serif font-bold text-lg text-[#991B24]">Bs {fotoModal.precio}</span>
+                )}
+              </div>
+              {fotoModal.desc && (
+                <p className="text-xs text-[#785E4F] leading-relaxed">{fotoModal.desc}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── ESTILOS GLOBALES DE IMPRESIÓN A4 ── */}
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 8mm 6mm 8mm 6mm;
+          }
+          body, html {
+            background-color: #ffffff !important;
+            color: #1e130c !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .print-page {
+            page-break-after: always !important;
+            break-after: page !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            min-height: 96vh !important;
+            border: 2px solid #991b24 !important;
+            border-radius: 20px !important;
+            box-shadow: none !important;
+            margin-bottom: 0 !important;
+            padding: 24px !important;
+          }
+          .print-page:last-of-type {
+            page-break-after: auto !important;
+            break-after: auto !important;
+          }
+          .print-no-break {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+        }
+      `}</style>
 
       {/* ── FOOTER DE LA CARTA (PRINT FRIENDLY) ── */}
       <footer className="max-w-4xl mx-auto px-4 py-8 text-center text-xs text-[#785E4F] border-t border-[#E7DFD5] space-y-2 mt-12 print:border-t print:border-black">
