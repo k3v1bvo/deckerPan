@@ -24,10 +24,15 @@ import {
   ZoomOut,
   RefreshCw,
   ExternalLink,
-  BookOpen
+  BookOpen,
+  Plus,
+  Minus,
+  ShoppingBag,
+  Check,
+  MessageCircle,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useSystemStore } from "@/store";
+import { useSystemStore, useCartStore, useUIStore } from "@/store";
 import {
   DENCKER_ASSETS,
   MENU_PDF_PAGES,
@@ -55,6 +60,107 @@ export default function MenuPdfPage() {
 
   const [modo, setModo] = useState<ModoMenu>("dinamico_vivo");
   const [mostrarFotos, setMostrarFotos] = useState<boolean>(true);
+
+  // Integración activa con el Carrito y Tienda Oficial
+  const { items, addItem, updateCantidad, total, count } = useCartStore();
+  const { setCartOpen } = useUIStore();
+  const cartCount = count();
+  const cartTotal = total();
+  const [feedbackAgregado, setFeedbackAgregado] = useState<string | null>(null);
+
+  const getItemCantidadEnCarrito = (id: string): number => {
+    const item = items.find((i) => i.producto.id === id);
+    return item ? item.cantidad : 0;
+  };
+
+  const handleAgregarRapido = (
+    item: { id: string; nombre: string; precio: number; desc?: string },
+    e?: React.MouseEvent
+  ) => {
+    if (e) e.stopPropagation();
+    let prod = getProd(item.id, item.nombre);
+    if (!prod) {
+      prod = {
+        id: item.id,
+        categoria_id: "c_saladas",
+        nombre: item.nombre,
+        descripcion: item.desc || "",
+        precio: item.precio,
+        costo: item.precio * 0.4,
+        imagen_url: "/img/brand/logo-3-don-dencker-badge.png",
+        disponible: true,
+        es_mas_vendido: false,
+        chips_personalizacion: [],
+        stock: 50,
+        estacion: "vitrina",
+      };
+    }
+    addItem(prod);
+    soundManager.playPastryCrinkle();
+    setFeedbackAgregado(prod.nombre);
+    setTimeout(() => setFeedbackAgregado(null), 1800);
+  };
+
+  const renderItemFila = (
+    item: { id: string; nombre: string; precio: number; desc?: string },
+    tamano: "normal" | "destacado" = "normal"
+  ) => {
+    const prod = getProd(item.id, item.nombre);
+    const cant = prod && prod.id ? getItemCantidadEnCarrito(prod.id) : 0;
+    const precioFinal = formatPrecio(prod, item.precio);
+
+    return (
+      <div
+        key={item.id}
+        className={`group border-b border-dotted border-[#E2D6C6] transition hover:bg-amber-500/10 px-2.5 -mx-2.5 rounded-xl flex flex-col justify-center ${
+          tamano === "destacado" ? "py-2.5" : "py-1.5"
+        }`}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-baseline gap-2 min-w-0">
+            <span
+              className={`font-serif font-bold text-[#1E130C] group-hover:text-[#991B24] transition ${
+                tamano === "destacado" ? "text-base" : "text-sm"
+              }`}
+            >
+              {prod ? prod.nombre : item.nombre}
+            </span>
+            {cant > 0 && (
+              <span className="print:hidden text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 shadow-2xs shrink-0">
+                {cant} en pedido
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <span
+              className={`font-serif font-black text-[#991B24] ${
+                tamano === "destacado" ? "text-base" : "text-sm"
+              }`}
+            >
+              Bs {precioFinal}
+            </span>
+
+            {/* Botón táctil para añadir a la canasta (se oculta al imprimir) */}
+            <button
+              type="button"
+              onClick={(e) => handleAgregarRapido(item, e)}
+              className="print:hidden w-7 h-7 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 group-hover:scale-105"
+              title={`Añadir ${prod ? prod.nombre : item.nombre} al pedido`}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        </div>
+
+        {(item.desc || prod?.descripcion) && (
+          <p className="text-[11px] text-[#785E4F] leading-tight mt-0.5 pr-8">
+            {prod?.descripcion || item.desc}
+          </p>
+        )}
+      </div>
+    );
+  };
   const [fotoModal, setFotoModal] = useState<{
     url: string;
     originalUrl?: string;
@@ -234,6 +340,28 @@ export default function MenuPdfPage() {
 
           {/* Acciones: Imprimir, Descargar, Admin */}
           <div className="flex items-center gap-2">
+            {/* Botón Canasta en Barra Superior */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playClick();
+                setCartOpen(true);
+              }}
+              className="relative px-3.5 py-1.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] border border-amber-400/50 text-white text-xs font-bold transition flex items-center gap-2 shadow-md active:scale-95 cursor-pointer print:hidden"
+            >
+              <ShoppingBag size={14} className="text-amber-300" />
+              <span>Canasta</span>
+              {cartCount > 0 ? (
+                <span className="px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[10px] font-black">
+                  {cartCount} • Bs {cartTotal.toFixed(0)}
+                </span>
+              ) : (
+                <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono text-[10px]">
+                  0
+                </span>
+              )}
+            </button>
+
             <button
               onClick={handleImprimir}
               className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer active:scale-95"
@@ -633,21 +761,36 @@ export default function MenuPdfPage() {
           {/* ── PÁGINA 2: DESAYUNOS, CAFÉS (4 LLAMAS) & LATTES ── */}
           <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
-            {/* Header con Logo Chef Hat */}
-            <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
-              <div className="w-16 h-12 flex items-center justify-center mb-1">
-                <img
-                  src={DENCKER_ASSETS.logoPng}
-                  alt="Dencker Hat"
-                  className="w-full h-full object-contain"
-                />
+            {/* Header Oficial: Mascota Café Barista & Sello Catuaí Caranavi */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
+              <div className="flex items-center gap-3.5">
+                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+                  <img
+                    src="/img/brand/mascot-coffee.png"
+                    alt="Mascota Café Barista Dencker"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                    DESAYUNOS & CAFÉS
+                  </h2>
+                  <p className="text-xs text-[#785E4F]">
+                    Granos de altura Caranavi "Café 4 Llamas" (1,700 msnm) & horneados frescos
+                  </p>
+                </div>
               </div>
-              <h2 className="font-serif font-black text-3xl sm:text-4xl uppercase text-[#991B24] tracking-wider">
-                DESAYUNOS & CAFÉS
-              </h2>
-              <span className="text-[11px] font-mono font-bold tracking-widest text-[#785E4F] uppercase">
-                Página 2 • Granos de Altura Caranavi "Café 4 Llamas"
-              </span>
+
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/img/brand/cafe-catuai-badge-hd.png"
+                  alt="Catuaí Lavado Caranavi"
+                  className="h-12 w-auto object-contain drop-shadow-xs"
+                />
+                <span className="font-serif font-bold text-xs px-3.5 py-1.5 rounded-full bg-[#991B24] text-white shadow-xs">
+                  Pág. 02
+                </span>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -707,7 +850,8 @@ export default function MenuPdfPage() {
                 )}
 
                 <div className="space-y-4">
-                  {[
+                  {
+  [
                     { id: "prod_rise_shine", nombre: "Rise & Shine", desc: "Huevos revueltos, tostadas, tomate, queso criollo, granola con yogurt, café o té", precio: 45 },
                     { id: "prod_jamon_palta", nombre: "Jamón y palta", desc: "Tostadas con porción de jamón y palta, café o té", precio: 30 },
                     { id: "prod_huevos_revueltos_fritos", nombre: "Huevos revueltos o fritos", desc: "Huevos revueltos o fritos con jamón o tomate, tostadas, mantequilla, café o té", precio: 35 },
@@ -715,24 +859,8 @@ export default function MenuPdfPage() {
                     { id: "prod_huevos_benedictinos", nombre: "Huevos escalfados (benedictinos)", desc: "Huevos escalfados, hojas de espinaca, jamón, salsa de queso sobre pan molde tostado, café o té", precio: 40 },
                     { id: "prod_continental", nombre: "Continental", desc: "Tostadas o pan baguette, mermelada y mantequilla, fruta, café o té y jugo o mimosa", precio: 35 },
                     { id: "prod_golosa_caprichosa", nombre: "Golosa y caprichosa", desc: "Frutos rojos, chocolate para untar y crema, viene con café o té. Elige base: Panqueques, Waffles o Tostadas francesas", precio: 40 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="group border-b border-dashed border-[#E2D6C6] pb-3">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-serif font-bold text-base text-[#1E130C] group-hover:text-[#991B24] transition">
-                            {prod ? prod.nombre : item.nombre}
-                          </span>
-                          <span className="font-serif font-black text-base text-[#991B24] shrink-0">
-                            Bs {formatPrecio(prod, item.precio)}
-                          </span>
-                        </div>
-                        <p className="text-xs text-[#6B5344] leading-relaxed mt-0.5">
-                          {prod?.descripcion || item.desc}
-                        </p>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item, 'destacado'))
+}
                 </div>
 
                 {/* Mascota Taza Sonriente con Sol */}
@@ -813,7 +941,8 @@ export default function MenuPdfPage() {
                   )}
 
                   <div className="space-y-2.5">
-                    {[
+                    {
+  [
                       { id: "prod_expresso", nombre: "Expresso (30cc)", desc: "Expresso 30cc puro", precio: 15 },
                       { id: "prod_expresso_rocas", nombre: "Expresso en las rocas", desc: "Expreso + hielo", precio: 16 },
                       { id: "prod_expresso_cortado", nombre: "Expresso cortado", desc: "Expresso cortado con leche", precio: 16 },
@@ -824,22 +953,8 @@ export default function MenuPdfPage() {
                       { id: "prod_flat_white", nombre: "Flat White", desc: "Dos expressos + leche texturizada sedosa", precio: 25 },
                       { id: "prod_affogato", nombre: "Affogato", desc: "Expresso + una porción de helado artesanal", precio: 25 },
                       { id: "prod_iced_coffee", nombre: "Iced coffee", desc: "Americano + hielo refrescante", precio: 22 },
-                    ].map((item) => {
-                      const prod = getProd(item.id, item.nombre);
-                      return (
-                        <div key={item.id} className="border-b border-dotted border-[#E2D6C6] pb-2">
-                          <div className="flex items-baseline justify-between gap-2">
-                            <span className="font-serif font-bold text-sm text-[#1E130C]">
-                              {prod ? prod.nombre : item.nombre}
-                            </span>
-                            <span className="font-serif font-bold text-sm text-[#991B24] shrink-0">
-                              Bs {formatPrecio(prod, item.precio)}
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-[#785E4F]">{prod?.descripcion || item.desc}</p>
-                        </div>
-                      );
-                    })}
+                    ].map((item) => renderItemFila(item))
+}
                   </div>
                 </div>
 
@@ -852,28 +967,15 @@ export default function MenuPdfPage() {
                   </div>
 
                   <div className="space-y-2.5">
-                    {[
+                    {
+  [
                       { id: "prod_latte_clasico", nombre: "Latte", desc: "Leche texturizada + expresso", precio: 22 },
                       { id: "prod_latte_caramel", nombre: "Latte caramel", desc: "Leche texturizada, expresso y caramelo", precio: 24 },
                       { id: "prod_latte_vainilla_caramelo", nombre: "Latte vainilla caramelo", desc: "Leche texturizada, expresso, vainilla y caramelo", precio: 25 },
                       { id: "prod_latte_mocha", nombre: "Latte mocha", desc: "Leche texturizada, expresso y chocolate", precio: 25 },
                       { id: "prod_latte_cinnamon", nombre: "Latte Cinnamon", desc: "Leche texturizada, expresso y canela", precio: 24 },
-                    ].map((item) => {
-                      const prod = getProd(item.id, item.nombre);
-                      return (
-                        <div key={item.id} className="border-b border-dotted border-[#E2D6C6] pb-2">
-                          <div className="flex items-baseline justify-between gap-2">
-                            <span className="font-serif font-bold text-sm text-[#1E130C]">
-                              {prod ? prod.nombre : item.nombre}
-                            </span>
-                            <span className="font-serif font-bold text-sm text-[#991B24] shrink-0">
-                              Bs {formatPrecio(prod, item.precio)}
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-[#785E4F]">{prod?.descripcion || item.desc}</p>
-                        </div>
-                      );
-                    })}
+                    ].map((item) => renderItemFila(item))
+}
                   </div>
                 </div>
 
@@ -886,21 +988,31 @@ export default function MenuPdfPage() {
           {/* ── PÁGINA 3: CHOCOLATES, TÉS, JUGOS, FRAPPÉS, HELADOS & REFRESCOS ── */}
           <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
-            {/* Header con Logo Chef Hat */}
-            <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
-              <div className="w-16 h-12 flex items-center justify-center mb-1">
-                <img
-                  src={DENCKER_ASSETS.logoPng}
-                  alt="Dencker Hat"
-                  className="w-full h-full object-contain"
-                />
+            {/* Header Oficial: Mascota Don Dencker & Bebidas Artesanales */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
+              <div className="flex items-center gap-3.5">
+                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+                  <img
+                    src="/img/brand/don-dencker-mascot-clean.png"
+                    alt="Don Dencker Mascota"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                    CHOCOLATES, TÉS & BEBIDAS
+                  </h2>
+                  <p className="text-xs text-[#785E4F]">
+                    Infusiones botánicas, chocolates espesos, helados artesanales y jugos de pura fruta
+                  </p>
+                </div>
               </div>
-              <h2 className="font-serif font-black text-3xl sm:text-4xl uppercase text-[#991B24] tracking-wider">
-                CHOCOLATES, TÉS & BEBIDAS
-              </h2>
-              <span className="text-[11px] font-mono font-bold tracking-widest text-[#785E4F] uppercase">
-                Página 3 • Infusiones, Frappés, Helados y Jugos Frescos
-              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-bold text-xs px-3.5 py-1.5 rounded-full bg-[#991B24] text-white shadow-xs">
+                  Pág. 03
+                </span>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -959,23 +1071,14 @@ export default function MenuPdfPage() {
                       </div>
                     </div>
                   )}
-                  {[
+                  {
+  [
                     { id: "prod_chocolate_leche", nombre: "Chocolate con leche", desc: "Chocolate, leche texturizada", precio: 22 },
                     { id: "prod_chocolate_marshmallow", nombre: "Chocolate con marshmallow", desc: "Chocolate, leche texturizada, marshmallow tostado", precio: 25 },
                     { id: "prod_chocolate_vainilla", nombre: "Chocolate vainilla", desc: "Chocolate, leche texturizada, esencia dulce de vainilla", precio: 25 },
                     { id: "prod_chocolate_agua", nombre: "Chocolate", desc: "Chocolate tradicional con agua", precio: 20 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-baseline justify-between gap-2 border-b border-dotted border-[#E2D6C6] pb-1.5">
-                        <div>
-                          <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                          <p className="text-[11px] text-[#785E4F]">{prod?.descripcion || item.desc}</p>
-                        </div>
-                        <span className="font-serif font-bold text-sm text-[#991B24] shrink-0">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
                 {/* Tés */}
@@ -983,22 +1086,16 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     TES
                   </h3>
-                  {[
+                  {
+  [
                     { id: "prod_te_negro_verde", nombre: "Te negro o verde", precio: 12 },
                     { id: "prod_te_frutos_rojos", nombre: "Te frutos rojos", precio: 16 },
                     { id: "prod_te_verde_jazmin", nombre: "Te verde jazmin", precio: 15 },
                     { id: "prod_te_limon_jengibre_miel", nombre: "Te limón jengibre y miel", precio: 20 },
                     { id: "prod_mate_tradicional", nombre: "Mate: manzanilla, anis, coca, trimate", precio: 12 },
                     { id: "prod_chai_tea_latte", nombre: "Chai tea latte", precio: 22 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-center justify-between gap-2 border-b border-dotted border-[#E2D6C6] pb-1">
-                        <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                        <span className="font-serif font-bold text-sm text-[#991B24] shrink-0">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
                 {/* Jugos */}
@@ -1022,20 +1119,14 @@ export default function MenuPdfPage() {
                       <span>Bs 20</span>
                     </div>
                   </div>
-                  {[
+                  {
+  [
                     { id: "prod_jugo_frutilla_naranja", nombre: "Mixto: Frutilla, naranja", precio: 22 },
                     { id: "prod_jugo_mango_naranja_maracuya", nombre: "Mixto: Mango, naranja, maracuyá", precio: 25 },
                     { id: "prod_limonada_hierbabuena", nombre: "Limón hierba buena", precio: 20 },
                     { id: "prod_pina_hierbabuena", nombre: "Piña hierba buena", precio: 20 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-center justify-between border-b border-dotted border-[#E2D6C6] pb-1">
-                        <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                        <span className="font-serif font-bold text-sm text-[#991B24]">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
               </div>
@@ -1094,24 +1185,15 @@ export default function MenuPdfPage() {
                       </div>
                     </div>
                   )}
-                  {[
+                  {
+  [
                     { id: "prod_frappe_light", nombre: "Light", desc: "Expresso, leche, hielo, edulcorante o azúcar", precio: 24 },
                     { id: "prod_frappe_vainilla", nombre: "Vainilla", desc: "Expresso, leche, hielo, crema, salsa de caramelo", precio: 25 },
                     { id: "prod_frappe_mocha", nombre: "Mocha", desc: "Expresso, leche, hielo, chocolate, crema, salsa de chocolate", precio: 26 },
                     { id: "prod_frappe_oreo", nombre: "Oreo", desc: "Expresso, leche, hielo, galletas oreo, crema, salsa de chocolate", precio: 26 },
                     { id: "prod_frappe_dos_chocolates", nombre: "Dos chocolates", desc: "Expresso, leche, hielo, chispas de chocolate blanco y negro, crema, salsa de chocolate", precio: 26 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="border-b border-dotted border-[#E2D6C6] pb-1.5">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                          <span className="font-serif font-bold text-sm text-[#991B24]">Bs {formatPrecio(prod, item.precio)}</span>
-                        </div>
-                        <p className="text-[11px] text-[#785E4F]">{prod?.descripcion || item.desc}</p>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
                 {/* Helados */}
@@ -1119,19 +1201,13 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     HELADOS
                   </h3>
-                  {[
+                  {
+  [
                     { id: "prod_copa_vienesa_melva", nombre: "Copa Vienesa o Melva", precio: 35 },
                     { id: "prod_helado_simple", nombre: "Porción de helado simple", precio: 15 },
                     { id: "prod_helado_doble", nombre: "Porción de helado doble", precio: 20 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-center justify-between border-b border-dotted border-[#E2D6C6] pb-1">
-                        <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                        <span className="font-serif font-bold text-sm text-[#991B24]">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
                 {/* Refrescos */}
@@ -1139,19 +1215,13 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     REFRESCOS
                   </h3>
-                  {[
+                  {
+  [
                     { id: "prod_iced_tea", nombre: "Iced tea", precio: 16 },
                     { id: "prod_gaseosa_500", nombre: "Gaseosas 500cc (Coca Cola, Fanta, Sprite)", precio: 10 },
                     { id: "prod_agua_500", nombre: "Agua 500cc (con o sin gas)", precio: 10 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-center justify-between border-b border-dotted border-[#E2D6C6] pb-1">
-                        <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                        <span className="font-serif font-bold text-sm text-[#991B24]">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
               </div>
@@ -1163,21 +1233,31 @@ export default function MenuPdfPage() {
           {/* ── PÁGINA 4: DULCES, POSTRES & MASITAS SALADAS ── */}
           <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
-            {/* Header con Logo Chef Hat */}
-            <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
-              <div className="w-16 h-12 flex items-center justify-center mb-1">
-                <img
-                  src={DENCKER_ASSETS.logoPng}
-                  alt="Dencker Hat"
-                  className="w-full h-full object-contain"
-                />
+            {/* Header Oficial: Mascota Croissant & Hojaldres de Mantequilla */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
+              <div className="flex items-center gap-3.5">
+                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+                  <img
+                    src="/img/brand/mascot-croissant.png"
+                    alt="Croissant Mascota Dencker"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                    DULCES, POSTRES & SALADAS
+                  </h2>
+                  <p className="text-xs text-[#785E4F]">
+                    100% pura mantequilla, tortas de vitrina y masitas saladas tradicionales
+                  </p>
+                </div>
               </div>
-              <h2 className="font-serif font-black text-3xl sm:text-4xl uppercase text-[#991B24] tracking-wider">
-                DULCES, POSTRES & SALADAS
-              </h2>
-              <span className="text-[11px] font-mono font-bold tracking-widest text-[#785E4F] uppercase">
-                Página 4 • Hojaldres, Alfajores, Tortas y Masitas Tradicionales
-              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-bold text-xs px-3.5 py-1.5 rounded-full bg-[#991B24] text-white shadow-xs">
+                  Pág. 04
+                </span>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -1253,7 +1333,8 @@ export default function MenuPdfPage() {
                 )}
 
                 <div className="space-y-2.5">
-                  {[
+                  {
+  [
                     { id: "prod_alfajor_maicena", nombre: "Alfajor de maicena", desc: "Galletas de maicena rellenas de dulce de leche con coco rallado", precio: 7.5 },
                     { id: "prod_muffin_arandanos_choco", nombre: "Muffin de arándanos chocolate", desc: "", precio: 11.5 },
                     { id: "prod_alfajor_marplatense", nombre: "Alfajor marplatense", desc: "Galleta de alfajor rellena de dulce de leche con cubierta de chocolate", precio: 12.5 },
@@ -1268,18 +1349,8 @@ export default function MenuPdfPage() {
                     { id: "prod_galletas_chips", nombre: "Galletas con chips de chocolate", desc: "", precio: 9.5 },
                     { id: "prod_donas_rellenas", nombre: "Donas rellenas", desc: "", precio: 12.5 },
                     { id: "prod_babka", nombre: "Babka", desc: "", precio: 10 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="border-b border-dotted border-[#E2D6C6] pb-1.5">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                          <span className="font-serif font-bold text-sm text-[#991B24] shrink-0">Bs {formatPrecio(prod, item.precio)}</span>
-                        </div>
-                        {item.desc && <p className="text-[11px] text-[#785E4F]">{item.desc}</p>}
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
               </div>
@@ -1368,7 +1439,8 @@ export default function MenuPdfPage() {
                       </div>
                     </div>
                   )}
-                  {[
+                  {
+  [
                     { id: "prod_tartaleta_chocolate", nombre: "Tartaleta de chocolate", precio: 20 },
                     { id: "prod_queque_japones", nombre: "Queque japonés", precio: 25 },
                     { id: "prod_cheesecake", nombre: "Cheesecake", precio: 27 },
@@ -1381,15 +1453,8 @@ export default function MenuPdfPage() {
                     { id: "prod_mini_cake", nombre: "Mini cake (Chocolate, red velvet, zanahoria)", precio: 17 },
                     { id: "prod_crumble_manzana", nombre: "Crumble de manzana", precio: 19 },
                     { id: "prod_mil_hojas", nombre: "Mil hojas", precio: 19 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-center justify-between border-b border-dotted border-[#E2D6C6] pb-1">
-                        <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                        <span className="font-serif font-bold text-sm text-[#991B24]">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
                 {/* Separador a cuadros rojos y blancos */}
@@ -1450,7 +1515,8 @@ export default function MenuPdfPage() {
                       </div>
                     </div>
                   )}
-                  {[
+                  {
+  [
                     { id: "prod_empanada_queso", nombre: "Empanada de queso", precio: 8.5 },
                     { id: "prod_cunape", nombre: "Cuñape", precio: 8.5 },
                     { id: "prod_cunape_frito", nombre: "Cuñape frito", precio: 7.5 },
@@ -1462,15 +1528,8 @@ export default function MenuPdfPage() {
                     { id: "prod_pan_arroz", nombre: "Pan de arroz", precio: 10.5 },
                     { id: "prod_sonso", nombre: "Sonso", precio: 15.5 },
                     { id: "prod_esfihas", nombre: "Esfihas", precio: 12 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-center justify-between border-b border-dotted border-[#E2D6C6] pb-1">
-                        <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                        <span className="font-serif font-bold text-sm text-[#991B24]">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
               </div>
@@ -1482,21 +1541,31 @@ export default function MenuPdfPage() {
           {/* ── PÁGINA 5: SÁNDWICHES, EXTRAS & ENSALADAS ── */}
           <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
-            {/* Header con Logo Chef Hat */}
-            <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
-              <div className="w-16 h-12 flex items-center justify-center mb-1">
-                <img
-                  src={DENCKER_ASSETS.logoPng}
-                  alt="Dencker Hat"
-                  className="w-full h-full object-contain"
-                />
+            {/* Header Oficial: Mascota Pan Tostada & Masa Madre */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
+              <div className="flex items-center gap-3.5">
+                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+                  <img
+                    src="/img/brand/mascot-bread.png"
+                    alt="Pan Tostada Mascota Dencker"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                    SANDWICHES & ENSALADAS
+                  </h2>
+                  <p className="text-xs text-[#785E4F]">
+                    Pan de masa madre con 24h de fermentación, vegetales frescos y guarniciones
+                  </p>
+                </div>
               </div>
-              <h2 className="font-serif font-black text-3xl sm:text-4xl uppercase text-[#991B24] tracking-wider">
-                SANDWICHES & ENSALADAS
-              </h2>
-              <span className="text-[11px] font-mono font-bold tracking-widest text-[#785E4F] uppercase">
-                Página 5 • Arma tu Sándwich a tu Gusto, Guarniciones y Panes Nobles
-              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-bold text-xs px-3.5 py-1.5 rounded-full bg-[#991B24] text-white shadow-xs">
+                  Pág. 05
+                </span>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -1587,22 +1656,16 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     EXTRAS
                   </h3>
-                  {[
+                  {
+  [
                     { id: "prod_extra_papas_fritas", nombre: "Porción de papas fritas", precio: 15 },
                     { id: "prod_extra_palta", nombre: "Porción de palta", precio: 10 },
                     { id: "prod_extra_tocino", nombre: "Tocino", precio: 10 },
                     { id: "prod_extra_jamon", nombre: "Jamón", precio: 5 },
                     { id: "prod_extra_tostada", nombre: "Tostada", precio: 6 },
                     { id: "prod_extra_queso", nombre: "Queso", precio: 3 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="flex items-center justify-between border-b border-dotted border-[#E2D6C6] pb-1">
-                        <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                        <span className="font-serif font-bold text-sm text-[#991B24]">Bs {formatPrecio(prod, item.precio)}</span>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
               </div>
@@ -1615,7 +1678,8 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C] border-b-2 border-[#1E130C] pb-1">
                     SANDWICHES
                   </h3>
-                  {[
+                  {
+  [
                     { id: "prod_sandwich_lomito", nombre: "Lomito", desc: "Lomito picado, cebolla salteada, pimentón, queso mozzarella, lechuga y tomate (pan a elección)", precio: 35 },
                     { id: "prod_sandwich_pesto", nombre: "Pesto", desc: "Filete de pollo grillado, pesto de albahaca, queso mozzarella, tomate, aceite de oliva (pan a elección)", precio: 35 },
                     { id: "prod_sandwich_st_germain", nombre: "St. Germain", desc: "Lomito picado, tocino, queso mozzarella, tomate, champiñones, mayonesa casera (pan a elección)", precio: 40 },
@@ -1623,18 +1687,8 @@ export default function MenuPdfPage() {
                     { id: "prod_sandwich_jamon_queso", nombre: "Jamón y queso", desc: "Jamón y queso mozzarella (pan a elección)", precio: 30 },
                     { id: "prod_croque_monsieur", nombre: "Croque Monsieur", desc: "Jamón, queso mozzarella, salsa bechamel en pan molde", precio: 30 },
                     { id: "prod_sandwich_pavita", nombre: "Pavita", desc: "Mayonesa de la casa, pollo, maíz (pan a elección)", precio: 27 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="border-b border-dotted border-[#E2D6C6] pb-2">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                          <span className="font-serif font-bold text-sm text-[#991B24] shrink-0">Bs {formatPrecio(prod, item.precio)}</span>
-                        </div>
-                        <p className="text-[11px] text-[#785E4F]">{prod?.descripcion || item.desc}</p>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
                 {/* PAN A ELECCIÓN */}
@@ -1702,22 +1756,13 @@ export default function MenuPdfPage() {
                       </div>
                     </div>
                   )}
-                  {[
+                  {
+  [
                     { id: "prod_ensalada_cesar", nombre: "Ensalada César", desc: "Lechuga, crutons, pollo y salsa cesar", precio: 30 },
                     { id: "prod_ensalada_thai", nombre: "Ensalada Thai", desc: "Lechuga, col, zanahoria, tomate cherry, gajos de naranja, pimentón caramelizado, pollo y tortilla tostada", precio: 30 },
                     { id: "prod_pasta_salad", nombre: "Pasta Salad", desc: "Pasta fusilli, lechuga, tomate cherry, pepino, choclitos, poroto negro, palta, pollo", precio: 35 },
-                  ].map((item) => {
-                    const prod = getProd(item.id, item.nombre);
-                    return (
-                      <div key={item.id} className="border-b border-dotted border-[#E2D6C6] pb-2">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : item.nombre}</span>
-                          <span className="font-serif font-bold text-sm text-[#991B24] shrink-0">Bs {formatPrecio(prod, item.precio)}</span>
-                        </div>
-                        <p className="text-[11px] text-[#785E4F]">{prod?.descripcion || item.desc}</p>
-                      </div>
-                    );
-                  })}
+                  ].map((item) => renderItemFila(item))
+}
                 </div>
 
               </div>
@@ -1729,21 +1774,31 @@ export default function MenuPdfPage() {
           {/* ── PÁGINA 6: PIZZAS ARTESANALES (PORCIONES 4, 6 Y 8) ── */}
           <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
-            {/* Header con Logo Chef Hat */}
-            <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/20 relative">
-              <div className="w-16 h-12 flex items-center justify-center mb-1">
-                <img
-                  src={DENCKER_ASSETS.logoPng}
-                  alt="Dencker Hat"
-                  className="w-full h-full object-contain"
-                />
+            {/* Header Oficial: Mascota Pizza Skater & Horno de Piedra */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
+              <div className="flex items-center gap-3.5">
+                <div className="w-16 h-16 rounded-2xl bg-white p-1 border-2 border-amber-400/80 shadow-xs flex items-center justify-center shrink-0">
+                  <img
+                    src="/img/brand/mascot-pizza.png"
+                    alt="Pizza Mascota Dencker"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-2xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                    PIZZAS ARTESANALES
+                  </h2>
+                  <p className="text-xs text-[#785E4F]">
+                    Masa madurada 24 horas, salsa pomodoro casera y queso Catupiri fundido
+                  </p>
+                </div>
               </div>
-              <h2 className="font-serif font-black text-3xl sm:text-4xl uppercase text-[#991B24] tracking-wider">
-                PIZZAS ARTESANALES
-              </h2>
-              <span className="text-[11px] font-mono font-bold tracking-widest text-[#785E4F] uppercase">
-                Página 6 • Masa Fermentada, Queso Mozzarella & Horno de Piedra
-              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-bold text-xs px-3.5 py-1.5 rounded-full bg-[#991B24] text-white shadow-xs">
+                  Pág. 06
+                </span>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -1852,7 +1907,7 @@ export default function MenuPdfPage() {
                 </div>
 
                 <div className="space-y-3">
-                  {[
+                                    {[
                     { id: "prod_pizza_margarita", nombre: "Margarita", desc: "Salsa de tomate, mozzarella, tomate, albahaca y aceite de oliva", p4: 40, p6: 55, p8: 70 },
                     { id: "prod_pizza_jamon_queso", nombre: "Jamón y queso", desc: "Salsa de tomate, mozzarella y jamon", p4: 35, p6: 50, p8: 65 },
                     { id: "prod_pizza_hawaiana", nombre: "Hawaina", desc: "Salsa de tomate, mozzarella, jamón, piña", p4: 40, p6: 55, p8: 70 },
@@ -1866,23 +1921,42 @@ export default function MenuPdfPage() {
                     { id: "prod_pizza_pollo_catupiri", nombre: "Pollo", desc: "Salsa de tomate, mozzarella, pollo desmenuzado, queso catupiri", p4: 45, p6: 65, p8: 80 },
                   ].map((p) => {
                     const prod = getProd(p.id, p.nombre);
-                    // Si el admin editó el precio base de la pizza de 4 porciones en el store:
                     const basePrice = prod ? prod.precio : p.p4;
                     const ratio = basePrice / p.p4;
                     const p6Display = Math.round(p.p6 * ratio);
                     const p8Display = Math.round(p.p8 * ratio);
+                    const cant = prod && prod.id ? getItemCantidadEnCarrito(prod.id) : 0;
 
                     return (
-                      <div key={p.id} className="border-b border-dotted border-[#E2D6C6] pb-2">
+                      <div key={p.id} className="group border-b border-dotted border-[#E2D6C6] pb-2 transition hover:bg-amber-500/10 px-2.5 -mx-2.5 rounded-xl">
                         <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-serif font-bold text-sm text-[#1E130C]">{prod ? prod.nombre : p.nombre}</span>
-                          <div className="flex gap-3 sm:gap-5 text-sm font-serif font-black text-[#991B24]">
-                            <span className="w-8 text-center">{basePrice}</span>
-                            <span className="w-8 text-center">{p6Display}</span>
-                            <span className="w-8 text-center">{p8Display}</span>
+                          <div className="flex items-baseline gap-2 min-w-0">
+                            <span className="font-serif font-bold text-sm text-[#1E130C] group-hover:text-[#991B24] transition">
+                              {prod ? prod.nombre : p.nombre}
+                            </span>
+                            {cant > 0 && (
+                              <span className="print:hidden text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 shadow-2xs shrink-0">
+                                {cant} en pedido
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <div className="flex gap-3 sm:gap-5 text-sm font-serif font-black text-[#991B24]">
+                              <span className="w-8 text-center">{basePrice}</span>
+                              <span className="w-8 text-center">{p6Display}</span>
+                              <span className="w-8 text-center">{p8Display}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => handleAgregarRapido({ id: p.id, nombre: `Pizza ${p.nombre}`, precio: basePrice, desc: p.desc }, e)}
+                              className="print:hidden w-7 h-7 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 group-hover:scale-105"
+                              title={`Añadir Pizza ${p.nombre} al pedido`}
+                            >
+                              <Plus size={14} />
+                            </button>
                           </div>
                         </div>
-                        <p className="text-[11px] text-[#785E4F]">{prod?.descripcion || p.desc}</p>
+                        <p className="text-[11px] text-[#785E4F] leading-tight mt-0.5 pr-8">{prod?.descripcion || p.desc}</p>
                       </div>
                     );
                   })}
@@ -2057,6 +2131,70 @@ export default function MenuPdfPage() {
         </main>
       )}
 
+            {/* Toast de confirmación de adición rápida */}
+      {feedbackAgregado && (
+        <div className="fixed top-20 right-6 z-50 bg-[#1E130C] border-2 border-amber-400 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 animate-bounce print:hidden">
+          <CheckCircle2 size={18} className="text-emerald-400" />
+          <div className="text-xs">
+            <span className="font-bold text-amber-300 block">¡Añadido a tu pedido!</span>
+            <span className="text-stone-300 line-clamp-1">{feedbackAgregado}</span>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════
+          BARRA FLOTANTE DE PEDIDO RÁPIDO (BISTRO ORDER DOCK)
+      ══════════════════════════════════════════════════════════════ */}
+      <div className="fixed bottom-0 inset-x-0 z-40 p-3 sm:p-4 print:hidden pointer-events-none">
+        <div className="max-w-4xl mx-auto bg-[#160D08]/98 backdrop-blur-2xl border-2 border-amber-500/50 rounded-3xl p-3 sm:p-4 shadow-[0_10px_40px_rgba(0,0,0,0.7)] flex items-center justify-between gap-3 text-white pointer-events-auto">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-center shrink-0">
+              <ShoppingBag className="text-amber-300 w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-black text-sm sm:text-base text-white truncate">
+                  {cartCount > 0 ? `Tu Pedido (${cartCount})` : "Carta Oficial Dencker Pan"}
+                </span>
+                {cartCount > 0 && (
+                  <span className="font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-950 shrink-0 shadow-xs">
+                    Bs {cartTotal.toFixed(2)}
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-stone-300 truncate hidden sm:block">
+                {cartCount > 0
+                  ? "Toca en 'Ver Canasta & Pedir' para enviar a cocina, mesero o pedir por WhatsApp."
+                  : "Toca el botón '+' en cualquier producto para agregarlo a tu pedido mientras lees la carta."}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playClick();
+                setCartOpen(true);
+              }}
+              className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-[#991B24] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B24] text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center gap-2 active:scale-95 transition cursor-pointer border border-amber-400/50"
+            >
+              <ShoppingBag size={16} className="text-amber-300" />
+              <span>{cartCount > 0 ? "Ver Canasta & Pedir" : "Abrir Canasta"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleImprimir}
+              className="p-2.5 sm:p-3 rounded-2xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white transition cursor-pointer hidden md:flex items-center justify-center border border-white/10"
+              title="Imprimir Carta A4"
+            >
+              <Printer size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* ── MODAL DE FOTO GASTRONÓMICA EN ALTA RESOLUCIÓN (EXTERIOR VS CORTE) ── */}
       {fotoModal && (
         <div
@@ -2106,16 +2244,34 @@ export default function MenuPdfPage() {
                 </div>
               )}
             </div>
-            <div className="p-5 space-y-2">
+            <div className="p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif font-black text-xl text-[#1E130C]">{fotoModal.titulo}</h3>
                 {fotoModal.precio && (
-                  <span className="font-serif font-bold text-lg text-[#991B24]">Bs {fotoModal.precio}</span>
+                  <span className="font-serif font-black text-xl text-[#991B24]">Bs {fotoModal.precio}</span>
                 )}
               </div>
               {fotoModal.desc && (
                 <p className="text-xs text-[#785E4F] leading-relaxed">{fotoModal.desc}</p>
               )}
+
+              {/* Botón táctil para añadir a la canasta desde el Modal */}
+              <button
+                type="button"
+                onClick={() => {
+                  handleAgregarRapido({
+                    id: fotoModal.titulo,
+                    nombre: fotoModal.titulo,
+                    precio: typeof fotoModal.precio === "number" ? fotoModal.precio : parseFloat(String(fotoModal.precio || 0)),
+                    desc: fotoModal.desc
+                  });
+                  setFotoModal(null);
+                }}
+                className="w-full mt-2 py-3 rounded-2xl bg-gradient-to-r from-[#991B24] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B24] text-white font-extrabold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition border border-amber-400/40"
+              >
+                <ShoppingBag size={18} className="text-amber-300" />
+                <span>Añadir a mi Pedido {fotoModal.precio ? `• Bs ${fotoModal.precio}` : ""}</span>
+              </button>
             </div>
           </div>
         </div>
