@@ -237,7 +237,7 @@ export default function MenuPdfPage() {
       {/* ─── BARRA SUPERIOR DE CONTROL (NO SE IMPRIME) ─── */}
       <header className="sticky top-0 z-50 bg-[#1E130C] border-b border-amber-900/30 text-white print:hidden">
         <div className="px-4 py-2">
-          <div className="max-w-7xl mx-auto flex items-center gap-2">
+          <div className="max-w-[1720px] mx-auto flex items-center gap-2">
 
             {/* Logo + Volver */}
             <div className="flex items-center gap-2 shrink-0">
@@ -356,7 +356,7 @@ export default function MenuPdfPage() {
 
       {/* Banner en vivo */}
       <div className="bg-[#7B1818]/90 text-amber-100 text-[10px] py-1 px-4 print:hidden">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+        <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 font-medium">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <span className="hidden sm:inline"><strong>Menú Oficial</strong> &middot; Dencker Coffee &amp; Panadería &middot; Precios sincronizados en tiempo real</span>
@@ -375,7 +375,7 @@ export default function MenuPdfPage() {
           MODO 1: VISUALIZADOR OFICIAL DEL PDF (6 PÁGINAS ESCANEADAS)
       ══════════════════════════════════════════════════════════════ */}
       {modo === "oficial_pdf" && (
-        <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+        <main className="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-6">
           
           {/* Barra de Control de Visualización (Tira Continua vs Página por Página) */}
           <div className="p-4 rounded-3xl bg-white border border-[#E5DACD] shadow-sm flex flex-wrap items-center justify-between gap-4">
@@ -467,7 +467,7 @@ export default function MenuPdfPage() {
 
           {/* SUB-VISTA A: TIRA CONTINUA DE LAS 6 PÁGINAS ESCANEADAS */}
           {subVistaPdf === "tira_continua" && (
-            <div className="space-y-8 max-w-4xl mx-auto py-2">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 max-w-[1720px] mx-auto py-2 print:block print:space-y-0">
               {MENU_PDF_PAGES.map((p) => (
                 <div
                   key={p.page}
@@ -566,10 +566,73 @@ export default function MenuPdfPage() {
           MODO 2: MENÚ DINÁMICO EN VIVO (ESTILO EXACTO AL PDF + LIVE PRECIOS)
       ══════════════════════════════════════════════════════════════ */}
       {modo === "dinamico_vivo" && (
-        <main className="max-w-4xl mx-auto px-4 py-8 space-y-12">
+        <main className="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-6">
+
+          {/* ── BARRA DE NAVEGACIÓN RÁPIDA DE SECCIONES (STICKY DESKTOP) ── */}
+          <nav className="sticky top-[52px] z-30 bg-[#FAF6EF]/95 backdrop-blur-md border border-[#E7DFD5] rounded-2xl p-2.5 shadow-sm hidden md:flex items-center justify-between gap-2 print:hidden">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+              <span className="text-[11px] font-bold text-[#785E4F] uppercase tracking-wider px-2 shrink-0">
+                Secciones:
+              </span>
+              <button
+                type="button"
+                onClick={() => document.getElementById("menu-pagina-1")?.scrollIntoView({ behavior: "smooth" })}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+              >
+                <span>🏠 Portada</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => document.getElementById("menu-pagina-2")?.scrollIntoView({ behavior: "smooth" })}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+              >
+                <span>☕ Cafés & Desayunos</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => document.getElementById("menu-pagina-3")?.scrollIntoView({ behavior: "smooth" })}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+              >
+                <span>🧃 Tés & Refrescos</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => document.getElementById("menu-pagina-4")?.scrollIntoView({ behavior: "smooth" })}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+              >
+                <span>🥐 Pastelería & Masitas</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => document.getElementById("menu-pagina-5")?.scrollIntoView({ behavior: "smooth" })}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+              >
+                <span>🥪 Sándwiches Gourmet</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => document.getElementById("menu-pagina-6")?.scrollIntoView({ behavior: "smooth" })}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#991B24] hover:text-white border border-[#E7DFD5] text-xs font-bold text-[#1E130C] transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer"
+              >
+                <span>🍕 Pizzas Artesanales</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 pr-1">
+              <span className="text-[11px] text-[#785E4F] font-semibold hidden xl:inline">
+                📖 Vista Editorial Doble Página
+              </span>
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-950 border border-amber-400/40">
+                6 Páginas Oficiales
+              </span>
+            </div>
+          </nav>
+
+          {/* ── GRID DOBLE PÁGINA (EDITORIAL BISTRO EN PANTALLAS ANCHAS) ── */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start print:block print:space-y-0">
           
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-2xl border-4 border-[#991B24]/20 overflow-hidden relative flex flex-col items-center justify-between min-h-[920px] p-6 sm:p-10 text-center print-page">
+          <div id="menu-pagina-1" className="bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col items-center justify-between min-h-[920px] p-6 sm:p-10 text-center print-page">
             
             {/* Toldo a rayas rojas y crema */}
             <div className="w-full h-24 sm:h-28 -mt-6 sm:-mt-10 rounded-b-[36px] overflow-hidden shadow-md flex relative border-b-4 border-[#7F1D1D]">
@@ -708,7 +771,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 2: DESAYUNOS, CAFÉS (4 LLAMAS) & LATTES ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-2" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header Oficial: Mascota Café Barista & Sello Catuaí Caranavi */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -935,7 +998,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 3: CHOCOLATES, TÉS, JUGOS, FRAPPÉS, HELADOS & REFRESCOS ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-3" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header Oficial: Mascota Don Dencker & Bebidas Artesanales */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1180,7 +1243,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 4: DULCES, POSTRES & MASITAS SALADAS ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-4" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header Oficial: Mascota Croissant & Hojaldres de Mantequilla */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1488,7 +1551,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 5: SÁNDWICHES, EXTRAS & ENSALADAS ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-5" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header Oficial: Mascota Pan Tostada & Masa Madre */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1721,7 +1784,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 6: PIZZAS ARTESANALES (PORCIONES 4, 6 Y 8) ── */}
-          <div className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
+          <div id="menu-pagina-6" className="bg-[#FAF6EF] rounded-3xl shadow-xl border border-[#E7DFD5] p-6 sm:p-10 relative space-y-8 print-page">
             
             {/* Header Oficial: Mascota Pizza Skater & Horno de Piedra */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1978,6 +2041,8 @@ export default function MenuPdfPage() {
               <span className="font-mono font-bold text-[#991B24]">www.denckerpan.com</span>
             </div>
           </div>
+
+          </div> {/* Cierre del grid doble página */}
 
         </main>
       )}

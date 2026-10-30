@@ -344,6 +344,18 @@
 
 /* ── Print Styles (Tickets Térmicos 80mm / 58mm) ── */
 @media print {
+  /* ── Carta Digital / Menú PDF (A4 por página estricta) ── */
+  .print-page {
+    page-break-after: always !important;
+    break-after: page !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 98vh !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
   * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
   body { background: white !important; color: black !important; font-family: 'Courier New', monospace; }
   .no-print { display: none !important; }
