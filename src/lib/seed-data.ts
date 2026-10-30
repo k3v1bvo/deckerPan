@@ -16,6 +16,9 @@ export const DENCKER_ASSETS = {
 
   // Logo Oficial Activo (Sello Don Dencker Badge Oficial)
   logo: "/img/brand/logo-3-don-dencker-badge.png",
+  logoLight: "/img/brand/don-dencker-mascot-light.png",
+  logoGold: "/img/brand/don-dencker-mascot-gold.png",
+  logoChefHatLight: "/img/brand/logo-1-chef-hat-light.svg",
   logoPng: "/img/brand/logo-3-don-dencker-badge.png",
   logoSvg: "/img/brand/don-dencker-badge.svg",
   mascotClean: "/img/brand/don-dencker-mascot-clean.png",

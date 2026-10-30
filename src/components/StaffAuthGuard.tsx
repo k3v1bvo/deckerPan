@@ -261,7 +261,7 @@ export default function StaffAuthGuard({
         <div className="space-y-2">
           <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 p-2.5 mx-auto flex items-center justify-center shadow-inner">
             <img
-              src={DENCKER_ASSETS.logo}
+              src={DENCKER_ASSETS.logoLight}
               alt="Dencker Pan"
               className="w-full h-full object-contain drop-shadow"
             />

@@ -3,12 +3,17 @@ import React from "react";
 
 export type DenckerLogoVariant =
   | "chef-hat"
+  | "chef-hat-light"
   | "logo-1-chef-hat"
   | "vintage-badge"
   | "logo-2-vintage-ticket"
   | "badge-clean"
   | "logo-3-badge"
   | "mascot"
+  | "mascot-light"
+  | "mascot-gold"
+  | "logo-light"
+  | "logo-gold"
   | "mascot-coffee"
   | "mascot-croissant"
   | "mascot-bread"
@@ -52,6 +57,14 @@ export default function DenckerLogo({
       case "logo-1-chef-hat":
       case "chef-hat":
         return "/img/brand/logo-1-chef-hat.svg";
+      case "chef-hat-light":
+        return "/img/brand/logo-1-chef-hat-light.svg";
+      case "logo-light":
+      case "mascot-light":
+        return "/img/brand/don-dencker-mascot-light.png";
+      case "logo-gold":
+      case "mascot-gold":
+        return "/img/brand/don-dencker-mascot-gold.png";
       case "mascot":
         return "/img/brand/don-dencker-mascot-clean.png";
       case "mascot-coffee":

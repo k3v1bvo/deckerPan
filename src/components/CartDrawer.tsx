@@ -252,7 +252,7 @@ export default function CartDrawer() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 p-1 flex items-center justify-center">
                   <img
-                    src={DENCKER_ASSETS.logo}
+                    src={DENCKER_ASSETS.logoLight}
                     alt="Dencker Pan"
                     className="w-full h-full object-contain drop-shadow"
                   />
