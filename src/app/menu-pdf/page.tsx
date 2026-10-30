@@ -853,7 +853,7 @@ export default function MenuPdfPage() {
 
                   <div className="space-y-2.5">
                     {[
-                      { id: "prod_latte", nombre: "Latte", desc: "Leche texturizada + expresso", precio: 22 },
+                      { id: "prod_latte_clasico", nombre: "Latte", desc: "Leche texturizada + expresso", precio: 22 },
                       { id: "prod_latte_caramel", nombre: "Latte caramel", desc: "Leche texturizada, expresso y caramelo", precio: 24 },
                       { id: "prod_latte_vainilla_caramelo", nombre: "Latte vainilla caramelo", desc: "Leche texturizada, expresso, vainilla y caramelo", precio: 25 },
                       { id: "prod_latte_mocha", nombre: "Latte mocha", desc: "Leche texturizada, expresso y chocolate", precio: 25 },
@@ -960,10 +960,10 @@ export default function MenuPdfPage() {
                     </div>
                   )}
                   {[
-                    { id: "prod_choc_leche", nombre: "Chocolate con leche", desc: "Chocolate, leche texturizada", precio: 22 },
-                    { id: "prod_choc_marshmallow", nombre: "Chocolate con marshmallow", desc: "Chocolate, leche texturizada, marshmallow tostado", precio: 25 },
-                    { id: "prod_choc_vainilla", nombre: "Chocolate vainilla", desc: "Chocolate, leche texturizada, esencia dulce de vainilla", precio: 25 },
-                    { id: "prod_choc_agua", nombre: "Chocolate", desc: "Chocolate tradicional con agua", precio: 20 },
+                    { id: "prod_chocolate_leche", nombre: "Chocolate con leche", desc: "Chocolate, leche texturizada", precio: 22 },
+                    { id: "prod_chocolate_marshmallow", nombre: "Chocolate con marshmallow", desc: "Chocolate, leche texturizada, marshmallow tostado", precio: 25 },
+                    { id: "prod_chocolate_vainilla", nombre: "Chocolate vainilla", desc: "Chocolate, leche texturizada, esencia dulce de vainilla", precio: 25 },
+                    { id: "prod_chocolate_agua", nombre: "Chocolate", desc: "Chocolate tradicional con agua", precio: 20 },
                   ].map((item) => {
                     const prod = getProd(item.id, item.nombre);
                     return (
@@ -987,8 +987,8 @@ export default function MenuPdfPage() {
                     { id: "prod_te_negro_verde", nombre: "Te negro o verde", precio: 12 },
                     { id: "prod_te_frutos_rojos", nombre: "Te frutos rojos", precio: 16 },
                     { id: "prod_te_verde_jazmin", nombre: "Te verde jazmin", precio: 15 },
-                    { id: "prod_te_limon_jengibre", nombre: "Te limón jengibre y miel", precio: 20 },
-                    { id: "prod_mates", nombre: "Mate: manzanilla, anis, coca, trimate", precio: 12 },
+                    { id: "prod_te_limon_jengibre_miel", nombre: "Te limón jengibre y miel", precio: 20 },
+                    { id: "prod_mate_tradicional", nombre: "Mate: manzanilla, anis, coca, trimate", precio: 12 },
                     { id: "prod_chai_tea_latte", nombre: "Chai tea latte", precio: 22 },
                   ].map((item) => {
                     const prod = getProd(item.id, item.nombre);
@@ -1024,9 +1024,9 @@ export default function MenuPdfPage() {
                   </div>
                   {[
                     { id: "prod_jugo_frutilla_naranja", nombre: "Mixto: Frutilla, naranja", precio: 22 },
-                    { id: "prod_jugo_mango_naranja", nombre: "Mixto: Mango, naranja, maracuyá", precio: 25 },
-                    { id: "prod_jugo_limon_hierbabuena", nombre: "Limón hierba buena", precio: 20 },
-                    { id: "prod_jugo_pina_hierbabuena", nombre: "Piña hierba buena", precio: 20 },
+                    { id: "prod_jugo_mango_naranja_maracuya", nombre: "Mixto: Mango, naranja, maracuyá", precio: 25 },
+                    { id: "prod_limonada_hierbabuena", nombre: "Limón hierba buena", precio: 20 },
+                    { id: "prod_pina_hierbabuena", nombre: "Piña hierba buena", precio: 20 },
                   ].map((item) => {
                     const prod = getProd(item.id, item.nombre);
                     return (
@@ -1255,7 +1255,7 @@ export default function MenuPdfPage() {
                 <div className="space-y-2.5">
                   {[
                     { id: "prod_alfajor_maicena", nombre: "Alfajor de maicena", desc: "Galletas de maicena rellenas de dulce de leche con coco rallado", precio: 7.5 },
-                    { id: "prod_muffin_arandanos", nombre: "Muffin de arándanos chocolate", desc: "", precio: 11.5 },
+                    { id: "prod_muffin_arandanos_choco", nombre: "Muffin de arándanos chocolate", desc: "", precio: 11.5 },
                     { id: "prod_alfajor_marplatense", nombre: "Alfajor marplatense", desc: "Galleta de alfajor rellena de dulce de leche con cubierta de chocolate", precio: 12.5 },
                     { id: "prod_cinnamon_roll", nombre: "Cinnamon roll", desc: "", precio: 13 },
                     { id: "prod_medialuna", nombre: "Media luna", desc: "Masa hojaldrada en forma de croissant", precio: 10.5 },
@@ -1458,7 +1458,7 @@ export default function MenuPdfPage() {
                     { id: "prod_italiano_jamon_queso", nombre: "Italianos de jamon y queso", precio: 12.5 },
                     { id: "prod_palitos_queso", nombre: "Palitos de queso", precio: 7.5 },
                     { id: "prod_empanada_ricota", nombre: "Empanada de ricota (integral)", precio: 10.5 },
-                    { id: "prod_llaucha", nombre: "Llaucha paceña", precio: 12.5 },
+                    { id: "prod_llaucha_pacena", nombre: "Llaucha paceña", precio: 12.5 },
                     { id: "prod_pan_arroz", nombre: "Pan de arroz", precio: 10.5 },
                     { id: "prod_sonso", nombre: "Sonso", precio: 15.5 },
                     { id: "prod_esfihas", nombre: "Esfihas", precio: 12 },
@@ -1588,7 +1588,7 @@ export default function MenuPdfPage() {
                     EXTRAS
                   </h3>
                   {[
-                    { id: "prod_extra_papas", nombre: "Porción de papas fritas", precio: 15 },
+                    { id: "prod_extra_papas_fritas", nombre: "Porción de papas fritas", precio: 15 },
                     { id: "prod_extra_palta", nombre: "Porción de palta", precio: 10 },
                     { id: "prod_extra_tocino", nombre: "Tocino", precio: 10 },
                     { id: "prod_extra_jamon", nombre: "Jamón", precio: 5 },
@@ -1855,15 +1855,15 @@ export default function MenuPdfPage() {
                   {[
                     { id: "prod_pizza_margarita", nombre: "Margarita", desc: "Salsa de tomate, mozzarella, tomate, albahaca y aceite de oliva", p4: 40, p6: 55, p8: 70 },
                     { id: "prod_pizza_jamon_queso", nombre: "Jamón y queso", desc: "Salsa de tomate, mozzarella y jamon", p4: 35, p6: 50, p8: 65 },
-                    { id: "prod_pizza_hawaina", nombre: "Hawaina", desc: "Salsa de tomate, mozzarella, jamón, piña", p4: 40, p6: 55, p8: 70 },
+                    { id: "prod_pizza_hawaiana", nombre: "Hawaina", desc: "Salsa de tomate, mozzarella, jamón, piña", p4: 40, p6: 55, p8: 70 },
                     { id: "prod_pizza_funghi", nombre: "Pizza funghi", desc: "Salsa de tomate, mozzarella, champiñones frescos y jamón", p4: 35, p6: 50, p8: 65 },
-                    { id: "prod_pizza_choclo", nombre: "Choclo amarillo", desc: "Salsa de tomate, mozzarella, choclo amarillo, tocino", p4: 35, p6: 50, p8: 70 },
+                    { id: "prod_pizza_choclo_amarillo", nombre: "Choclo amarillo", desc: "Salsa de tomate, mozzarella, choclo amarillo, tocino", p4: 35, p6: 50, p8: 70 },
                     { id: "prod_pizza_bacon", nombre: "Bacon", desc: "Salsa de tomate, mozzarella, tocino, cebolla", p4: 40, p6: 55, p8: 70 },
                     { id: "prod_pizza_palmito", nombre: "Palmito", desc: "Salsa de tomate, mozzarella, palmitos, jamón, aceitunas, huevo", p4: 40, p6: 55, p8: 70 },
                     { id: "prod_pizza_portuguesa", nombre: "Portuguesa", desc: "Salsa de tomate, mozzarella, jamón, tomate, huevo, choclo amarillo, cebolla y aceitunas", p4: 45, p6: 55, p8: 80 },
                     { id: "prod_pizza_criolla", nombre: "Criolla", desc: "Salsa de tomate, mozzarella, carne molida, cebolla, tomate", p4: 45, p6: 65, p8: 80 },
                     { id: "prod_pizza_salame", nombre: "Salame", desc: "Salsa de tomate, mozzarella, salame, champiñones frescos, cebolla", p4: 45, p6: 65, p8: 80 },
-                    { id: "prod_pizza_pollo", nombre: "Pollo", desc: "Salsa de tomate, mozzarella, pollo desmenuzado, queso catupiri", p4: 45, p6: 65, p8: 80 },
+                    { id: "prod_pizza_pollo_catupiri", nombre: "Pollo", desc: "Salsa de tomate, mozzarella, pollo desmenuzado, queso catupiri", p4: 45, p6: 65, p8: 80 },
                   ].map((p) => {
                     const prod = getProd(p.id, p.nombre);
                     // Si el admin editó el precio base de la pizza de 4 porciones en el store:
