@@ -368,13 +368,13 @@ export default function MesaPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
       {/* ── Header Flotante Apple Glass ── */}
-      <header className="sticky top-0 z-30 bg-[#281810]/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 py-3 shadow-xl">
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
+      <header className="sticky top-0 z-30 bg-[#281810]/95 backdrop-blur-2xl border-b border-white/10 text-white px-3 sm:px-4 py-2.5 sm:py-3 shadow-xl pt-safe">
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/logo/logo.png"
-                alt="Dencker Pan"
+                src={DENCKER_ASSETS.logoLight}
+                alt="Don Dencker"
                 className="w-full h-full object-contain drop-shadow"
               />
             </div>
@@ -393,16 +393,16 @@ export default function MesaPage({ params }: PageProps) {
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={llamarMesero}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
+              className={`px-2 sm:px-3 py-1.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1 sm:gap-1.5 border cursor-pointer shrink-0 ${
                 llamandoMesero
                   ? "bg-emerald-600 border-emerald-400 text-white animate-pulse"
                   : "bg-white/10 hover:bg-white/20 border-white/15 text-stone-200"
               }`}
               title="Llamar al mesero para asistencia"
             >
-              <Bell size={14} className={llamandoMesero ? "animate-bounce" : ""} />
-              <span className="hidden xs:inline">{llamandoMesero ? "Llamando..." : "Mesero"}</span>
-              <span className="xs:hidden">{llamandoMesero ? "..." : "Mesero"}</span>
+              <Bell size={13} className={llamandoMesero ? "animate-bounce" : ""} />
+              <span className="hidden sm:inline">{llamandoMesero ? "Llamando..." : "Mesero"}</span>
+              <span className="sm:hidden text-[11px]">{llamandoMesero ? "..." : "Mozo"}</span>
             </motion.button>
 
             <motion.button
@@ -411,15 +411,16 @@ export default function MesaPage({ params }: PageProps) {
                 soundManager.playTactileClick();
                 setModalCuentaAbierto(true);
               }}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
+              className={`px-2 sm:px-3 py-1.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1 sm:gap-1.5 border cursor-pointer shrink-0 ${
                 avisoCuentaEnviado
                   ? "bg-amber-600 border-amber-400 text-white animate-pulse shadow-md"
                   : "bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/40 text-amber-200"
               }`}
               title="Pedir que traigan la cuenta a la mesa"
             >
-              <Receipt size={14} className={avisoCuentaEnviado ? "animate-bounce" : ""} />
-              <span className="whitespace-nowrap">{avisoCuentaEnviado ? "Cuenta Pedida ✓" : "Traer Cuenta"}</span>
+              <Receipt size={13} className={avisoCuentaEnviado ? "animate-bounce" : ""} />
+              <span className="hidden sm:inline">{avisoCuentaEnviado ? "Cuenta Pedida ✓" : "Traer Cuenta"}</span>
+              <span className="sm:hidden text-[11px]">{avisoCuentaEnviado ? "Pedida" : "Cuenta"}</span>
             </motion.button>
 
             <motion.button
@@ -428,7 +429,7 @@ export default function MesaPage({ params }: PageProps) {
                 soundManager.playClick();
                 setCartOpen(true);
               }}
-              className="px-3 sm:px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-black shadow-md flex items-center gap-1.5 relative active:scale-95 transition cursor-pointer"
+              className="px-2.5 sm:px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-black shadow-md flex items-center gap-1 sm:gap-1.5 relative active:scale-95 transition cursor-pointer shrink-0"
             >
               <ShoppingCart size={14} />
               <span>{count()}</span>
@@ -600,7 +601,7 @@ export default function MesaPage({ params }: PageProps) {
               >
                 <div>
                   {/* Image / Emoji Showcase */}
-                  <div className="h-28 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200/50 dark:from-stone-800 dark:to-stone-850 flex items-center justify-center text-4xl relative overflow-hidden mb-2.5">
+                  <div className="h-32 sm:h-36 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200/50 dark:from-stone-800 dark:to-stone-850 flex items-center justify-center text-4xl relative overflow-hidden mb-2.5">
                     {prod.imagen_url ? (
                       <img
                         src={prod.imagen_url}
@@ -624,19 +625,19 @@ export default function MesaPage({ params }: PageProps) {
                     )}
                   </div>
 
-                  <h3 className="font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100 line-clamp-1 leading-snug">
+                  <h3 className="font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100 line-clamp-2 min-h-[2.2rem] sm:min-h-[2.5rem] leading-snug">
                     {prod.nombre}
                   </h3>
 
                   {prod.descripcion && (
-                    <p className="text-[11px] text-stone-500 dark:text-stone-400 line-clamp-2 mt-0.5 leading-relaxed">
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 line-clamp-2 mt-0.5 leading-relaxed hidden xs:block">
                       {prod.descripcion}
                     </p>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between pt-3 mt-2 border-t border-stone-100 dark:border-stone-800/60">
-                  <span className="font-mono font-bold text-sm text-amber-900 dark:text-amber-400">
+                <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-stone-100 dark:border-stone-800/60">
+                  <span className="font-mono font-black text-sm text-amber-900 dark:text-amber-400">
                     Bs {prod.precio.toFixed(2)}
                   </span>
                   <button
@@ -644,7 +645,8 @@ export default function MesaPage({ params }: PageProps) {
                       e.stopPropagation();
                       abrirModal(prod);
                     }}
-                    className="w-7 h-7 rounded-xl bg-amber-900 dark:bg-amber-600 text-white flex items-center justify-center font-bold text-sm shadow-xs hover:bg-amber-950 transition active:scale-90"
+                    className="w-8 h-8 rounded-xl bg-amber-900 dark:bg-amber-600 text-white flex items-center justify-center font-bold text-base shadow-xs hover:bg-amber-950 transition active:scale-90"
+                    title="Añadir o personalizar"
                   >
                     +
                   </button>
@@ -673,7 +675,7 @@ export default function MesaPage({ params }: PageProps) {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 80, opacity: 0, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="fixed bottom-6 inset-x-4 max-w-sm mx-auto z-40"
+            className="fixed bottom-4 sm:bottom-6 inset-x-3 sm:inset-x-4 max-w-sm mx-auto z-40 pb-safe"
           >
             <motion.button
               whileTap={{ scale: 0.96 }}
@@ -706,13 +708,13 @@ export default function MesaPage({ params }: PageProps) {
       {/* ── Modal Customización de Producto ── */}
       <AnimatePresence>
         {productoModal && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4">
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="w-full max-w-lg bg-white dark:bg-stone-900 rounded-t-3xl p-6 shadow-2xl border-t border-stone-200 dark:border-stone-800 max-h-[85vh] overflow-y-auto space-y-5"
+              className="w-full max-w-lg bg-white dark:bg-stone-900 rounded-t-[28px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl border-t sm:border border-stone-200 dark:border-stone-800 max-h-[85vh] overflow-y-auto space-y-4 pb-safe"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -983,12 +985,12 @@ export default function MesaPage({ params }: PageProps) {
       {/* ── Modal Traer la Cuenta a la Mesa ── */}
       <AnimatePresence>
         {modalCuentaAbierto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 10 }}
+              initial={{ opacity: 0, scale: 0.94, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 10 }}
-              className="w-full max-w-md bg-stone-900 text-stone-100 rounded-[32px] p-6 border border-amber-500/40 shadow-2xl space-y-5"
+              exit={{ opacity: 0, scale: 0.94, y: 20 }}
+              className="w-full max-w-md bg-stone-900 text-stone-100 rounded-t-[28px] sm:rounded-[32px] p-5 sm:p-6 border-t sm:border border-amber-500/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto pb-safe"
             >
               {/* Header Modal */}
               <div className="flex items-center justify-between border-b border-stone-800 pb-4">

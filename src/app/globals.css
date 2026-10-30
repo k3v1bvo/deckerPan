@@ -99,6 +99,12 @@
   .text-center {
     text-align: center !important;
   }
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .pt-safe {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
 }
 
 /* ── Typography ── */

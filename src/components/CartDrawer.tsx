@@ -20,6 +20,7 @@ import {
   QrCode,
   CreditCard,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useCartStore, useUIStore, useSystemStore } from "@/store";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
@@ -29,7 +30,12 @@ const springTransition = { type: "spring", stiffness: 400, damping: 20 } as cons
 const springButton = { type: "spring", stiffness: 400, damping: 15 } as const;
 
 export default function CartDrawer() {
+  const pathname = usePathname();
   const { cartOpen, setCartOpen } = useUIStore();
+
+  if (pathname && pathname.startsWith("/mesa/")) {
+    return null;
+  }
   const { items, updateCantidad, removeItem, clearCart, total, count, mesaNumero, setMesa } = useCartStore();
   const storeProductos = useSystemStore((state) => state.productos);
 

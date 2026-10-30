@@ -1,24 +1,35 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import RoleNav from "@/components/RoleNav";
-import SupabaseSync from "@/components/SupabaseSync";
 import CartDrawer from "@/components/CartDrawer";
 import NotificationToast from "@/components/NotificationToast";
 import SoundToggle from "@/components/SoundToggle";
+import SupabaseSync from "@/components/SupabaseSync";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#1E130C",
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
-  title: {
-    default: "Dencker Pan — Cafetería & Panadería",
-    template: "%s | Dencker Pan",
-  },
-  description: "Sistema integral de gestión para Dencker Pan: menú digital, pedidos en mesa, cocina en tiempo real y administración completa.",
-  keywords: ["panadería", "cafetería", "Dencker Pan", "menú digital", "pedidos QR", "Cochabamba"],
-  openGraph: {
-    title: "Dencker Pan — Cafetería & Panadería",
-    description: "El mejor café artesanal y panes recién horneados de Cochabamba",
-    locale: "es_BO",
-    type: "website",
+  title: "Dencker Pan | Masa Madre & Café de Especialidad",
+  description:
+    "Panadería artesanal con masa madre viva de 24 horas y café de altura 4 Llamas (1,700 msnm) en Cochabamba, Bolivia. Hojaldres finos 100% mantequilla noble y servicio editorial.",
+  keywords: [
+    "Dencker Pan",
+    "Café de especialidad Cochabamba",
+    "Panadería artesanal masa madre",
+    "Café 4 Llamas Caranavi",
+    "Croissants mantequilla Cochabamba",
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Dencker Pan",
   },
 };
 
@@ -36,16 +47,16 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#1E130C" />
       </head>
-      <body>
+      <body className="antialiased selection:bg-amber-900 selection:text-white">
         <SupabaseSync />
-        <Suspense fallback={<div className="h-14 bg-amber-950" />}>
+        <Suspense fallback={<div className="h-16 bg-[#160D08]" />}>
           <RoleNav />
         </Suspense>
         <main className="w-full flex flex-col items-center flex-1">{children}</main>
-        <CartDrawer />
+        <Suspense fallback={null}>
+          <CartDrawer />
+        </Suspense>
         <NotificationToast />
         <Suspense fallback={null}>
           <SoundToggle />

@@ -145,7 +145,7 @@ export default function MenuPdfPage() {
             <button
               type="button"
               onClick={(e) => handleAgregarRapido(item, e)}
-              className="print:hidden w-7 h-7 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 group-hover:scale-105"
+              className="print:hidden w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 group-hover:scale-105"
               title={`Añadir ${prod ? prod.nombre : item.nombre} al pedido`}
             >
               <Plus size={14} />
@@ -609,7 +609,7 @@ export default function MenuPdfPage() {
           <div className="w-full flex flex-col items-center space-y-12 sm:space-y-16 print:space-y-0">
           
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
-          <div id="menu-pagina-1" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1050px] p-6 sm:p-10 lg:p-12 text-center print-page space-y-6">
+          <div id="menu-pagina-1" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 text-center print-page space-y-6">
             
             {/* Toldo a rayas rojas y crema de mayor presencia y escala */}
             <div className="w-full h-28 sm:h-36 -mt-6 sm:-mt-10 rounded-b-[42px] overflow-hidden shadow-lg flex relative border-b-4 border-[#7F1D1D] shrink-0">
@@ -794,7 +794,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 2: DESAYUNOS, CAFÉS (4 LLAMAS) & LATTES ── */}
-          <div id="menu-pagina-2" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
+          <div id="menu-pagina-2" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Café Barista & Sello Catuaí Caranavi */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1039,7 +1039,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 3: CHOCOLATES, TÉS, JUGOS, FRAPPÉS, HELADOS & REFRESCOS ── */}
-          <div id="menu-pagina-3" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
+          <div id="menu-pagina-3" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Don Dencker & Bebidas Artesanales */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1239,7 +1239,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 4: DULCES, POSTRES & MASITAS SALADAS ── */}
-          <div id="menu-pagina-4" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
+          <div id="menu-pagina-4" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Croissant & Hojaldres de Mantequilla */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1562,7 +1562,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 5: SÁNDWICHES, EXTRAS & ENSALADAS ── */}
-          <div id="menu-pagina-5" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
+          <div id="menu-pagina-5" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Pan Tostada & Masa Madre */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1812,7 +1812,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* ── PÁGINA 6: PIZZAS ARTESANALES (PORCIONES 4, 6 Y 8) ── */}
-          <div id="menu-pagina-6" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-[1020px] p-6 sm:p-10 lg:p-12 print-page space-y-8">
+          <div id="menu-pagina-6" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 print-page space-y-8">
             
             {/* Header Oficial: Mascota Pizza Skater & Horno de Piedra */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
@@ -1942,7 +1942,7 @@ export default function MenuPdfPage() {
                   <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C]">
                     PIZZAS
                   </h3>
-                  <div className="text-xs font-serif font-bold text-[#991B24] flex gap-3 sm:gap-5">
+                  <div className="text-[11px] sm:text-xs font-serif font-bold text-[#991B24] flex gap-2 sm:gap-5">
                     <span className="w-8 text-center">4 porc</span>
                     <span className="w-8 text-center">6 porc</span>
                     <span className="w-8 text-center">8 porc</span>
@@ -1984,7 +1984,7 @@ export default function MenuPdfPage() {
                             )}
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
-                            <div className="flex gap-3 sm:gap-5 text-sm font-serif font-black text-[#991B24]">
+                            <div className="flex gap-2 sm:gap-5 text-xs sm:text-sm font-serif font-black text-[#991B24]">
                               <span className="w-8 text-center">{basePrice}</span>
                               <span className="w-8 text-center">{p6Display}</span>
                               <span className="w-8 text-center">{p8Display}</span>
@@ -1992,7 +1992,7 @@ export default function MenuPdfPage() {
                             <button
                               type="button"
                               onClick={(e) => handleAgregarRapido({ id: p.id, nombre: `Pizza ${p.nombre}`, precio: basePrice, desc: p.desc }, e)}
-                              className="print:hidden w-7 h-7 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 group-hover:scale-105"
+                              className="print:hidden w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 group-hover:scale-105"
                               title={`Añadir Pizza ${p.nombre} al pedido`}
                             >
                               <Plus size={14} />

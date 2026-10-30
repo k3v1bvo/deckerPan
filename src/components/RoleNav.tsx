@@ -45,30 +45,30 @@ export default function RoleNav() {
       <header className="sticky top-0 z-40 bg-[#160D08] backdrop-blur-2xl border-b border-amber-500/20 text-white shadow-xl print:hidden">
         <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-3">
 
-          {/* ── LOGO & BRAND IDENTITY ── */}
+          {/* ── LOGO & BRAND IDENTITY RESPONSIVE (MÓVIL & ESCRITORIO) ── */}
           <Link
             href="/"
             onClick={() => soundManager.playSuccessTone()}
-            className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0 min-w-0"
+            className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0"
           >
-            <div className="h-13 sm:h-14 w-auto flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+            <div className="h-11 sm:h-14 w-auto flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
               <img
                 src={DENCKER_ASSETS.logoLight}
                 alt="Don Dencker"
-                className="h-full w-auto max-h-13 sm:max-h-14 object-contain select-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]"
+                className="h-full w-auto max-h-11 sm:max-h-14 object-contain select-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]"
               />
             </div>
             <div className="leading-tight flex flex-col justify-center">
-              <div className="flex items-center gap-2">
-                <span className="font-serif font-black text-lg sm:text-xl text-white tracking-wide group-hover:text-amber-200 transition-colors">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-serif font-black text-base sm:text-xl text-white tracking-wide group-hover:text-amber-200 transition-colors whitespace-nowrap">
                   Dencker Pan
                 </span>
-                <span className="text-[9.5px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30 whitespace-nowrap shadow-xs">
+                <span className="text-[9px] sm:text-[10px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30 whitespace-nowrap shadow-xs">
                   Café 4 Llamas
                 </span>
               </div>
-              <span className="text-[9.5px] sm:text-[10.5px] text-amber-300/80 font-mono tracking-wider font-semibold">
-                Panadería & Café &bull; Cochabamba
+              <span className="text-[10px] text-amber-300/80 font-mono tracking-wider font-semibold hidden sm:block">
+                Panadería &amp; Café &bull; Cochabamba
               </span>
             </div>
           </Link>
@@ -122,44 +122,46 @@ export default function RoleNav() {
               WhatsApp
             </a>
 
-            {/* Carrito */}
+            {/* Carrito Táctil & Compacto en Celulares */}
             <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={() => {
                 soundManager.playClick();
                 setCartOpen(true);
               }}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-stone-900 hover:bg-stone-800 border-2 border-amber-400/70 text-white text-[12px] font-bold shadow transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-stone-900 hover:bg-stone-800 border border-amber-400/60 sm:border-2 sm:border-amber-400/70 text-white text-xs font-bold shadow transition-all active:scale-95 cursor-pointer whitespace-nowrap min-h-[38px]"
+              aria-label="Ver Canasta"
             >
               <ShoppingBag size={15} className="text-amber-400 shrink-0" />
               <span className="hidden sm:inline">Canasta</span>
               {cartCount > 0 ? (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[11px] font-black">
-                  {cartCount} <span className="text-stone-700">·</span> Bs {cartTotal.toFixed(0)}
+                <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-400 text-stone-950 font-mono text-[10px] font-black">
+                  {cartCount}
+                  <span className="hidden md:inline text-stone-700">· Bs {cartTotal.toFixed(0)}</span>
                 </span>
               ) : (
-                <span className="w-5 h-5 rounded-full bg-white/15 text-white font-mono text-[11px] font-bold flex items-center justify-center">
+                <span className="w-4 h-4 rounded-full bg-white/15 text-white font-mono text-[10px] font-bold flex items-center justify-center">
                   0
                 </span>
               )}
             </motion.button>
 
-            {/* Staff access */}
+            {/* Acceso Staff (Solo en Desktop para no estorbar en móviles) */}
             <Link
               href="/admin"
               onClick={() => soundManager.playClick()}
               title="Acceso al Personal"
               aria-label="Acceso al Personal"
-              className="w-9 h-9 rounded-full bg-white/8 hover:bg-white/15 border border-white/15 text-stone-300 hover:text-amber-300 flex items-center justify-center transition active:scale-95 cursor-pointer"
+              className="hidden sm:flex w-9 h-9 rounded-full bg-white/8 hover:bg-white/15 border border-white/15 text-stone-300 hover:text-amber-300 items-center justify-center transition active:scale-95 cursor-pointer"
             >
               <Lock size={15} />
             </Link>
 
-            {/* Hamburger (mobile) */}
+            {/* Hamburger (Móvil con tamaño táctil de 40px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Abrir menú"
-              className="lg:hidden w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center transition active:scale-95"
+              className="lg:hidden w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>

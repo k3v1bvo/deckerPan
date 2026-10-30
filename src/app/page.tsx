@@ -591,7 +591,7 @@ export default function HomePage() {
               </p>
 
               {/* Botones de Acción Directos */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3.5 pt-2">
                 <a
                   href="#catalogo"
                   onClick={() => soundManager.playPastryCrinkle()}
@@ -637,7 +637,7 @@ export default function HomePage() {
               </div>
 
               {/* Tres Pilares Auténticos de Panadería */}
-              <div className="pt-6 border-t border-[#EAE2D5] grid grid-cols-3 gap-4 text-xs text-[#785E4F]">
+              <div className="pt-6 border-t border-[#EAE2D5] grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs text-[#785E4F]">
                 <div className="flex items-center gap-2.5">
                   <Clock size={16} className="text-[#C4844D] shrink-0" />
                   <div>
@@ -1002,7 +1002,7 @@ export default function HomePage() {
                 </div>
                 
                 {/* 12 Mesas Rápidas */}
-                <div className="grid grid-cols-6 gap-1 pt-1">
+                <div className="grid grid-cols-6 gap-1.5 pt-1">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
                     <Link
                       key={num}
@@ -1522,7 +1522,7 @@ export default function HomePage() {
                     </div>
 
                     {/* Grilla de 4 Columnas con Doble Vista */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                       {itemsAMostrar.map((prod) => {
                         const cantidadEnCarrito = getItemCantidadEnCarrito(prod.id);
                         const vistaActual = getVistaActual(prod.id);
@@ -1539,7 +1539,7 @@ export default function HomePage() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={springCard}
-                            className="relative overflow-hidden rounded-2xl min-h-[350px] flex flex-col justify-end p-6 sm:p-7 group shadow-sm hover:shadow-xl transition-all border border-[#EAE2D5] bg-[#1A110B]"
+                            className="relative overflow-hidden rounded-2xl min-h-[230px] sm:min-h-[350px] flex flex-col justify-end p-3.5 sm:p-7 group shadow-sm hover:shadow-xl transition-all border border-[#EAE2D5] bg-[#1A110B]"
                           >
                             {/* Imagen Exterior */}
                             <img
@@ -1596,24 +1596,24 @@ export default function HomePage() {
                             <div className="relative z-10 space-y-2 text-white">
                               <h4
                                 onClick={() => abrirModalProducto(prod)}
-                                className="font-serif font-bold text-base sm:text-lg text-white hover:text-[#FDF3E7] transition cursor-pointer line-clamp-1"
+                                className="font-serif font-bold text-xs sm:text-lg text-white hover:text-[#FDF3E7] transition cursor-pointer line-clamp-2 min-h-[2rem] sm:min-h-0 leading-tight sm:leading-normal"
                               >
                                 {prod.nombre}
                               </h4>
 
                               {prod.descripcion && (
-                                <p className="text-[11px] text-[#D8C7B8] line-clamp-2 leading-relaxed">
+                                <p className="hidden sm:block text-[11px] text-[#D8C7B8] line-clamp-2 leading-relaxed">
                                   {prod.descripcion}
                                 </p>
                               )}
 
                               {/* Precios y Botón de Añadir */}
-                              <div className="pt-3 border-t border-white/15 flex items-center justify-between">
+                              <div className="pt-2 sm:pt-3 border-t border-white/15 flex items-center justify-between gap-1">
                                 <div>
-                                  <span className="text-[9px] text-[#A8988D] block font-medium uppercase tracking-wider">
+                                  <span className="text-[8px] sm:text-[9px] text-[#A8988D] block font-medium uppercase tracking-wider">
                                     Precio
                                   </span>
-                                  <span className="font-sans text-base font-extrabold text-white">
+                                  <span className="font-sans text-xs sm:text-base font-extrabold text-white">
                                     Bs {prod.precio.toFixed(2)}
                                   </span>
                                 </div>
@@ -1788,7 +1788,7 @@ export default function HomePage() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={springCard}
-                      className="relative overflow-hidden rounded-2xl min-h-[350px] flex flex-col justify-end p-6 sm:p-7 group shadow-sm hover:shadow-xl transition-all border border-[#EAE2D5] bg-[#1A110B]"
+                      className="relative overflow-hidden rounded-2xl min-h-[230px] sm:min-h-[350px] flex flex-col justify-end p-3.5 sm:p-7 group shadow-sm hover:shadow-xl transition-all border border-[#EAE2D5] bg-[#1A110B]"
                     >
                       {/* Imagen Exterior */}
                       <img
