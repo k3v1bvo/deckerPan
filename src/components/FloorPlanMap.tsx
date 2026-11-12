@@ -29,6 +29,10 @@ import {
   ChevronDown,
   Split,
   UserCheck,
+  Thermometer,
+  Activity,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import { Mesa, TipoMesa, PisoCafeteria, EstadoMesa, ItemPedido, Pedido } from "@/types";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
@@ -64,6 +68,10 @@ export default function FloorPlanMap({
   const [modalDetalleMesa, setModalDetalleMesa] = useState<Mesa | null>(null);
   const [subTabDetalle, setSubTabDetalle] = useState<"general" | "asientos" | "cuenta_separada">("general");
 
+  // Estados Mapa de Calor & Aforo en Vivo
+  const [modoCalor, setModoCalor] = useState(false);
+  const [metricaCalor, setMetricaCalor] = useState<"ocupacion" | "consumo" | "tiempo">("ocupacion");
+
   // Estado para asignar nombre a asiento
   const [asientoEditando, setAsientoEditando] = useState<number | null>(null);
   const [nombreAsientoInput, setNombreAsientoInput] = useState("");
@@ -92,6 +100,178 @@ export default function FloorPlanMap({
       return p === pisoActivo;
     });
   }, [storeMesas, pisoActivo]);
+
+  // Estadísticas globales de aforo y ocupación en vivo para el dueño/admin
+  const metricasAforo = useMemo(() => {
+    let capacidadPB = 0;
+    let personasPB = 0;
+    let capacidadTerraza = 0;
+    let personasTerraza = 0;
+    let mesasOcupadasCount = 0;
+    let consumoTotalEnVivo = 0;
+
+    storeMesas.forEach((mesa) => {
+      const p = mesa.piso || (mesa.numero >= 13 ? "terraza" : "planta_baja");
+      const ped = pedidos.find(
+        (o) => o.mesa_numero === mesa.numero && o.estado !== "pagado" && o.estado !== "cancelado"
+      );
+      const estaOcupada = mesa.estado === "ocupada" || !!ped;
+
+      let pax = 0;
+      if (estaOcupada) {
+        mesasOcupadasCount++;
+        const asignados = mesa.asientos_nombres ? Object.keys(mesa.asientos_nombres).length : 0;
+        pax = asignados > 0 ? asignados : mesa.capacidad;
+      }
+
+      if (ped) {
+        consumoTotalEnVivo += ped.total;
+      }
+
+      if (p === "terraza") {
+        capacidadTerraza += mesa.capacidad;
+        personasTerraza += pax;
+      } else {
+        capacidadPB += mesa.capacidad;
+        personasPB += pax;
+      }
+    });
+
+    const capacidadTotal = capacidadPB + capacidadTerraza;
+    const personasTotal = personasPB + personasTerraza;
+    const porcentajeTotal = capacidadTotal > 0 ? Math.round((personasTotal / capacidadTotal) * 100) : 0;
+    const porcentajePB = capacidadPB > 0 ? Math.round((personasPB / capacidadPB) * 100) : 0;
+    const porcentajeTerraza = capacidadTerraza > 0 ? Math.round((personasTerraza / capacidadTerraza) * 100) : 0;
+
+    return {
+      capacidadTotal,
+      personasTotal,
+      porcentajeTotal,
+      capacidadPB,
+      personasPB,
+      porcentajePB,
+      capacidadTerraza,
+      personasTerraza,
+      porcentajeTerraza,
+      mesasOcupadasCount,
+      mesasLibresCount: storeMesas.length - mesasOcupadasCount,
+      consumoTotalEnVivo,
+    };
+  }, [storeMesas, pedidos]);
+
+  // Cálculo de intensidad térmica para cada mesa
+  const getMesaHeatData = (mesa: Mesa, ped?: Pedido) => {
+    const estaOcupada = mesa.estado === "ocupada" || !!ped;
+
+    if (!estaOcupada) {
+      return {
+        intensity: 0,
+        badge: "❄️ Libre",
+        badgeBg: "bg-emerald-600/80 text-white",
+        glowColor: "rgba(16, 185, 129, 0.18)",
+        tableBg: "bg-emerald-500/10 border-emerald-500/40",
+      };
+    }
+
+    if (metricaCalor === "ocupacion") {
+      const asignados = mesa.asientos_nombres ? Object.keys(mesa.asientos_nombres).length : 0;
+      const pax = asignados > 0 ? asignados : mesa.capacidad;
+      const ratio = pax / mesa.capacidad;
+
+      if (ratio >= 1) {
+        return {
+          intensity: 1,
+          badge: `🔥 100% LLENO`,
+          badgeBg: "bg-red-600 text-white shadow-md shadow-red-600/40 animate-pulse font-black",
+          glowColor: "rgba(239, 68, 68, 0.70)",
+          tableBg: "bg-red-600/25 border-red-500",
+        };
+      } else if (ratio >= 0.7) {
+        return {
+          intensity: 0.75,
+          badge: `🌡️ ${Math.round(ratio * 100)}% (${pax}/${mesa.capacidad})`,
+          badgeBg: "bg-orange-500 text-white font-bold",
+          glowColor: "rgba(249, 115, 22, 0.55)",
+          tableBg: "bg-orange-500/20 border-orange-400",
+        };
+      } else if (ratio >= 0.5) {
+        return {
+          intensity: 0.5,
+          badge: `🟡 ${Math.round(ratio * 100)}% (${pax}/${mesa.capacidad})`,
+          badgeBg: "bg-amber-500 text-stone-950 font-bold",
+          glowColor: "rgba(245, 158, 11, 0.45)",
+          tableBg: "bg-amber-500/20 border-amber-400",
+        };
+      } else {
+        return {
+          intensity: 0.25,
+          badge: `🟡 ${Math.round(ratio * 100)}% (${pax}/${mesa.capacidad})`,
+          badgeBg: "bg-yellow-400 text-stone-950",
+          glowColor: "rgba(234, 179, 8, 0.35)",
+          tableBg: "bg-yellow-400/15 border-yellow-300",
+        };
+      }
+    } else if (metricaCalor === "consumo") {
+      const total = ped ? ped.total : 0;
+      if (total >= 100) {
+        return {
+          intensity: 1,
+          badge: `🔥 Bs ${total.toFixed(0)}`,
+          badgeBg: "bg-red-600 text-white shadow-md shadow-red-600/40 font-black",
+          glowColor: "rgba(239, 68, 68, 0.70)",
+          tableBg: "bg-red-600/25 border-red-500",
+        };
+      } else if (total >= 60) {
+        return {
+          intensity: 0.7,
+          badge: `🌡️ Bs ${total.toFixed(0)}`,
+          badgeBg: "bg-orange-500 text-white font-bold",
+          glowColor: "rgba(249, 115, 22, 0.55)",
+          tableBg: "bg-orange-500/20 border-orange-400",
+        };
+      } else {
+        return {
+          intensity: 0.4,
+          badge: `🟡 Bs ${total.toFixed(0)}`,
+          badgeBg: "bg-amber-500 text-stone-950 font-bold",
+          glowColor: "rgba(245, 158, 11, 0.45)",
+          tableBg: "bg-amber-500/20 border-amber-400",
+        };
+      }
+    } else {
+      // Tiempo de permanencia
+      let minutos = 20;
+      if (ped?.created_at) {
+        minutos = Math.max(5, Math.round((Date.now() - new Date(ped.created_at).getTime()) / 60000));
+      }
+
+      if (minutos >= 50) {
+        return {
+          intensity: 1,
+          badge: `🔥 ${minutos}m (Rotar)`,
+          badgeBg: "bg-red-600 text-white shadow-md shadow-red-600/40 font-black animate-pulse",
+          glowColor: "rgba(239, 68, 68, 0.70)",
+          tableBg: "bg-red-600/25 border-red-500",
+        };
+      } else if (minutos >= 30) {
+        return {
+          intensity: 0.65,
+          badge: `⏱️ ${minutos} min`,
+          badgeBg: "bg-orange-500 text-white font-bold",
+          glowColor: "rgba(249, 115, 22, 0.55)",
+          tableBg: "bg-orange-500/20 border-orange-400",
+        };
+      } else {
+        return {
+          intensity: 0.3,
+          badge: `✨ ${minutos} min`,
+          badgeBg: "bg-amber-400 text-stone-950 font-medium",
+          glowColor: "rgba(245, 158, 11, 0.35)",
+          tableBg: "bg-amber-400/15 border-amber-300",
+        };
+      }
+    }
+  };
 
   // Obtener pedido activo de una mesa
   const getPedidoMesa = (mesaNum: number): Pedido | undefined => {
@@ -227,8 +407,9 @@ export default function FloorPlanMap({
       {/* ── BARRA SUPERIOR DE CONTROL: PISOS & MODO EDICIÓN ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EAE2D5] dark:border-stone-800 shadow-xs">
         
-        {/* Selector de Piso (Planta Baja ⇄ Terraza) */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#F5EFEB] dark:bg-stone-800 rounded-xl border border-[#EAE2D5] dark:border-stone-700">
+        {/* Selector de Piso (Planta Baja ⇄ Terraza) y Toggle Mapa de Calor */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 p-1 bg-[#F5EFEB] dark:bg-stone-800 rounded-xl border border-[#EAE2D5] dark:border-stone-700">
           <button
             type="button"
             onClick={() => {
@@ -265,6 +446,90 @@ export default function FloorPlanMap({
             </span>
           </button>
         </div>
+
+        {/* Botón Switch Modo Mapa de Calor */}
+        <div className="flex items-center gap-1 bg-[#F5EFEB] dark:bg-stone-800 p-1 rounded-xl border border-[#EAE2D5] dark:border-stone-700">
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setModoCalor(false);
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              !modoCalor
+                ? "bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs"
+                : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+            }`}
+          >
+            <Layers size={13} />
+            <span>Operativo</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setModoCalor(true);
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              modoCalor
+                ? "bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-md shadow-red-600/30 font-black animate-pulse"
+                : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+            }`}
+          >
+            <Thermometer size={14} className={modoCalor ? "text-white" : "text-amber-600"} />
+            <span>Mapa de Calor</span>
+          </button>
+        </div>
+
+        {/* Sub-selector de Métrica de Calor */}
+        {modoCalor && (
+          <div className="flex items-center gap-1 bg-red-950/10 dark:bg-stone-800/80 p-1 rounded-xl border border-red-500/20 text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playClick();
+                setMetricaCalor("ocupacion");
+              }}
+              className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${
+                metricaCalor === "ocupacion"
+                  ? "bg-red-600 text-white shadow-xs"
+                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+              }`}
+            >
+              👥 Aforo / Sillas
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playClick();
+                setMetricaCalor("consumo");
+              }}
+              className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${
+                metricaCalor === "consumo"
+                  ? "bg-red-600 text-white shadow-xs"
+                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+              }`}
+            >
+              💰 Consumo Bs
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playClick();
+                setMetricaCalor("tiempo");
+              }}
+              className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${
+                metricaCalor === "tiempo"
+                  ? "bg-red-600 text-white shadow-xs"
+                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+              }`}
+            >
+              ⏱️ Rotación / Tiempo
+            </button>
+          </div>
+        )}
+      </div>
 
         {/* Acciones de Edición de Distribución */}
         {allowEditLayout && !readOnly && (
@@ -312,6 +577,85 @@ export default function FloorPlanMap({
             )}
           </div>
         )}
+      </div>
+
+      {/* ── HUD DE AFORO & OCUPACIÓN EN TIEMPO REAL (MÉTRICAS DUEÑO/ADMIN) ── */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-stone-900 via-[#1F130B] to-stone-900 text-white border border-amber-500/20 shadow-lg space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold border ${
+              metricasAforo.porcentajeTotal >= 85
+                ? "bg-red-500/20 text-red-400 border-red-500/40 animate-pulse"
+                : metricasAforo.porcentajeTotal >= 50
+                ? "bg-amber-500/20 text-amber-400 border-amber-500/40"
+                : "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
+            }`}>
+              <Activity size={20} />
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-black text-base text-white">
+                  Ocupación de Cafetería: {metricasAforo.porcentajeTotal}%
+                </span>
+                <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                  metricasAforo.porcentajeTotal >= 85
+                    ? "bg-red-500 text-white animate-pulse"
+                    : metricasAforo.porcentajeTotal >= 50
+                    ? "bg-amber-500 text-stone-950"
+                    : "bg-emerald-500 text-white"
+                }`}>
+                  {metricasAforo.porcentajeTotal >= 85
+                    ? "🔥 ALTA AFLUENCIA"
+                    : metricasAforo.porcentajeTotal >= 50
+                    ? "🟡 MODERADO"
+                    : "🟢 ESPACIO LIBRE"}
+                </span>
+              </div>
+              <p className="text-xs text-stone-300 font-medium">
+                <strong>{metricasAforo.personasTotal}</strong> comensales sentados de <strong>{metricasAforo.capacidadTotal}</strong> sillas máximas &bull; {metricasAforo.mesasOcupadasCount} mesas ocupadas, {metricasAforo.mesasLibresCount} libres
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+            {/* Planta Baja */}
+            <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
+              <span className="text-stone-300">Planta Baja:</span>
+              <span className="font-bold text-amber-300">{metricasAforo.personasPB}/{metricasAforo.capacidadPB} pax</span>
+              <span className="text-[10px] text-stone-400">({metricasAforo.porcentajePB}%)</span>
+            </div>
+
+            {/* Terraza */}
+            <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
+              <span className="text-stone-300">Terraza:</span>
+              <span className="font-bold text-amber-300">{metricasAforo.personasTerraza}/{metricasAforo.capacidadTerraza} pax</span>
+              <span className="text-[10px] text-stone-400">({metricasAforo.porcentajeTerraza}%)</span>
+            </div>
+
+            {/* Consumo Vivo */}
+            <div className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold flex items-center gap-1.5">
+              <span>Sala:</span>
+              <span>Bs {metricasAforo.consumoTotalEnVivo.toFixed(0)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Barra de progreso de aforo */}
+        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden p-0.5">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(100, metricasAforo.porcentajeTotal)}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className={`h-full rounded-full transition-all ${
+              metricasAforo.porcentajeTotal >= 85
+                ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 shadow-[0_0_12px_#ef4444]"
+                : metricasAforo.porcentajeTotal >= 50
+                ? "bg-gradient-to-r from-emerald-500 via-yellow-500 to-amber-500"
+                : "bg-gradient-to-r from-emerald-400 to-emerald-500"
+            }`}
+          />
+        </div>
       </div>
 
       {/* ── LIENZO ARQUITECTÓNICO DEL PLANO (CANVAS 2.5D INTERACTIVO) ── */}
@@ -417,6 +761,7 @@ export default function FloorPlanMap({
           const tieneAlerta = alertas.some((a) => a.mesa_numero === mesa.numero);
           const isSelected = mesaSeleccionadaId === mesa.id;
           const isDragging = mesaArrastrando === mesa.id;
+          const heat = getMesaHeatData(mesa, pedido);
 
           const statusStyles = {
             libre: {
@@ -458,13 +803,23 @@ export default function FloorPlanMap({
                 isDragging ? "scale-110 z-30 cursor-grabbing" : "hover:scale-105 active:scale-95"
               }`}
             >
+              {/* Halo Térmico / Heatmap Bloom (Cámara Térmica Infrarroja) */}
+              {modoCalor && (
+                <div
+                  style={{
+                    background: `radial-gradient(circle, ${heat.glowColor} 0%, rgba(239,68,68,0) 70%)`,
+                  }}
+                  className="absolute -inset-10 sm:-inset-14 rounded-full pointer-events-none filter blur-xl z-0 transition-all duration-700 animate-pulse"
+                />
+              )}
+
               {/* Sillas alrededor */}
               {renderChairs(mesa.capacidad, mesa.tipo, mesa.id)}
 
               {/* Superficie de la mesa */}
               <div
                 className={`relative flex flex-col items-center justify-center p-2.5 transition-all shadow-md backdrop-blur-md border-2 ${
-                  statusStyles.border
+                  modoCalor ? heat.tableBg : statusStyles.border
                 } ${isRound ? "rounded-full w-20 h-20 sm:w-22 sm:h-22" : isRect ? "rounded-2xl w-28 h-20 sm:w-32 sm:h-22" : "rounded-2xl w-20 h-20 sm:w-22 sm:h-22"} ${
                   isSelected ? "ring-4 ring-amber-600 shadow-xl" : ""
                 } ${tieneAlerta ? "ring-4 ring-red-500 animate-pulse bg-red-500/30" : ""}`}
@@ -480,8 +835,12 @@ export default function FloorPlanMap({
                   <span>{mesa.capacidad} sillas</span>
                 </div>
 
-                {/* Pedido Activo / Subtotal */}
-                {pedido ? (
+                {/* Badge Dinámico: Modo Calor vs Modo Operativo */}
+                {modoCalor ? (
+                  <span className={`mt-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${heat.badgeBg}`}>
+                    {heat.badge}
+                  </span>
+                ) : pedido ? (
                   <span className="mt-1 text-[10px] font-mono font-black px-1.5 py-0.5 rounded-md bg-[#1E130C] text-amber-300 shadow-xs">
                     Bs {pedido.total.toFixed(0)}
                   </span>
@@ -510,6 +869,37 @@ export default function FloorPlanMap({
             </div>
           );
         })}
+        {/* Leyenda Térmica Flotante en Modo Mapa de Calor */}
+        {modoCalor && (
+          <div className="absolute left-4 bottom-4 p-2.5 rounded-2xl bg-stone-900/90 backdrop-blur-md border border-white/10 text-white text-[10px] shadow-xl z-20 space-y-1.5 pointer-events-none">
+            <span className="font-bold flex items-center gap-1 text-amber-300 uppercase tracking-wider">
+              <Thermometer size={12} />
+              <span>Escala Térmica de Ocupación</span>
+            </span>
+            <div className="flex items-center gap-2 font-mono">
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span>Libre</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                <span>25%</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                <span>50%</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+                <span>75%</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+                <span className="font-bold text-red-400">100% LLENO</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── MODAL NUEVA MESA ── */}
