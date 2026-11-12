@@ -53,11 +53,14 @@ import {
   UserPlus,
   Lock,
   Download,
+  MapPin,
+  Compass,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSystemStore } from "@/store";
 import { uploadImageToImgBB } from "@/lib/imgbb";
-import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja, UsuarioStaff, StaffRole, FacturaEmitida } from "@/types";
+import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja, UsuarioStaff, StaffRole, FacturaEmitida, RegistroAsistencia, TipoMarcadoAsistencia, EstadoPuntualidad, GeocercaConfig } from "@/types";
+import { getGPSPosition, calcularDistanciaMetros } from "@/lib/geo";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import FloorPlanMap from "@/components/FloorPlanMap";
 import { uploadImageMultiCloud } from "@/lib/cloudStorage";
@@ -98,9 +101,14 @@ export default function AdminPage() {
     facturacionSiatConfig,
     facturasEmitidas,
     setFacturacionSiatConfig,
+    asistencias,
+    geocercaConfig,
+    updateGeocercaConfig,
+    clearHistorialAsistencias,
+    addRegistroAsistencia,
   } = useSystemStore();
 
-  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "personal" | "qr_mesas" | "reservas" | "metricas" | "qr" | "siat">("productos");
+  const [tabActiva, setTabActiva] = useState<"mesas" | "productos" | "personal" | "asistencias" | "qr_mesas" | "reservas" | "metricas" | "qr" | "siat">("productos");
   const [baseUrlMesas, setBaseUrlMesas] = useState("https://decker-pan.vercel.app");
 
   // Estados Edición Rápida de Precios & Galería de Fotos Reales
@@ -129,6 +137,83 @@ export default function AdminPage() {
       setLinkContadoraInput(facturacionSiatConfig.linkContadora);
     }
   }, [facturacionSiatConfig]);
+
+  // Estados Control de Asistencias & Geocerca GPS
+  const [filtroAsistenciaPersonal, setFiltroAsistenciaPersonal] = useState<string>("todos");
+  const [filtroAsistenciaFecha, setFiltroAsistenciaFecha] = useState<"hoy" | "todos">("hoy");
+  const [filtroAsistenciaTipo, setFiltroAsistenciaTipo] = useState<string>("todos");
+  const [formGeocerca, setFormGeocerca] = useState(geocercaConfig);
+  const [gpsCalibrando, setGpsCalibrando] = useState(false);
+  const [guardadoGeocercaExitoso, setGuardadoGeocercaExitoso] = useState(false);
+
+  useEffect(() => {
+    setFormGeocerca(geocercaConfig);
+  }, [geocercaConfig]);
+
+  const [fechaHoyStr, setFechaHoyStr] = useState("");
+
+  useEffect(() => {
+    setFechaHoyStr(new Date().toISOString().split("T")[0]);
+  }, []);
+
+  const capturarUbicacionActual = async () => {
+    setGpsCalibrando(true);
+    try {
+      const pos = await getGPSPosition();
+      setFormGeocerca((prev) => ({
+        ...prev,
+        latitud: Number(pos.lat.toFixed(6)),
+        longitud: Number(pos.lon.toFixed(6)),
+      }));
+      soundManager.playSuccessTone();
+      alert(`📍 Coordenadas capturadas con éxito:\nLatitud: ${pos.lat.toFixed(6)}\nLongitud: ${pos.lon.toFixed(6)}\nPrecisión GPS: ±${pos.accuracy} metros`);
+    } catch (err: any) {
+      soundManager.playError();
+      alert(err.message || "Error al obtener ubicación GPS del dispositivo.");
+    } finally {
+      setGpsCalibrando(false);
+    }
+  };
+
+  const guardarGeocerca = () => {
+    updateGeocercaConfig(formGeocerca);
+    setGuardadoGeocercaExitoso(true);
+    soundManager.playSuccessTone();
+    setTimeout(() => setGuardadoGeocercaExitoso(false), 3000);
+  };
+
+  const asistenciasFiltradas = useMemo(() => {
+    return (asistencias || []).filter((a) => {
+      if (filtroAsistenciaFecha === "hoy" && a.fecha !== fechaHoyStr) return false;
+      if (filtroAsistenciaPersonal !== "todos" && a.personal_id !== filtroAsistenciaPersonal) return false;
+      if (filtroAsistenciaTipo !== "todos" && a.tipo !== filtroAsistenciaTipo) return false;
+      return true;
+    });
+  }, [asistencias, filtroAsistenciaFecha, filtroAsistenciaPersonal, filtroAsistenciaTipo, fechaHoyStr]);
+
+  const personalEnTurno = useMemo(() => {
+    const hoyRegs = (asistencias || []).filter((a) => a.fecha === fechaHoyStr);
+    const mapa = new Map<string, { reg: RegistroAsistencia; personal: UsuarioStaff }>();
+
+    usuariosStaff.forEach((usr) => {
+      const regsUsuario = hoyRegs.filter((r) => r.personal_id === usr.id);
+      if (regsUsuario.length > 0) {
+        const ultimo = regsUsuario[0];
+        if (ultimo.tipo === "entrada" || ultimo.tipo === "almuerzo_fin") {
+          mapa.set(usr.id, { reg: ultimo, personal: usr });
+        }
+      }
+    });
+    return Array.from(mapa.values());
+  }, [asistencias, usuariosStaff, fechaHoyStr]);
+
+  const entradasHoy = useMemo(() => {
+    return (asistencias || []).filter((a) => a.fecha === fechaHoyStr && a.tipo === "entrada");
+  }, [asistencias, fechaHoyStr]);
+
+  const aTiempoCount = entradasHoy.filter((a) => a.estado_puntualidad === "a_tiempo").length;
+  const tardanzasCount = entradasHoy.filter((a) => a.estado_puntualidad === "tardanza").length;
+  const puntualidadPorcentaje = entradasHoy.length > 0 ? Math.round((aTiempoCount / entradasHoy.length) * 100) : 100;
 
   // Estados Gestión de Personal & Accesos PIN
   const [modalStaffAbierto, setModalStaffAbierto] = useState(false);
@@ -685,6 +770,7 @@ export default function AdminPage() {
             [
               { id: "productos", label: "Catálogo & Precios", icon: UtensilsCrossed },
               { id: "mesas", label: "Mesas", icon: Layers },
+              { id: "asistencias", label: "Asistencias GPS", icon: Clock },
               { id: "siat", label: "Facturas SIAT", icon: Receipt },
               { id: "personal", label: "Personal", icon: Users },
               { id: "qr_mesas", label: "QRs Mesas", icon: QrCode },
@@ -2320,6 +2406,501 @@ export default function AdminPage() {
                     </div>
                   );
                 })}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: CONTROL DE ASISTENCIA & GEOCERCA GPS ── */}
+        {tabActiva === "asistencias" && (
+          <div className="space-y-6">
+            {/* Header Asistencias & Accesos Rápidos */}
+            <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
+              <div className="space-y-1">
+                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                  <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    <Clock size={26} />
+                  </div>
+                  <span>Control de Asistencias & Geocerca GPS</span>
+                </h2>
+                <p className="text-stone-400 text-xs max-w-xl">
+                  Monitoreo de entradas y salidas del personal con validación satelital por radio de metros, turnos de panadería/barismo y control de puntualidad.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/asistencia"
+                  target="_blank"
+                  className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold text-xs shadow-lg shadow-emerald-950/40 flex items-center gap-2 transition active:scale-95 cursor-pointer"
+                >
+                  <MapPin size={16} />
+                  <span>Terminal de Marcado Móvil (/asistencia) ↗</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* KPIs de Asistencia en Tiempo Real */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                  <Users size={14} className="text-emerald-500" />
+                  Personal en Turno Ahora
+                </span>
+                <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <span>{personalEnTurno.length}</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+                <span className="text-[11px] text-stone-400">
+                  De {usuariosStaff.filter((u) => u.activo).length} colaboradores activos
+                </span>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                  <CheckCircle2 size={14} className="text-blue-500" />
+                  Puntualidad Hoy
+                </span>
+                <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100">
+                  {puntualidadPorcentaje}%
+                </div>
+                <span className="text-[11px] text-stone-400">
+                  {aTiempoCount} llegadas a tiempo de {entradasHoy.length}
+                </span>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                  <AlertTriangle size={14} className="text-amber-500" />
+                  Tardanzas Hoy
+                </span>
+                <div className="text-3xl font-serif font-black text-amber-500">
+                  {tardanzasCount}
+                </div>
+                <span className="text-[11px] text-stone-400">
+                  Tolerancia: {geocercaConfig.tolerancia_minutos} min
+                </span>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                  <Compass size={14} className="text-purple-500" />
+                  Radio Geocerca Activa
+                </span>
+                <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100">
+                  {geocercaConfig.radio_metros}m
+                </div>
+                <span className="text-[11px] text-stone-400 truncate block">
+                  {geocercaConfig.bloquear_fuera_de_radio ? "Bloqueo fuera de radio activo" : "Alerta informativa"}
+                </span>
+              </div>
+            </div>
+
+            {/* SECCIÓN 1: PERSONAL EN TURNO EN VIVO */}
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <Users size={18} className="text-emerald-500" />
+                  <span>Personal Actualmente en Turno ({personalEnTurno.length})</span>
+                </h3>
+                <span className="text-xs text-stone-400">
+                  Fecha: {fechaHoyStr}
+                </span>
+              </div>
+
+              {personalEnTurno.length === 0 ? (
+                <div className="p-8 text-center bg-stone-50 dark:bg-stone-950/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-800 text-stone-400 text-xs">
+                  No hay personal con turno activo en este momento.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {personalEnTurno.map(({ reg, personal }) => (
+                    <div
+                      key={personal.id}
+                      className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800 flex items-center justify-between gap-3"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-11 h-11 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-sm flex items-center justify-center shrink-0 border border-emerald-500/30">
+                          {personal.nombre
+                            .split(" ")
+                            .map((n) => n[0])
+                            .slice(0, 2)
+                            .join("")}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="font-bold text-sm text-stone-900 dark:text-stone-100 truncate block">
+                            {personal.nombre}
+                          </span>
+                          <span className="text-xs text-stone-500 dark:text-stone-400 truncate block">
+                            {personal.cargo || personal.role}
+                          </span>
+                          <div className="mt-1 flex items-center gap-2 text-[11px] text-stone-400 font-mono">
+                            <span>Entrada: <strong>{reg.hora}</strong></span>
+                            <span>&bull;</span>
+                            <span className="text-emerald-500 font-semibold">a {reg.distancia_metros}m</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          if (confirm(`¿Marcar salida de turno para ${personal.nombre}?`)) {
+                            addRegistroAsistencia({
+                              personal_id: personal.id,
+                              personal_nombre: personal.nombre,
+                              cargo: personal.cargo || personal.role,
+                              tipo: "salida",
+                              fecha: fechaHoyStr,
+                              hora: new Date().toLocaleTimeString("es-BO", { hour12: false }),
+                              distancia_metros: 0,
+                              dentro_del_radio: true,
+                              estado_puntualidad: "salida_puntual",
+                              observaciones: "Salida marcada desde el Panel Admin",
+                            });
+                            soundManager.playSuccessTone();
+                          }
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 text-xs font-bold transition shrink-0 cursor-pointer"
+                        title="Marcar salida manual"
+                      >
+                        Marcar Salida
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* SECCIÓN 2: CONFIGURACIÓN DE LA GEOCERCA GPS */}
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <Compass size={18} className="text-amber-500" />
+                    <span>Configuración de Geocerca GPS & Perímetro</span>
+                  </h3>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    Define las coordenadas del local y el radio de metros en el que se permite el marcado del personal.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={capturarUbicacionActual}
+                    disabled={gpsCalibrando}
+                    className="px-4 py-2 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 border border-amber-500/30 font-bold text-xs flex items-center gap-2 transition active:scale-95 cursor-pointer disabled:opacity-50"
+                  >
+                    <MapPin size={15} className={gpsCalibrando ? "animate-spin" : ""} />
+                    <span>{gpsCalibrando ? "Capturando..." : "📍 Usar Mi Ubicación Actual"}</span>
+                  </button>
+
+                  <button
+                    onClick={guardarGeocerca}
+                    className="px-5 py-2 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs shadow-lg shadow-amber-500/20 flex items-center gap-2 transition active:scale-95 cursor-pointer"
+                  >
+                    <Save size={15} />
+                    <span>{guardadoGeocercaExitoso ? "¡Guardado!" : "Guardar Cambios"}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Nombre del Local
+                  </label>
+                  <input
+                    type="text"
+                    value={formGeocerca.local_nombre}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, local_nombre: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Dirección
+                  </label>
+                  <input
+                    type="text"
+                    value={formGeocerca.direccion}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, direccion: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Radio Permitido (Metros)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={10}
+                      max={500}
+                      step={5}
+                      value={formGeocerca.radio_metros}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, radio_metros: Number(e.target.value) })}
+                      className="w-24 px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono font-bold"
+                    />
+                    <div className="flex items-center gap-1">
+                      {[30, 60, 100].map((rad) => (
+                        <button
+                          key={rad}
+                          type="button"
+                          onClick={() => setFormGeocerca({ ...formGeocerca, radio_metros: rad })}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold border transition ${
+                            formGeocerca.radio_metros === rad
+                              ? "bg-amber-500 text-stone-950 border-amber-400"
+                              : "bg-stone-100 dark:bg-stone-950 text-stone-400 border-stone-300 dark:border-stone-800"
+                          }`}
+                        >
+                          {rad}m
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Latitud GPS
+                  </label>
+                  <input
+                    type="number"
+                    step="0.000001"
+                    value={formGeocerca.latitud}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, latitud: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Longitud GPS
+                  </label>
+                  <input
+                    type="number"
+                    step="0.000001"
+                    value={formGeocerca.longitud}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, longitud: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Tolerancia de Tardanza (minutos)
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={60}
+                    value={formGeocerca.tolerancia_minutos}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, tolerancia_minutos: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Hora Inicio Turno Mañana
+                  </label>
+                  <input
+                    type="time"
+                    value={formGeocerca.hora_inicio_turno_manana}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, hora_inicio_turno_manana: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                    Hora Inicio Turno Tarde
+                  </label>
+                  <input
+                    type="time"
+                    value={formGeocerca.hora_inicio_turno_tarde}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, hora_inicio_turno_tarde: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                  />
+                </div>
+
+                <div className="flex items-center gap-3 pt-4 sm:pt-6">
+                  <input
+                    type="checkbox"
+                    id="chkBloquearFuera"
+                    checked={formGeocerca.bloquear_fuera_de_radio}
+                    onChange={(e) => setFormGeocerca({ ...formGeocerca, bloquear_fuera_de_radio: e.target.checked })}
+                    className="w-5 h-5 rounded text-amber-500 focus:ring-amber-400 cursor-pointer"
+                  />
+                  <label htmlFor="chkBloquearFuera" className="text-xs font-bold text-stone-800 dark:text-stone-200 cursor-pointer">
+                    Bloquear Marcado Fuera del Radio Permitido
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 3: TABLA DE HISTORIAL Y AUDITORÍA DE ASISTENCIA */}
+            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <FileText size={18} className="text-amber-500" />
+                    <span>Auditoría de Marcados ({asistenciasFiltradas.length})</span>
+                  </h3>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    Historial de entradas, refrigerios y salidas con coordenadas geográficas y evaluación de puntualidad.
+                  </p>
+                </div>
+
+                {/* Filtros Rápidos */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    value={filtroAsistenciaFecha}
+                    onChange={(e) => setFiltroAsistenciaFecha(e.target.value as any)}
+                    className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                  >
+                    <option value="hoy">Solo Hoy ({fechaHoyStr})</option>
+                    <option value="todos">Todo el Historial</option>
+                  </select>
+
+                  <select
+                    value={filtroAsistenciaPersonal}
+                    onChange={(e) => setFiltroAsistenciaPersonal(e.target.value)}
+                    className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                  >
+                    <option value="todos">Todos los Empleados</option>
+                    {usuariosStaff.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.nombre}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={filtroAsistenciaTipo}
+                    onChange={(e) => setFiltroAsistenciaTipo(e.target.value)}
+                    className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                  >
+                    <option value="todos">Todos los Tipos</option>
+                    <option value="entrada">Entradas</option>
+                    <option value="salida">Salidas</option>
+                    <option value="almuerzo_inicio">Inicio Refrigerio</option>
+                    <option value="almuerzo_fin">Fin Refrigerio</option>
+                  </select>
+                </div>
+              </div>
+
+              {asistenciasFiltradas.length === 0 ? (
+                <div className="p-8 text-center bg-stone-50 dark:bg-stone-950/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-800 text-stone-400 text-xs">
+                  No se encontraron marcados con los filtros seleccionados.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-500 dark:text-stone-400 uppercase font-mono text-[10px]">
+                        <th className="py-2.5 px-3">Colaborador</th>
+                        <th className="py-2.5 px-3">Tipo</th>
+                        <th className="py-2.5 px-3">Fecha & Hora</th>
+                        <th className="py-2.5 px-3">Distancia al Local</th>
+                        <th className="py-2.5 px-3">Puntualidad</th>
+                        <th className="py-2.5 px-3">GPS / Mapa</th>
+                        <th className="py-2.5 px-3">Observaciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800/60">
+                      {asistenciasFiltradas.map((reg) => (
+                        <tr key={reg.id} className="hover:bg-stone-50 dark:hover:bg-stone-950/40 transition">
+                          <td className="py-3 px-3">
+                            <div className="font-bold text-stone-900 dark:text-stone-100">
+                              {reg.personal_nombre}
+                            </div>
+                            <div className="text-[11px] text-stone-400">
+                              {reg.cargo}
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <span
+                              className={`px-2.5 py-1 rounded-full font-bold uppercase text-[10px] whitespace-nowrap ${
+                                reg.tipo === "entrada"
+                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                                  : reg.tipo === "salida"
+                                  ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                              }`}
+                            >
+                              {reg.tipo.replace("_", " ")}
+                            </span>
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <div className="font-mono font-bold text-stone-900 dark:text-stone-100">
+                              {reg.hora}
+                            </div>
+                            <div className="text-[10px] text-stone-400">
+                              {reg.fecha}
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <div className="flex items-center gap-1.5 font-mono">
+                              <span
+                                className={`w-2 h-2 rounded-full ${
+                                  reg.dentro_del_radio ? "bg-emerald-500" : "bg-rose-500"
+                                }`}
+                              />
+                              <span className="font-bold">
+                                {reg.distancia_metros} metros
+                              </span>
+                            </div>
+                            <div className="text-[10px] text-stone-400">
+                              {reg.dentro_del_radio ? "Dentro del radio" : "Fuera de perímetro"}
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${
+                                reg.estado_puntualidad === "a_tiempo" || reg.estado_puntualidad === "salida_puntual"
+                                  ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"
+                                  : "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300"
+                              }`}
+                            >
+                              {reg.estado_puntualidad === "a_tiempo"
+                                ? "A Tiempo"
+                                : reg.estado_puntualidad === "tardanza"
+                                ? "Tardanza"
+                                : "Completado"}
+                            </span>
+                          </td>
+
+                          <td className="py-3 px-3">
+                            {reg.latitud && reg.longitud ? (
+                              <a
+                                href={`https://www.google.com/maps?q=${reg.latitud},${reg.longitud}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
+                              >
+                                <ExternalLink size={12} />
+                                <span>Ver en Mapa</span>
+                              </a>
+                            ) : (
+                              <span className="text-stone-400">Sin GPS</span>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-3 text-stone-500 dark:text-stone-400 max-w-xs truncate">
+                            {reg.observaciones || "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}

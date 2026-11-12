@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
   CartItem,
+  RegistroAsistencia,
+  GeocercaConfig,
   Producto,
   Mesa,
   AlertaMesero,
@@ -28,8 +30,10 @@ import {
   SEED_PAGOS,
   SEED_HISTORIAL_SESIONES,
   SEED_USUARIOS_STAFF,
+  SEED_ASISTENCIAS,
 } from '@/lib/seed-data';
 import { broadcastSync, markEventHandled } from '@/lib/broadcast';
+import { DEFAULT_GEOCERCA_CONFIG } from '@/lib/geo';
 
 // ============================
 // SYSTEM STORE (Central Data: Mesas, Pedidos, Productos, Alertas)
@@ -109,6 +113,13 @@ interface SystemStore {
     montoTotal: number;
     pedidoId: string;
   }) => FacturaEmitida;
+
+  // Control de Asistencias & Geocerca GPS
+  asistencias: RegistroAsistencia[];
+  geocercaConfig: GeocercaConfig;
+  addRegistroAsistencia: (reg: Omit<RegistroAsistencia, 'id' | 'created_at'>) => RegistroAsistencia;
+  updateGeocercaConfig: (cfg: Partial<GeocercaConfig>) => void;
+  clearHistorialAsistencias: () => void;
 
   // Reset a datos de fábrica
   resetToDefaults: () => void;
@@ -669,6 +680,33 @@ export const useSystemStore = create<SystemStore>()(
         fechaLimiteEmision: '2027-04-30',
         actividadEconomica: '561000 - Servicios de restaurantes, cafeterías y panaderías',
       },
+      asistencias: SEED_ASISTENCIAS,
+      geocercaConfig: DEFAULT_GEOCERCA_CONFIG,
+
+      addRegistroAsistencia: (regData) => {
+        const nuevo: RegistroAsistencia = {
+          ...regData,
+          id: 'asist-' + Date.now(),
+          created_at: new Date().toISOString(),
+        };
+        set((state) => ({
+          asistencias: [nuevo, ...(state.asistencias || [])],
+        }));
+        broadcastSync('ATTENDANCE_RECORDED', nuevo);
+        return nuevo;
+      },
+
+      updateGeocercaConfig: (cfg) => {
+        set((state) => ({
+          geocercaConfig: { ...state.geocercaConfig, ...cfg },
+        }));
+        broadcastSync('GEOCERCA_CONFIG_UPDATED', cfg);
+      },
+
+      clearHistorialAsistencias: () => {
+        set({ asistencias: [] });
+      },
+
       facturasEmitidas: [],
 
       setFacturacionSiatConfig: (cfg) => {

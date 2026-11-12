@@ -558,6 +558,10 @@ class SoundManager {
       osc.stop(now + 0.35);
     } catch {}
   }
+
+  playError() {
+    this.playAlertTone();
+  }
 }
 
 export const soundManager = new SoundManager();

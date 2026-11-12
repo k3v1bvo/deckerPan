@@ -3,7 +3,7 @@
 // Extracted from tienda.denckerpan.com & ImgBB
 // ==========================================
 
-import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja, UsuarioStaff } from '@/types';
+import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja, UsuarioStaff, RegistroAsistencia } from '@/types';
 
 export const DENCKER_ASSETS = {
   // ── Los 3 Logos Oficiales Vectorizados & Alta Resolución ──
@@ -2824,4 +2824,75 @@ export const MENU_PDF_PAGES = [
   { page: 4, title: 'Dulces, Postres & Masitas Saladas', url: '/img/menu-pdf/page_4.png', desc: 'Alfajores, New York roll, cheesecake, cuñapés calientes y croissant con lentes de sol' },
   { page: 5, title: 'Sándwiches, Extras & Ensaladas', url: '/img/menu-pdf/page_5.png', desc: 'Arma tu sándwich (2 proteínas + 3 complementos), pan a elección y mascota tostada feliz' },
   { page: 6, title: 'Pizzas Artesanales Dencker', url: '/img/menu-pdf/page_6.png', desc: 'Arma tu pizza, porciones 4/6/8 porciones y mascota pizza skater con lentes' },
+];
+
+export const SEED_ASISTENCIAS: RegistroAsistencia[] = [
+  {
+    id: "asist-1",
+    personal_id: "usr-mesero-1",
+    personal_nombre: "Mateo Arce",
+    cargo: "Mesero de Salón & Terraza",
+    tipo: "entrada",
+    fecha: new Date().toISOString().split("T")[0],
+    hora: "06:52:14",
+    latitud: -17.38951,
+    longitud: -66.15684,
+    distancia_metros: 6,
+    dentro_del_radio: true,
+    precision_gps_metros: 5,
+    estado_puntualidad: "a_tiempo",
+    observaciones: "Entrada puntual turno mañana",
+    created_at: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+  },
+  {
+    id: "asist-2",
+    personal_id: "usr-cocina-1",
+    personal_nombre: "Rodrigo Morales",
+    cargo: "Jefe de Horno, Bollería & Barismo",
+    tipo: "entrada",
+    fecha: new Date().toISOString().split("T")[0],
+    hora: "06:45:30",
+    latitud: -17.38955,
+    longitud: -66.15680,
+    distancia_metros: 8,
+    dentro_del_radio: true,
+    precision_gps_metros: 4,
+    estado_puntualidad: "a_tiempo",
+    observaciones: "Precalentamiento de hornos y masa madre",
+    created_at: new Date(Date.now() - 1000 * 60 * 190).toISOString(),
+  },
+  {
+    id: "asist-3",
+    personal_id: "usr-caja-1",
+    personal_nombre: "Valeria Quiroga",
+    cargo: "Cajera Principal & Facturación POS",
+    tipo: "entrada",
+    fecha: new Date().toISOString().split("T")[0],
+    hora: "07:18:05",
+    latitud: -17.38948,
+    longitud: -66.15679,
+    distancia_metros: 12,
+    dentro_del_radio: true,
+    precision_gps_metros: 6,
+    estado_puntualidad: "tardanza",
+    observaciones: "Retraso por tráfico en Av. Heroínas",
+    created_at: new Date(Date.now() - 1000 * 60 * 150).toISOString(),
+  },
+  {
+    id: "asist-4",
+    personal_id: "usr-cocina-1",
+    personal_nombre: "Rodrigo Morales",
+    cargo: "Jefe de Horno, Bollería & Barismo",
+    tipo: "almuerzo_inicio",
+    fecha: new Date().toISOString().split("T")[0],
+    hora: "12:30:10",
+    latitud: -17.38953,
+    longitud: -66.15682,
+    distancia_metros: 3,
+    dentro_del_radio: true,
+    precision_gps_metros: 4,
+    estado_puntualidad: "a_tiempo",
+    observaciones: "Refrigerio del personal",
+    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+  }
 ];

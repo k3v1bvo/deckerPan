@@ -13,6 +13,7 @@ import {
   MapPin,
   Coffee,
   FileText,
+  Clock,
 } from "lucide-react";
 import { useCartStore, useUIStore } from "@/store";
 import { soundManager } from "@/lib/sound";
@@ -146,6 +147,18 @@ export default function RoleNav() {
               )}
             </motion.button>
 
+            {/* Control Asistencia GPS Staff */}
+            <Link
+              href="/asistencia"
+              onClick={() => soundManager.playClick()}
+              title="Marcar Asistencia GPS"
+              aria-label="Marcar Asistencia GPS"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/8 hover:bg-white/15 border border-white/15 text-stone-200 hover:text-amber-300 text-[11px] font-bold transition active:scale-95 cursor-pointer whitespace-nowrap"
+            >
+              <Clock size={13} className="text-amber-400" />
+              <span>Asistencia</span>
+            </Link>
+
             {/* Acceso Staff (Solo en Desktop para no estorbar en móviles) */}
             <Link
               href="/admin"
@@ -222,14 +235,22 @@ export default function RoleNav() {
                 <span>Pedir directo por WhatsApp (+591 76911000)</span>
               </a>
 
-              <div className="pt-2 border-t border-white/10 flex justify-center">
+              <div className="pt-2 border-t border-white/10 flex items-center justify-between px-1">
+                <Link
+                  href="/asistencia"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-xs text-amber-400 hover:text-amber-300 font-bold transition-colors inline-flex items-center gap-1.5 py-1"
+                >
+                  <MapPin size={14} />
+                  <span>Marcar Asistencia GPS</span>
+                </Link>
                 <Link
                   href="/admin"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-xs text-stone-400 hover:text-amber-300 transition-colors inline-flex items-center gap-1.5 py-1"
                 >
                   <Lock size={14} />
-                  <span>Portal del Personal Dencker Pan</span>
+                  <span>Portal Staff</span>
                 </Link>
               </div>
             </motion.div>

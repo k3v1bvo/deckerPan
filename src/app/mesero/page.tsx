@@ -1,5 +1,6 @@
 ﻿"use client";
 import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
@@ -388,6 +389,16 @@ export default function MeseroPage() {
                 Tarjetas
               </button>
             </div>
+
+            {/* Marcado Asistencia GPS */}
+            <Link
+              href="/asistencia"
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 flex items-center gap-1.5 transition ml-1 shrink-0"
+              title="Marcar Asistencia GPS"
+            >
+              <Clock size={13} />
+              <span className="hidden sm:inline">Asistencia GPS</span>
+            </Link>
           </div>
         </div>
       </header>

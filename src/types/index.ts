@@ -257,3 +257,38 @@ export interface UploadResult {
   format?: string;
   bytes?: number;
 }
+
+
+// ── SISTEMA DE ASISTENCIAS CON GEOCERCA GPS ──
+export type TipoMarcadoAsistencia = 'entrada' | 'salida' | 'almuerzo_inicio' | 'almuerzo_fin';
+export type EstadoPuntualidad = 'a_tiempo' | 'tardanza' | 'salida_anticipada' | 'salida_puntual';
+
+export interface RegistroAsistencia {
+  id: string;
+  personal_id: string;
+  personal_nombre: string;
+  cargo: string;
+  tipo: TipoMarcadoAsistencia;
+  fecha: string; // YYYY-MM-DD
+  hora: string;  // HH:MM:SS
+  latitud?: number;
+  longitud?: number;
+  distancia_metros: number;
+  dentro_del_radio: boolean;
+  precision_gps_metros?: number;
+  estado_puntualidad: EstadoPuntualidad;
+  observaciones?: string;
+  created_at: string;
+}
+
+export interface GeocercaConfig {
+  local_nombre: string;
+  direccion: string;
+  latitud: number;
+  longitud: number;
+  radio_metros: number; // Radio en metros (ej. 50m o 100m)
+  hora_inicio_turno_manana: string; // "07:00"
+  hora_inicio_turno_tarde: string;  // "14:00"
+  tolerancia_minutos: number;       // Tolerancia de tardanza (minutos)
+  bloquear_fuera_de_radio: boolean; // Si true, bloquea el marcado fuera del radio
+}

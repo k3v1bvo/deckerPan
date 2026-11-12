@@ -13,7 +13,9 @@ export type SyncEventType =
   | 'QR_CONFIG_UPDATED'
   | 'STAFF_UPDATED'
   | 'PRODUCTOS_UPDATED'
-  | 'SIAT_CONFIG_UPDATED';
+  | 'SIAT_CONFIG_UPDATED'
+  | 'ATTENDANCE_RECORDED'
+  | 'GEOCERCA_CONFIG_UPDATED';
 
 export interface SyncMessage {
   type: SyncEventType;
