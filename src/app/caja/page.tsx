@@ -50,6 +50,8 @@ export default function CajaPage() {
   const [facturaEmitidaActual, setFacturaEmitidaActual] = useState<FacturaEmitida | null>(null);
   const [nitCiCliente, setNitCiCliente] = useState("0");
   const [razonSocialCliente, setRazonSocialCliente] = useState("");
+  const [tipoComprobante, setTipoComprobante] = useState<"recibo" | "factura">("recibo");
+  const [fechaHoraImpresion, setFechaHoraImpresion] = useState<string>("");
 
   // Arqueo conteo de billetes
   const [conteoBilletes, setConteoBilletes] = useState<Record<number, number>>({
@@ -146,7 +148,7 @@ export default function CajaPage() {
       modalidad: pedidoSeleccionado.mesa_numero ? "mesa" : "retiro",
     });
 
-    if (facturacionSiatConfig.activa) {
+    if (tipoComprobante === "factura" && facturacionSiatConfig.activa) {
       const fac = emitirFacturaSiat({
         pedidoId: pedidoSeleccionado.id,
         clienteNombre: razonSocialCliente.trim() || pedidoSeleccionado.cliente_nombre || "Sin Nombre",
@@ -158,6 +160,7 @@ export default function CajaPage() {
       setFacturaEmitidaActual(null);
     }
 
+    setFechaHoraImpresion(new Date().toLocaleString("es-BO"));
     // 💰 ¡Sonido icónico de Caja Registradora Antigua de Bronce Ka-Ching!
     soundManager.playCashRegister();
     setPagoCompletado(true);
@@ -605,42 +608,93 @@ export default function CajaPage() {
                 </div>
               )}
 
-              {/* Formulario Cliente SIAT (si la facturación está activa) */}
-              {facturacionSiatConfig.activa && (
-                <div className="p-3.5 bg-blue-50/80 rounded-2xl border border-blue-200 text-xs space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-blue-950 flex items-center gap-1.5">
-                      <Receipt size={14} className="text-blue-600" />
-                      Facturación Oficial SIN Bolivia
+              {/* Selector Dual: Recibo de Venta vs. Factura SIAT */}
+              <div className="p-3.5 bg-stone-100/90 dark:bg-stone-900/60 rounded-2xl border border-stone-200 dark:border-stone-800 space-y-2.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5 uppercase text-[10px] tracking-wider">
+                    <Receipt size={14} className="text-amber-600" />
+                    Tipo de Comprobante
+                  </span>
+                  {tipoComprobante === "factura" ? (
+                    <span className="text-[10px] bg-blue-100 text-blue-800 font-mono px-2 py-0.5 rounded-full font-bold border border-blue-200">
+                      N° Factura: {facturacionSiatConfig.siguienteNumeroFactura || 1}
                     </span>
-                    <span className="text-[10px] bg-blue-200/70 text-blue-800 font-mono px-2 py-0.5 rounded-full font-bold">
-                      Punto {facturacionSiatConfig.codigoPuntoVenta}
+                  ) : (
+                    <span className="text-[10px] bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded-full border border-amber-200">
+                      Control Interno
                     </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[10px] text-stone-600 font-bold block mb-0.5">NIT / CI Cliente:</label>
-                      <input
-                        type="text"
-                        value={nitCiCliente}
-                        onChange={(e) => setNitCiCliente(e.target.value)}
-                        placeholder="0 (Sin NIT)"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-stone-300 bg-white font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] text-stone-600 font-bold block mb-0.5">Razón Social / Nombre:</label>
-                      <input
-                        type="text"
-                        value={razonSocialCliente}
-                        onChange={(e) => setRazonSocialCliente(e.target.value)}
-                        placeholder={pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-stone-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
-              )}
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playClick();
+                      setTipoComprobante("recibo");
+                    }}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      tipoComprobante === "recibo"
+                        ? "bg-amber-500 text-stone-950 shadow-md border-2 border-amber-400 font-black"
+                        : "bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50"
+                    }`}
+                  >
+                    <Receipt size={14} />
+                    <span>🧾 Recibo de Venta</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playClick();
+                      setTipoComprobante("factura");
+                    }}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      tipoComprobante === "factura"
+                        ? "bg-blue-600 text-white shadow-md border-2 border-blue-400 font-black"
+                        : "bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50"
+                    }`}
+                  >
+                    <FileText size={14} />
+                    <span>🏛️ Factura con NIT</span>
+                  </button>
+                </div>
+
+                {tipoComprobante === "factura" ? (
+                  <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-200/80 space-y-2 mt-1">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] text-blue-950 font-bold block mb-0.5">NIT / CI Cliente:</label>
+                        <input
+                          type="text"
+                          value={nitCiCliente}
+                          onChange={(e) => setNitCiCliente(e.target.value)}
+                          placeholder="0 (Sin NIT)"
+                          className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-blue-200 bg-white font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-blue-950 font-bold block mb-0.5">Razón Social / Nombre:</label>
+                        <input
+                          type="text"
+                          value={razonSocialCliente}
+                          onChange={(e) => setRazonSocialCliente(e.target.value)}
+                          placeholder={pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-blue-200 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-[9px] text-blue-700 leading-tight">
+                      ℹ️ Se generará la Factura SIAT N° <strong>{facturacionSiatConfig.siguienteNumeroFactura || 1}</strong> con CUF algorítmico y QR oficial de Impuestos Nacionales.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="px-2 py-1 bg-stone-200/50 dark:bg-stone-800/40 rounded-xl text-[10px] text-stone-500 dark:text-stone-400 flex items-center justify-between">
+                    <span>Branding artesanal Dencker Pan con logo</span>
+                    <span className="text-emerald-700 font-bold">✓ Venta rápida</span>
+                  </div>
+                )}
+              </div>
 
               {/* Botón Finalizar Cobro */}
               <button
@@ -679,25 +733,26 @@ export default function CajaPage() {
             >
               {/* Ticket Térmico Styling */}
               <div id="recibo-termico" className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
-                {/* Logo Oficial Vectorizado */}
-                <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
-                  <img
-                    src="/img/brand/logo-3-don-dencker-badge.png"
-                    alt="Dencker Pan"
-                    className="h-12 w-auto object-contain mx-auto mb-1"
-                  />
-                  <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
-                    {facturacionSiatConfig.razonSocialEmisor || "DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."}
-                  </h4>
-                  <p className="text-[10px] font-bold text-stone-700">CASA MATRIZ: 0</p>
-                  <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba - Bolivia</p>
-                  <p className="text-[9px] text-stone-600">Teléfono: (591) 4-4251234</p>
-                  <p className="text-[10px] text-stone-900 font-bold mt-1">NIT: {facturacionSiatConfig.nitEmisor || "389201024"}</p>
-                  <p className="text-[8px] text-stone-500 italic max-w-[240px] mx-auto leading-tight">
-                    {facturacionSiatConfig.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
-                  </p>
+                {/* ── ENCABEZADO: FACTURA SIAT vs RECIBO DE CONSUMO ── */}
+                {facturaEmitidaActual ? (
+                  /* ── ENCABEZADO FACTURA OFICIAL SIAT ── */
+                  <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Dencker Pan"
+                      className="h-12 w-auto object-contain mx-auto mb-1"
+                    />
+                    <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
+                      {facturacionSiatConfig.razonSocialEmisor || "DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."}
+                    </h4>
+                    <p className="text-[10px] font-bold text-stone-700">CASA MATRIZ: 0</p>
+                    <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba - Bolivia</p>
+                    <p className="text-[9px] text-stone-600">Teléfono: (591) 4-4251234 &bull; +591 76911000</p>
+                    <p className="text-[10px] text-stone-900 font-bold mt-1">NIT: {facturacionSiatConfig.nitEmisor || "389201024"}</p>
+                    <p className="text-[8px] text-stone-500 italic max-w-[240px] mx-auto leading-tight">
+                      {facturacionSiatConfig.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
+                    </p>
 
-                  {facturaEmitidaActual && (
                     <div className="pt-2 text-[10px] text-stone-800 space-y-0.5 border-t border-dashed border-stone-300 mt-2 w-full">
                       <p className="font-black text-sm text-stone-950 tracking-wide">
                         FACTURA N°: {facturaEmitidaActual.numeroFactura}
@@ -712,35 +767,80 @@ export default function CajaPage() {
                         </p>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  /* ── ENCABEZADO RECIBO DE CONSUMO / COMPROBANTE ARTESANAL ── */
+                  <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Dencker Pan"
+                      className="h-14 w-auto object-contain mx-auto mb-1.5"
+                    />
+                    <h4 className="font-black text-base font-serif text-stone-950 tracking-wider">
+                      DENCKER PAN
+                    </h4>
+                    <p className="text-[10px] font-bold text-amber-900 tracking-wide">
+                      Masa Madre Viva &bull; Café 4 Llamas de Altura
+                    </p>
+                    <p className="text-[9px] text-stone-600">
+                      Av. Daniel Salamanca, Cochabamba &bull; Bolivia
+                    </p>
+                    <p className="text-[9px] text-stone-500">
+                      Tandas Calientes: 07:30 y 16:30 &bull; WhatsApp: +591 76911000
+                    </p>
 
+                    <div className="pt-2 border-t border-dashed border-stone-300 mt-2 w-full text-center">
+                      <span className="font-black text-xs text-stone-900 uppercase tracking-widest px-2.5 py-0.5 bg-stone-100 rounded-full border border-stone-300">
+                        RECIBO DE VENTA
+                      </span>
+                      <p className="text-[9px] text-stone-500 font-mono mt-1">
+                        N° Control: <strong>{pedidoSeleccionado.id}</strong>
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── DATOS DEL PEDIDO / CLIENTE ── */}
                 <div className="border-t border-dashed border-stone-300 pt-2 text-[11px] space-y-0.5">
                   <div className="flex justify-between">
-                    <span className="text-stone-500">Mesa:</span>
-                    <span className="font-bold">{pedidoSeleccionado.mesa_numero ? `Mesa ${pedidoSeleccionado.mesa_numero}` : "Venta Mostrador"}</span>
+                    <span className="text-stone-500">Ubicación:</span>
+                    <span className="font-bold">
+                      {pedidoSeleccionado.mesa_numero ? `Mesa ${pedidoSeleccionado.mesa_numero}` : "Venta Mostrador"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-stone-500">Fecha y Hora:</span>
-                    <span>{new Date().toLocaleDateString("es-BO")} {new Date().toLocaleTimeString("es-BO")}</span>
+                    <span className="font-mono">{fechaHoraImpresion || "Hoy"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-stone-500">Cajero / Operador:</span>
+                    <span className="text-stone-500">Atendido por:</span>
                     <span>{sesionCaja?.cajero || "Caja Principal"}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">NIT / CI:</span>
-                    <span className="font-bold font-mono">{facturaEmitidaActual?.clienteNitCi || nitCiCliente || "0"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">Señor(es):</span>
-                    <span className="font-bold uppercase text-right truncate max-w-[170px]">
-                      {facturaEmitidaActual?.clienteNombre || razonSocialCliente || pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}
-                    </span>
-                  </div>
+
+                  {facturaEmitidaActual ? (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">NIT / CI:</span>
+                        <span className="font-bold font-mono">{facturaEmitidaActual.clienteNitCi}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">Señor(es):</span>
+                        <span className="font-bold uppercase text-right truncate max-w-[170px]">
+                          {facturaEmitidaActual.clienteNombre}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between">
+                      <span className="text-stone-500">Cliente:</span>
+                      <span className="font-bold uppercase text-right truncate max-w-[170px]">
+                        {razonSocialCliente || pedidoSeleccionado.cliente_nombre || "Cliente Mostrador"}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Detalle de Productos */}
+                {/* ── DETALLE DE PRODUCTOS ── */}
                 <div className="border-t border-dashed border-stone-300 pt-2 space-y-1">
                   <div className="flex justify-between text-[10px] font-bold text-stone-500 border-b border-stone-200 pb-0.5">
                     <span>CANT / DETALLE</span>
@@ -754,14 +854,14 @@ export default function CajaPage() {
                   ))}
                 </div>
 
-                {/* Totales y Monto Literal Oficial */}
+                {/* ── TOTALES Y MONTO LITERAL ── */}
                 <div className="border-t border-dashed border-stone-300 pt-2 space-y-1 font-bold">
                   <div className="flex justify-between text-sm text-stone-950">
                     <span>TOTAL A PAGAR:</span>
-                    <span className="font-mono text-base">Bs {totalPagar.toFixed(2)}</span>
+                    <span className="font-mono text-base font-black">Bs {totalPagar.toFixed(2)}</span>
                   </div>
 
-                  {/* Expresión en palabras requerida por el SIN */}
+                  {/* Expresión en palabras */}
                   <div className="text-[10px] text-stone-700 bg-stone-100/80 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
                     {facturaEmitidaActual?.montoLiteral || `Son: ${totalPagar.toFixed(2)} Bolivianos`}
                   </div>
@@ -784,41 +884,51 @@ export default function CajaPage() {
                   )}
                 </div>
 
-                {facturaEmitidaActual && (
-                  <div className="border-t border-dashed border-stone-300 pt-2 flex flex-col items-center justify-center space-y-1 text-center">
-                    <div className="p-2 bg-white rounded-lg border border-stone-300 shadow-2xs">
-                      <QRCodeSVG
-                        value={facturaEmitidaActual.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
-                        size={92}
-                        level="M"
-                      />
+                {/* ── QR Y LEYENDAS LEGALES SIAT vs RECIBO ARTESANAL ── */}
+                {facturaEmitidaActual ? (
+                  <>
+                    <div className="border-t border-dashed border-stone-300 pt-2 flex flex-col items-center justify-center space-y-1 text-center">
+                      <div className="p-2 bg-white rounded-lg border border-stone-300 shadow-2xs">
+                        <QRCodeSVG
+                          value={facturaEmitidaActual.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
+                          size={92}
+                          level="M"
+                        />
+                      </div>
+                      <p className="text-[8px] text-stone-500 font-mono">Código de Control Tributario / QR SIAT</p>
                     </div>
-                    <p className="text-[8px] text-stone-500 font-mono">Código de Control Tributario / QR SIAT</p>
+
+                    <div className="text-center pt-2 text-[9px] text-stone-600 space-y-1 leading-tight border-t border-dashed border-stone-300">
+                      <p className="font-bold text-stone-900">
+                        "ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE ACUERDO A LEY"
+                      </p>
+                      <p className="text-[8px] text-stone-500 italic">
+                        {facturaEmitidaActual.leyendaLey453 || facturacionSiatConfig.leyendaLey453 || "Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad."}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="border-t border-dashed border-stone-300 pt-2 text-center space-y-1.5">
+                    <p className="text-[10px] text-amber-950 font-serif font-bold">
+                      ¡Gracias por su visita a Dencker Pan!
+                    </p>
+                    <p className="text-[8px] text-stone-500 italic">
+                      Comprobante de consumo interno &bull; Masa madre viva y café de altura
+                    </p>
                   </div>
                 )}
 
-                {/* Textos y Leyendas Obligatorias Ley N° 453 */}
-                <div className="text-center pt-2 text-[9px] text-stone-600 space-y-1 leading-tight border-t border-dashed border-stone-300">
-                  <p className="font-bold text-stone-900">
-                    "ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE ACUERDO A LEY"
-                  </p>
-                  <p className="text-[8px] text-stone-500 italic">
-                    {facturaEmitidaActual?.leyendaLey453 || facturacionSiatConfig.leyendaLey453 || "Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad."}
-                  </p>
-                  <div className="flex items-center justify-center gap-2 pt-2 pb-1">
-                    <img
-                      src="/img/brand/logo-3-don-dencker-badge.png"
-                      alt="Sello Oficial Don Dencker"
-                      className="w-9 h-9 object-contain shrink-0"
-                    />
-                    <div className="text-left leading-tight">
-                      <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
-                      <p className="text-[8px] text-stone-500 font-mono">Tradición & Calidad Dencker</p>
-                    </div>
+                {/* Sello Don Dencker al pie de ambos comprobantes */}
+                <div className="flex items-center justify-center gap-2 pt-2 border-t border-dashed border-stone-300">
+                  <img
+                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    alt="Sello Oficial Don Dencker"
+                    className="w-8 h-8 object-contain shrink-0"
+                  />
+                  <div className="text-left leading-tight">
+                    <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
+                    <p className="text-[8px] text-stone-500 font-mono">Tradición &amp; Calidad Dencker</p>
                   </div>
-                  <p className="text-[10px] text-amber-950 font-serif font-bold pt-1">
-                    ¡Gracias por su visita a Dencker Pan!
-                  </p>
                 </div>
               </div>
 
