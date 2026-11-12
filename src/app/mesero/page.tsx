@@ -26,6 +26,7 @@ import { useSystemStore } from "@/store";
 import { Mesa, EstadoMesa, Producto, ItemPedido, Zona } from "@/types";
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
+import FloorPlanMap from "@/components/FloorPlanMap";
 
 export default function MeseroPage() {
   const {
@@ -579,137 +580,13 @@ export default function MeseroPage() {
           )}
         </div>
 
-        {/* ── MODE 1: ARCHITECTURAL FLOOR PLAN 2.5D ── */}
+        {/* ── MODE 1: ARCHITECTURAL FLOOR PLAN 2.5D (DOS PISOS & CROQUIS REAL) ── */}
         {modoVista === "plano" && (
-          <div className="relative rounded-3xl bg-[#f5ede3] dark:bg-[#18120d] border border-stone-300/60 dark:border-amber-950/40 p-6 lg:p-10 shadow-inner overflow-hidden min-h-[480px]">
-            {/* Ambient Wood Parquet / Terrazzo Texture lines */}
-            <div
-              className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06] pointer-events-none"
-              style={{
-                backgroundImage:
-                  "radial-gradient(#78350f 1px, transparent 1px), radial-gradient(#78350f 1px, #f5ede3 1px)",
-                backgroundSize: "24px 24px",
-                backgroundPosition: "0 0, 12px 12px",
-              }}
-            />
-
-            {/* Room architectural landmarks */}
-            <div className="relative z-10 flex items-center justify-between mb-8 pb-3 border-b border-stone-300/70 dark:border-stone-800 text-xs font-bold text-stone-500 uppercase tracking-widest">
-              <span className="flex items-center gap-1.5">
-                <MapPin size={14} className="text-amber-700" /> Distribución de Sala
-              </span>
-              <span className="text-[11px] text-stone-400 font-normal">
-                Haz clic en una mesa para ver comandas y estado
-              </span>
-            </div>
-
-            {/* Tables Spatial Layout */}
-            <div className="relative z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-12 gap-x-8 justify-items-center">
-              {mesasFiltradas.map((mesa) => {
-                const pedido = getPedidoActivo(mesa.numero);
-                const tieneAlerta = alertasPendientes.some((a) => a.mesa_numero === mesa.numero);
-                const isSelected = mesaSeleccionada?.id === mesa.id;
-
-                const statusStyles = {
-                  libre: {
-                    border: "border-emerald-400 dark:border-emerald-600/70",
-                    bg: "bg-emerald-500/10 dark:bg-emerald-950/30",
-                    glow: "shadow-emerald-500/20",
-                    ring: "ring-emerald-400",
-                    tag: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300",
-                    label: "Libre",
-                  },
-                  ocupada: {
-                    border: "border-amber-400 dark:border-amber-500",
-                    bg: "bg-amber-500/15 dark:bg-amber-950/40",
-                    glow: "shadow-amber-500/30",
-                    ring: "ring-amber-500",
-                    tag: "bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300",
-                    label: "Ocupada",
-                  },
-                  reservada: {
-                    border: "border-purple-400 dark:border-purple-600/70",
-                    bg: "bg-purple-500/10 dark:bg-purple-950/30",
-                    glow: "shadow-purple-500/20",
-                    ring: "ring-purple-400",
-                    tag: "bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300",
-                    label: "Reserva",
-                  },
-                  limpieza: {
-                    border: "border-blue-400 dark:border-blue-600/70",
-                    bg: "bg-blue-500/10 dark:bg-blue-950/30",
-                    glow: "shadow-blue-500/20",
-                    ring: "ring-blue-400",
-                    tag: "bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300",
-                    label: "Limpieza",
-                  },
-                }[mesa.estado];
-
-                const isCircular = mesa.tipo === "redonda";
-
-                return (
-                  <motion.div
-                    key={mesa.id}
-                    whileHover={{ scale: 1.05, y: -4 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => abrirDetalleMesa(mesa)}
-                    className="relative flex flex-col items-center cursor-pointer select-none group"
-                  >
-                    {/* Rendered Physical Chairs around table */}
-                    {renderChairs(mesa.capacidad, mesa.tipo)}
-
-                    {/* Table Surface */}
-                    <div
-                      className={`relative w-24 h-24 flex flex-col items-center justify-center p-2 transition-all border-2 backdrop-blur-md shadow-lg ${
-                        isCircular ? "rounded-full" : "rounded-2xl"
-                      } ${statusStyles.border} ${statusStyles.bg} ${
-                        isSelected
-                          ? `ring-4 ${statusStyles.ring} shadow-xl scale-105`
-                          : "hover:shadow-xl"
-                      } ${tieneAlerta ? "ring-4 ring-red-500 animate-pulse bg-red-500/20" : ""}`}
-                    >
-                      {/* Mesa Number */}
-                      <span className="font-serif font-black text-lg text-stone-900 dark:text-stone-50 leading-none">
-                        M-{mesa.numero}
-                      </span>
-
-                      {/* Capacidad / Pax */}
-                      <span className="text-[10px] text-stone-500 dark:text-stone-400 font-semibold flex items-center gap-0.5 mt-0.5">
-                        <Users size={10} /> {mesa.capacidad}
-                      </span>
-
-                      {/* Live Ticket Badge if occupied */}
-                      {pedido ? (
-                        <span className="mt-1 text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-md bg-amber-900 text-amber-100 shadow-xs">
-                          Bs {pedido.total.toFixed(0)}
-                        </span>
-                      ) : (
-                        <span
-                          className={`mt-1 text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase tracking-wider ${statusStyles.tag}`}
-                        >
-                          {statusStyles.label}
-                        </span>
-                      )}
-
-                      {/* Alert Icon */}
-                      {tieneAlerta && (
-                        <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md animate-bounce text-[10px]">
-                          <Bell size={11} />
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Subtitle / Diners tag */}
-                    <div className="mt-2 text-center">
-                      <span className="text-[11px] font-medium text-stone-600 dark:text-stone-400 block group-hover:text-amber-800 dark:group-hover:text-amber-300 transition-colors">
-                        {zonas.find((z) => z.id === mesa.zona_id)?.nombre || "Sala"}
-                      </span>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+          <FloorPlanMap
+            onSelectMesa={(m) => abrirDetalleMesa(m)}
+            mesaSeleccionadaId={mesaSeleccionada?.id}
+            allowEditLayout={true}
+          />
         )}
 
         {/* ── MODE 2: FAST CARDS GRID ── */}

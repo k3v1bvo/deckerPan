@@ -1,6 +1,9 @@
 export type Estacion = 'vitrina' | 'cafeteria' | 'cocina';
 export type EstadoMesa = 'libre' | 'ocupada' | 'reservada' | 'limpieza';
 export type TipoMesa = 'cuadrada' | 'redonda' | 'rectangular';
+export type PisoCafeteria = 'planta_baja' | 'terraza';
+export type SubzonaMesa = 'patio_exterior' | 'salon_interior' | 'terraza_abierta' | 'terraza_balcon';
+export type CloudStorageProvider = 'cloudinary' | 'supabase' | 'imgbb';
 export type EstadoPedido = 'pendiente' | 'en_preparacion' | 'listo' | 'entregado' | 'pagado' | 'cancelado';
 export type EstadoItem = 'pendiente' | 'en_preparacion' | 'listo' | 'entregado' | 'cancelado';
 export type MetodoPago = 'efectivo' | 'qr' | 'qr_simple' | 'mixto';
@@ -32,14 +35,19 @@ export interface Zona {
 export interface Mesa {
   id: string;
   numero: number;
+  piso?: PisoCafeteria;
+  subzona?: SubzonaMesa;
   zona_id?: string;
   zona?: Zona;
   tipo: TipoMesa;
   capacidad: number;
+  sillas?: number;
   pos_x: number;
   pos_y: number;
   ancho: number;
   alto: number;
+  rotacion?: number;
+  asientos_nombres?: Record<number, string>;
   estado: EstadoMesa;
   activa: boolean;
   created_at: string;
@@ -95,6 +103,8 @@ export interface ItemPedido {
   chips_seleccionados: string[];
   estacion: Estacion;
   estado: EstadoItem;
+  asiento_numero?: number;
+  comensal_nombre?: string;
   tiempo_inicio?: string;
   tiempo_listo?: string;
   created_at: string;
@@ -236,4 +246,14 @@ export interface FacturaEmitida {
   urlQrVerificacion: string;
   pedidoId: string;
   estado: 'emitida' | 'anulada';
+}
+
+
+export interface UploadResult {
+  url: string;
+  provider: CloudStorageProvider;
+  width?: number;
+  height?: number;
+  format?: string;
+  bytes?: number;
 }

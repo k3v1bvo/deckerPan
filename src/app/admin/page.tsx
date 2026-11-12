@@ -59,6 +59,9 @@ import { useSystemStore } from "@/store";
 import { uploadImageToImgBB } from "@/lib/imgbb";
 import { Mesa, Producto, TipoMesa, Estacion, Reserva, Pago, SesionCaja, UsuarioStaff, StaffRole, FacturaEmitida } from "@/types";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
+import FloorPlanMap from "@/components/FloorPlanMap";
+import { uploadImageMultiCloud } from "@/lib/cloudStorage";
+import { CloudStorageProvider } from "@/types";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, REAL_PRODUCT_PHOTOS, MENU_PDF_PAGES } from "@/lib/seed-data";
 import { parsearLinkContadora, exportarLibroVentasCsv } from "@/lib/siat-utils";
@@ -563,21 +566,26 @@ export default function AdminPage() {
     setModalProductoAbierto(true);
   };
 
+  const [proveedorCloud, setProveedorCloud] = useState<CloudStorageProvider>("cloudinary");
+  const [nubeExito, setNubeExito] = useState<string | null>(null);
+
   const handleSubirImagenImgBB = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setSubiendoImgBB(true);
     setErrorImgBB(null);
+    setNubeExito(null);
 
-    const res = await uploadImageToImgBB(file, `dencker_${file.name}`);
-    setSubiendoImgBB(false);
-
-    if (res.success && res.url) {
+    try {
+      const res = await uploadImageMultiCloud(file, proveedorCloud);
       setFormProducto((prev) => ({ ...prev, imagen_url: res.url || "" }));
+      setNubeExito(`Subido a ${res.provider.toUpperCase()} ✓`);
       soundManager.playSuccessTone();
-    } else {
-      setErrorImgBB(res.error || "Error al subir a ImgBB. Verifica tu conexión.");
+    } catch (err: any) {
+      setErrorImgBB(err?.message || "Error al subir a la nube. Verifica tu conexión.");
+    } finally {
+      setSubiendoImgBB(false);
     }
   };
 
@@ -715,6 +723,21 @@ export default function AdminPage() {
         {/* ── TAB 1: GESTIÓN DE MESAS & AFORO ── */}
         {tabActiva === "mesas" && (
           <div className="space-y-6">
+            {/* Plano Arquitectónico Interactivo (2 Pisos: Planta Baja & Terraza) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <span>🗺️ Plano Dinámico de Mesas (Croquis Real Dencker Pan)</span>
+                  </h3>
+                  <p className="text-xs text-stone-500">
+                    Arrastra mesas para moverlas, cambia formas (redondas/cuadradas), ajusta sillas y guarda los cambios en vivo.
+                  </p>
+                </div>
+              </div>
+              <FloorPlanMap allowEditLayout={true} />
+            </div>
+
             {/* Quick adjust total capacity dock */}
             <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-6">
               <div>
@@ -3552,15 +3575,28 @@ export default function AdminPage() {
                       <span>Elegir Foto Real ({REAL_PRODUCT_PHOTOS.length})</span>
                     </button>
 
-                    <button
-                      type="button"
-                      disabled={subiendoImgBB}
-                      onClick={() => fileInputRef.current?.click()}
-                      className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
-                    >
-                      <Upload size={14} />
-                      <span>{subiendoImgBB ? "Subiendo..." : "Subir desde PC"}</span>
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <select
+                        value={proveedorCloud}
+                        onChange={(e) => setProveedorCloud(e.target.value as CloudStorageProvider)}
+                        className="p-1.5 text-xs rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 font-bold"
+                        title="Seleccionar proveedor de almacenamiento en la nube"
+                      >
+                        <option value="cloudinary">Cloudinary ☁️</option>
+                        <option value="supabase">Supabase 🗄️</option>
+                        <option value="imgbb">ImgBB 🚀</option>
+                      </select>
+
+                      <button
+                        type="button"
+                        disabled={subiendoImgBB}
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                      >
+                        <Upload size={14} />
+                        <span>{subiendoImgBB ? "Subiendo..." : "Subir Nube"}</span>
+                      </button>
+                    </div>
 
                     <input
                       type="text"
