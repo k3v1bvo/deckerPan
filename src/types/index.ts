@@ -35,6 +35,7 @@ export interface Zona {
 export interface Mesa {
   id: string;
   numero: number;
+  label?: string;
   piso?: PisoCafeteria;
   subzona?: SubzonaMesa;
   zona_id?: string;

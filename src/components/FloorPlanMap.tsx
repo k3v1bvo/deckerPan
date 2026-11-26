@@ -80,6 +80,12 @@ export default function FloorPlanMap({
   const [tipoPlanoVisor, setTipoPlanoVisor] = useState<"anotado" | "original" | "croquis">("anotado");
   const [modoBlueprint, setModoBlueprint] = useState(false);
 
+  // Estados de capas visuales arquitectónicas en Planta Baja
+  const [mostrarGrid, setMostrarGrid] = useState(false);
+  const [mostrarZonas, setMostrarZonas] = useState(true);
+  const [mostrarPasillo, setMostrarPasillo] = useState(true);
+  const [mostrarSignage, setMostrarSignage] = useState(true);
+
   // Estados Mapa de Calor & Aforo en Vivo
   const [modoCalor, setModoCalor] = useState(false);
   const [metricaCalor, setMetricaCalor] = useState<"ocupacion" | "consumo" | "tiempo">("ocupacion");
@@ -105,17 +111,21 @@ export default function FloorPlanMap({
 
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  // Restaurar desde localStorage al montar si existe layout guardado previo
+  // Restaurar desde localStorage al montar si existe layout guardado previo v4
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("dencker_mesas_layout");
+        const saved = localStorage.getItem("dencker_mesas_layout_v4");
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].label) {
             setMesas(parsed);
+            return;
           }
         }
+        // Si no existe v4 o el formato es anterior, inicializar con SEED_MESAS oficial
+        setMesas(SEED_MESAS);
+        localStorage.setItem("dencker_mesas_layout_v4", JSON.stringify(SEED_MESAS));
       } catch (e) {
         console.error("Error cargando layout guardado de mesas:", e);
       }
@@ -340,7 +350,7 @@ export default function FloorPlanMap({
     soundManager.playVintageRegisterDing();
     try {
       if (typeof window !== "undefined") {
-        localStorage.setItem("dencker_mesas_layout", JSON.stringify(storeMesas));
+        localStorage.setItem("dencker_mesas_layout_v4", JSON.stringify(storeMesas));
       }
       if (supabase) {
         for (const m of storeMesas) {
@@ -361,17 +371,17 @@ export default function FloorPlanMap({
     setModoEdicion(false);
   };
 
-  // Restablecer a la distribución oficial calibrada con el Plano de Evacuación
+  // Restablecer a la distribución oficial calibrada con el Plano Arquitectónico
   const handleRestablecerPlanoOficial = () => {
     if (
       confirm(
-        "¿Restablecer el plano a la distribución oficial del Plano de Evacuación arquitectónico (21 mesas)?"
+        "¿Restablecer el plano a la distribución oficial del Plano Arquitectónico (15 mesas en Planta Baja + 6 en Terraza)?"
       )
     ) {
       soundManager.playSuccessTone();
       setMesas(SEED_MESAS);
       if (typeof window !== "undefined") {
-        localStorage.setItem("dencker_mesas_layout", JSON.stringify(SEED_MESAS));
+        localStorage.setItem("dencker_mesas_layout_v4", JSON.stringify(SEED_MESAS));
       }
     }
   };
@@ -514,24 +524,90 @@ export default function FloorPlanMap({
             <span>Plano Evacuación</span>
           </button>
 
-          {/* Switch Capa Blueprint en Planta Baja */}
+          {/* Controles de Capas Arquitectónicas en Planta Baja */}
           {pisoActivo === "planta_baja" && (
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playTactileClick();
-                setModoBlueprint((prev) => !prev);
-              }}
-              className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border ${
-                modoBlueprint
-                  ? "bg-sky-700 text-white border-sky-600 shadow-xs"
-                  : "bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:text-stone-900"
-              }`}
-              title="Superponer imagen técnica del plano en el lienzo"
-            >
-              {modoBlueprint ? <Eye size={13} /> : <EyeOff size={13} />}
-              <span>{modoBlueprint ? "Blueprint Activo" : "Capa Blueprint"}</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-1 bg-[#F5EFEB] dark:bg-stone-800 p-1 rounded-xl border border-[#EAE2D5] dark:border-stone-700 text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setMostrarZonas((prev) => !prev);
+                }}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
+                  mostrarZonas
+                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                }`}
+                title="Mostrar u ocultar nombres de zonas en el plano"
+              >
+                <span>🏷️ Zonas</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setMostrarPasillo((prev) => !prev);
+                }}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
+                  mostrarPasillo
+                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                }`}
+                title="Mostrar u ocultar pasillo central de acceso"
+              >
+                <span>🚶 Pasillo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setMostrarSignage((prev) => !prev);
+                }}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
+                  mostrarSignage
+                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                }`}
+                title="Mostrar u ocultar extintores y salidas"
+              >
+                <span>🧯 Señalética</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setMostrarGrid((prev) => !prev);
+                }}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
+                  mostrarGrid
+                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                }`}
+                title="Mostrar u ocultar cuadrícula técnica"
+              >
+                <span>📐 Grilla</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setModoBlueprint((prev) => !prev);
+                }}
+                className={`px-2 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
+                  modoBlueprint
+                    ? "bg-sky-700 text-white shadow-xs"
+                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                }`}
+                title="Superponer fotografía técnica original del plano"
+              >
+                {modoBlueprint ? <Eye size={12} /> : <EyeOff size={12} />}
+                <span>Blueprint</span>
+              </button>
+            </div>
           )}
 
           {/* Botón Switch Modo Mapa de Calor */}
@@ -767,10 +843,7 @@ export default function FloorPlanMap({
 
       {/* ── LIENZO ARQUITECTÓNICO DEL PLANO (CANVAS 2.5D INTERACTIVO) ── */}
       <div
-        ref={canvasRef}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        className="w-full relative min-h-[600px] sm:min-h-[680px] rounded-3xl overflow-hidden border-2 border-[#1E130C]/20 dark:border-stone-800 bg-[#FAF7F2] dark:bg-[#120D0A] shadow-inner select-none"
+        className="w-full relative min-h-[620px] sm:min-h-[720px] rounded-3xl overflow-hidden border-2 border-[#1E130C]/20 dark:border-stone-800 bg-[#FAF7F2] dark:bg-[#120D0A] shadow-inner select-none p-2 sm:p-4 flex items-center justify-center"
         style={{
           backgroundImage:
             "radial-gradient(#1E130C 0.75px, transparent 0.75px), radial-gradient(#991B24 0.75px, #FAF7F2 0.75px)",
@@ -778,314 +851,492 @@ export default function FloorPlanMap({
           backgroundPosition: "0 0, 14px 14px",
         }}
       >
-        {/* Capa Blueprint Semitransparente (Fondo técnico del Plano de Evacuación Oficial) */}
-        {modoBlueprint && pisoActivo === "planta_baja" && (
-          <div className="absolute inset-0 pointer-events-none z-0 opacity-20 filter contrast-125 brightness-95 overflow-hidden flex items-center justify-center">
-            <img
-              src="/img/planos/plano-evacuacion-anotado.jpg"
-              alt="Plano Blueprint Evacuación Oficial"
-              className="w-full h-full object-fill select-none"
-            />
-          </div>
-        )}
-
-        {/* ── REFERENCIAS ARQUITECTÓNICAS DE PLANTA BAJA SEGÚN PLANO OFICIAL ── */}
-        {pisoActivo === "planta_baja" && (
-          <>
-            {/* Fachada Curva Salamanca (Esquina Arquitectónica Oficial con Av. Daniel Salamanca) */}
-            <div className="absolute left-0 bottom-0 w-[42%] h-[32%] rounded-bl-[70px] border-b-4 border-l-4 border-[#1E130C]/30 bg-emerald-600/[0.04] pointer-events-none z-0">
-              <div className="absolute left-4 bottom-3 flex items-center gap-1.5 text-[10px] font-bold text-emerald-900 dark:text-emerald-300 bg-[#FAF7F2]/95 dark:bg-stone-900/90 px-2.5 py-1 rounded-full shadow-xs border border-emerald-900/20">
-                <span>🌿 Patio Curvo Salamanca (M-1 a M-5)</span>
-              </div>
+        {/* Contenedor Proporcional 920 x 960 (Aspect Ratio Arquitectónico Exacto) */}
+        <div
+          ref={canvasRef}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          className="relative w-full max-w-[920px] aspect-[920/960] mx-auto select-none overflow-hidden rounded-2xl shadow-xl border border-stone-300 dark:border-stone-800 bg-white"
+        >
+          {/* Capa Blueprint Semitransparente (Fondo técnico del Plano de Evacuación Oficial) */}
+          {modoBlueprint && pisoActivo === "planta_baja" && (
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-20 filter contrast-125 brightness-95 overflow-hidden flex items-center justify-center">
+              <img
+                src="/img/planos/plano-evacuacion-anotado.jpg"
+                alt="Plano Blueprint Evacuación Oficial"
+                className="w-full h-full object-fill select-none"
+              />
             </div>
+          )}
 
-            {/* Patio Exterior Derecho (Sombrillas y mesas de entrada) */}
-            <div className="absolute right-0 bottom-0 w-[44%] h-[32%] border-b-4 border-r-4 border-[#1E130C]/30 bg-amber-600/[0.04] pointer-events-none z-0">
-              <div className="absolute right-4 bottom-3 flex items-center gap-1.5 text-[10px] font-bold text-amber-900 dark:text-amber-300 bg-[#FAF7F2]/95 dark:bg-stone-900/90 px-2.5 py-1 rounded-full shadow-xs border border-amber-900/20">
-                <span>☀️ Patio Exterior Entrada (M-6 a M-9)</span>
-              </div>
-            </div>
+          {/* ── PLANO VECTORIAL ARQUITECTÓNICO OFICIAL DE PLANTA BAJA (VIEWBOX 0 0 920 960) ── */}
+          {pisoActivo === "planta_baja" && (
+            <>
+              <svg
+                id="floorplan-svg"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 920 960"
+                className="absolute inset-0 w-full h-full block drop-shadow-md overflow-visible pointer-events-none select-none z-0"
+              >
+                <defs>
+                  {/* Patrón de sombreado diagonal cálido para Patio Exterior */}
+                  <pattern id="patio-hatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(42)">
+                    <rect width="14" height="14" fill="#f5efe6" />
+                    <line x1="0" y1="0" x2="0" y2="14" stroke="#d9cdbc" strokeWidth="1.3" />
+                  </pattern>
 
-            {/* Pasillo Central de Ingreso y Salida de Emergencia (Las 2 líneas gruesas del plano) */}
-            <div className="absolute left-[44%] w-[12%] bottom-0 top-[66%] border-x-4 border-[#1E130C]/40 bg-amber-950/[0.05] pointer-events-none flex flex-col justify-end items-center pb-2 z-0">
-              <div className="px-2 py-1 rounded-md bg-emerald-700 text-white text-[9px] font-black uppercase flex items-center gap-1 shadow-md border border-emerald-400 animate-pulse">
-                <span>🚪 Salida Emergencia</span>
-              </div>
-              <span className="text-[8px] font-mono font-bold text-stone-500 mt-0.5">
-                ◄ Entrada Principal ►
-              </span>
-            </div>
+                  {/* Cuadrícula técnica arquitectónica */}
+                  <pattern id="draft-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#94a3b8" strokeWidth="0.6" strokeOpacity="0.35" />
+                  </pattern>
+                  <pattern id="draft-grid-major" width="100" height="100" patternUnits="userSpaceOnUse">
+                    <rect width="100" height="100" fill="url(#draft-grid)" />
+                    <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#64748b" strokeWidth="0.9" strokeOpacity="0.35" />
+                  </pattern>
 
-            {/* Límite / Fachada Vidriada entre Patio Exterior e Interior */}
-            <div className="absolute left-0 right-0 top-[66%] border-t-2 border-dashed border-amber-900/30 flex items-center justify-between px-6 pointer-events-none z-0">
-              <span className="text-[9px] uppercase font-bold text-stone-600 bg-[#FAF7F2]/90 dark:bg-stone-900/90 px-2 py-0.5 rounded">
-                ◄ Puerta Batiente de Vidrio
-              </span>
-              <span className="text-[9px] uppercase font-bold text-emerald-800 dark:text-emerald-300 bg-[#FAF7F2]/90 dark:bg-stone-900/90 px-2 py-0.5 rounded">
-                Patio Exterior &amp; Sombrillas Dencker Pan ►
-              </span>
-            </div>
+                  {/* Filtro de sombra suave */}
+                  <filter id="item-shadow" x="-25%" y="-25%" width="150%" height="150%">
+                    <feDropShadow dx="0" dy="1.8" stdDeviation="2.2" floodColor="#0f172a" floodOpacity="0.16" />
+                  </filter>
 
-            {/* Salón Interior Climatizado (Izquierda) */}
-            <div className="absolute left-4 top-18 w-[38%] h-[47%] rounded-2xl border-2 border-stone-800/40 bg-stone-100/30 dark:bg-stone-900/20 pointer-events-none p-2.5 flex flex-col justify-between shadow-2xs z-0">
-              <div className="flex items-center justify-between text-[10px] font-bold text-stone-700 dark:text-stone-300">
-                <span className="flex items-center gap-1">
-                  <span>🏛️ Salón Climatizado</span>
-                </span>
-                <span className="text-[8px] px-1.5 py-0.5 rounded bg-stone-200 dark:bg-stone-800 font-mono">
-                  M-10 a M-14
-                </span>
-              </div>
-              <div className="border-t border-dashed border-stone-300 dark:border-stone-700 text-[8px] text-stone-400 text-center py-0.5">
-                Ventanales con vista al Patio Salamanca
-              </div>
-            </div>
+                  {/* Polígono de Recorte Perimetral Exacto del Edificio */}
+                  <clipPath id="perimeter-clip">
+                    <path d="M 80 100 L 830 100 L 830 380 L 690 380 L 690 770 L 340 885 C 195 925, 80 830, 80 680 Z" />
+                  </clipPath>
 
-            {/* Hall Central & Extintor Oficial (Frente a la mesa central M-15) */}
-            <div className="absolute left-[41%] top-[33%] pointer-events-none flex items-center gap-1 bg-red-600 text-white px-2 py-0.5 rounded-full text-[8px] font-black shadow-xs z-10 animate-pulse">
-              <span>🧯 EXTINTOR PQS</span>
-            </div>
+                  {/* Superficie Barra Barismo 4 Llamas */}
+                  <linearGradient id="bar-surface" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#f1f5f9" />
+                    <stop offset="100%" stopColor="#e2e8f0" />
+                  </linearGradient>
+                </defs>
 
-            {/* Bloque Arquitectónico: ESCALERAS REALES A TERRAZA (PISO 2) */}
-            <div
-              onClick={() => {
-                soundManager.playTactileClick();
-                setPisoActivo("terraza");
-              }}
-              className="absolute left-4 top-2.5 w-52 rounded-2xl bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-[#FAF7F2] p-2.5 shadow-xl border border-amber-500/30 cursor-pointer hover:border-amber-400 hover:scale-[1.02] transition-all z-20 group"
-              title="Clic para subir a la Terraza"
-            >
-              <div className="flex items-center justify-between">
+                {/* Hoja de plano */}
+                <rect x="20" y="25" width="880" height="910" rx="18" fill="#ffffff" stroke="#dbe2ea" strokeWidth="1.5" />
+
+                {/* Encabezado Arquitectónico Oficial */}
+                <g id="sheet-header" pointerEvents="none">
+                  <text x="80" y="68" fontFamily="Inter, sans-serif" fontSize="13" fontWeight="700" fill="#334155" letterSpacing="1.2">
+                    DENCKER PAN — PLANO ARQUITECTÓNICO PLANTA BAJA
+                  </text>
+                  <text x="830" y="68" textAnchor="end" fontFamily="Inter, sans-serif" fontSize="11" fontWeight="600" fill="#94a3b8">
+                    15 MESAS · 58 PAX (PATIO P1-P9 &bull; SALÓN M1-M6)
+                  </text>
+                  <line x1="80" y1="80" x2="830" y2="80" stroke="#e2e8f0" strokeWidth="1" />
+                </g>
+
+                {/* CAPA 1: ESTRUCTURA ARQUITECTÓNICA BASE */}
+                <g id="layer-base-plan" pointerEvents="none">
+                  <g clipPath="url(#perimeter-clip)">
+                    {/* Suelo interior blanco pulido */}
+                    <rect x="80" y="100" width="760" height="820" fill="#ffffff" />
+
+                    {/* Zonas de Patio Exterior con trama diagonal de adoquines */}
+                    <rect x="80" y="445" width="140" height="480" fill="url(#patio-hatch)" />
+                    <rect x="220" y="675" width="300" height="255" fill="url(#patio-hatch)" />
+                    <rect x="520" y="645" width="175" height="240" fill="url(#patio-hatch)" />
+
+                    {/* Estructura Barra Barismo & Mostrador Central */}
+                    <rect x="585" y="285" width="105" height="360" fill="#f8fafc" />
+                    <rect x="585" y="285" width="43" height="340" rx="3" fill="url(#bar-surface)" stroke="#334155" strokeWidth="2.2" />
+                    <line x1="591" y1="291" x2="591" y2="619" stroke="#94a3b8" strokeWidth="1" />
+                    <line x1="595" y1="455" x2="626" y2="455" stroke="#cbd5e1" strokeWidth="1.2" />
+
+                    {/* Contrabarra y vitrinas */}
+                    <rect x="655" y="285" width="33" height="158" rx="2" fill="#f1f5f9" stroke="#334155" strokeWidth="2" />
+                    <rect x="655" y="458" width="33" height="167" rx="2" fill="#f1f5f9" stroke="#334155" strokeWidth="2" />
+
+                    {/* Fregadero de barismo */}
+                    <rect x="662" y="340" width="19" height="32" rx="2" fill="none" stroke="#94a3b8" strokeWidth="1.1" />
+                    <circle cx="671.5" cy="356" r="2.2" fill="#94a3b8" />
+
+                    {/* Mostrador de Caja & POS */}
+                    <rect x="525" y="600" width="50" height="40" rx="2.5" fill="#f1f5f9" stroke="#334155" strokeWidth="2" />
+                    <rect x="533" y="608" width="34" height="24" rx="1.5" fill="none" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3 2" />
+
+                    {/* Escaleras L-Shaped Detalladas hacia Terraza */}
+                    <g id="arch-stairs">
+                      <polygon points="220,195 280,195 280,295 410,295 410,355 220,355" fill="#f8fafc" stroke="#334155" strokeWidth="2" />
+                      <g stroke="#64748b" strokeWidth="1.3">
+                        <line x1="220" y1="211" x2="280" y2="211" />
+                        <line x1="220" y1="227" x2="280" y2="227" />
+                        <line x1="220" y1="243" x2="280" y2="243" />
+                        <line x1="220" y1="259" x2="280" y2="259" />
+                        <line x1="220" y1="275" x2="280" y2="275" />
+                        <line x1="220" y1="295" x2="280" y2="295" stroke="#334155" strokeWidth="1.8" />
+                      </g>
+                      <line x1="220" y1="355" x2="280" y2="295" stroke="#cbd5e1" strokeWidth="1.2" strokeDasharray="4 3" />
+                      <line x1="280" y1="295" x2="280" y2="355" stroke="#334155" strokeWidth="1.8" />
+                      <g stroke="#64748b" strokeWidth="1.3">
+                        <line x1="296" y1="295" x2="296" y2="355" />
+                        <line x1="312" y1="295" x2="312" y2="355" />
+                        <line x1="328" y1="295" x2="328" y2="355" />
+                        <line x1="344" y1="295" x2="344" y2="355" />
+                        <line x1="360" y1="295" x2="360" y2="355" />
+                        <line x1="376" y1="295" x2="376" y2="355" />
+                        <line x1="392" y1="295" x2="392" y2="355" />
+                      </g>
+                      <path d="M 250 205 L 250 325 L 400 325" fill="none" stroke="#334155" strokeWidth="1.6" />
+                      <polygon points="404,325 395,320 395,330" fill="#334155" />
+                      <circle cx="250" cy="205" r="3" fill="#334155" />
+                    </g>
+
+                    {/* Depósito bajo escalera */}
+                    <rect x="220" y="355" width="145" height="70" fill="#f8fafc" />
+
+                    {/* Baños & Servicios fondo */}
+                    <rect x="410" y="100" width="260" height="160" fill="#fcfdfe" />
+                  </g>
+
+                  {/* Muros Interiores Portantes */}
+                  <g stroke="#1e293b" strokeWidth="4.5" strokeLinecap="square" strokeLinejoin="miter" fill="none">
+                    <line x1="220" y1="100" x2="220" y2="122" />
+                    <line x1="80" y1="175" x2="115" y2="175" />
+                    <line x1="170" y1="175" x2="220" y2="175" />
+                    <line x1="220" y1="175" x2="220" y2="362" />
+                    <line x1="220" y1="410" x2="220" y2="675" />
+
+                    <line x1="80" y1="445" x2="162" y2="445" />
+                    <line x1="216" y1="445" x2="220" y2="445" />
+
+                    <line x1="220" y1="355" x2="365" y2="355" />
+                    <line x1="365" y1="355" x2="365" y2="425" />
+
+                    <line x1="220" y1="425" x2="410" y2="425" />
+
+                    <line x1="220" y1="675" x2="405" y2="675" />
+                    <line x1="490" y1="675" x2="520" y2="675" />
+                    <line x1="520" y1="675" x2="520" y2="645" />
+                    <line x1="520" y1="645" x2="690" y2="645" />
+
+                    <line x1="220" y1="195" x2="410" y2="195" />
+                    <line x1="410" y1="100" x2="410" y2="195" />
+                    <line x1="410" y1="260" x2="475" y2="260" />
+                    <line x1="525" y1="260" x2="590" y2="260" />
+                    <line x1="640" y1="260" x2="670" y2="260" />
+
+                    <line x1="545" y1="100" x2="545" y2="260" />
+                    <line x1="410" y1="195" x2="432" y2="195" />
+                    <line x1="482" y1="195" x2="545" y2="195" />
+
+                    <line x1="670" y1="100" x2="670" y2="145" />
+                    <line x1="670" y1="200" x2="670" y2="260" />
+                    <line x1="725" y1="155" x2="830" y2="155" strokeWidth="3.5" />
+                  </g>
+
+                  {/* Puertas y Arcos de Apertura Batientes */}
+                  <g stroke="#475569" fill="none">
+                    <line x1="115" y1="175" x2="115" y2="228" strokeWidth="2.2" stroke="#1e293b" />
+                    <path d="M 115 228 A 53 53 0 0 0 168 175" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                    <line x1="216" y1="445" x2="216" y2="393" strokeWidth="2.2" stroke="#1e293b" />
+                    <path d="M 216 393 A 52 52 0 0 0 164 445" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                    <line x1="220" y1="410" x2="266" y2="410" strokeWidth="2.2" stroke="#1e293b" />
+                    <path d="M 266 410 A 46 46 0 0 0 220 364" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                    <line x1="482" y1="195" x2="482" y2="147" strokeWidth="2.2" stroke="#1e293b" />
+                    <path d="M 482 147 A 48 48 0 0 0 434 195" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                    <line x1="475" y1="260" x2="475" y2="308" strokeWidth="2.2" stroke="#1e293b" />
+                    <path d="M 475 308 A 48 48 0 0 0 523 260" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                    <line x1="640" y1="260" x2="640" y2="212" strokeWidth="2.2" stroke="#1e293b" />
+                    <path d="M 640 212 A 48 48 0 0 0 592 260" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                    <line x1="670" y1="145" x2="722" y2="145" strokeWidth="2.2" stroke="#1e293b" />
+                    <path d="M 722 145 A 52 52 0 0 1 670 197" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                    {/* Puerta Doble de Ingreso Principal */}
+                    <line x1="405" y1="675" x2="405" y2="634" strokeWidth="2.4" stroke="#1e293b" />
+                    <path d="M 405 634 A 41 41 0 0 1 446 675" strokeWidth="1.3" strokeDasharray="3 2" />
+                    <line x1="490" y1="675" x2="490" y2="634" strokeWidth="2.4" stroke="#1e293b" />
+                    <path d="M 490 634 A 41 41 0 0 0 449 675" strokeWidth="1.3" strokeDasharray="3 2" />
+                    <line x1="405" y1="675" x2="490" y2="675" stroke="#94a3b8" strokeWidth="1.2" />
+                  </g>
+
+                  {/* Fachada Perimetral Curva de la Esquina Salamanca */}
+                  <path
+                    d="M 80 100 L 830 100 L 830 380 L 690 380 L 690 770 L 340 885 C 195 925, 80 830, 80 680 Z"
+                    fill="none"
+                    stroke="#0f172a"
+                    strokeWidth="5.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  />
+                </g>
+
+                {/* CAPA 1B: PASILLO CENTRAL DE ACCESO Y ENTRADA */}
+                {mostrarPasillo && (
+                  <g id="layer-walkway" clipPath="url(#perimeter-clip)" pointerEvents="none">
+                    <polygon points="388,675 504,675 504,840 388,876" fill="#ffffff" fillOpacity="0.65" />
+                    <line x1="388" y1="675" x2="388" y2="876" stroke="#475569" strokeWidth="5" strokeLinecap="round" strokeOpacity="0.75" />
+                    <line x1="395" y1="678" x2="395" y2="871" stroke="#cbd5e1" strokeWidth="1.2" strokeDasharray="5 4" />
+                    <line x1="504" y1="675" x2="504" y2="840" stroke="#475569" strokeWidth="5" strokeLinecap="round" strokeOpacity="0.75" />
+                    <line x1="497" y1="678" x2="497" y2="838" stroke="#cbd5e1" strokeWidth="1.2" strokeDasharray="5 4" />
+                    <path d="M 446 825 L 446 730 M 439 738 L 446 728 L 453 738" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
+                  </g>
+                )}
+
+                {/* CAPA 2: CUADRÍCULA ARQUITECTÓNICA */}
+                {mostrarGrid && (
+                  <g id="layer-grid" clipPath="url(#perimeter-clip)" pointerEvents="none">
+                    <rect x="80" y="100" width="760" height="830" fill="url(#draft-grid-major)" />
+                  </g>
+                )}
+
+                {/* CAPA 3: ETIQUETAS DE ZONAS */}
+                {mostrarZonas && (
+                  <g id="layer-zone-labels" pointerEvents="none" fontFamily="Inter, sans-serif" fontWeight="600" fill="#94a3b8" textAnchor="middle">
+                    <text x="150" y="310" fontSize="10" letterSpacing="0.8">PASILLO</text>
+                    <text x="150" y="323" fontSize="10" letterSpacing="0.8">LATERAL</text>
+
+                    <text x="330" y="255" fontSize="10" letterSpacing="0.8">ESCALERAS</text>
+                    <text x="292" y="394" fontSize="9" letterSpacing="0.6">DEPÓSITO</text>
+
+                    <text x="315" y="518" fontSize="11.5" letterSpacing="1.2" fill="#cbd5e1">SALÓN IZQUIERDO</text>
+                    <text x="485" y="540" fontSize="11" letterSpacing="1" fill="#cbd5e1">SALÓN CENTRAL</text>
+
+                    <text x="477" y="148" fontSize="9.5" letterSpacing="0.8">SERVICIOS / BAÑOS</text>
+                    <text x="607" y="182" fontSize="9.5" letterSpacing="0.8">OFICINA / SERV.</text>
+
+                    <text x="760" y="275" fontSize="10.5" letterSpacing="0.9">ANEXO DERECHO</text>
+
+                    <text x="607" y="460" fontSize="10" letterSpacing="1.4" fill="#64748b" transform="rotate(-90, 607, 460)">BARRA 4 LLAMAS</text>
+                    <text x="550" y="623" fontSize="8.5" letterSpacing="0.6" fill="#64748b">CAJA</text>
+
+                    <text x="148" y="468" fontSize="10" letterSpacing="1.1" fill="#a89882">PATIO SALAMANCA</text>
+                    <text x="242" y="772" fontSize="10.5" letterSpacing="1.1" fill="#a89882">PATIO IZQUIERDO</text>
+                    <text x="446" y="790" fontSize="9" letterSpacing="1" fill="#64748b">ACCESO</text>
+                    <text x="600" y="730" fontSize="10" letterSpacing="1.1" fill="#a89882">PATIO DERECHO</text>
+                  </g>
+                )}
+
+                {/* CAPA 4: SEÑALÉTICA Y EXTINTORES */}
+                {mostrarSignage && (
+                  <g id="layer-signage" pointerEvents="none">
+                    {/* Extintores PQS */}
+                    <g transform="translate(560, 422)">
+                      <rect x="-11" y="-13" width="22" height="26" rx="4" fill="#dc2626" stroke="#ffffff" strokeWidth="1.5" />
+                      <rect x="-4" y="-5" width="8" height="12" rx="2.5" fill="#ffffff" />
+                      <path d="M -2 -5 L -2 -8 L 3 -8 M 2 -8 L 5 -5" stroke="#ffffff" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                    </g>
+                    <g transform="translate(502, 620)">
+                      <rect x="-11" y="-13" width="22" height="26" rx="4" fill="#dc2626" stroke="#ffffff" strokeWidth="1.5" />
+                      <rect x="-4" y="-5" width="8" height="12" rx="2.5" fill="#ffffff" />
+                      <path d="M -2 -5 L -2 -8 L 3 -8 M 2 -8 L 5 -5" stroke="#ffffff" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                    </g>
+                    <g transform="translate(715, 250)">
+                      <rect x="-11" y="-13" width="22" height="26" rx="4" fill="#dc2626" stroke="#ffffff" strokeWidth="1.5" />
+                      <rect x="-4" y="-5" width="8" height="12" rx="2.5" fill="#ffffff" />
+                      <path d="M -2 -5 L -2 -8 L 3 -8 M 2 -8 L 5 -5" stroke="#ffffff" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                    </g>
+
+                    {/* Cartel Salida / Entrada */}
+                    <g transform="translate(447, 696)">
+                      <rect x="-42" y="-11" width="84" height="22" rx="4" fill="#15803d" stroke="#ffffff" strokeWidth="1.5" />
+                      <text x="0" y="3.5" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.2" fontWeight="700" fill="#ffffff" letterSpacing="0.5">SALIDA / ENTRADA</text>
+                    </g>
+                    <g transform="translate(447, 650)">
+                      <rect x="-9" y="-9" width="18" height="18" rx="3" fill="#16a34a" opacity="0.9" />
+                      <path d="M 0 -5 L 0 4 M -3.5 1 L 0 4.5 L 3.5 1" stroke="#ffffff" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                    </g>
+                  </g>
+                )}
+              </svg>
+
+              {/* Botón interactivo para subir por las escaleras a Terraza */}
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setPisoActivo("terraza");
+                }}
+                style={{ left: "34%", top: "28%", transform: "translate(-50%, -50%)" }}
+                className="absolute px-3 py-1.5 rounded-xl bg-stone-900/90 hover:bg-stone-900 text-white text-[11px] font-black border border-amber-400/50 shadow-xl hover:scale-105 active:scale-95 transition flex items-center gap-1.5 z-20 cursor-pointer group"
+                title="Subir a Terraza (Piso 2)"
+              >
+                <span>🪜 Subir a Terraza</span>
+                <ArrowRight size={13} className="text-amber-300 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </>
+          )}
+
+          {/* ── REFERENCIAS ARQUITECTÓNICAS DE TERRAZA SEGÚN CROQUIS ── */}
+          {pisoActivo === "terraza" && (
+            <div className="absolute inset-0 bg-[#FDFBF7] dark:bg-[#1A1410] z-0 p-4">
+              {/* Barandado Perimetral con Vista Panorámica */}
+              <div className="w-full h-14 border-b-2 border-dashed border-amber-600/40 flex items-center justify-between px-4 bg-amber-500/[0.06] rounded-2xl">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-600/80 flex items-center justify-center text-white text-xs font-black">
-                    🪜
-                  </div>
+                  <Sun size={18} className="text-amber-500" />
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider block text-amber-300">
-                      Escalera a Terraza
+                    <span className="text-xs sm:text-sm font-black text-amber-950 dark:text-amber-200 block">
+                      Terraza Mirador Alameda Salamanca (Piso 2)
                     </span>
-                    <span className="text-[9px] text-stone-400">
-                      Subir a Piso 2 (Mesas 16 a 21)
+                    <span className="text-[10px] text-stone-500">
+                      Ambiente al aire libre &bull; Pérgolas, toldos y sombrillas
                     </span>
                   </div>
                 </div>
-                <ArrowRight size={14} className="text-amber-300 group-hover:translate-x-1 transition-transform" />
-              </div>
-
-              {/* Peldaños Arquitectónicos en Vector */}
-              <div className="mt-2 grid grid-cols-6 gap-1 h-3 opacity-75 group-hover:opacity-100 transition-opacity">
-                {[1, 2, 3, 4, 5, 6].map((step) => (
-                  <div
-                    key={step}
-                    className="h-full bg-stone-700 rounded-xs border-r border-stone-600 flex items-center justify-center"
-                  >
-                    <span className="text-[6px] text-stone-400 font-mono">{step}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Bloque Arquitectónico: BARRA DE BARISMO 4 LLAMAS & RECEPCIÓN POS (Derecha) */}
-            <div className="absolute right-4 top-[14%] w-[44%] h-[50%] rounded-3xl bg-amber-950/10 border-2 border-amber-900/30 p-3 flex flex-col justify-between pointer-events-none shadow-xs z-0">
-              <div className="flex items-center justify-between text-amber-900 dark:text-amber-300 font-black text-xs border-b border-amber-900/20 pb-1.5">
-                <div className="flex items-center gap-1.5">
-                  <Coffee size={14} className="text-amber-700" />
-                  <span>Barra de Especialidad &amp; Recepción POS</span>
-                </div>
-                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-200">
-                  Café 4 Llamas
+                <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200">
+                  6 Mesas Panorámicas (T16 a T21)
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-[9px] text-amber-800/80">
-                <div className="p-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 border border-amber-900/10">
-                  <span className="font-bold block text-amber-950 dark:text-amber-100">☕ La Marzocco</span>
-                  <span>Espresso &amp; Filtrados</span>
-                </div>
-                <div className="p-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 border border-amber-900/10">
-                  <span className="font-bold block text-amber-950 dark:text-amber-100">🥐 Vitrina Pastelería</span>
-                  <span>Masa madre viva &amp; Rolls</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-[9px] text-stone-500 pt-1 border-t border-amber-900/10">
-                <span>Mostrador de Cobro &amp; Empaque</span>
-                <span>Terminal POS</span>
-              </div>
-            </div>
 
-            {/* Bloque Arquitectónico: COCINA / OBRADOIRO & BAÑOS (Fondo superior derecho) */}
-            <div className="absolute right-4 top-2 flex items-center gap-2 pointer-events-none z-10">
-              <div className="px-2.5 py-1 rounded-xl bg-red-950/10 border border-red-900/30 text-[9px] font-bold text-red-900 dark:text-red-300 flex items-center gap-1">
-                <Flame size={12} />
-                <span>Cocina &amp; Hornos</span>
-              </div>
-              <div className="px-2.5 py-1 rounded-xl bg-stone-200/80 dark:bg-stone-800 border border-stone-300 text-[9px] font-bold text-stone-600 dark:text-stone-300">
-                🚻 Baños
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* ── REFERENCIAS ARQUITECTÓNICAS DE TERRAZA SEGÚN CROQUIS ── */}
-        {pisoActivo === "terraza" && (
-          <>
-            {/* Barandado Perimetral con Vista Panorámica */}
-            <div className="absolute inset-x-4 top-4 h-12 border-b-2 border-dashed border-amber-600/40 flex items-center justify-between px-4 pointer-events-none bg-amber-500/[0.04] rounded-t-2xl z-0">
-              <div className="flex items-center gap-2">
-                <Sun size={15} className="text-amber-500" />
-                <div>
-                  <span className="text-[11px] font-black text-amber-950 dark:text-amber-200 block">
-                    Terraza Mirador Alameda Salamanca
-                  </span>
-                  <span className="text-[9px] text-stone-500">
-                    Piso 2 al aire libre &bull; Pérgolas, toldos y sombrillas
-                  </span>
-                </div>
-              </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200">
-                6 Mesas Panorámicas (M-16 a M-21)
-              </span>
-            </div>
-
-            {/* Escalera de Bajada a Planta Baja */}
-            <div
-              onClick={() => {
-                soundManager.playTactileClick();
-                setPisoActivo("planta_baja");
-              }}
-              className="absolute right-6 bottom-5 px-4 py-2.5 rounded-2xl bg-stone-900 text-[#FAF7F2] text-xs font-bold shadow-xl cursor-pointer hover:bg-amber-900 transition flex items-center gap-2 z-20 group border border-amber-500/30"
-              title="Bajar a Planta Baja"
-            >
-              <ArrowRight size={14} className="rotate-180 group-hover:-translate-x-1 transition-transform text-amber-300" />
-              <div className="text-left">
-                <span className="block text-[11px] font-black text-amber-300">Bajar a Planta Baja</span>
-                <span className="block text-[9px] text-stone-400">Salón &amp; Patio Exterior</span>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* ── RENDERIZADO ESPACIAL DE CADA MESA ── */}
-        {mesasPiso.map((mesa) => {
-          const pedido = getPedidoMesa(mesa.numero);
-          const tieneAlerta = alertas.some((a) => a.mesa_numero === mesa.numero);
-          const isSelected = mesaSeleccionadaId === mesa.id;
-          const isDragging = mesaArrastrando === mesa.id;
-          const heat = getMesaHeatData(mesa, pedido);
-
-          const statusStyles = {
-            libre: {
-              border: "border-emerald-600 bg-emerald-500/15 text-emerald-950",
-              tag: "bg-emerald-600 text-white",
-              label: "Libre",
-            },
-            ocupada: {
-              border: "border-amber-600 bg-amber-500/25 text-amber-950",
-              tag: "bg-amber-600 text-white",
-              label: "Ocupada",
-            },
-            reservada: {
-              border: "border-purple-600 bg-purple-500/20 text-purple-950",
-              tag: "bg-purple-600 text-white",
-              label: "Reserva",
-            },
-            limpieza: {
-              border: "border-blue-500 bg-blue-500/20 text-blue-950",
-              tag: "bg-blue-600 text-white",
-              label: "Limpieza",
-            },
-          }[mesa.estado];
-
-          const isRound = mesa.tipo === "redonda";
-          const isRect = mesa.tipo === "rectangular";
-
-          return (
-            <div
-              key={mesa.id}
-              onPointerDown={(e) => handlePointerDown(mesa.id, e)}
-              onClick={() => handleMesaClick(mesa)}
-              style={{
-                left: `${mesa.pos_x}%`,
-                top: `${mesa.pos_y}%`,
-                transform: "translate(-50%, -50%)",
-              }}
-              className={`absolute cursor-pointer transition-transform group select-none z-10 ${
-                isDragging ? "scale-110 z-30 cursor-grabbing" : "hover:scale-105 active:scale-95"
-              }`}
-            >
-              {/* Halo Térmico / Heatmap Bloom (Cámara Térmica Infrarroja) */}
-              {modoCalor && (
-                <div
-                  style={{
-                    background: `radial-gradient(circle, ${heat.glowColor} 0%, rgba(239,68,68,0) 70%)`,
-                  }}
-                  className="absolute -inset-10 sm:-inset-14 rounded-full pointer-events-none filter blur-xl z-0 transition-all duration-700 animate-pulse"
-                />
-              )}
-
-              {/* Sillas alrededor */}
-              {renderChairs(mesa.capacidad, mesa.tipo, mesa.id)}
-
-              {/* Superficie de la mesa */}
+              {/* Escalera de Bajada a Planta Baja */}
               <div
-                className={`relative flex flex-col items-center justify-center p-2.5 transition-all shadow-md backdrop-blur-md border-2 ${
-                  modoCalor ? heat.tableBg : statusStyles.border
-                } ${
-                  isRound
-                    ? "rounded-full w-20 h-20 sm:w-22 sm:h-22"
-                    : isRect
-                    ? "rounded-2xl w-28 h-20 sm:w-32 sm:h-22"
-                    : "rounded-2xl w-20 h-20 sm:w-22 sm:h-22"
-                } ${isSelected ? "ring-4 ring-amber-600 shadow-xl" : ""} ${
-                  tieneAlerta ? "ring-4 ring-red-500 animate-pulse bg-red-500/30" : ""
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setPisoActivo("planta_baja");
+                }}
+                className="absolute right-6 bottom-6 px-4 py-2.5 rounded-2xl bg-stone-900 text-[#FAF7F2] text-xs font-bold shadow-xl cursor-pointer hover:bg-amber-900 transition flex items-center gap-2 z-20 group border border-amber-500/30"
+                title="Bajar a Planta Baja"
+              >
+                <ArrowRight size={14} className="rotate-180 group-hover:-translate-x-1 transition-transform text-amber-300" />
+                <div className="text-left">
+                  <span className="block text-[11px] font-black text-amber-300">Bajar a Planta Baja</span>
+                  <span className="block text-[9px] text-stone-400">Salón &amp; Patio Exterior</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── RENDERIZADO ESPACIAL DE CADA MESA ── */}
+          {mesasPiso.map((mesa) => {
+            const pedido = getPedidoMesa(mesa.numero);
+            const tieneAlerta = alertas.some((a) => a.mesa_numero === mesa.numero);
+            const isSelected = mesaSeleccionadaId === mesa.id;
+            const isDragging = mesaArrastrando === mesa.id;
+            const heat = getMesaHeatData(mesa, pedido);
+
+            const displayLabel = mesa.label || (
+              mesa.piso === "terraza"
+                ? `T${mesa.numero}`
+                : mesa.numero <= 9
+                ? `P${mesa.numero}`
+                : `M${mesa.numero - 9}`
+            );
+
+            const statusStyles = {
+              libre: {
+                border: "border-emerald-600 bg-emerald-500/20 text-emerald-950",
+                tag: "bg-emerald-600 text-white",
+                label: "Libre",
+              },
+              ocupada: {
+                border: "border-amber-600 bg-amber-500/30 text-amber-950",
+                tag: "bg-amber-600 text-white",
+                label: "Ocupada",
+              },
+              reservada: {
+                border: "border-purple-600 bg-purple-500/25 text-purple-950",
+                tag: "bg-purple-600 text-white",
+                label: "Reserva",
+              },
+              limpieza: {
+                border: "border-blue-500 bg-blue-500/25 text-blue-950",
+                tag: "bg-blue-600 text-white",
+                label: "Limpieza",
+              },
+            }[mesa.estado];
+
+            const isRound = mesa.tipo === "redonda";
+            const isRect = mesa.tipo === "rectangular";
+
+            return (
+              <div
+                key={mesa.id}
+                onPointerDown={(e) => handlePointerDown(mesa.id, e)}
+                onClick={() => handleMesaClick(mesa)}
+                style={{
+                  left: `${mesa.pos_x}%`,
+                  top: `${mesa.pos_y}%`,
+                  transform: "translate(-50%, -50%)",
+                }}
+                className={`absolute cursor-pointer transition-transform group select-none z-10 ${
+                  isDragging ? "scale-110 z-30 cursor-grabbing" : "hover:scale-105 active:scale-95"
                 }`}
               >
-                {/* Número de Mesa */}
-                <span className="font-serif font-black text-base sm:text-lg leading-none">
-                  M-{mesa.numero}
-                </span>
+                {/* Halo Térmico / Heatmap Bloom (Cámara Térmica Infrarroja) */}
+                {modoCalor && (
+                  <div
+                    style={{
+                      background: `radial-gradient(circle, ${heat.glowColor} 0%, rgba(239,68,68,0) 70%)`,
+                    }}
+                    className="absolute -inset-8 sm:-inset-10 rounded-full pointer-events-none filter blur-xl z-0 transition-all duration-700 animate-pulse"
+                  />
+                )}
 
-                {/* Sillas / Pax */}
-                <div className="flex items-center gap-1 text-[10px] font-bold text-stone-700 dark:text-stone-300 mt-0.5">
-                  <Users size={11} />
-                  <span>{mesa.capacidad} sillas</span>
+                {/* Sillas alrededor */}
+                {renderChairs(mesa.capacidad, mesa.tipo, mesa.id)}
+
+                {/* Superficie de la mesa */}
+                <div
+                  className={`relative flex flex-col items-center justify-center p-1.5 sm:p-2 transition-all shadow-md backdrop-blur-md border-2 ${
+                    modoCalor ? heat.tableBg : statusStyles.border
+                  } ${
+                    isRound
+                      ? "rounded-full w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18"
+                      : isRect
+                      ? "rounded-2xl w-22 sm:w-26 md:w-28 h-14 sm:h-16 md:h-18"
+                      : "rounded-2xl w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18"
+                  } ${isSelected ? "ring-4 ring-amber-600 shadow-xl" : ""} ${
+                    tieneAlerta ? "ring-4 ring-red-500 animate-pulse bg-red-500/30" : ""
+                  }`}
+                >
+                  {/* Etiqueta Arquitectónica Oficial (P1-P9, M1-M6, T16-T21) */}
+                  <div className="flex flex-col items-center leading-none">
+                    <span className="font-serif font-black text-xs sm:text-sm text-[#1E130C] dark:text-[#FAF7F2]">
+                      {displayLabel}
+                    </span>
+                    <span className="text-[7px] font-mono font-bold text-stone-500 mt-0.5">
+                      M-{mesa.numero}
+                    </span>
+                  </div>
+
+                  {/* Sillas / Pax */}
+                  <div className="flex items-center gap-0.5 text-[8px] font-bold text-stone-700 dark:text-stone-300 mt-0.5">
+                    <Users size={9} />
+                    <span>{mesa.capacidad}p</span>
+                  </div>
+
+                  {/* Badge Dinámico: Modo Calor vs Modo Operativo */}
+                  {modoCalor ? (
+                    <span
+                      className={`mt-0.5 text-[7.5px] font-bold px-1 py-0.2 rounded-full uppercase tracking-wider ${heat.badgeBg}`}
+                    >
+                      {heat.badge}
+                    </span>
+                  ) : pedido ? (
+                    <span className="mt-0.5 text-[8px] font-mono font-black px-1 py-0.2 rounded-md bg-[#1E130C] text-amber-300 shadow-xs">
+                      Bs {pedido.total.toFixed(0)}
+                    </span>
+                  ) : (
+                    <span
+                      className={`mt-0.5 text-[7px] font-bold px-1 py-0.2 rounded-full uppercase tracking-wider ${statusStyles.tag}`}
+                    >
+                      {statusStyles.label}
+                    </span>
+                  )}
+
+                  {/* Alerta de Mozo */}
+                  {tieneAlerta && (
+                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg animate-bounce text-[8px]">
+                      <Bell size={9} />
+                    </span>
+                  )}
+
+                  {/* Indicador de edición */}
+                  {modoEdicion && (
+                    <span className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-stone-900 text-white shadow">
+                      <Move size={8} />
+                    </span>
+                  )}
                 </div>
-
-                {/* Badge Dinámico: Modo Calor vs Modo Operativo */}
-                {modoCalor ? (
-                  <span
-                    className={`mt-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${heat.badgeBg}`}
-                  >
-                    {heat.badge}
-                  </span>
-                ) : pedido ? (
-                  <span className="mt-1 text-[10px] font-mono font-black px-1.5 py-0.5 rounded-md bg-[#1E130C] text-amber-300 shadow-xs">
-                    Bs {pedido.total.toFixed(0)}
-                  </span>
-                ) : (
-                  <span
-                    className={`mt-1 text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase tracking-wider ${statusStyles.tag}`}
-                  >
-                    {statusStyles.label}
-                  </span>
-                )}
-
-                {/* Alerta de Mozo */}
-                {tieneAlerta && (
-                  <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg animate-bounce text-[10px]">
-                    <Bell size={11} />
-                  </span>
-                )}
-
-                {/* Indicador de edición */}
-                {modoEdicion && (
-                  <span className="absolute -bottom-2 -right-2 p-1 rounded-full bg-stone-900 text-white shadow">
-                    <Move size={10} />
-                  </span>
-                )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
 
         {/* Leyenda Térmica Flotante en Modo Mapa de Calor */}
         {modoCalor && (
@@ -1474,14 +1725,37 @@ export default function FloorPlanMap({
               {/* Header Modal */}
               <div className="flex items-start justify-between border-b pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-[#1E130C] text-amber-300 flex items-center justify-center font-serif font-black text-xl shadow-md">
-                    M-{modalDetalleMesa.numero}
+                  <div className="w-12 h-12 rounded-2xl bg-[#1E130C] text-amber-300 flex flex-col items-center justify-center font-serif font-black shadow-md">
+                    <span className="text-base leading-none">
+                      {modalDetalleMesa.label || (
+                        modalDetalleMesa.piso === "terraza"
+                          ? `T${modalDetalleMesa.numero}`
+                          : modalDetalleMesa.numero <= 9
+                          ? `P${modalDetalleMesa.numero}`
+                          : `M${modalDetalleMesa.numero - 9}`
+                      )}
+                    </span>
+                    <span className="text-[7.5px] font-mono text-stone-400 mt-0.5">
+                      M-{modalDetalleMesa.numero}
+                    </span>
                   </div>
                   <div>
                     <h3 className="font-serif text-lg font-bold flex items-center gap-2">
-                      <span>Mesa {modalDetalleMesa.numero}</span>
-                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold capitalize">
-                        {modalDetalleMesa.piso === "terraza" ? "Terraza" : "Planta Baja"}
+                      <span>
+                        {modalDetalleMesa.label || (
+                          modalDetalleMesa.piso === "terraza"
+                            ? `Mesa T${modalDetalleMesa.numero}`
+                            : modalDetalleMesa.numero <= 9
+                            ? `Mesa P${modalDetalleMesa.numero}`
+                            : `Mesa M${modalDetalleMesa.numero - 9}`
+                        )}
+                      </span>
+                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 font-bold capitalize">
+                        {modalDetalleMesa.subzona === "patio_exterior"
+                          ? "Patio Exterior"
+                          : modalDetalleMesa.subzona === "salon_interior"
+                          ? "Salón Interior"
+                          : "Terraza Mirador"}
                       </span>
                     </h3>
                     <p className="text-xs text-stone-500">
