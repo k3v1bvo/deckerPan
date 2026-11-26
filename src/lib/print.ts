@@ -87,6 +87,31 @@ function getStylesForPageType(pageType: "thermal" | "letter" | "a4" | "carpas"):
       .border-dashed {
         border-top: 1px dashed #000000 !important;
       }
+      .border-double {
+        border-top: 3px double #000000 !important;
+      }
+      .border-solid {
+        border-top: 1px solid #000000 !important;
+      }
+      .coupon-box {
+        border: 1.5px dashed #000000 !important;
+        padding: 6px !important;
+        margin: 8px 0 !important;
+        text-align: center !important;
+        border-radius: 4px !important;
+      }
+      .tip-box {
+        border: 1px dashed #333333 !important;
+        padding: 6px !important;
+        margin: 6px 0 !important;
+        border-radius: 4px !important;
+      }
+      .seal-badge {
+        border: 1px solid #000000 !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        display: inline-block !important;
+      }
       table {
         width: 100% !important;
         border-collapse: collapse !important;
@@ -98,28 +123,79 @@ function getStylesForPageType(pageType: "thermal" | "letter" | "a4" | "carpas"):
       .font-mono {
         font-family: 'Courier New', Courier, monospace !important;
       }
+      .font-serif {
+        font-family: Georgia, 'Times New Roman', serif !important;
+      }
+      .font-sans {
+        font-family: system-ui, -apple-system, sans-serif !important;
+      }
       .text-center { text-align: center !important; }
       .text-right { text-align: right !important; }
       .text-left { text-align: left !important; }
       .font-bold, .font-black { font-weight: bold !important; }
+      .font-semibold { font-weight: 600 !important; }
+      .font-medium { font-weight: 500 !important; }
       .font-normal { font-weight: normal !important; }
+      .italic { font-style: italic !important; }
+      .uppercase { text-transform: uppercase !important; }
+      .capitalize { text-transform: capitalize !important; }
+      .tracking-tight { letter-spacing: -0.025em !important; }
+      .tracking-wide { letter-spacing: 0.025em !important; }
+      .tracking-wider { letter-spacing: 0.05em !important; }
+      .tracking-widest { letter-spacing: 0.1em !important; }
+      .leading-none { line-height: 1 !important; }
+      .leading-tight { line-height: 1.25 !important; }
+      .text-lg { font-size: 16px !important; }
       .text-base { font-size: 14px !important; }
       .text-sm { font-size: 12px !important; }
-      .text-xs { font-size: 10px !important; }
+      .text-xs { font-size: 10.5px !important; }
+      .text-\\[11px\\] { font-size: 11px !important; }
       .text-\\[10px\\] { font-size: 10px !important; }
       .text-\\[9px\\] { font-size: 9px !important; }
       .text-\\[8px\\] { font-size: 8px !important; }
       .flex { display: flex !important; }
+      .inline-flex { display: inline-flex !important; }
       .justify-between { justify-content: space-between !important; }
+      .justify-center { justify-content: center !important; }
       .items-center { align-items: center !important; }
+      .items-start { align-items: flex-start !important; }
       .flex-col { flex-direction: column !important; }
+      .flex-1 { flex: 1 1 0% !important; }
+      .shrink-0 { flex-shrink: 0 !important; }
+      .gap-0\\.5 { gap: 2px !important; }
       .gap-1 { gap: 4px !important; }
+      .gap-1\\.5 { gap: 6px !important; }
       .gap-2 { gap: 8px !important; }
+      .gap-3 { gap: 12px !important; }
+      .p-1 { padding: 4px !important; }
+      .p-1\\.5 { padding: 6px !important; }
+      .p-2 { padding: 8px !important; }
+      .py-0\\.5 { padding-top: 2px !important; padding-bottom: 2px !important; }
       .py-1 { padding-top: 3px !important; padding-bottom: 3px !important; }
+      .py-1\\.5 { padding-top: 5px !important; padding-bottom: 5px !important; }
+      .py-2 { padding-top: 6px !important; padding-bottom: 6px !important; }
+      .px-1 { padding-left: 4px !important; padding-right: 4px !important; }
+      .px-2 { padding-left: 8px !important; padding-right: 8px !important; }
+      .px-2\\.5 { padding-left: 10px !important; padding-right: 10px !important; }
+      .px-3 { padding-left: 12px !important; padding-right: 12px !important; }
+      .pt-1 { padding-top: 4px !important; }
       .pt-2 { padding-top: 6px !important; }
+      .pt-3 { padding-top: 10px !important; }
+      .pt-4 { padding-top: 14px !important; }
+      .pb-1 { padding-bottom: 4px !important; }
       .pb-2 { padding-bottom: 6px !important; }
+      .pb-3 { padding-bottom: 10px !important; }
+      .mt-1 { margin-top: 4px !important; }
       .mt-2 { margin-top: 6px !important; }
+      .mt-3 { margin-top: 10px !important; }
+      .mb-1 { margin-bottom: 4px !important; }
       .mb-2 { margin-bottom: 6px !important; }
+      .w-full { width: 100% !important; }
+      .rounded { border-radius: 4px !important; }
+      .rounded-md { border-radius: 6px !important; }
+      .rounded-lg { border-radius: 8px !important; }
+      .rounded-full { border-radius: 9999px !important; }
+      .break-all { word-break: break-all !important; }
     `;
   }
 

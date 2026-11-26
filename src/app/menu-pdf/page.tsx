@@ -2348,16 +2348,16 @@ export default function MenuPdfPage() {
           </div>
 
           {/* Grid de Carpas */}
-          <div id="carpas-menu-pdf-print" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div id="carpas-menu-pdf-print" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-2 print:gap-8">
             {mesasParaCarpas.map((mesa) => {
               const urlMesa = `${baseUrl}/mesa/${mesa.numero}`;
               return (
                 <div
                   key={mesa.id}
-                  className="bg-[#FAF6EF] p-6 rounded-3xl border-2 border-[#991B24]/40 shadow-lg text-center flex flex-col items-center justify-between space-y-4 print:border-2 print:border-black print:break-inside-avoid print:shadow-none"
+                  className="bg-[#FAF6EF] p-6 rounded-3xl border-2 border-[#991B24]/40 shadow-lg text-center flex flex-col items-center justify-between space-y-4 print:border-2 print:border-stone-800 print:break-inside-avoid print:shadow-none print:p-6 print:rounded-2xl"
                 >
                   {/* Toldo mini */}
-                  <div className="w-full h-8 rounded-t-xl overflow-hidden flex border-b-2 border-[#7F1D1D]">
+                  <div className="w-full h-4 rounded-t-xl overflow-hidden flex border-b-2 border-[#7F1D1D]">
                     {[...Array(12)].map((_, i) => (
                       <div
                         key={i}
@@ -2367,14 +2367,14 @@ export default function MenuPdfPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <div className="w-12 h-10 mx-auto">
+                    <div className="w-12 h-12 mx-auto">
                       <img
-                        src={DENCKER_ASSETS.logoPng}
-                        alt="Logo"
+                        src="/img/brand/logo-3-don-dencker-badge.png"
+                        alt="Logo Don Dencker"
                         className="w-full h-full object-contain"
                       />
                     </div>
-                    <span className="font-serif font-black text-2xl uppercase text-[#991B24] block">
+                    <span className="font-serif font-black text-2xl uppercase text-[#991B24] block tracking-wide">
                       MESA {mesa.numero}
                     </span>
                     <span className="text-[11px] font-sans text-[#785E4F] block">
@@ -2387,12 +2387,23 @@ export default function MenuPdfPage() {
                   </div>
 
                   <div className="space-y-1 text-center w-full pt-2 border-t border-dashed border-[#E2D6C6]">
-                    <span className="text-[11px] font-bold text-[#1E130C] block">
-                      DENCKER COFFEE & PAN
+                    <span className="text-[11px] font-black text-[#1E130C] font-serif uppercase tracking-wider block">
+                      DENCKER PAN &bull; CAFÉ 4 LLAMAS
                     </span>
-                    <span className="text-[10px] text-[#785E4F] block">
-                      Wi-Fi: <strong className="text-[#991B24]">Dencker_Clientes</strong> • Pass: <strong className="text-[#991B24]">panfresco123</strong>
+                    <span className="text-[10px] text-[#785E4F] font-mono block">
+                      WiFi: <strong className="text-[#991B24]">Dencker-Clientes</strong> &bull; Clave: <strong className="text-[#991B24]">masamadre2024</strong>
                     </span>
+                  </div>
+
+                  {/* Guía de Pliegue para Carpa de Mesa Plegable (Visible en Impresión) */}
+                  <div className="w-full cut-line my-1 pt-2 border-t border-dashed border-stone-400 print:block hidden text-center">
+                    <span className="text-[8px] font-mono uppercase text-stone-500 font-bold bg-[#FAF6EF] px-2">
+                      ✂ Pliegue de Soporte para Mesa ✂
+                    </span>
+                  </div>
+
+                  <div className="text-[8px] text-stone-400 font-mono text-center">
+                    Tandas Calientes: 07:30 y 16:30 &bull; Cochabamba
                   </div>
                 </div>
               );

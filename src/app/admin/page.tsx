@@ -67,7 +67,7 @@ import { uploadImageMultiCloud } from "@/lib/cloudStorage";
 import { CloudStorageProvider } from "@/types";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, REAL_PRODUCT_PHOTOS, MENU_PDF_PAGES } from "@/lib/seed-data";
-import { parsearLinkContadora, exportarLibroVentasCsv } from "@/lib/siat-utils";
+import { parsearLinkContadora, exportarLibroVentasCsv, convertirNumeroALiteral } from "@/lib/siat-utils";
 import { printElementById } from "@/lib/print";
 
 export default function AdminPage() {
@@ -2178,7 +2178,7 @@ export default function AdminPage() {
                           <span className="font-mono text-base">Bs {facturaSeleccionadaModal.montoTotal.toFixed(2)}</span>
                         </div>
                         <div className="text-[10px] text-stone-700 bg-stone-100/80 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
-                          {facturaSeleccionadaModal.montoLiteral || `Son: ${facturaSeleccionadaModal.montoTotal.toFixed(2)} Bolivianos`}
+                          {facturaSeleccionadaModal.montoLiteral || convertirNumeroALiteral(facturaSeleccionadaModal.montoTotal)}
                         </div>
                       </div>
 
@@ -4111,20 +4111,31 @@ export default function AdminPage() {
                   <div
                     key={m.id}
                     id={`carpa-mesa-${m.numero}`}
-                    className="p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-200/80 dark:border-amber-900/40 shadow-sm flex flex-col items-center text-center justify-between space-y-4 break-inside-avoid print:border-2 print:border-black print:p-6"
+                    className="p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-200/80 dark:border-amber-900/40 shadow-sm flex flex-col items-center text-center justify-between space-y-4 break-inside-avoid print:border-2 print:border-stone-800 print:p-6 print:rounded-2xl"
                   >
+                    {/* Toldo Bistro Decorativo Superior */}
+                    <div className="w-full h-3 rounded-t-lg overflow-hidden flex border-b border-amber-900/30">
+                      {[...Array(12)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`flex-1 h-full ${i % 2 === 0 ? "bg-[#991B24]" : "bg-[#FAF6EF]"}`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Cara 1: Marca & Mesa */}
                     <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100">
                       <img
                         src="/img/brand/logo-3-don-dencker-badge.png"
                         alt="Logo Don Dencker"
-                        className="w-9 h-9 object-contain"
+                        className="w-10 h-10 object-contain"
                       />
                       <div className="text-left leading-tight">
                         <span className="font-serif font-black text-sm tracking-wider uppercase block">
                           Dencker Pan
                         </span>
                         <span className="text-[9px] text-amber-900 font-sans font-semibold">
-                          Masa Madre & Café 4 Llamas
+                          Masa Madre Viva &bull; Café 4 Llamas
                         </span>
                       </div>
                     </div>
@@ -4134,11 +4145,11 @@ export default function AdminPage() {
                         MESA {m.numero}
                       </div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#527953] bg-[#EBF3EA] px-2.5 py-0.5 rounded-full inline-block">
-                        {zonaNombre} • {m.capacidad} Personas
+                        {zonaNombre} &bull; {m.capacidad} Personas
                       </span>
                     </div>
 
-                    {/* QR Code SVG Vectorial */}
+                    {/* QR Code SVG Vectorial Nítido */}
                     <div className="p-3 bg-white rounded-2xl border-2 border-stone-300 shadow-inner flex items-center justify-center">
                       <QRCodeSVG
                         value={mesaUrl}
@@ -4151,9 +4162,21 @@ export default function AdminPage() {
                       <p className="text-[11px] font-bold text-stone-800 dark:text-stone-200 leading-tight">
                         Escanea para ver la carta y pedir desde tu mesa
                       </p>
-                      <p className="text-[9px] font-mono text-stone-500">
-                        WiFi: Dencker-Clientes &bull; Cochabamba
+                      <p className="text-[9px] font-mono text-stone-500 bg-stone-100 dark:bg-stone-800 py-1 px-2 rounded border border-stone-200 dark:border-stone-700">
+                        WiFi: <strong>Dencker-Clientes</strong> &bull; Clave: <strong>masamadre2024</strong>
                       </p>
+                    </div>
+
+                    {/* Guía de Pliegue para Carpa de Mesa Plegable (Visible en Impresión) */}
+                    <div className="w-full cut-line my-2 pt-2 border-t border-dashed border-stone-400 print:block hidden text-center">
+                      <span className="text-[8px] font-mono uppercase text-stone-500 font-bold bg-white px-2">
+                        ✂ Pliegue de Soporte para Mesa ✂
+                      </span>
+                    </div>
+
+                    {/* Pie de Marca */}
+                    <div className="text-[8px] text-stone-400 font-mono text-center">
+                      Tandas Calientes: 07:30 y 16:30 &bull; Cochabamba
                     </div>
 
                     <div className="w-full pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-center gap-2 print:hidden">
@@ -5095,112 +5118,145 @@ export default function AdminPage() {
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100"
             >
-              <div id="recibo-pago-historial-print" className="ticket-termico space-y-4 p-2 bg-white text-stone-900 rounded-2xl">
-                {/* Encabezado Ticket Térmico */}
-                <div className="flex items-center justify-between pb-3 border-b border-dashed border-stone-300 dark:border-stone-700">
-                  <div className="flex items-center gap-2">
-                    <img
-                      src="/img/logo/logo.png"
-                      alt="Logo Dencker Pan"
-                      className="w-7 h-7 object-contain"
-                    />
-                    <div>
-                      <h3 className="font-serif font-black text-sm tracking-wider uppercase">
-                        Dencker Pan
-                      </h3>
-                      <p className="text-[10px] text-stone-500">Cafetería & Panadería Artesanal</p>
-                    </div>
+              <div id="recibo-pago-historial-print" className="ticket-termico space-y-3 p-3 bg-white text-stone-900 rounded-2xl font-mono text-xs">
+                {/* Encabezado Ticket Térmico con Logo Oficial */}
+                <div className="text-center pb-2 border-b border-dashed border-stone-300">
+                  <div className="flex items-center justify-between pb-1 no-print">
+                    <span className="text-[10px] text-stone-400 font-sans">Historial de Pagos</span>
+                    <button
+                      onClick={() => setReciboModalPago(null)}
+                      className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
+                    >
+                      <X size={18} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setReciboModalPago(null)}
-                    className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 no-print"
-                  >
-                    <X size={18} />
-                  </button>
+                  <img
+                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    alt="Dencker Pan"
+                    className="h-14 w-auto mx-auto mb-1.5 object-contain"
+                  />
+                  <h3 className="font-serif font-black text-base tracking-wide text-stone-950">
+                    DENCKER PAN
+                  </h3>
+                  <p className="text-[10px] font-bold text-amber-900">
+                    Masa Madre Viva &bull; Café 4 Llamas de Altura
+                  </p>
+                  <p className="text-[9px] text-stone-600">
+                    Av. Daniel Salamanca, Cochabamba &bull; Tel: +591 76911000
+                  </p>
+                  <div className="mt-2 text-xs font-black bg-stone-100 text-stone-900 py-1 px-3 rounded-full border border-stone-300 inline-block font-sans uppercase tracking-wider">
+                    COMPROBANTE DE COBRO
+                  </div>
                 </div>
 
-                {/* Cuerpo del Recibo */}
-                <div className="space-y-2.5 text-xs font-mono">
-                  <div className="flex items-center justify-between text-stone-500">
-                    <span>Nº Comprobante:</span>
-                    <span className="font-bold text-stone-900">{reciboModalPago.id}</span>
+                {/* Metadata del Cobro */}
+                <div className="space-y-1 text-xs border-b border-dashed border-stone-300 pb-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-stone-500">Nº Comprobante:</span>
+                    <span className="font-bold text-stone-950">{reciboModalPago.id}</span>
                   </div>
-                  <div className="flex items-center justify-between text-stone-500">
-                    <span>Fecha & Hora:</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-stone-500">Fecha y Hora:</span>
                     <span className="font-semibold text-stone-800">
                       {new Date(reciboModalPago.created_at).toLocaleString("es-BO")}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-stone-500">
-                    <span>Turno:</span>
-                    <span className="font-bold uppercase text-amber-800">
+                  <div className="flex items-center justify-between">
+                    <span className="text-stone-500">Turno:</span>
+                    <span className="font-bold uppercase text-amber-900">
                       {reciboModalPago.turno || "Tarde"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-stone-500">
-                    <span>Cajero:</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-stone-500">Cajero(a):</span>
                     <span className="font-semibold text-stone-800">
-                      {reciboModalPago.cajero || "Cajero Principal"}
+                      {reciboModalPago.cajero || "Caja Principal"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-stone-500">
-                    <span>Cliente:</span>
-                    <span className="font-bold text-stone-900">
+                  <div className="flex items-center justify-between">
+                    <span className="text-stone-500">Cliente:</span>
+                    <span className="font-bold text-stone-950 truncate max-w-[170px]">
                       {reciboModalPago.cliente_nombre || "Cliente Mostrador"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-stone-500">
-                    <span>Destino / Mesa:</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-stone-500">Ubicación:</span>
                     <span className="font-semibold text-stone-800">
-                      {reciboModalPago.mesa_numero ? `Mesa ${reciboModalPago.mesa_numero}` : "Para Llevar / Retiro"}
+                      {reciboModalPago.mesa_numero ? `Mesa ${reciboModalPago.mesa_numero}` : "Venta Mostrador"}
                     </span>
                   </div>
+                </div>
 
-                  <div className="pt-2 border-t border-dashed border-stone-300" />
-
-                  <div className="flex items-center justify-between text-sm py-1 font-bold">
-                    <span>Total Pagado:</span>
-                    <span className="font-serif text-lg text-emerald-700 font-mono">
+                {/* Monto y Método */}
+                <div className="space-y-1.5 py-1 font-bold border-b border-dashed border-stone-300">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-stone-900">TOTAL PAGADO:</span>
+                    <span className="font-serif text-base text-emerald-800 font-mono font-black">
                       Bs {reciboModalPago.monto.toFixed(2)}
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1">
-                    <div className="flex items-center justify-between font-bold text-[11px]">
-                      <span className="text-stone-600">Método de Cobro:</span>
-                      <span className="text-stone-900 uppercase">
-                        {reciboModalPago.metodo === "qr" ? "QR Simple BNB/BCP" : "Efectivo BOB"}
+                  <div className="text-[10px] text-stone-700 bg-stone-100/90 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
+                    {convertirNumeroALiteral(reciboModalPago.monto)}
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-stone-50 border border-stone-200 space-y-1 text-[11px] font-normal">
+                    <div className="flex items-center justify-between font-bold">
+                      <span className="text-stone-600">Método de Pago:</span>
+                      <span className="text-stone-950 uppercase">
+                        {reciboModalPago.metodo === "qr" ? "QR Simple BNB/BCP (ASFI)" : "Efectivo BOB"}
                       </span>
                     </div>
                     {reciboModalPago.metodo === "efectivo" && (
-                      <div className="flex items-center justify-between text-[11px] text-stone-500">
+                      <div className="flex items-center justify-between text-[10.5px] text-stone-600">
                         <span>Recibido: Bs {(reciboModalPago.monto_recibido || reciboModalPago.monto).toFixed(2)}</span>
-                        <span>Cambio: Bs {(reciboModalPago.cambio || 0).toFixed(2)}</span>
+                        <span>Vuelto: Bs {(reciboModalPago.cambio || 0).toFixed(2)}</span>
                       </div>
                     )}
                     {reciboModalPago.metodo === "qr" && (
-                      <div className="text-[10px] text-purple-700">
-                        Liquidación inmediata Interoperable ASFI ✓
+                      <div className="text-[10px] text-purple-800 font-semibold">
+                        Liquidación Inmediata Interoperable ASFI ✓
                       </div>
                     )}
                   </div>
+                </div>
 
-                  {/* Código QR de validación */}
-                  <div className="py-2 flex flex-col items-center justify-center space-y-1">
-                    <div className="p-2 bg-white rounded-xl border border-stone-200 shadow-inner">
-                      <QRCodeSVG
-                        value={`https://decker-pan.vercel.app/comprobante/${reciboModalPago.id}`}
-                        size={90}
-                      />
-                    </div>
-                    <span className="text-[9px] text-stone-400">Escanea para verificar validez digital</span>
-                  </div>
-
-                  <p className="text-[10px] text-center text-stone-400 italic">
-                    NIT: 1028492023 • Facturación Computarizada en Línea
-                    <br />
-                    ¡Gracias por su visita a Dencker Pan!
+                {/* Cupón Marketing Retention */}
+                <div className="coupon-box border border-dashed border-stone-800 p-2 my-1 text-center rounded bg-stone-50">
+                  <p className="font-bold text-[10px] text-stone-900 tracking-wide uppercase">
+                    ☕ ¡CAFÉ DE CORTESÍA EN TU PRÓXIMA VISITA!
                   </p>
+                  <p className="text-[8px] text-stone-600 leading-tight mt-0.5 font-sans">
+                    Sube una foto de tu pedido a Instagram o TikTok etiquetando a <strong>@denckerpan</strong> y muéstrala a tu barista.
+                  </p>
+                  <div className="mt-1 pt-1 border-t border-dashed border-stone-300 flex justify-between text-[8px] text-stone-500 font-mono">
+                    <span>WiFi: Dencker-Clientes</span>
+                    <span>Clave: masamadre2024</span>
+                  </div>
+                </div>
+
+                {/* Código QR de validación */}
+                <div className="py-1 flex flex-col items-center justify-center space-y-1">
+                  <div className="p-2 bg-white rounded-xl border border-stone-200 shadow-inner">
+                    <QRCodeSVG
+                      value={`https://decker-pan.vercel.app/comprobante/${reciboModalPago.id}`}
+                      size={88}
+                    />
+                  </div>
+                  <span className="text-[8px] text-stone-400 font-mono">Código de Verificación Digital</span>
+                </div>
+
+                {/* Sello Don Dencker */}
+                <div className="flex items-center justify-center gap-2 pt-2 border-t border-dashed border-stone-300">
+                  <img
+                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    alt="Sello Oficial Don Dencker"
+                    className="w-8 h-8 object-contain shrink-0"
+                  />
+                  <div className="text-left leading-tight">
+                    <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
+                    <p className="text-[8px] text-stone-500 font-mono">Tradición &amp; Calidad Dencker</p>
+                  </div>
                 </div>
               </div>
 

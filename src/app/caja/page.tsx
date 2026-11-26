@@ -28,6 +28,7 @@ import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
 import { printElementById } from "@/lib/print";
+import { convertirNumeroALiteral } from "@/lib/siat-utils";
 
 export default function CajaPage() {
   const {
@@ -943,7 +944,7 @@ export default function CajaPage() {
                     <img
                       src="/img/brand/logo-3-don-dencker-badge.png"
                       alt="Dencker Pan"
-                      className="h-12 w-auto object-contain mx-auto mb-1"
+                      className="h-14 w-auto object-contain mx-auto mb-1.5"
                     />
                     <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
                       {facturacionSiatConfig.razonSocialEmisor || "DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."}
@@ -994,7 +995,7 @@ export default function CajaPage() {
 
                     <div className="pt-2 border-t border-dashed border-stone-300 mt-2 w-full text-center">
                       <span className="font-black text-xs text-stone-900 uppercase tracking-widest px-2.5 py-0.5 bg-stone-100 rounded-full border border-stone-300">
-                        RECIBO DE VENTA
+                        COMPROBANTE DE VENTA
                       </span>
                       <p className="text-[9px] text-stone-500 font-mono mt-1">
                         N° Control: <strong>{pedidoSeleccionado.id}</strong>
@@ -1013,7 +1014,7 @@ export default function CajaPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-stone-500">Fecha y Hora:</span>
-                    <span className="font-mono">{fechaHoraImpresion || "Hoy"}</span>
+                    <span className="font-mono">{fechaHoraImpresion || new Date().toLocaleString("es-BO")}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-stone-500">Atendido por:</span>
@@ -1043,35 +1044,63 @@ export default function CajaPage() {
                   )}
                 </div>
 
-                {/* ── DETALLE DE PRODUCTOS ── */}
+                {/* ── DETALLE DE PRODUCTOS CON TAMAÑOS Y SILLAS ── */}
                 <div className="border-t border-dashed border-stone-300 pt-2 space-y-1">
-                  <div className="flex justify-between text-[10px] font-bold text-stone-500 border-b border-stone-200 pb-0.5">
-                    <span>CANT / DETALLE</span>
-                    <span>SUBTOTAL</span>
+                  <div className="grid grid-cols-12 text-[10px] font-bold text-stone-500 border-b border-stone-200 pb-0.5">
+                    <span className="col-span-7">CANT / DETALLE</span>
+                    <span className="col-span-2 text-right">P.U.</span>
+                    <span className="col-span-3 text-right">TOTAL</span>
                   </div>
-                  {pedidoSeleccionado.items?.map((it, idx) => (
-                    <div key={idx} className="flex justify-between text-[11px] leading-tight">
-                      <span>{it.cantidad}x {it.producto_nombre}</span>
-                      <span className="font-mono">Bs {it.subtotal.toFixed(2)}</span>
-                    </div>
-                  ))}
+                  {pedidoSeleccionado.items?.map((it, idx) => {
+                    const precioUnit = it.precio_unitario || (it.subtotal / (it.cantidad || 1));
+                    return (
+                      <div key={idx} className="grid grid-cols-12 text-[11px] leading-tight pt-1 items-start">
+                        <div className="col-span-7 pr-1">
+                          <span className="font-semibold">{it.cantidad}x {it.producto_nombre}</span>
+                          {it.tamanio && (
+                            <span className="block text-[9px] text-amber-900 font-bold">
+                              • Tamaño: {it.tamanio}
+                            </span>
+                          )}
+                          {it.asiento_numero && (
+                            <span className="block text-[9px] text-stone-500">
+                              👤 Silla {it.asiento_numero} {it.comensal_nombre ? `(${it.comensal_nombre})` : ""}
+                            </span>
+                          )}
+                          {it.chips_seleccionados && it.chips_seleccionados.length > 0 && (
+                            <span className="block text-[9px] text-amber-800">
+                              • {it.chips_seleccionados.join(", ")}
+                            </span>
+                          )}
+                        </div>
+                        <div className="col-span-2 text-right font-mono text-[10px] text-stone-600">
+                          {precioUnit.toFixed(1)}
+                        </div>
+                        <div className="col-span-3 text-right font-mono font-bold">
+                          Bs {it.subtotal.toFixed(2)}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
-                {/* ── TOTALES Y MONTO LITERAL ── */}
+                {/* ── TOTALES Y MONTO LITERAL EN ESPAÑOL ── */}
                 <div className="border-t border-dashed border-stone-300 pt-2 space-y-1 font-bold">
                   <div className="flex justify-between text-sm text-stone-950">
                     <span>TOTAL A PAGAR:</span>
                     <span className="font-mono text-base font-black">Bs {totalPagar.toFixed(2)}</span>
                   </div>
 
-                  {/* Expresión en palabras */}
-                  <div className="text-[10px] text-stone-700 bg-stone-100/80 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
-                    {facturaEmitidaActual?.montoLiteral || `Son: ${totalPagar.toFixed(2)} Bolivianos`}
+                  {/* Expresión en palabras oficial */}
+                  <div className="text-[10px] text-stone-700 bg-stone-100/90 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
+                    {facturaEmitidaActual?.montoLiteral || convertirNumeroALiteral(totalPagar)}
                   </div>
 
                   <div className="flex justify-between text-[11px] font-normal pt-1">
                     <span>Método de Pago:</span>
-                    <span className="capitalize font-semibold">{metodoPago}</span>
+                    <span className="capitalize font-semibold">
+                      {metodoPago === "qr_simple" ? "QR Simple BNB/BCP (ASFI)" : metodoPago === "mixto" ? "Pago Mixto (Efectivo + QR)" : "Efectivo BOB"}
+                    </span>
                   </div>
                   {metodoPago === "efectivo" && (
                     <>
@@ -1085,6 +1114,20 @@ export default function CajaPage() {
                       </div>
                     </>
                   )}
+                </div>
+
+                {/* ── MARKETING RETENTION HOOK: CUPÓN DE CORTESÍA & WIFI ── */}
+                <div className="coupon-box border border-dashed border-stone-800 p-2 my-1 text-center rounded bg-stone-50">
+                  <p className="font-bold text-[10px] text-stone-900 tracking-wide uppercase">
+                    ☕ ¡CAFÉ DE CORTESÍA EN TU PRÓXIMA VISITA!
+                  </p>
+                  <p className="text-[8px] text-stone-600 leading-tight mt-0.5 font-sans">
+                    Sube una foto de tu pedido a Instagram o TikTok etiquetando a <strong>@denckerpan</strong> y muéstrala a tu barista.
+                  </p>
+                  <div className="mt-1 pt-1 border-t border-dashed border-stone-300 flex justify-between text-[8px] text-stone-500 font-mono">
+                    <span>WiFi: Dencker-Clientes</span>
+                    <span>Clave: masamadre2024</span>
+                  </div>
                 </div>
 
                 {/* ── QR Y LEYENDAS LEGALES SIAT vs RECIBO ARTESANAL ── */}
@@ -1111,9 +1154,9 @@ export default function CajaPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="border-t border-dashed border-stone-300 pt-2 text-center space-y-1.5">
+                  <div className="border-t border-dashed border-stone-300 pt-2 text-center space-y-1">
                     <p className="text-[10px] text-amber-950 font-serif font-bold">
-                      ¡Gracias por su visita a Dencker Pan!
+                      ¡Gracias por visitar Dencker Pan!
                     </p>
                     <p className="text-[8px] text-stone-500 italic">
                       Comprobante de consumo interno &bull; Masa madre viva y café de altura
@@ -1253,73 +1296,124 @@ export default function CajaPage() {
 
               {/* Comprobante imprimible de arqueo oculto en pantalla normal */}
               <div id="arqueo-caja-print" className="hidden">
-                <div className="ticket-termico">
+                <div className="ticket-termico font-mono text-xs space-y-3 text-stone-900">
+                  {/* Encabezado Arqueo Oficial */}
                   <div className="text-center pb-2 border-b border-dashed border-stone-400">
                     <img
                       src="/img/brand/logo-3-don-dencker-badge.png"
                       alt="Dencker Pan"
-                      className="h-12 w-auto mx-auto mb-1"
+                      className="h-14 w-auto object-contain mx-auto mb-1.5"
                     />
-                    <h3 className="font-bold text-sm">DENCKER PAN</h3>
-                    <p className="text-[10px] font-bold">ARQUEO DE CAJA & CIERRE DE TURNO</p>
-                    <p className="text-[9px]">Av. Daniel Salamanca, Cochabamba</p>
-                    <p className="text-[9px]">Fecha: {new Date().toLocaleString("es-BO")}</p>
-                    <p className="text-[9px]">Cajero: {sesionCaja?.cajero || "Cajero Principal"} &bull; Turno: {sesionCaja?.turno?.toUpperCase() || "ACTIVO"}</p>
+                    <h3 className="font-serif font-black text-base tracking-wide text-stone-950">
+                      DENCKER PAN
+                    </h3>
+                    <p className="text-[10px] font-bold text-amber-900 uppercase tracking-wider">
+                      Arqueo de Caja &amp; Auditoría de Turno
+                    </p>
+                    <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba &bull; Bolivia</p>
+                    <div className="mt-1.5 py-1 px-2 bg-stone-100 rounded border border-stone-300 text-[10px] space-y-0.5 text-left">
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">Fecha Cierre:</span>
+                        <span className="font-bold">{new Date().toLocaleString("es-BO")}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">Cajero(a):</span>
+                        <span className="font-bold">{sesionCaja?.cajero || "Cajero Principal"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-stone-500">Turno:</span>
+                        <span className="font-bold uppercase">{sesionCaja?.turno || "TARDE"}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="py-2 text-[10px] space-y-1 border-b border-dashed border-stone-400">
-                    <div className="flex justify-between font-bold">
-                      <span>Total Efectivo Contado:</span>
-                      <span>Bs {totalArqueoContado.toFixed(2)}</span>
+                  {/* Resumen de Balance Financiero */}
+                  <div className="py-2 text-[10px] space-y-1.5 border-b border-dashed border-stone-400">
+                    <div className="flex justify-between font-bold text-xs text-stone-950">
+                      <span>Efectivo Contado en Gaveta:</span>
+                      <span className="font-mono text-sm font-black">Bs {totalArqueoContado.toFixed(2)}</span>
                     </div>
                     {sesionCaja && (
-                      <div className="flex justify-between">
-                        <span>Efectivo Esperado:</span>
-                        <span>Bs {sesionCaja.efectivo_esperado.toFixed(2)}</span>
+                      <div className="flex justify-between text-stone-600">
+                        <span>Efectivo Teórico Esperado:</span>
+                        <span className="font-mono">Bs {sesionCaja.efectivo_esperado.toFixed(2)}</span>
                       </div>
                     )}
+                    {sesionCaja && (() => {
+                      const diff = totalArqueoContado - sesionCaja.efectivo_esperado;
+                      return (
+                        <div className={`p-1.5 rounded border text-center font-bold text-[10px] ${
+                          diff === 0
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                            : diff > 0
+                            ? "bg-amber-50 text-amber-900 border-amber-300"
+                            : "bg-rose-50 text-rose-900 border-rose-300"
+                        }`}>
+                          {diff === 0 && "✓ CUADRADO EXACTO (Diferencia: Bs 0.00)"}
+                          {diff > 0 && `▲ SOBRANTE DE CAJA: +Bs ${diff.toFixed(2)}`}
+                          {diff < 0 && `▼ FALTANTE DE CAJA: -Bs ${Math.abs(diff).toFixed(2)}`}
+                        </div>
+                      );
+                    })()}
                     {sesionCaja && (
-                      <div className="flex justify-between font-bold">
-                        <span>Diferencia:</span>
-                        <span>Bs {(totalArqueoContado - sesionCaja.efectivo_esperado).toFixed(2)}</span>
-                      </div>
-                    )}
-                    {sesionCaja && (
-                      <div className="flex justify-between">
-                        <span>Ventas del Turno:</span>
-                        <span>Bs {sesionCaja.total_ventas.toFixed(2)}</span>
+                      <div className="flex justify-between pt-1 border-t border-stone-200 text-stone-700">
+                        <span>Ventas Totales Registradas:</span>
+                        <span className="font-mono font-bold">Bs {sesionCaja.total_ventas.toFixed(2)}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Desglose de billetes */}
-                  <div className="py-2 text-[9px] border-b border-dashed border-stone-400">
-                    <p className="font-bold mb-1 text-[10px]">Desglose de Efectivo:</p>
-                    {BILLETES_BOLIVIANOS.filter((b) => (conteoBilletes[b.valor] || 0) > 0).map((b) => (
-                      <div key={b.valor} className="flex justify-between">
-                        <span>{conteoBilletes[b.valor]}x {b.label}</span>
-                        <span>Bs {((conteoBilletes[b.valor] || 0) * b.valor).toFixed(2)}</span>
-                      </div>
-                    ))}
+                  {/* Desglose Detallado de Billetes y Monedas */}
+                  <div className="py-2 text-[9px] border-b border-dashed border-stone-400 space-y-1">
+                    <p className="font-bold text-[10px] text-stone-950 mb-1">
+                      CONTEO DE DENOMINACIONES:
+                    </p>
+                    <div className="grid grid-cols-12 font-bold text-stone-500 border-b border-stone-200 pb-0.5">
+                      <span className="col-span-6">CORTE</span>
+                      <span className="col-span-2 text-center">CANT</span>
+                      <span className="col-span-4 text-right">TOTAL</span>
+                    </div>
+                    {BILLETES_BOLIVIANOS.filter((b) => (conteoBilletes[b.valor] || 0) > 0).map((b) => {
+                      const count = conteoBilletes[b.valor] || 0;
+                      return (
+                        <div key={b.valor} className="grid grid-cols-12 py-0.5 items-center">
+                          <span className="col-span-6">{b.label}</span>
+                          <span className="col-span-2 text-center font-mono font-bold">{count}</span>
+                          <span className="col-span-4 text-right font-mono font-bold">
+                            Bs {(count * b.valor).toFixed(2)}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
+                  {/* Observaciones de Cierre */}
                   {notasCierre && (
                     <div className="py-2 text-[9px] border-b border-dashed border-stone-400">
-                      <p className="font-bold">Observaciones:</p>
-                      <p className="italic">{notasCierre}</p>
+                      <p className="font-bold text-stone-900">Observaciones del Cajero:</p>
+                      <p className="italic text-stone-700 mt-0.5 bg-stone-50 p-1 rounded border border-stone-200">
+                        "{notasCierre}"
+                      </p>
                     </div>
                   )}
 
-                  {/* Firmas */}
-                  <div className="pt-6 pb-2 text-[9px] text-center space-y-4">
+                  {/* Firmas de Control de Auditoría */}
+                  <div className="pt-8 pb-2 text-[9px] text-center space-y-6">
                     <div>
-                      <div className="w-36 border-t border-black mx-auto mb-1"></div>
-                      <p>Firma Cajero(a)</p>
+                      <div className="w-44 border-t border-stone-800 mx-auto mb-1"></div>
+                      <p className="font-bold text-stone-900">Firma Cajero(a) Responsable</p>
+                      <p className="text-[8px] text-stone-500">{sesionCaja?.cajero || "Caja Principal"}</p>
                     </div>
                     <div>
-                      <div className="w-36 border-t border-black mx-auto mb-1"></div>
-                      <p>Firma Supervisor / Administrador</p>
+                      <div className="w-44 border-t border-stone-800 mx-auto mb-1"></div>
+                      <p className="font-bold text-stone-900">Firma Supervisor / Administrador</p>
+                      <p className="text-[8px] text-stone-500">Revisión y Conformidad de Arqueo</p>
                     </div>
+                  </div>
+
+                  {/* Pie de Sello */}
+                  <div className="pt-2 text-center text-[8px] text-stone-500 border-t border-dashed border-stone-300">
+                    Dencker Pan Sistema Operativo Gastronómico &bull; Cochabamba
                   </div>
                 </div>
               </div>
