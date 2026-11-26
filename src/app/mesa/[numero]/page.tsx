@@ -82,6 +82,21 @@ export default function MesaPage({ params }: PageProps) {
   const [productoModal, setProductoModal] = useState<Producto | null>(null);
   const [chipsSeleccionados, setChipsSeleccionados] = useState<string[]>([]);
   const [notaProducto, setNotaProducto] = useState("");
+  const [tamanoPizzaModal, setTamanoPizzaModal] = useState<4 | 6 | 8>(4);
+
+  const PIZZA_SIZES_MAP: Record<string, { p4: number; p6: number; p8: number }> = {
+    prod_pizza_margarita: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_jamon_queso: { p4: 35, p6: 50, p8: 65 },
+    prod_pizza_hawaiana: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_funghi: { p4: 35, p6: 50, p8: 65 },
+    prod_pizza_choclo_amarillo: { p4: 35, p6: 50, p8: 70 },
+    prod_pizza_bacon: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_palmito: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_portuguesa: { p4: 45, p6: 55, p8: 80 },
+    prod_pizza_criolla: { p4: 45, p6: 65, p8: 80 },
+    prod_pizza_salame: { p4: 45, p6: 65, p8: 80 },
+    prod_pizza_pollo_catupiri: { p4: 45, p6: 65, p8: 80 },
+  };
   const [showPayment, setShowPayment] = useState(false);
   const [modalCuentaAbierto, setModalCuentaAbierto] = useState(false);
   const [metodoCuenta, setMetodoCuenta] = useState<"efectivo" | "tarjeta" | "qr">("efectivo");
@@ -354,12 +369,41 @@ export default function MesaPage({ params }: PageProps) {
     setProductoModal(producto);
     setChipsSeleccionados([]);
     setNotaProducto("");
+    setTamanoPizzaModal(4);
   };
 
   const agregarAlCarrito = () => {
     if (!productoModal) return;
     soundManager.playSuccessTone();
-    addItem(productoModal, chipsSeleccionados, notaProducto || undefined);
+    const esPizzaTradicional =
+      productoModal.categoria_id === "c_pizzas" &&
+      productoModal.id !== "prod_pizza_especial_dencker";
+    const p4 = PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
+    const p6 = PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
+    const p8 = PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
+    const precioCalculado = esPizzaTradicional
+      ? tamanoPizzaModal === 4
+        ? p4
+        : tamanoPizzaModal === 6
+        ? p6
+        : p8
+      : productoModal.precio;
+
+    const itemFinal = esPizzaTradicional
+      ? {
+          ...productoModal,
+          id: `${productoModal.id}__size_${tamanoPizzaModal}p`,
+          nombre: `${productoModal.nombre} (${tamanoPizzaModal} porc)`,
+          precio: precioCalculado,
+          chips_personalizacion: [`${tamanoPizzaModal} porciones`],
+        }
+      : productoModal;
+
+    addItem(
+      itemFinal,
+      esPizzaTradicional ? [`${tamanoPizzaModal} Porciones`] : chipsSeleccionados,
+      notaProducto || undefined
+    );
     setProductoModal(null);
   };
 
@@ -716,22 +760,80 @@ export default function MesaPage({ params }: PageProps) {
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
               className="w-full max-w-lg bg-white dark:bg-stone-900 rounded-t-[28px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl border-t sm:border border-stone-200 dark:border-stone-800 max-h-[85vh] overflow-y-auto space-y-4 pb-safe"
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-serif text-xl font-bold text-stone-900 dark:text-stone-100">
-                    {productoModal.nombre}
-                  </h3>
-                  <span className="font-mono font-bold text-base text-amber-900 dark:text-amber-400">
-                    Bs {productoModal.precio.toFixed(2)}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setProductoModal(null)}
-                  className="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+              {(() => {
+                const esPizzaTradicional =
+                  productoModal.categoria_id === "c_pizzas" &&
+                  productoModal.id !== "prod_pizza_especial_dencker";
+                const p4 = PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
+                const p6 = PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
+                const precioCalculado = esPizzaTradicional
+                  ? tamanoPizzaModal === 4
+                    ? p4
+                    : tamanoPizzaModal === 6
+                    ? p6
+                    : p8
+                  : productoModal.precio;
+
+                return (
+                  <>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-serif text-xl font-bold text-stone-900 dark:text-stone-100">
+                          {productoModal.nombre}
+                        </h3>
+                        <span className="font-mono font-bold text-base text-amber-900 dark:text-amber-400">
+                          Bs {precioCalculado.toFixed(2)}
+                          {esPizzaTradicional ? ` (${tamanoPizzaModal} porc)` : ""}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setProductoModal(null)}
+                        className="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
+
+                    {/* Selector de Porciones para Pizzas */}
+                    {esPizzaTradicional && (
+                      <div className="p-3 rounded-2xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-500/30 space-y-1.5">
+                        <label className="text-[10px] font-mono font-bold text-amber-900 dark:text-amber-400 uppercase tracking-wider block">
+                          Selecciona Tamaño (Porciones):
+                        </label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            { porc: 4 as const, precio: p4, label: "4 Porc", sub: "Individual", icon: "🍕" },
+                            { porc: 6 as const, precio: p6, label: "6 Porc", sub: "Compartir", icon: "🍕🍕" },
+                            { porc: 8 as const, precio: p8, label: "8 Porc", sub: "Familiar", icon: "🍕🍕🍕" },
+                          ].map((sz) => (
+                            <button
+                              key={sz.porc}
+                              type="button"
+                              onClick={() => {
+                                soundManager.playClick();
+                                setTamanoPizzaModal(sz.porc);
+                              }}
+                              className={`py-2 px-1 rounded-xl text-center border transition flex flex-col items-center cursor-pointer ${
+                                tamanoPizzaModal === sz.porc
+                                  ? "bg-amber-900 dark:bg-amber-600 text-white border-amber-900 dark:border-amber-600 shadow-sm"
+                                  : "bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:bg-amber-50"
+                              }`}
+                            >
+                              <span className="text-xs">{sz.icon}</span>
+                              <div className="text-[10px] uppercase font-bold mt-0.5">{sz.label}</div>
+                              <div className="text-[9px] text-stone-500 dark:text-stone-400">{sz.sub}</div>
+                              <div className={`text-xs font-mono font-black mt-0.5 ${tamanoPizzaModal === sz.porc ? "text-amber-300" : "text-amber-800 dark:text-amber-400"}`}>
+                                Bs {sz.precio}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               {productoModal.descripcion && (
                 <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
@@ -786,12 +888,34 @@ export default function MesaPage({ params }: PageProps) {
                 />
               </div>
 
-              <button
-                onClick={agregarAlCarrito}
-                className="w-full py-3.5 rounded-2xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs shadow-lg transition active:scale-98 flex items-center justify-center gap-2"
-              >
-                <Plus size={16} /> Agregar al Pedido • Bs {productoModal.precio.toFixed(2)}
-              </button>
+              {(() => {
+                const esPizzaTradicional =
+                  productoModal.categoria_id === "c_pizzas" &&
+                  productoModal.id !== "prod_pizza_especial_dencker";
+                const p4 = PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
+                const p6 = PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
+                const precioCalculado = esPizzaTradicional
+                  ? tamanoPizzaModal === 4
+                    ? p4
+                    : tamanoPizzaModal === 6
+                    ? p6
+                    : p8
+                  : productoModal.precio;
+
+                return (
+                  <button
+                    onClick={agregarAlCarrito}
+                    className="w-full py-3.5 rounded-2xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs shadow-lg transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Plus size={16} />
+                    <span>
+                      Agregar al Pedido • Bs {precioCalculado.toFixed(2)}
+                      {esPizzaTradicional ? ` (${tamanoPizzaModal} porc)` : ""}
+                    </span>
+                  </button>
+                );
+              })()}
             </motion.div>
           </div>
         )}

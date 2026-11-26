@@ -68,6 +68,71 @@ export default function MenuPdfPage() {
   const cartTotal = total();
   const [feedbackAgregado, setFeedbackAgregado] = useState<string | null>(null);
 
+  // Estados para modal de selección de tamaño de pizzas
+  const [modalPizza, setModalPizza] = useState<{
+    id: string;
+    nombre: string;
+    desc: string;
+    p4: number;
+    p6: number;
+    p8: number;
+    imagen_url?: string;
+  } | null>(null);
+  const [tamanoPizzaSeleccionado, setTamanoPizzaSeleccionado] = useState<4 | 6 | 8>(4);
+  const [notasPizza, setNotasPizza] = useState<string>("");
+
+  const getCantidadesPizza = (pizzaId: string) => {
+    const c4 = getItemCantidadEnCarrito(`${pizzaId}__size_4p`) + getItemCantidadEnCarrito(pizzaId);
+    const c6 = getItemCantidadEnCarrito(`${pizzaId}__size_6p`);
+    const c8 = getItemCantidadEnCarrito(`${pizzaId}__size_8p`);
+    return { c4, c6, c8, total: c4 + c6 + c8 };
+  };
+
+  const handleAgregarPizzaTamano = (
+    pizza: { id: string; nombre: string; desc?: string; p4: number; p6: number; p8: number },
+    porciones: 4 | 6 | 8,
+    precioCalculado?: number,
+    notasPersonalizadas?: string,
+    e?: React.MouseEvent
+  ) => {
+    if (e) e.stopPropagation();
+    const prod = getProd(pizza.id, pizza.nombre);
+    const basePrice = prod ? prod.precio : pizza.p4;
+    const ratio = basePrice / pizza.p4;
+    const p6Price = Math.round(pizza.p6 * ratio);
+    const p8Price = Math.round(pizza.p8 * ratio);
+
+    const precioFinal =
+      precioCalculado !== undefined
+        ? precioCalculado
+        : porciones === 4
+        ? basePrice
+        : porciones === 6
+        ? p6Price
+        : p8Price;
+
+    const limpioNombre = pizza.nombre.replace(/^Pizza\s+/i, "");
+    const itemProducto: Producto = {
+      id: `${pizza.id}__size_${porciones}p`,
+      categoria_id: "c_pizzas",
+      nombre: `Pizza ${limpioNombre} (${porciones} porc)`,
+      descripcion: `${pizza.desc || ""} • Tamaño ${porciones} porciones`,
+      precio: precioFinal,
+      costo: Math.round(precioFinal * 0.4),
+      imagen_url: prod?.imagen_url || "/img/products/pizza_artesanal_dencker.jpg",
+      disponible: true,
+      es_mas_vendido: false,
+      chips_personalizacion: [`${porciones} porciones`],
+      stock: 50,
+      estacion: "cocina",
+    };
+
+    addItem(itemProducto, [`${porciones} Porciones`], notasPersonalizadas || notasPizza || undefined);
+    soundManager.playPastryCrinkle();
+    setFeedbackAgregado(`${itemProducto.nombre} (Bs ${precioFinal})`);
+    setTimeout(() => setFeedbackAgregado(null), 1800);
+  };
+
   const getItemCantidadEnCarrito = (id: string): number => {
     const item = items.find((i) => i.producto.id === id);
     return item ? item.cantidad : 0;
@@ -1135,14 +1200,49 @@ export default function MenuPdfPage() {
                       <span>c/leche</span>
                     </div>
                   </div>
-                  <div className="flex items-baseline justify-between border-b border-dotted border-[#E2D6C6] pb-1">
+                  <div className="flex items-baseline justify-between border-b border-dotted border-[#E2D6C6] pb-2 pt-1 transition hover:bg-amber-500/10 px-2 rounded-xl">
                     <div>
-                      <span className="font-serif font-bold text-sm text-[#1E130C]">TEMPORADA (una fruta)</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-serif font-bold text-sm text-[#1E130C]">TEMPORADA (una fruta)</span>
+                        {(getItemCantidadEnCarrito("prod_jugo_temporada_agua") > 0 || getItemCantidadEnCarrito("prod_jugo_temporada_leche") > 0) && (
+                          <span className="print:hidden text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 shadow-2xs">
+                            {getItemCantidadEnCarrito("prod_jugo_temporada_agua") + getItemCantidadEnCarrito("prod_jugo_temporada_leche")} en pedido
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-[#785E4F]">Frutilla, piña, limón, durazno, papaya, maracuyá</p>
                     </div>
-                    <div className="flex gap-4 font-serif font-bold text-sm text-[#991B24]">
-                      <span>Bs 15</span>
-                      <span>Bs 20</span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={(e) => handleAgregarRapido({
+                          id: "prod_jugo_temporada_agua",
+                          nombre: "Jugo Temporada (al agua)",
+                          precio: 15,
+                          desc: "Jugo natural de fruta fresca preparado al agua"
+                        }, e)}
+                        className="px-2.5 py-1 rounded-lg bg-[#FAF7F2] hover:bg-[#991B24] hover:text-white border border-[#E2D6C6] transition text-xs font-bold text-[#991B24] cursor-pointer flex items-center gap-1 shadow-2xs group/btn"
+                        title="Añadir Jugo de temporada preparado al agua (Bs 15)"
+                      >
+                        <span>c/agua</span>
+                        <span className="font-mono font-black">Bs 15</span>
+                        <Plus size={11} className="print:hidden group-hover/btn:scale-110" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleAgregarRapido({
+                          id: "prod_jugo_temporada_leche",
+                          nombre: "Jugo Temporada (con leche)",
+                          precio: 20,
+                          desc: "Jugo cremoso de fruta fresca preparado con leche entera"
+                        }, e)}
+                        className="px-2.5 py-1 rounded-lg bg-[#FAF7F2] hover:bg-[#991B24] hover:text-white border border-[#E2D6C6] transition text-xs font-bold text-[#991B24] cursor-pointer flex items-center gap-1 shadow-2xs group/btn"
+                        title="Añadir Jugo de temporada preparado con leche (Bs 20)"
+                      >
+                        <span>c/leche</span>
+                        <span className="font-mono font-black">Bs 20</span>
+                        <Plus size={11} className="print:hidden group-hover/btn:scale-110" />
+                      </button>
                     </div>
                   </div>
                   {
@@ -1939,18 +2039,24 @@ export default function MenuPdfPage() {
               <div className="space-y-4">
                 
                 <div className="border-b-2 border-[#1E130C] pb-2 flex items-baseline justify-between">
-                  <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C]">
-                    PIZZAS
-                  </h3>
-                  <div className="text-[11px] sm:text-xs font-serif font-bold text-[#991B24] flex gap-2 sm:gap-5">
-                    <span className="w-8 text-center">4 porc</span>
-                    <span className="w-8 text-center">6 porc</span>
-                    <span className="w-8 text-center">8 porc</span>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-[#1E130C]">
+                      PIZZAS
+                    </h3>
+                    <span className="text-[10px] font-mono font-bold bg-[#991B24]/10 text-[#991B24] px-2 py-0.5 rounded-full border border-[#991B24]/20 hidden sm:inline-block">
+                      4, 6 u 8 porciones
+                    </span>
+                  </div>
+                  <div className="text-[11px] sm:text-xs font-serif font-bold text-[#991B24] flex gap-1.5 sm:gap-3 items-center">
+                    <span className="w-10 sm:w-12 text-center">4 porc</span>
+                    <span className="w-10 sm:w-12 text-center">6 porc</span>
+                    <span className="w-10 sm:w-12 text-center">8 porc</span>
+                    <span className="w-8 text-center print:hidden">Elegir</span>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                                    {[
+                  {[
                     { id: "prod_pizza_margarita", nombre: "Margarita", desc: "Salsa de tomate, mozzarella, tomate, albahaca y aceite de oliva", p4: 40, p6: 55, p8: 70 },
                     { id: "prod_pizza_jamon_queso", nombre: "Jamón y queso", desc: "Salsa de tomate, mozzarella y jamon", p4: 35, p6: 50, p8: 65 },
                     { id: "prod_pizza_hawaiana", nombre: "Hawaina", desc: "Salsa de tomate, mozzarella, jamón, piña", p4: 40, p6: 55, p8: 70 },
@@ -1968,32 +2074,113 @@ export default function MenuPdfPage() {
                     const ratio = basePrice / p.p4;
                     const p6Display = Math.round(p.p6 * ratio);
                     const p8Display = Math.round(p.p8 * ratio);
-                    const cant = prod && prod.id ? getItemCantidadEnCarrito(prod.id) : 0;
+                    const cantidades = getCantidadesPizza(p.id);
 
                     return (
-                      <div key={p.id} className="group border-b border-dotted border-[#E2D6C6] pb-2 transition hover:bg-amber-500/10 px-2.5 -mx-2.5 rounded-xl">
+                      <div
+                        key={p.id}
+                        className="group border-b border-dotted border-[#E2D6C6] pb-2 transition hover:bg-amber-500/10 px-2.5 -mx-2.5 rounded-xl cursor-pointer"
+                        onClick={() => {
+                          soundManager.playPastryCrinkle();
+                          setModalPizza({
+                            id: p.id,
+                            nombre: prod ? prod.nombre : `Pizza ${p.nombre}`,
+                            desc: prod?.descripcion || p.desc,
+                            p4: basePrice,
+                            p6: p6Display,
+                            p8: p8Display,
+                            imagen_url: prod?.imagen_url,
+                          });
+                          setTamanoPizzaSeleccionado(4);
+                          setNotasPizza("");
+                        }}
+                      >
                         <div className="flex items-baseline justify-between gap-2">
-                          <div className="flex items-baseline gap-2 min-w-0">
+                          <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
                             <span className="font-serif font-bold text-sm text-[#1E130C] group-hover:text-[#991B24] transition">
                               {prod ? prod.nombre : p.nombre}
                             </span>
-                            {cant > 0 && (
-                              <span className="print:hidden text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 shadow-2xs shrink-0">
-                                {cant} en pedido
-                              </span>
+                            {cantidades.total > 0 && (
+                              <div className="print:hidden inline-flex items-center gap-1 shrink-0">
+                                {cantidades.c4 > 0 && (
+                                  <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-amber-400 text-stone-950 shadow-2xs">
+                                    {cantidades.c4}x 4p
+                                  </span>
+                                )}
+                                {cantidades.c6 > 0 && (
+                                  <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#991B24] text-white shadow-2xs">
+                                    {cantidades.c6}x 6p
+                                  </span>
+                                )}
+                                {cantidades.c8 > 0 && (
+                                  <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#1E130C] text-amber-300 border border-amber-400/40 shadow-2xs">
+                                    {cantidades.c8}x 8p
+                                  </span>
+                                )}
+                              </div>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 shrink-0">
-                            <div className="flex gap-2 sm:gap-5 text-xs sm:text-sm font-serif font-black text-[#991B24]">
-                              <span className="w-8 text-center">{basePrice}</span>
-                              <span className="w-8 text-center">{p6Display}</span>
-                              <span className="w-8 text-center">{p8Display}</span>
+                          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex gap-1 sm:gap-2 text-xs sm:text-sm font-serif font-black">
+                              {/* Botón 4 Porciones */}
+                              <button
+                                type="button"
+                                onClick={(e) => handleAgregarPizzaTamano(p, 4, basePrice, undefined, e)}
+                                className="w-10 sm:w-12 py-1 px-1 rounded-lg border border-[#991B24]/20 hover:border-[#991B24] bg-white hover:bg-[#991B24] hover:text-white text-[#991B24] transition text-center flex flex-col items-center justify-center cursor-pointer shadow-2xs group/btn active:scale-95"
+                                title={`Añadir ${p.nombre} (4 porciones) • Bs ${basePrice}`}
+                              >
+                                <span className="font-mono text-xs sm:text-sm font-black">{basePrice}</span>
+                                <span className="text-[8px] font-sans opacity-70 group-hover/btn:opacity-100 flex items-center -mt-0.5">
+                                  + 4p
+                                </span>
+                              </button>
+
+                              {/* Botón 6 Porciones */}
+                              <button
+                                type="button"
+                                onClick={(e) => handleAgregarPizzaTamano(p, 6, p6Display, undefined, e)}
+                                className="w-10 sm:w-12 py-1 px-1 rounded-lg border border-[#991B24]/20 hover:border-[#991B24] bg-white hover:bg-[#991B24] hover:text-white text-[#991B24] transition text-center flex flex-col items-center justify-center cursor-pointer shadow-2xs group/btn active:scale-95"
+                                title={`Añadir ${p.nombre} (6 porciones) • Bs ${p6Display}`}
+                              >
+                                <span className="font-mono text-xs sm:text-sm font-black">{p6Display}</span>
+                                <span className="text-[8px] font-sans opacity-70 group-hover/btn:opacity-100 flex items-center -mt-0.5">
+                                  + 6p
+                                </span>
+                              </button>
+
+                              {/* Botón 8 Porciones */}
+                              <button
+                                type="button"
+                                onClick={(e) => handleAgregarPizzaTamano(p, 8, p8Display, undefined, e)}
+                                className="w-10 sm:w-12 py-1 px-1 rounded-lg border border-[#991B24]/20 hover:border-[#991B24] bg-white hover:bg-[#991B24] hover:text-white text-[#991B24] transition text-center flex flex-col items-center justify-center cursor-pointer shadow-2xs group/btn active:scale-95"
+                                title={`Añadir ${p.nombre} (8 porciones) • Bs ${p8Display}`}
+                              >
+                                <span className="font-mono text-xs sm:text-sm font-black">{p8Display}</span>
+                                <span className="text-[8px] font-sans opacity-70 group-hover/btn:opacity-100 flex items-center -mt-0.5">
+                                  + 8p
+                                </span>
+                              </button>
                             </div>
+
+                            {/* Botón Selector / Personalizar tamaño */}
                             <button
                               type="button"
-                              onClick={(e) => handleAgregarRapido({ id: p.id, nombre: `Pizza ${p.nombre}`, precio: basePrice, desc: p.desc }, e)}
-                              className="print:hidden w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 group-hover:scale-105"
-                              title={`Añadir Pizza ${p.nombre} al pedido`}
+                              onClick={() => {
+                                soundManager.playPastryCrinkle();
+                                setModalPizza({
+                                  id: p.id,
+                                  nombre: prod ? prod.nombre : `Pizza ${p.nombre}`,
+                                  desc: prod?.descripcion || p.desc,
+                                  p4: basePrice,
+                                  p6: p6Display,
+                                  p8: p8Display,
+                                  imagen_url: prod?.imagen_url,
+                                });
+                                setTamanoPizzaSeleccionado(4);
+                                setNotasPizza("");
+                              }}
+                              className="print:hidden w-8 h-8 rounded-full bg-[#1E130C] hover:bg-[#991B24] text-white flex items-center justify-center transition shadow-xs active:scale-90 cursor-pointer text-xs font-bold border border-amber-400/40 hover:scale-105 shrink-0"
+                              title={`Abrir opciones de tamaño para Pizza ${p.nombre}`}
                             >
                               <Plus size={14} />
                             </button>
@@ -2251,6 +2438,156 @@ export default function MenuPdfPage() {
           </div>
         </div>
       </div>
+
+            {/* ── MODAL DE SELECCIÓN DE TAMAÑO & PORCIONES DE PIZZA ── */}
+      {modalPizza && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 print:hidden animate-fade-in"
+          onClick={() => setModalPizza(null)}
+        >
+          <div
+            className="bg-[#FAF6EF] rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border-2 border-[#991B24]/40 flex flex-col max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header con Imagen */}
+            <div className="relative h-44 bg-[#1E130C] overflow-hidden shrink-0">
+              <img
+                src={modalPizza.imagen_url || "/img/products/pizza_artesanal_dencker.jpg"}
+                alt={modalPizza.nombre}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <button
+                onClick={() => setModalPizza(null)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition cursor-pointer"
+              >
+                ✕
+              </button>
+              <div className="absolute bottom-3 left-4 right-4">
+                <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-amber-300 bg-black/60 px-2 py-0.5 rounded-md">
+                  Pizzas Artesanales Dencker
+                </span>
+                <h3 className="font-serif font-black text-xl text-white mt-1">
+                  {modalPizza.nombre}
+                </h3>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-4 overflow-y-auto">
+              <p className="text-xs text-[#785E4F] leading-relaxed">
+                {modalPizza.desc}
+              </p>
+
+              {/* Selector de Tamaño / Porciones */}
+              <div className="space-y-2">
+                <label className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#1E130C] flex items-center justify-between">
+                  <span>Selecciona el Tamaño (Porciones):</span>
+                  <span className="text-[#991B24] font-sans font-bold text-xs">
+                    {tamanoPizzaSeleccionado} porciones
+                  </span>
+                </label>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    {
+                      porc: 4 as const,
+                      precio: modalPizza.p4,
+                      titulo: "4 Porc",
+                      sub: "Individual",
+                      icono: "🍕",
+                    },
+                    {
+                      porc: 6 as const,
+                      precio: modalPizza.p6,
+                      titulo: "6 Porc",
+                      sub: "Compartir",
+                      icono: "🍕🍕",
+                    },
+                    {
+                      porc: 8 as const,
+                      precio: modalPizza.p8,
+                      titulo: "8 Porc",
+                      sub: "Familiar",
+                      icono: "🍕🍕🍕",
+                    },
+                  ].map((opt) => {
+                    const sel = tamanoPizzaSeleccionado === opt.porc;
+                    return (
+                      <button
+                        key={opt.porc}
+                        type="button"
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          setTamanoPizzaSeleccionado(opt.porc);
+                        }}
+                        className={`p-3 rounded-2xl border text-center transition flex flex-col items-center justify-between cursor-pointer ${
+                          sel
+                            ? "bg-[#1E130C] text-white border-[#1E130C] shadow-md ring-2 ring-amber-400/50"
+                            : "bg-white text-[#1E130C] border-[#E2D6C6] hover:bg-amber-500/10"
+                        }`}
+                      >
+                        <span className="text-sm">{opt.icono}</span>
+                        <span className="font-serif font-bold text-xs mt-1">
+                          {opt.titulo}
+                        </span>
+                        <span className={`text-[9px] ${sel ? "text-amber-300" : "text-[#785E4F]"}`}>
+                          {opt.sub}
+                        </span>
+                        <span className={`font-mono font-black text-sm mt-1.5 ${sel ? "text-amber-400" : "text-[#991B24]"}`}>
+                          Bs {opt.precio}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Notas del Pedido */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-[#785E4F] uppercase tracking-wider block">
+                  Instrucciones especiales para cocina (opcional):
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej: bien tostada, orégano extra, sin cebolla..."
+                  value={notasPizza}
+                  onChange={(e) => setNotasPizza(e.target.value)}
+                  className="w-full text-xs p-2.5 rounded-xl border border-[#E2D6C6] bg-white focus:outline-none focus:ring-1 focus:ring-[#991B24]"
+                />
+              </div>
+
+              {/* Botón de Agregar */}
+              <button
+                type="button"
+                onClick={() => {
+                  handleAgregarPizzaTamano(
+                    modalPizza,
+                    tamanoPizzaSeleccionado,
+                    tamanoPizzaSeleccionado === 4
+                      ? modalPizza.p4
+                      : tamanoPizzaSeleccionado === 6
+                      ? modalPizza.p6
+                      : modalPizza.p8,
+                    notasPizza
+                  );
+                  setModalPizza(null);
+                }}
+                className="w-full py-3.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition cursor-pointer active:scale-98"
+              >
+                <Plus size={16} />
+                <span>
+                  Añadir {modalPizza.nombre} ({tamanoPizzaSeleccionado} porc) • Bs{" "}
+                  {tamanoPizzaSeleccionado === 4
+                    ? modalPizza.p4
+                    : tamanoPizzaSeleccionado === 6
+                    ? modalPizza.p6
+                    : modalPizza.p8}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── MODAL DE FOTO GASTRONÓMICA EN ALTA RESOLUCIÓN (EXTERIOR VS CORTE) ── */}
       {fotoModal && (

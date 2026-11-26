@@ -283,6 +283,21 @@ export default function HomePage() {
   const [productoModal, setProductoModal] = useState<Producto | null>(null);
   const [chipsSeleccionados, setChipsSeleccionados] = useState<string[]>([]);
   const [notaPersonalizada, setNotaPersonalizada] = useState<string>("");
+  const [tamanoPizzaModal, setTamanoPizzaModal] = useState<4 | 6 | 8>(4);
+
+  const PIZZA_SIZES_MAP: Record<string, { p4: number; p6: number; p8: number }> = {
+    prod_pizza_margarita: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_jamon_queso: { p4: 35, p6: 50, p8: 65 },
+    prod_pizza_hawaiana: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_funghi: { p4: 35, p6: 50, p8: 65 },
+    prod_pizza_choclo_amarillo: { p4: 35, p6: 50, p8: 70 },
+    prod_pizza_bacon: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_palmito: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_portuguesa: { p4: 45, p6: 55, p8: 80 },
+    prod_pizza_criolla: { p4: 45, p6: 65, p8: 80 },
+    prod_pizza_salame: { p4: 45, p6: 65, p8: 80 },
+    prod_pizza_pollo_catupiri: { p4: 45, p6: 65, p8: 80 },
+  };
 
   // Estados de Organización del Menú & Doble Vista de Fotos
   const [modoPresentacion, setModoPresentacion] = useState<"general" | "categoria">("general");
@@ -535,6 +550,7 @@ export default function HomePage() {
     setVistaModal(productoVistaOverrides[p.id] || vistaGlobalFotos);
     setChipsSeleccionados([]);
     setNotaPersonalizada("");
+    setTamanoPizzaModal(4);
   };
 
   const agregarAlCarritoRapido = (p: Producto, e: React.MouseEvent) => {
@@ -932,6 +948,65 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── 1.1. RIBBON FLOTANTE DE DELICIAS ARTESANALES (MICRO-INTERACCIONES & PROFUNDIDAD) ── */}
+      <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] py-6 overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-mono uppercase font-black tracking-wider text-[#991B24]">
+                Horneado Hoy • Tandas Frescas 07:30 y 16:30
+              </span>
+            </div>
+            <a
+              href="#catalogo"
+              className="text-xs font-bold text-[#8C5332] hover:text-[#1E130C] flex items-center gap-1 transition group"
+            >
+              <span>Ver Vitrina Completa</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {PHOTO_RIBBON_ITEMS.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.07 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("catalogo");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-[#EAE2D5] p-3 shadow-xs hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 mb-2.5">
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-amber-300 border border-white/20">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition-colors">
+                    {item.nombre}
+                  </h4>
+                  <p className="text-[10px] text-[#785E4F] line-clamp-1">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── 1.5. ATENCIÓN FLEXIBLE: 4 MODALIDADES CLARAS (EN SALÓN / LLEVAR / DELIVERY / RESERVAS) ── */}
       <section className="w-full bg-[#F5EFEB] border-b border-[#EAE2D5] py-14 flex flex-col items-center">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 space-y-8">
@@ -1187,10 +1262,128 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── 1.1. RIBBON FLOTANTE DE DELICIAS ARTESANALES (MICRO-INTERACCIONES & PROFUNDIDAD) ── */}
+      <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] py-6 overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-mono uppercase font-black tracking-wider text-[#991B24]">
+                Horneado Hoy • Tandas Frescas 07:30 y 16:30
+              </span>
+            </div>
+            <a
+              href="#catalogo"
+              className="text-xs font-bold text-[#8C5332] hover:text-[#1E130C] flex items-center gap-1 transition group"
+            >
+              <span>Ver Vitrina Completa</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {PHOTO_RIBBON_ITEMS.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.07 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("catalogo");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-[#EAE2D5] p-3 shadow-xs hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 mb-2.5">
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-amber-300 border border-white/20">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition-colors">
+                    {item.nombre}
+                  </h4>
+                  <p className="text-[10px] text-[#785E4F] line-clamp-1">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── 2. COFFEELAB 3D FULL BLEED (w-full bg-[#140D08]) ── */}
       <section id="coffeelab" className="w-full bg-[#140D08] py-24 border-t border-amber-900/30 overflow-hidden flex flex-col items-center">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
           <CoffeeLab />
+        </div>
+      </section>
+
+      {/* ── 1.1. RIBBON FLOTANTE DE DELICIAS ARTESANALES (MICRO-INTERACCIONES & PROFUNDIDAD) ── */}
+      <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] py-6 overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-mono uppercase font-black tracking-wider text-[#991B24]">
+                Horneado Hoy • Tandas Frescas 07:30 y 16:30
+              </span>
+            </div>
+            <a
+              href="#catalogo"
+              className="text-xs font-bold text-[#8C5332] hover:text-[#1E130C] flex items-center gap-1 transition group"
+            >
+              <span>Ver Vitrina Completa</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {PHOTO_RIBBON_ITEMS.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.07 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("catalogo");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-[#EAE2D5] p-3 shadow-xs hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 mb-2.5">
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-amber-300 border border-white/20">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition-colors">
+                    {item.nombre}
+                  </h4>
+                  <p className="text-[10px] text-[#785E4F] line-clamp-1">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -2029,6 +2222,65 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── 1.1. RIBBON FLOTANTE DE DELICIAS ARTESANALES (MICRO-INTERACCIONES & PROFUNDIDAD) ── */}
+      <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] py-6 overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-mono uppercase font-black tracking-wider text-[#991B24]">
+                Horneado Hoy • Tandas Frescas 07:30 y 16:30
+              </span>
+            </div>
+            <a
+              href="#catalogo"
+              className="text-xs font-bold text-[#8C5332] hover:text-[#1E130C] flex items-center gap-1 transition group"
+            >
+              <span>Ver Vitrina Completa</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {PHOTO_RIBBON_ITEMS.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.07 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("catalogo");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-[#EAE2D5] p-3 shadow-xs hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 mb-2.5">
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-amber-300 border border-white/20">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition-colors">
+                    {item.nombre}
+                  </h4>
+                  <p className="text-[10px] text-[#785E4F] line-clamp-1">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── 4. COTIZADOR DE EVENTOS & CATERING (w-full bg-[#F4EFEB]) ── */}
       <section id="catering" className="w-full bg-[#F4EFEB] py-24 border-t border-[#EAE2D5] flex flex-col items-center">
         <div className="w-full max-w-5xl mx-auto px-6 md:px-12 space-y-8">
@@ -2124,6 +2376,65 @@ export default function HomePage() {
                 <span>Coordinar por WhatsApp</span>
               </motion.a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 1.1. RIBBON FLOTANTE DE DELICIAS ARTESANALES (MICRO-INTERACCIONES & PROFUNDIDAD) ── */}
+      <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] py-6 overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-mono uppercase font-black tracking-wider text-[#991B24]">
+                Horneado Hoy • Tandas Frescas 07:30 y 16:30
+              </span>
+            </div>
+            <a
+              href="#catalogo"
+              className="text-xs font-bold text-[#8C5332] hover:text-[#1E130C] flex items-center gap-1 transition group"
+            >
+              <span>Ver Vitrina Completa</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {PHOTO_RIBBON_ITEMS.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.07 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("catalogo");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-[#EAE2D5] p-3 shadow-xs hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 mb-2.5">
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-amber-300 border border-white/20">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition-colors">
+                    {item.nombre}
+                  </h4>
+                  <p className="text-[10px] text-[#785E4F] line-clamp-1">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -2239,17 +2550,81 @@ export default function HomePage() {
                 </button>
               </div>
 
-              <div className="space-y-1.5">
-                <h3 className="font-serif text-xl font-bold text-[#1E130C]">
-                  {productoModal.nombre}
-                </h3>
-                <p className="text-xs text-[#785E4F] leading-relaxed">
-                  {productoModal.descripcion || "Elaborado fresco diariamente con receta artesanal."}
-                </p>
-                <p className="font-sans text-2xl font-black text-[#1E130C] pt-1">
-                  Bs {productoModal.precio.toFixed(2)}
-                </p>
-              </div>
+              {(() => {
+                const esPizzaTradicional =
+                  productoModal.categoria_id === "c_pizzas" &&
+                  productoModal.id !== "prod_pizza_especial_dencker";
+                const p4 = PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
+                const p6 = PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
+                const precioCalculado = esPizzaTradicional
+                  ? tamanoPizzaModal === 4
+                    ? p4
+                    : tamanoPizzaModal === 6
+                    ? p6
+                    : p8
+                  : productoModal.precio;
+
+                return (
+                  <>
+                    <div className="space-y-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-serif text-xl font-bold text-[#1E130C]">
+                          {productoModal.nombre}
+                        </h3>
+                        {esPizzaTradicional && (
+                          <span className="text-[10px] font-mono font-bold bg-[#991B24]/10 text-[#991B24] px-2 py-0.5 rounded-full border border-[#991B24]/20 shrink-0">
+                            {tamanoPizzaModal} porciones
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#785E4F] leading-relaxed">
+                        {productoModal.descripcion || "Elaborado fresco diariamente con receta artesanal."}
+                      </p>
+                      <p className="font-sans text-2xl font-black text-[#1E130C] pt-1">
+                        Bs {precioCalculado.toFixed(2)}
+                      </p>
+                    </div>
+
+                    {/* Selector interactivo de porciones para Pizzas */}
+                    {esPizzaTradicional && (
+                      <div className="space-y-1.5 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                        <label className="text-[10px] font-mono font-bold text-[#991B24] uppercase tracking-wider block">
+                          Selecciona el Tamaño (Porciones):
+                        </label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            { porc: 4 as const, precio: p4, label: "4 Porc", sub: "Individual", icon: "🍕" },
+                            { porc: 6 as const, precio: p6, label: "6 Porc", sub: "Compartir", icon: "🍕🍕" },
+                            { porc: 8 as const, precio: p8, label: "8 Porc", sub: "Familiar", icon: "🍕🍕🍕" },
+                          ].map((sz) => (
+                            <button
+                              key={sz.porc}
+                              type="button"
+                              onClick={() => {
+                                soundManager.playTactileClick();
+                                setTamanoPizzaModal(sz.porc);
+                              }}
+                              className={`py-2 px-1.5 rounded-xl text-center border transition cursor-pointer flex flex-col items-center ${
+                                tamanoPizzaModal === sz.porc
+                                  ? "bg-[#1E130C] text-white border-[#1E130C] shadow-md ring-1 ring-amber-400"
+                                  : "bg-white text-[#1E130C] border-[#EAE2D5] hover:bg-amber-500/10"
+                              }`}
+                            >
+                              <span className="text-xs">{sz.icon}</span>
+                              <div className="text-[10px] uppercase font-bold mt-0.5">{sz.label}</div>
+                              <div className="text-[9px] text-[#785E4F]">{sz.sub}</div>
+                              <div className={`text-xs font-mono font-black mt-0.5 ${tamanoPizzaModal === sz.porc ? "text-amber-400" : "text-[#991B24]"}`}>
+                                Bs {sz.precio}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               {productoModal.chips_personalizacion && productoModal.chips_personalizacion.length > 0 && (
                 <div className="space-y-1.5">
@@ -2293,20 +2668,54 @@ export default function HomePage() {
                 />
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.96, y: 1 }}
-                transition={springPhysics}
-                onClick={() => {
-                  soundManager.playPastryCrinkle();
-                  addItem(productoModal, chipsSeleccionados, notaPersonalizada || undefined);
-                  setProductoModal(null);
-                }}
-                className="w-full py-3.5 rounded-2xl bg-[#1E130C] hover:bg-[#2C1C12] text-[#FAF7F2] font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Plus size={16} className="text-[#D97706]" />
-                <span>Agregar al Pedido • Bs {productoModal.precio.toFixed(2)}</span>
-              </motion.button>
+              {(() => {
+                const esPizzaTradicional =
+                  productoModal.categoria_id === "c_pizzas" &&
+                  productoModal.id !== "prod_pizza_especial_dencker";
+                const p4 = PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
+                const p6 = PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
+                const precioCalculado = esPizzaTradicional
+                  ? tamanoPizzaModal === 4
+                    ? p4
+                    : tamanoPizzaModal === 6
+                    ? p6
+                    : p8
+                  : productoModal.precio;
+
+                return (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96, y: 1 }}
+                    transition={springPhysics}
+                    onClick={() => {
+                      soundManager.playPastryCrinkle();
+                      const itemFinal = esPizzaTradicional
+                        ? {
+                            ...productoModal,
+                            id: `${productoModal.id}__size_${tamanoPizzaModal}p`,
+                            nombre: `${productoModal.nombre} (${tamanoPizzaModal} porc)`,
+                            precio: precioCalculado,
+                            chips_personalizacion: [`${tamanoPizzaModal} porciones`],
+                          }
+                        : productoModal;
+                      addItem(
+                        itemFinal,
+                        esPizzaTradicional ? [`${tamanoPizzaModal} Porciones`] : chipsSeleccionados,
+                        notaPersonalizada || undefined
+                      );
+                      setProductoModal(null);
+                    }}
+                    className="w-full py-3.5 rounded-2xl bg-[#1E130C] hover:bg-[#2C1C12] text-[#FAF7F2] font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Plus size={16} className="text-[#D97706]" />
+                    <span>
+                      Agregar al Pedido • Bs {precioCalculado.toFixed(2)}
+                      {esPizzaTradicional ? ` (${tamanoPizzaModal} porc)` : ""}
+                    </span>
+                  </motion.button>
+                );
+              })()}
             </motion.div>
           </div>
         )}
@@ -2867,6 +3276,65 @@ export default function HomePage() {
 
           </div>
 
+        </div>
+      </section>
+
+      {/* ── 1.1. RIBBON FLOTANTE DE DELICIAS ARTESANALES (MICRO-INTERACCIONES & PROFUNDIDAD) ── */}
+      <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] py-6 overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-mono uppercase font-black tracking-wider text-[#991B24]">
+                Horneado Hoy • Tandas Frescas 07:30 y 16:30
+              </span>
+            </div>
+            <a
+              href="#catalogo"
+              className="text-xs font-bold text-[#8C5332] hover:text-[#1E130C] flex items-center gap-1 transition group"
+            >
+              <span>Ver Vitrina Completa</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {PHOTO_RIBBON_ITEMS.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.07 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("catalogo");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-[#EAE2D5] p-3 shadow-xs hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 mb-2.5">
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-amber-300 border border-white/20">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition-colors">
+                    {item.nombre}
+                  </h4>
+                  <p className="text-[10px] text-[#785E4F] line-clamp-1">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
