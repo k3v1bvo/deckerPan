@@ -572,7 +572,16 @@ export default function HomePage() {
         {/* Textura sutil y cálida de panadería */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#1E130C_1px,transparent_1px)] [background-size:16px_16px]" />
 
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 pt-10 pb-14 lg:py-16 relative z-10">
+        {/* Toldo a Rayas Auténtico de la Panadería Dencker (del Menú Oficial) */}
+        <div className="w-full max-w-7xl mx-auto px-4 -mt-2 overflow-hidden select-none pointer-events-none">
+          <img
+            src="/img/brand/awning-marquee-official.png"
+            alt="Toldo Tradicional Dencker Pan"
+            className="w-full h-auto object-cover max-h-16 sm:max-h-24 drop-shadow-xs"
+          />
+        </div>
+
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 pt-4 pb-14 lg:py-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
             {/* Columna Izquierda: Identidad, Título Editorial & Acciones */}
@@ -581,7 +590,7 @@ export default function HomePage() {
               {/* Sello de la Casa */}
               <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#F3ECE1] border border-[#E0D5C5] text-[#63493C] text-xs font-semibold shadow-2xs">
                 <img
-                  src={DENCKER_ASSETS.mascotClean}
+                  src="/img/brand/don-dencker-mascot-official.png"
                   alt="Dencker Pan"
                   className="w-5 h-5 object-contain"
                 />
@@ -688,7 +697,7 @@ export default function HomePage() {
               {/* Mascota Croissant Oficial Flotante */}
               <div className="absolute -top-6 -right-4 w-20 h-20 sm:w-24 sm:h-24 z-20 drop-shadow-2xl transform rotate-6 hover:rotate-12 transition-transform select-none pointer-events-none">
                 <img
-                  src={DENCKER_ASSETS.mascotCroissant}
+                  src="/img/brand/mascot-croissant-official.png"
                   alt="Mascota Croissant Dencker"
                   className="w-full h-full object-contain"
                 />
@@ -832,13 +841,22 @@ export default function HomePage() {
           <div className="bg-gradient-to-r from-[#991B24]/95 via-[#7F1D1D] to-[#1E130C] rounded-3xl p-6 sm:p-10 border-2 border-amber-500/30 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
             
             <div className="space-y-3.5 text-left max-w-2xl">
+              {/* Rótulo Oficial MENU DENCKER del PDF */}
+              <div className="mb-2">
+                <img
+                  src="/img/brand/menu-dencker-banner-official.png"
+                  alt="MENU DENCKER Oficial"
+                  className="h-10 sm:h-12 w-auto object-contain drop-shadow"
+                />
+              </div>
+
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-amber-400/30 text-amber-300 text-xs font-bold shadow-xs">
                 <FileText size={14} />
-                <span>Menú Oficial Impreso • Edición Fiel</span>
+                <span>Menú Oficial Impreso • Edición Fiel de 6 Páginas</span>
               </div>
               
               <h2 className="font-serif text-2xl sm:text-4xl font-black text-white leading-tight">
-                La Carta Oficial de Dencker Coffee & Pan (6 Páginas)
+                La Carta Oficial de Dencker Coffee & Pan
               </h2>
               
               <p className="text-xs sm:text-sm text-amber-100/90 leading-relaxed">
@@ -942,6 +960,86 @@ export default function HomePage() {
               <div className="text-left">
                 <h4 className="font-serif font-bold text-xs text-amber-200 uppercase tracking-wider">Sello de Tradición</h4>
                 <p className="text-[11px] text-stone-300">Don Dencker con Taza Humeante</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Cenefa a Cuadros Bistró Oficial del PDF */}
+          <div className="w-full mt-6 py-1 flex items-center justify-center opacity-90">
+            <img
+              src="/img/brand/checkered-bistro-ribbon-official.png"
+              alt="Cenefa a Cuadros Dencker"
+              className="w-full max-w-4xl h-4 object-contain select-none"
+            />
+          </div>
+
+          {/* Galería de Mascotas Ilustradas Originales del Menú Físico (PDF) */}
+          <div className="w-full mt-4 pt-4 border-t border-white/10 flex flex-col items-center space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-amber-300">
+                Arte & Mascotas Ilustradas Originales de Don Dencker (Menú Oficial)
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full">
+              {/* Mascota 1: Taza con Sol */}
+              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
+                <div className="w-16 h-16 flex items-center justify-center">
+                  <img
+                    src="/img/brand/mascot-coffee-sun-official.png"
+                    alt="Taza Sonriente con Sol"
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
+                  />
+                </div>
+                <div>
+                  <h5 className="font-serif font-bold text-xs text-amber-200">Café Sonriente & Sol</h5>
+                  <p className="text-[10px] text-stone-300">Pág. 02 • Especialidad 4 Llamas</p>
+                </div>
+              </div>
+
+              {/* Mascota 2: Croissant Saltarín */}
+              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
+                <div className="w-16 h-16 flex items-center justify-center">
+                  <img
+                    src="/img/brand/mascot-croissant-official.png"
+                    alt="Croissant Saltarín"
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
+                  />
+                </div>
+                <div>
+                  <h5 className="font-serif font-bold text-xs text-amber-200">Croissant Saltarín</h5>
+                  <p className="text-[10px] text-stone-300">Pág. 04 • Hojaldre 100% Mantequilla</p>
+                </div>
+              </div>
+
+              {/* Mascota 3: Sándwich Pulgar Arriba */}
+              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
+                <div className="w-16 h-16 flex items-center justify-center">
+                  <img
+                    src="/img/brand/mascot-sandwich-official.png"
+                    alt="Sándwich Pulgar Arriba"
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
+                  />
+                </div>
+                <div>
+                  <h5 className="font-serif font-bold text-xs text-amber-200">Sándwich Feliz</h5>
+                  <p className="text-[10px] text-stone-300">Pág. 05 • Pan de Masa Madre 24h</p>
+                </div>
+              </div>
+
+              {/* Mascota 4: Pizza Skater */}
+              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
+                <div className="w-16 h-16 flex items-center justify-center">
+                  <img
+                    src="/img/brand/mascot-pizza-official.png"
+                    alt="Pizza Skater"
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
+                  />
+                </div>
+                <div>
+                  <h5 className="font-serif font-bold text-xs text-amber-200">Pizza Skater con Gafas</h5>
+                  <p className="text-[10px] text-stone-300">Pág. 06 • Horno de Piedra Artesanal</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1542,13 +1640,13 @@ export default function HomePage() {
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center pt-2">
                 {[
                   { id: "todos", label: "Todos (114)", icon: UtensilsCrossed, sound: "tactile" },
-                  { id: "c_desayunos", label: "Desayunos", mascot: DENCKER_ASSETS.mascotCroissant, sound: "pastry" },
-                  { id: "c_cafes", label: "Cafés 4 Llamas", mascot: DENCKER_ASSETS.mascotCoffee, sound: "porcelain" },
-                  { id: "c_dulces", label: "Pastelería & Tortas", mascot: DENCKER_ASSETS.mascotCroissant, sound: "pastry" },
-                  { id: "c_saladas", label: "Masitas Saladas", icon: Flame, sound: "bread" },
-                  { id: "c_sandwiches", label: "Sándwiches Gourmet", mascot: DENCKER_ASSETS.mascotBread, sound: "bread" },
-                  { id: "c_pizzas", label: "Pizzas al Horno", mascot: DENCKER_ASSETS.mascotPizza, sound: "bread" },
-                  { id: "c_jugos", label: "Bebidas & Frappés", icon: Droplets, sound: "tactile" },
+                  { id: "c_desayunos", label: "Desayunos", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
+                  { id: "c_cafes", label: "Cafés 4 Llamas", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "porcelain" },
+                  { id: "c_dulces", label: "Pastelería & Tortas", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
+                  { id: "c_saladas", label: "Masitas Saladas", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
+                  { id: "c_sandwiches", label: "Sándwiches Gourmet", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
+                  { id: "c_pizzas", label: "Pizzas al Horno", mascot: "/img/brand/mascot-pizza-official.png", sound: "bread" },
+                  { id: "c_jugos", label: "Bebidas & Frappés", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "tactile" },
                   { id: "favoritos", label: "Más Vendidos ★", icon: Star, sound: "tactile" },
                 ].map((cat) => {
                   const Icon = cat.icon;

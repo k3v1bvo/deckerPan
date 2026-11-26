@@ -14,6 +14,23 @@ export const DENCKER_ASSETS = {
   logo3DonDenckerBadgePng: "/img/brand/logo-3-don-dencker-badge.png",
   logo3DonDenckerBadgeSvg: "/img/brand/logo-3-don-dencker-badge.svg",
 
+  // ── Arte & Dibujos Oficiales Originales del Menú Físico (PDF) ──
+  mascotClean: "/img/brand/don-dencker-mascot-official.png",
+  mascotOfficial: "/img/brand/don-dencker-mascot-official.png",
+  mascotCoffee: "/img/brand/mascot-coffee-sun-official.png",
+  mascotCroissant: "/img/brand/mascot-croissant-official.png",
+  mascotBread: "/img/brand/mascot-sandwich-official.png",
+  mascotSandwich: "/img/brand/mascot-sandwich-official.png",
+  mascotPizza: "/img/brand/mascot-pizza-official.png",
+  awningMarquee: "/img/brand/awning-marquee-official.png",
+  menuDenckerBanner: "/img/brand/menu-dencker-banner-official.png",
+  checkeredRibbon: "/img/brand/checkered-bistro-ribbon-official.png",
+  doodleCloud: "/img/brand/doodle-cloud-official.png",
+  doodleStarburst: "/img/brand/doodle-starburst-black.png",
+  doodleStarRed: "/img/brand/doodle-star-red.png",
+  doodleStarRedLarge: "/img/brand/doodle-star-red-large.png",
+  doodleSquiggle: "/img/brand/doodle-squiggle.png",
+
   // Logo Oficial Activo (Sello Don Dencker Badge Oficial)
   logo: "/img/brand/logo-3-don-dencker-badge.png",
   logoLight: "/img/brand/don-dencker-mascot-light.png",
@@ -21,13 +38,8 @@ export const DENCKER_ASSETS = {
   logoChefHatLight: "/img/brand/logo-1-chef-hat-light.svg",
   logoPng: "/img/brand/logo-3-don-dencker-badge.png",
   logoSvg: "/img/brand/don-dencker-badge.svg",
-  mascotClean: "/img/brand/don-dencker-mascot-clean.png",
   badgeClean: "/img/brand/logo-3-don-dencker-badge.png",
   coffeeVintage: "/img/brand/logo-2-dencker-coffee-vintage.png",
-  mascotCoffee: "/img/brand/mascot-coffee.png",
-  mascotCroissant: "/img/brand/mascot-croissant.png",
-  mascotBread: "/img/brand/mascot-bread.png",
-  mascotPizza: "/img/brand/mascot-pizza.png",
   cafe4Llamas: "/img/brand/cafe-4llamas-pack.png",
   cafeCatuai: "/img/brand/cafe-catuai-badge.png",
   menuPdfDownload: "/menu-dencker.pdf",
@@ -93,7 +105,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cocina",
     "orden": 1,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-croissant.png"
+    "imagen_url": "/img/brand/mascot-croissant-official.png"
   },
   {
     "id": "c_cafes",
@@ -103,7 +115,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 2,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_lattes",
@@ -113,7 +125,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 3,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_chocolates",
@@ -123,7 +135,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 4,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_tes",
@@ -133,7 +145,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 5,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_frappes",
@@ -143,7 +155,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 6,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_helados",
@@ -153,7 +165,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 7,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_jugos",
@@ -163,7 +175,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cafeteria",
     "orden": 8,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_refrescos",
@@ -173,7 +185,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "vitrina",
     "orden": 9,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-coffee.png"
+    "imagen_url": "/img/brand/mascot-coffee-sun-official.png"
   },
   {
     "id": "c_dulces",
@@ -183,7 +195,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "vitrina",
     "orden": 10,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-croissant.png"
+    "imagen_url": "/img/brand/mascot-croissant-official.png"
   },
   {
     "id": "c_postres",
@@ -193,7 +205,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "vitrina",
     "orden": 11,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-croissant.png"
+    "imagen_url": "/img/brand/mascot-croissant-official.png"
   },
   {
     "id": "c_saladas",
@@ -203,7 +215,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "vitrina",
     "orden": 12,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-croissant.png"
+    "imagen_url": "/img/brand/mascot-croissant-official.png"
   },
   {
     "id": "c_sandwiches",
@@ -213,7 +225,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cocina",
     "orden": 13,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-bread.png"
+    "imagen_url": "/img/brand/mascot-sandwich-official.png"
   },
   {
     "id": "c_ensaladas",
@@ -223,7 +235,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cocina",
     "orden": 14,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-bread.png"
+    "imagen_url": "/img/brand/mascot-sandwich-official.png"
   },
   {
     "id": "c_pizzas",
@@ -233,7 +245,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cocina",
     "orden": 15,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-pizza.png"
+    "imagen_url": "/img/brand/mascot-pizza-official.png"
   },
   {
     "id": "c_extras",
@@ -243,7 +255,7 @@ export const SEED_CATEGORIAS: Categoria[] = [
     "estacion": "cocina",
     "orden": 16,
     "activa": true,
-    "imagen_url": "/img/brand/mascot-bread.png"
+    "imagen_url": "/img/brand/mascot-sandwich-official.png"
   }
 ];
 
@@ -2653,9 +2665,9 @@ export const SEED_USUARIOS_STAFF: UsuarioStaff[] = [
 
 export const REAL_PRODUCT_PHOTOS: string[] = [
   "/img/brand/don-dencker.png",
-  "/img/brand/mascot-croissant.png",
-  "/img/brand/mascot-bread.png",
-  "/img/brand/mascot-pizza.png",
+  "/img/brand/mascot-croissant-official.png",
+  "/img/brand/mascot-sandwich-official.png",
+  "/img/brand/mascot-pizza-official.png",
   "/img/brand/cafe-catuai-badge.png",
   "/img/brand/cafe-4llamas-pack.png",
   "/img/brand/dencker-logo.png",

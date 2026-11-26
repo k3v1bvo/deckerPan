@@ -676,16 +676,13 @@ export default function MenuPdfPage() {
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
           <div id="menu-pagina-1" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 text-center print-page space-y-6">
             
-            {/* Toldo a rayas rojas y crema de mayor presencia y escala */}
-            <div className="w-full h-28 sm:h-36 -mt-6 sm:-mt-10 rounded-b-[42px] overflow-hidden shadow-lg flex relative border-b-4 border-[#7F1D1D] shrink-0">
-              {[...Array(16)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`flex-1 h-full ${
-                    i % 2 === 0 ? "bg-[#991B24]" : "bg-[#FAF6EF]"
-                  } border-r border-[#991B24]/20`}
-                />
-              ))}
+            {/* Toldo Artesanal Auténtico del Menú Oficial PDF */}
+            <div className="w-full -mt-4 sm:-mt-8 -mx-4 sm:-mx-8 lg:-mx-12 overflow-hidden shadow-md relative shrink-0">
+              <img
+                src="/img/brand/awning-marquee-official.png"
+                alt="Toldo Tradicional Dencker Pan"
+                className="w-full h-auto object-cover max-h-36 sm:max-h-48 drop-shadow-sm select-none"
+              />
             </div>
 
             {/* Cabecera & Título Central ME NU + Don Dencker en Gran Escala */}
@@ -715,7 +712,7 @@ export default function MenuPdfPage() {
               <div className="md:col-span-7 flex flex-col items-center justify-center relative">
                 <div className="relative w-72 sm:w-96 h-88 sm:h-[420px] flex items-center justify-center">
                   <img
-                    src={DENCKER_ASSETS.mascotClean}
+                    src="/img/brand/don-dencker-mascot-official.png"
                     alt="Don Dencker Mascota Oficial"
                     className="w-full h-full object-contain drop-shadow-2xl select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -861,38 +858,45 @@ export default function MenuPdfPage() {
           {/* ── PÁGINA 2: DESAYUNOS, CAFÉS (4 LLAMAS) & LATTES ── */}
           <div id="menu-pagina-2" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 print-page space-y-8">
             
-            {/* Header Oficial: Mascota Café Barista & Sello Catuaí Caranavi */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b-2 border-[#991B24]/25 relative">
-              <div className="flex items-center gap-4">
-                <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
-                  <img
-                    src="/img/brand/mascot-coffee.png"
-                    alt="Mascota Café Barista Dencker"
-                    className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div>
+            {/* Header Oficial con Arte Original del PDF: MENU DENCKER Banner, Nube y Destellos */}
+            <div className="flex flex-col items-center justify-center pb-4 border-b-2 border-[#991B24]/25 relative space-y-3">
+              {/* Garabatos auténticos en las esquinas */}
+              <div className="absolute top-0 left-0 w-12 h-8 sm:w-16 sm:h-10 opacity-80 pointer-events-none">
+                <img src="/img/brand/doodle-cloud-official.png" alt="Nube Dencker" className="w-full h-full object-contain" />
+              </div>
+              <div className="absolute top-1 right-2 w-8 h-8 sm:w-10 sm:h-10 opacity-80 pointer-events-none">
+                <img src="/img/brand/doodle-starburst-black.png" alt="Destello Dencker" className="w-full h-full object-contain" />
+              </div>
+
+              {/* Rótulo Oficial MENU DENCKER del PDF */}
+              <div className="max-w-md w-full px-4 flex justify-center">
+                <img
+                  src="/img/brand/menu-dencker-banner-official.png"
+                  alt="MENU DENCKER Oficial"
+                  className="w-full max-w-[340px] sm:max-w-[420px] h-auto object-contain drop-shadow-sm select-none"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-3 pt-1">
+                <div className="text-center sm:text-left">
                   <span className="text-[10px] font-mono font-bold tracking-widest text-[#991B24] uppercase block">
                     Cochabamba &bull; 4 Llamas Specialty Coffee
                   </span>
-                  <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase text-[#991B24] tracking-tight">
-                    DESAYUNOS & CAFÉS
+                  <h2 className="font-serif font-black text-xl sm:text-3xl uppercase text-[#991B24] tracking-tight">
+                    DESAYUNOS & CAFÉS DE ESPECIALIDAD
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#785E4F]">
-                    Granos de altura Caranavi "Café 4 Llamas" (1,700 msnm) &amp; horneados frescos
-                  </p>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-2.5">
-                <img
-                  src="/img/brand/cafe-catuai-badge-hd.png"
-                  alt="Catuaí Lavado Caranavi"
-                  className="h-12 w-auto object-contain drop-shadow-xs"
-                />
-                <span className="font-serif font-bold text-xs px-3.5 py-1.5 rounded-full bg-[#991B24] text-white shadow-xs">
-                  Pág. 02
-                </span>
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <img
+                    src="/img/brand/cafe-catuai-badge-hd.png"
+                    alt="Catuaí Lavado Caranavi"
+                    className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs"
+                  />
+                  <span className="font-serif font-bold text-xs px-3.5 py-1.5 rounded-full bg-[#991B24] text-white shadow-xs">
+                    Pág. 02
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -1111,7 +1115,7 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src={DENCKER_ASSETS.mascotClean}
+                    src="/img/brand/don-dencker-mascot-official.png"
                     alt="Don Dencker Mascota"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -1346,7 +1350,7 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/mascot-croissant.png"
+                    src="/img/brand/mascot-croissant-official.png"
                     alt="Croissant Mascota Dencker"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -1568,8 +1572,14 @@ export default function MenuPdfPage() {
 }
                 </div>
 
-                {/* Separador a cuadros rojos y blancos */}
-                <div className="w-full h-3 bg-[repeating-linear-gradient(45deg,#991B24,#991B24_10px,#FAF6EF_10px,#FAF6EF_20px)] rounded-full" />
+                {/* Cenefa a Cuadros Bistró Auténtica del PDF (Página 4) */}
+                <div className="w-full py-2 flex items-center justify-center overflow-hidden">
+                  <img
+                    src="/img/brand/checkered-bistro-ribbon-official.png"
+                    alt="Cenefa a Cuadros Dencker"
+                    className="w-full h-5 sm:h-6 object-contain select-none"
+                  />
+                </div>
 
                 {/* MASITAS SALADAS */}
                 <div className="space-y-3">
@@ -1669,7 +1679,7 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/mascot-bread.png"
+                    src="/img/brand/mascot-sandwich-official.png"
                     alt="Pan Tostada Mascota Dencker"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -1919,7 +1929,7 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/mascot-pizza.png"
+                    src="/img/brand/mascot-pizza-official.png"
                     alt="Pizza Mascota Dencker"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />

@@ -412,8 +412,16 @@ export default function MesaPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
       {/* ── Header Flotante Apple Glass ── */}
-      <header className="sticky top-0 z-30 bg-[#281810]/95 backdrop-blur-2xl border-b border-white/10 text-white px-3 sm:px-4 py-2.5 sm:py-3 shadow-xl pt-safe">
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
+      <header className="sticky top-0 z-30 bg-[#281810]/95 backdrop-blur-2xl border-b border-white/10 text-white shadow-xl pt-safe">
+        {/* Toldo Mini Auténtico Dencker */}
+        <div className="w-full shrink-0 overflow-hidden select-none">
+          <img
+            src="/img/brand/awning-marquee-official.png"
+            alt="Toldo Dencker"
+            className="w-full h-2.5 sm:h-3.5 object-cover"
+          />
+        </div>
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img

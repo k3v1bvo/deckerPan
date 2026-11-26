@@ -253,6 +253,15 @@ export default function CartDrawer() {
             transition={springTransition}
             className="relative w-full max-w-md bg-[#FAF7F2] text-[#1E130C] h-full shadow-[0_0_60px_rgba(0,0,0,0.5)] flex flex-col z-10 border-l border-[#3D271D]/15 overflow-hidden font-sans"
           >
+            {/* Toldo Mini Auténtico Dencker */}
+            <div className="w-full shrink-0 overflow-hidden select-none">
+              <img
+                src="/img/brand/awning-marquee-official.png"
+                alt="Toldo Dencker"
+                className="w-full h-3.5 sm:h-4 object-cover"
+              />
+            </div>
+
             {/* Header Sensorial */}
             <header className="p-5 bg-gradient-to-b from-[#18100A] to-[#22160F] text-white flex items-center justify-between border-b border-[#3D271D]/40">
               <div className="flex items-center gap-3">
