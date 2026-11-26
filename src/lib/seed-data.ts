@@ -52,29 +52,36 @@ export const SEED_ZONAS: Zona[] = [
 ];
 
 export const SEED_MESAS: Mesa[] = [
-  // ── PLANTA BAJA: PATIO EXTERIOR (Afuera a la derecha: 3 mesas de 4 y algunas de 2; a la izquierda: 2 mesas) ──
-  { id: 'm01', numero: 1,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 72, pos_y: 78, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm02', numero: 2,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 88, pos_y: 78, ancho: 80, alto: 80, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
-  { id: 'm03', numero: 3,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 72, pos_y: 91, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm04', numero: 4,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 88, pos_y: 91, ancho: 70, alto: 70, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
-  { id: 'm05', numero: 5,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 12, pos_y: 82, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm06', numero: 6,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 28, pos_y: 82, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  // ── PLANTA BAJA: PATIO EXTERIOR IZQUIERDO (Área Curva con Sombrillas - 5 mesas según plano y puntos verdes) ──
+  { id: 'm01', numero: 1,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 16, pos_y: 86, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm02', numero: 2,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 12, pos_y: 72, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm03', numero: 3,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 25, pos_y: 92, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm04', numero: 4,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 27, pos_y: 78, ancho: 80, alto: 80, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
+  { id: 'm05', numero: 5,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 35, pos_y: 87, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
 
-  // ── PLANTA BAJA: SALÓN INTERIOR (Entrando a la izquierda, 4 a 6 mesas de diferentes tamaños) ──
-  { id: 'm07', numero: 7,  piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 14, pos_y: 20, ancho: 80, alto: 80, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
-  { id: 'm08', numero: 8,  piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 34, pos_y: 20, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm09', numero: 9,  piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'rectangular', capacidad: 6, sillas: 6, pos_x: 24, pos_y: 42, ancho: 110, alto: 70, estado: 'reservada', activa: true, created_at: new Date().toISOString() },
-  { id: 'm10', numero: 10, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 12, pos_y: 60, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm11', numero: 11, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 32, pos_y: 60, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm12', numero: 12, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 48, pos_y: 35, ancho: 80, alto: 80, estado: 'limpieza',  activa: true, created_at: new Date().toISOString() },
+  // ── PLANTA BAJA: PATIO EXTERIOR DERECHO (Área Sombrillas junto a Entrada - 4 mesas según plano y puntos verdes) ──
+  { id: 'm06', numero: 6,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 58, pos_y: 78, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm07', numero: 7,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 74, pos_y: 78, ancho: 80, alto: 80, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
+  { id: 'm08', numero: 8,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 58, pos_y: 91, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm09', numero: 9,  piso: 'planta_baja', subzona: 'patio_exterior', zona_id: 'z3', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 74, pos_y: 91, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
 
-  // ── TERRAZA (PISO 2): VISTA AL AIRE LIBRE & BALCÓN ──
-  { id: 'm13', numero: 13, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z2', tipo: 'redonda',     capacidad: 4, sillas: 4, pos_x: 22, pos_y: 22, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm14', numero: 14, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z2', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 52, pos_y: 22, ancho: 80, alto: 80, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
-  { id: 'm15', numero: 15, piso: 'terraza',     subzona: 'terraza_balcon',  zona_id: 'z6', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 20, pos_y: 55, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm16', numero: 16, piso: 'terraza',     subzona: 'terraza_balcon',  zona_id: 'z6', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 50, pos_y: 55, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm17', numero: 17, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z2', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 25, pos_y: 82, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
-  { id: 'm18', numero: 18, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z5', tipo: 'rectangular', capacidad: 6, sillas: 6, pos_x: 60, pos_y: 82, ancho: 120, alto: 75, estado: 'reservada', activa: true, created_at: new Date().toISOString() }
+  // ── PLANTA BAJA: SALÓN INTERIOR CLIMATIZADO (Exacto al Plano de Evacuación: 4 mesas cuadradas + 1 ventanal) ──
+  { id: 'm10', numero: 10, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 16, pos_y: 35, ancho: 80, alto: 80, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
+  { id: 'm11', numero: 11, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 28, pos_y: 35, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm12', numero: 12, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 16, pos_y: 53, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm13', numero: 13, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 28, pos_y: 53, ancho: 80, alto: 80, estado: 'limpieza',  activa: true, created_at: new Date().toISOString() },
+  { id: 'm14', numero: 14, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'rectangular', capacidad: 6, sillas: 6, pos_x: 22, pos_y: 18, ancho: 110, alto: 70, estado: 'reservada', activa: true, created_at: new Date().toISOString() },
+
+  // ── PLANTA BAJA: HALL CENTRAL & PASO A ESCALERA (Mesa frente a extintor según plano oficial) ──
+  { id: 'm15', numero: 15, piso: 'planta_baja', subzona: 'salon_interior', zona_id: 'z1', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 43, pos_y: 42, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+
+  // ── TERRAZA (PISO 2): VISTA AL AIRE LIBRE & BALCÓN SALAMANCA (6 mesas según croquis) ──
+  { id: 'm16', numero: 16, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z2', tipo: 'redonda',     capacidad: 4, sillas: 4, pos_x: 22, pos_y: 24, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm17', numero: 17, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z2', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 52, pos_y: 24, ancho: 80, alto: 80, estado: 'ocupada',   activa: true, created_at: new Date().toISOString() },
+  { id: 'm18', numero: 18, piso: 'terraza',     subzona: 'terraza_balcon',  zona_id: 'z6', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 22, pos_y: 55, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm19', numero: 19, piso: 'terraza',     subzona: 'terraza_balcon',  zona_id: 'z6', tipo: 'redonda',     capacidad: 2, sillas: 2, pos_x: 52, pos_y: 55, ancho: 70, alto: 70, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm20', numero: 20, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z2', tipo: 'cuadrada',    capacidad: 4, sillas: 4, pos_x: 25, pos_y: 82, ancho: 80, alto: 80, estado: 'libre',     activa: true, created_at: new Date().toISOString() },
+  { id: 'm21', numero: 21, piso: 'terraza',     subzona: 'terraza_abierta', zona_id: 'z5', tipo: 'rectangular', capacidad: 6, sillas: 6, pos_x: 62, pos_y: 82, ancho: 120, alto: 75, estado: 'reservada', activa: true, created_at: new Date().toISOString() }
 ];
 
 export const SEED_CATEGORIAS: Categoria[] = [
