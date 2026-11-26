@@ -10,6 +10,9 @@ import {
   Move,
   Users,
   Check,
+  CheckCircle2,
+  AlertTriangle,
+  Printer,
   X,
   Receipt,
   Coffee,
@@ -65,6 +68,9 @@ export default function FloorPlanMap({
   const deleteMesa = useSystemStore((state) => state.deleteMesa);
   const pedidos = useSystemStore((state) => state.pedidos);
   const alertas = useSystemStore((state) => state.alertas);
+  const marcarAlertaAtendida = useSystemStore((state) => state.marcarAlertaAtendida);
+  const updatePedidoEstado = useSystemStore((state) => state.updatePedidoEstado);
+  const updateItemEstado = useSystemStore((state) => state.updateItemEstado);
   const { setMesa: setCartMesa } = useCartStore();
 
   const [pisoActivo, setPisoActivo] = useState<PisoCafeteria>("planta_baja");
@@ -74,6 +80,11 @@ export default function FloorPlanMap({
   const [modalNuevaMesa, setModalNuevaMesa] = useState(false);
   const [modalDetalleMesa, setModalDetalleMesa] = useState<Mesa | null>(null);
   const [subTabDetalle, setSubTabDetalle] = useState<"general" | "asientos" | "cuenta_separada">("general");
+
+  // Filtro operacional en tiempo real (Ribbon superior)
+  const [filtroEstadoLive, setFiltroEstadoLive] = useState<"todas" | "libres" | "ocupadas" | "cuenta" | "llamado" | "limpieza">("todas");
+  const [mesaSeleccionadaInterna, setMesaSeleccionadaInterna] = useState<string | null>(mesaSeleccionadaId || null);
+  const [asientoInspectorSeleccionado, setAsientoInspectorSeleccionado] = useState<number | null>(null);
 
   // Visor y Superposición de Plano de Evacuación Oficial y Croquis
   const [modalPlanoEvacuacion, setModalPlanoEvacuacion] = useState(false);
@@ -198,8 +209,98 @@ export default function FloorPlanMap({
     };
   }, [storeMesas, pedidos]);
 
-  // Cálculo de intensidad térmica para cada mesa
-  const getMesaHeatData = (mesa: Mesa, ped?: Pedido) => {
+  // Métricas para el Ribbon de Filtros Operativos en Vivo
+  const metricasFiltros = useMemo(() => {
+    let libres = 0;
+    let ocupadas = 0;
+    let pidenCuenta = 0;
+    let llamadosMozo = 0;
+    let limpieza = 0;
+
+    mesasPiso.forEach((m) => {
+      const ped = pedidos.find(
+        (o) => o.mesa_numero === m.numero && o.estado !== "pagado" && o.estado !== "cancelado"
+      );
+      const al = alertas.find((a) => a.mesa_numero === m.numero && !a.atendida);
+
+      if (al?.tipo === "cuenta_pedida") pidenCuenta++;
+      if (al?.tipo === "llamado") llamadosMozo++;
+      if (m.estado === "limpieza") limpieza++;
+
+      if (m.estado === "ocupada" || !!ped) {
+        ocupadas++;
+      } else if (m.estado === "libre" && !ped) {
+        libres++;
+      }
+    });
+
+    return { libres, ocupadas, pidenCuenta, llamadosMozo, limpieza };
+  }, [mesasPiso, pedidos, alertas]);
+
+  // Mesas de alerta prioritaria para selección instantánea
+  const primeraMesaCuenta = useMemo(() => {
+    const al = alertas.find((a) => a.tipo === "cuenta_pedida" && !a.atendida);
+    if (!al) return null;
+    return storeMesas.find((m) => m.numero === al.mesa_numero) || null;
+  }, [alertas, storeMesas]);
+
+  const primeraMesaLlamado = useMemo(() => {
+    const al = alertas.find((a) => a.tipo === "llamado" && !a.atendida);
+    if (!al) return null;
+    return storeMesas.find((m) => m.numero === al.mesa_numero) || null;
+  }, [alertas, storeMesas]);
+
+  // Mesa activa para el Inspector HUD Dockeado en Vivo ("Qué pidió qué mesa en qué silla")
+  const mesaActivaInspector = useMemo(() => {
+    if (mesaSeleccionadaInterna) {
+      const f = storeMesas.find((m) => m.id === mesaSeleccionadaInterna);
+      if (f) return f;
+    }
+    // Si hay una mesa que pidió la cuenta, priorizarla inmediatamente para atención
+    if (primeraMesaCuenta) return primeraMesaCuenta;
+    if (primeraMesaLlamado) return primeraMesaLlamado;
+
+    // Si hay mesa ocupada con pedido en curso, enfocarla
+    const conPed = mesasPiso.find((m) =>
+      pedidos.some((p) => p.mesa_numero === m.numero && p.estado !== "pagado" && p.estado !== "cancelado")
+    );
+    if (conPed) return conPed;
+
+    return mesasPiso[0] || storeMesas[0];
+  }, [mesaSeleccionadaInterna, storeMesas, primeraMesaCuenta, primeraMesaLlamado, mesasPiso, pedidos]);
+
+  // Cálculo de intensidad térmica para cada mesa con soporte de alertas urgentes
+  const getMesaHeatData = (mesa: Mesa, ped?: Pedido, alerta?: any) => {
+    // Escalamiento por alerta de atención prioritaria (Cuenta pedida o llamado)
+    if (alerta && !alerta.atendida) {
+      let minEspera = 2;
+      if (alerta.created_at) {
+        minEspera = Math.max(1, Math.round((Date.now() - new Date(alerta.created_at).getTime()) / 60000));
+      }
+
+      if (alerta.tipo === "cuenta_pedida") {
+        return {
+          intensity: 1,
+          badge: `💳 ESPERA CUENTA (${minEspera}m)`,
+          badgeBg: "bg-red-600 text-white shadow-lg shadow-red-600/50 animate-pulse font-black",
+          glowColor: "rgba(220, 38, 38, 0.85)",
+          tableBg: "bg-red-600/30 border-red-500 ring-4 ring-red-500/80",
+          esAlerta: true,
+          alertaTexto: `Pide cuenta hace ${minEspera}m`,
+        };
+      } else {
+        return {
+          intensity: 0.95,
+          badge: `🔔 MOZO (${minEspera}m)`,
+          badgeBg: "bg-amber-500 text-stone-950 shadow-lg shadow-amber-500/50 animate-pulse font-black",
+          glowColor: "rgba(245, 158, 11, 0.80)",
+          tableBg: "bg-amber-500/30 border-amber-500 ring-4 ring-amber-500/80",
+          esAlerta: true,
+          alertaTexto: `Solicitó mozo hace ${minEspera}m`,
+        };
+      }
+    }
+
     const estaOcupada = mesa.estado === "ocupada" || !!ped;
 
     if (!estaOcupada) {
@@ -209,6 +310,7 @@ export default function FloorPlanMap({
         badgeBg: "bg-emerald-600/80 text-white",
         glowColor: "rgba(16, 185, 129, 0.18)",
         tableBg: "bg-emerald-500/10 border-emerald-500/40",
+        esAlerta: false,
       };
     }
 
@@ -220,10 +322,11 @@ export default function FloorPlanMap({
       if (ratio >= 1) {
         return {
           intensity: 1,
-          badge: `🔥 100% LLENO`,
+          badge: `🔥 100% (${pax}/${mesa.capacidad})`,
           badgeBg: "bg-red-600 text-white shadow-md shadow-red-600/40 animate-pulse font-black",
           glowColor: "rgba(239, 68, 68, 0.70)",
           tableBg: "bg-red-600/25 border-red-500",
+          esAlerta: false,
         };
       } else if (ratio >= 0.7) {
         return {
@@ -232,6 +335,7 @@ export default function FloorPlanMap({
           badgeBg: "bg-orange-500 text-white font-bold",
           glowColor: "rgba(249, 115, 22, 0.55)",
           tableBg: "bg-orange-500/20 border-orange-400",
+          esAlerta: false,
         };
       } else if (ratio >= 0.5) {
         return {
@@ -240,6 +344,7 @@ export default function FloorPlanMap({
           badgeBg: "bg-amber-500 text-stone-950 font-bold",
           glowColor: "rgba(245, 158, 11, 0.45)",
           tableBg: "bg-amber-500/20 border-amber-400",
+          esAlerta: false,
         };
       } else {
         return {
@@ -248,6 +353,7 @@ export default function FloorPlanMap({
           badgeBg: "bg-yellow-400 text-stone-950",
           glowColor: "rgba(234, 179, 8, 0.35)",
           tableBg: "bg-yellow-400/15 border-yellow-300",
+          esAlerta: false,
         };
       }
     } else if (metricaCalor === "consumo") {
@@ -259,6 +365,7 @@ export default function FloorPlanMap({
           badgeBg: "bg-red-600 text-white shadow-md shadow-red-600/40 font-black",
           glowColor: "rgba(239, 68, 68, 0.70)",
           tableBg: "bg-red-600/25 border-red-500",
+          esAlerta: false,
         };
       } else if (total >= 60) {
         return {
@@ -267,6 +374,7 @@ export default function FloorPlanMap({
           badgeBg: "bg-orange-500 text-white font-bold",
           glowColor: "rgba(249, 115, 22, 0.55)",
           tableBg: "bg-orange-500/20 border-orange-400",
+          esAlerta: false,
         };
       } else {
         return {
@@ -275,6 +383,7 @@ export default function FloorPlanMap({
           badgeBg: "bg-amber-500 text-stone-950 font-bold",
           glowColor: "rgba(245, 158, 11, 0.45)",
           tableBg: "bg-amber-500/20 border-amber-400",
+          esAlerta: false,
         };
       }
     } else {
@@ -284,21 +393,23 @@ export default function FloorPlanMap({
         minutos = Math.max(5, Math.round((Date.now() - new Date(ped.created_at).getTime()) / 60000));
       }
 
-      if (minutos >= 50) {
+      if (minutos >= 45) {
         return {
           intensity: 1,
           badge: `🔥 ${minutos}m (Rotar)`,
           badgeBg: "bg-red-600 text-white shadow-md shadow-red-600/40 font-black animate-pulse",
           glowColor: "rgba(239, 68, 68, 0.70)",
           tableBg: "bg-red-600/25 border-red-500",
+          esAlerta: false,
         };
-      } else if (minutos >= 30) {
+      } else if (minutos >= 25) {
         return {
           intensity: 0.65,
           badge: `⏱️ ${minutos} min`,
           badgeBg: "bg-orange-500 text-white font-bold",
           glowColor: "rgba(249, 115, 22, 0.55)",
           tableBg: "bg-orange-500/20 border-orange-400",
+          esAlerta: false,
         };
       } else {
         return {
@@ -307,6 +418,7 @@ export default function FloorPlanMap({
           badgeBg: "bg-amber-400 text-stone-950 font-medium",
           glowColor: "rgba(245, 158, 11, 0.35)",
           tableBg: "bg-amber-400/15 border-amber-300",
+          esAlerta: false,
         };
       }
     }
@@ -412,30 +524,72 @@ export default function FloorPlanMap({
     }));
   };
 
-  // Renderizar sillas físicas alrededor de la mesa
-  const renderChairs = (capacidad: number, tipo: TipoMesa, mesaId: string) => {
+  // Renderizar sillas físicas alrededor de la mesa con estado de ocupación e interacción en vivo
+  const renderChairs = (
+    mesa: Mesa,
+    pedido?: Pedido,
+    onChairClick?: (seatNum: number) => void
+  ) => {
     const chairs = [];
-    const count = Math.max(1, capacidad);
-    const radius = tipo === "redonda" ? 44 : 46;
+    const count = Math.max(1, mesa.capacidad);
+    const radius = mesa.tipo === "redonda" ? 44 : 46;
 
     for (let i = 0; i < count; i++) {
+      const seatNum = i + 1;
       const angle = (i * 2 * Math.PI) / count - Math.PI / 2;
       const x = Math.round(50 + radius * Math.cos(angle));
       const y = Math.round(50 + radius * Math.sin(angle));
 
+      const itemsSilla = pedido?.items?.filter((it) => it.asiento_numero === seatNum) || [];
+      const subtotalSilla = itemsSilla.reduce((acc, it) => acc + it.subtotal, 0);
+      const nombreComensal = mesa.asientos_nombres?.[seatNum] || itemsSilla[0]?.comensal_nombre;
+      const isChairOccupied = itemsSilla.length > 0 || !!nombreComensal || (mesa.estado === "ocupada" && seatNum <= 2);
+      const isChairSelected = asientoInspectorSeleccionado === seatNum && mesaActivaInspector?.id === mesa.id;
+
       chairs.push(
         <div
-          key={i}
+          key={seatNum}
+          onClick={(e) => {
+            e.stopPropagation();
+            soundManager.playTactileClick();
+            setMesaSeleccionadaInterna(mesa.id);
+            setAsientoInspectorSeleccionado(seatNum);
+            if (onChairClick) onChairClick(seatNum);
+          }}
           style={{
             left: `${x}%`,
             top: `${y}%`,
             transform: "translate(-50%, -50%)",
           }}
-          className="absolute w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#3D2619] border-2 border-[#D49B54] shadow-xs flex items-center justify-center pointer-events-none z-0"
+          className={`absolute rounded-full flex items-center justify-center transition-all duration-300 z-10 group/chair ${
+            isChairSelected
+              ? "w-6 h-6 sm:w-7 sm:h-7 bg-[#991B24] border-2 border-white text-white shadow-lg ring-4 ring-[#991B24]/50 scale-125 z-30"
+              : isChairOccupied
+              ? "w-5 h-5 sm:w-6 sm:h-6 bg-[#D49B54] border-2 border-white dark:border-[#1E130C] text-[#1E130C] shadow-md hover:scale-125 cursor-pointer ring-1 ring-amber-600/50"
+              : "w-4 h-4 sm:w-5 sm:h-5 bg-stone-200/80 dark:bg-stone-800 border border-stone-400/50 text-stone-500 shadow-2xs hover:scale-110 cursor-pointer"
+          }`}
+          title={`Silla ${seatNum}: ${nombreComensal || (isChairOccupied ? "Ocupado" : "Libre")}${
+            subtotalSilla > 0 ? ` • Bs ${subtotalSilla.toFixed(2)}` : ""
+          }`}
         >
-          <span className="text-[7px] text-[#FAF7F2] font-mono font-bold leading-none">
-            {i + 1}
+          <span className="text-[7.5px] font-mono font-black leading-none">
+            {seatNum}
           </span>
+
+          {/* Micro Tooltip flotante al pasar mouse por la silla */}
+          <div className="absolute bottom-full mb-1 hidden group-hover/chair:flex flex-col items-center pointer-events-none z-40 whitespace-nowrap">
+            <div className="px-2 py-1 rounded-lg bg-stone-900 text-white text-[9px] shadow-xl border border-white/20 flex flex-col items-center">
+              <span className="font-bold text-amber-300">
+                Silla {seatNum}: {nombreComensal || (isChairOccupied ? "Comensal" : "Libre")}
+              </span>
+              {itemsSilla.length > 0 && (
+                <span className="text-[8px] text-stone-300 font-mono">
+                  {itemsSilla.length} pedido{itemsSilla.length > 1 ? "s" : ""} &bull; Bs {subtotalSilla.toFixed(0)}
+                </span>
+              )}
+            </div>
+            <div className="w-1.5 h-1.5 rotate-45 bg-stone-900 -mt-0.5 border-r border-b border-white/20" />
+          </div>
         </div>
       );
     }
@@ -449,10 +603,11 @@ export default function FloorPlanMap({
       return;
     }
     soundManager.playTactileClick();
+    setMesaSeleccionadaInterna(mesa.id);
+    setAsientoInspectorSeleccionado(null);
     if (onSelectMesa) {
       onSelectMesa(mesa);
     }
-    setModalDetalleMesa(mesa);
     setCartMesa(mesa.numero);
   };
 
@@ -841,6 +996,159 @@ export default function FloorPlanMap({
         </div>
       </div>
 
+      {/* ── BARRA DE FILTROS OPERATIVOS EN VIVO (RIBBON EN TIEMPO REAL) ── */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 p-3 rounded-2xl bg-white dark:bg-stone-900 border border-[#EAE2D5] dark:border-stone-800 shadow-xs">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="text-[11px] font-black text-stone-500 dark:text-stone-400 uppercase tracking-wider px-1.5 flex items-center gap-1">
+            <Activity size={13} className="text-[#991B24]" />
+            <span>Filtrar Plano:</span>
+          </span>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setFiltroEstadoLive("todas");
+            }}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
+              filtroEstadoLive === "todas"
+                ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+            }`}
+          >
+            <span>Todas</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px] font-mono">
+              {mesasPiso.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setFiltroEstadoLive("libres");
+            }}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
+              filtroEstadoLive === "libres"
+                ? "bg-emerald-600 text-white shadow-xs"
+                : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>🟢 Libres</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-black/10 dark:bg-white/20 text-[10px] font-mono font-bold">
+              {metricasFiltros.libres}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setFiltroEstadoLive("ocupadas");
+            }}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
+              filtroEstadoLive === "ocupadas"
+                ? "bg-amber-600 text-white shadow-xs"
+                : "bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 hover:bg-amber-100"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-500" />
+            <span>🟡 En Consumo</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-black/10 dark:bg-white/20 text-[10px] font-mono font-bold">
+              {metricasFiltros.ocupadas}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setFiltroEstadoLive("cuenta");
+              if (primeraMesaCuenta) {
+                setMesaSeleccionadaInterna(primeraMesaCuenta.id);
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
+              filtroEstadoLive === "cuenta"
+                ? "bg-red-600 text-white shadow-md animate-pulse font-black"
+                : metricasFiltros.pidenCuenta > 0
+                ? "bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/40 hover:bg-red-500/25 animate-pulse font-bold"
+                : "bg-stone-100 dark:bg-stone-800 text-stone-400 opacity-60"
+            }`}
+          >
+            <CreditCard size={13} />
+            <span>💳 Pidiendo Cuenta</span>
+            {metricasFiltros.pidenCuenta > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[10px] font-black animate-bounce">
+                {metricasFiltros.pidenCuenta}
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setFiltroEstadoLive("llamado");
+              if (primeraMesaLlamado) {
+                setMesaSeleccionadaInterna(primeraMesaLlamado.id);
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
+              filtroEstadoLive === "llamado"
+                ? "bg-amber-500 text-stone-950 shadow-md animate-pulse font-black"
+                : metricasFiltros.llamadosMozo > 0
+                ? "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/40 hover:bg-amber-500/25 animate-pulse font-bold"
+                : "bg-stone-100 dark:bg-stone-800 text-stone-400 opacity-60"
+            }`}
+          >
+            <Bell size={13} />
+            <span>🔔 Llamados Mozo</span>
+            {metricasFiltros.llamadosMozo > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-stone-950 text-[10px] font-black">
+                {metricasFiltros.llamadosMozo}
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playTactileClick();
+              setFiltroEstadoLive("limpieza");
+            }}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
+              filtroEstadoLive === "limpieza"
+                ? "bg-blue-600 text-white shadow-xs"
+                : "bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 hover:bg-blue-100"
+            }`}
+          >
+            <Sparkles size={13} />
+            <span>🧹 Limpieza</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-black/10 dark:bg-white/20 text-[10px] font-mono">
+              {metricasFiltros.limpieza}
+            </span>
+          </button>
+        </div>
+
+        {/* Indicador de mesa actualmente enfocada en el Inspector */}
+        <div className="flex items-center gap-2 text-xs font-medium text-stone-500">
+          <span className="hidden sm:inline">Inspeccionando:</span>
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("hud-inspector-mesa");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="font-serif font-black text-stone-900 dark:text-stone-100 px-2.5 py-1 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs flex items-center gap-1 hover:bg-amber-500/25 cursor-pointer"
+          >
+            <span>{mesaActivaInspector ? (mesaActivaInspector.label || `Mesa ${mesaActivaInspector.numero}`) : "Ninguna"}</span>
+            <ChevronDown size={12} className="text-amber-700 dark:text-amber-300" />
+          </button>
+        </div>
+      </div>
+
       {/* ── LIENZO ARQUITECTÓNICO DEL PLANO (CANVAS 2.5D INTERACTIVO) ── */}
       <div
         className="w-full relative min-h-[620px] sm:min-h-[720px] rounded-3xl overflow-hidden border-2 border-[#1E130C]/20 dark:border-stone-800 bg-[#FAF7F2] dark:bg-[#120D0A] shadow-inner select-none p-2 sm:p-4 flex items-center justify-center"
@@ -1204,10 +1512,27 @@ export default function FloorPlanMap({
           {/* ── RENDERIZADO ESPACIAL DE CADA MESA ── */}
           {mesasPiso.map((mesa) => {
             const pedido = getPedidoMesa(mesa.numero);
-            const tieneAlerta = alertas.some((a) => a.mesa_numero === mesa.numero);
-            const isSelected = mesaSeleccionadaId === mesa.id;
+            const alertaMesa = alertas.find((a) => a.mesa_numero === mesa.numero && !a.atendida);
+            const tieneAlerta = !!alertaMesa;
+            const isSelected = (mesaSeleccionadaId === mesa.id) || (mesaActivaInspector?.id === mesa.id);
             const isDragging = mesaArrastrando === mesa.id;
-            const heat = getMesaHeatData(mesa, pedido);
+            const heat = getMesaHeatData(mesa, pedido, alertaMesa);
+
+            // Filtro dinámico en vivo
+            const matchesFilter =
+              filtroEstadoLive === "todas"
+                ? true
+                : filtroEstadoLive === "libres"
+                ? mesa.estado === "libre" && !pedido
+                : filtroEstadoLive === "ocupadas"
+                ? mesa.estado === "ocupada" || !!pedido
+                : filtroEstadoLive === "cuenta"
+                ? alertaMesa?.tipo === "cuenta_pedida"
+                : filtroEstadoLive === "llamado"
+                ? alertaMesa?.tipo === "llamado"
+                : filtroEstadoLive === "limpieza"
+                ? mesa.estado === "limpieza"
+                : true;
 
             const displayLabel = mesa.label || (
               mesa.piso === "terraza"
@@ -1243,6 +1568,12 @@ export default function FloorPlanMap({
             const isRound = mesa.tipo === "redonda";
             const isRect = mesa.tipo === "rectangular";
 
+            // Minutos de espera de alerta
+            let minutosAlerta = 2;
+            if (alertaMesa?.created_at) {
+              minutosAlerta = Math.max(1, Math.round((Date.now() - new Date(alertaMesa.created_at).getTime()) / 60000));
+            }
+
             return (
               <div
                 key={mesa.id}
@@ -1253,10 +1584,25 @@ export default function FloorPlanMap({
                   top: `${mesa.pos_y}%`,
                   transform: "translate(-50%, -50%)",
                 }}
-                className={`absolute cursor-pointer transition-transform group select-none z-10 ${
+                className={`absolute cursor-pointer transition-all duration-300 group select-none z-10 ${
                   isDragging ? "scale-110 z-30 cursor-grabbing" : "hover:scale-105 active:scale-95"
-                }`}
+                } ${!matchesFilter ? "opacity-30 filter grayscale-[50%] scale-90" : "opacity-100"}`}
               >
+                {/* Banner Flotante de Atención Prioritaria encima de la mesa */}
+                {alertaMesa?.tipo === "cuenta_pedida" && (
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[7.5px] shadow-lg animate-bounce flex items-center gap-1 border border-white whitespace-nowrap z-30">
+                    <CreditCard size={9} />
+                    <span>CUENTA ({minutosAlerta}m)</span>
+                  </div>
+                )}
+
+                {alertaMesa?.tipo === "llamado" && (
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 font-black text-[7.5px] shadow-lg animate-bounce flex items-center gap-1 border border-white whitespace-nowrap z-30">
+                    <Bell size={9} />
+                    <span>MOZO ({minutosAlerta}m)</span>
+                  </div>
+                )}
+
                 {/* Halo Térmico / Heatmap Bloom (Cámara Térmica Infrarroja) */}
                 {modoCalor && (
                   <div
@@ -1267,8 +1613,8 @@ export default function FloorPlanMap({
                   />
                 )}
 
-                {/* Sillas alrededor */}
-                {renderChairs(mesa.capacidad, mesa.tipo, mesa.id)}
+                {/* Sillas físicas con estado de ocupación y pedidos individuales */}
+                {renderChairs(mesa, pedido)}
 
                 {/* Superficie de la mesa */}
                 <div
@@ -1303,12 +1649,12 @@ export default function FloorPlanMap({
                   {/* Badge Dinámico: Modo Calor vs Modo Operativo */}
                   {modoCalor ? (
                     <span
-                      className={`mt-0.5 text-[7.5px] font-bold px-1 py-0.2 rounded-full uppercase tracking-wider ${heat.badgeBg}`}
+                      className={`mt-0.5 text-[7px] font-bold px-1 py-0.2 rounded-full uppercase tracking-wider ${heat.badgeBg}`}
                     >
                       {heat.badge}
                     </span>
                   ) : pedido ? (
-                    <span className="mt-0.5 text-[8px] font-mono font-black px-1 py-0.2 rounded-md bg-[#1E130C] text-amber-300 shadow-xs">
+                    <span className="mt-0.5 text-[8px] font-mono font-black px-1.5 py-0.2 rounded-md bg-[#1E130C] text-amber-300 shadow-xs">
                       Bs {pedido.total.toFixed(0)}
                     </span>
                   ) : (
@@ -1370,6 +1716,418 @@ export default function FloorPlanMap({
           </div>
         )}
       </div>
+
+      {/* ── PANEL DE INSPECCIÓN EN VIVO: MESA & SILLAS ("QUÉ PIDIÓ CADA SILLA") ── */}
+      {mesaActivaInspector && (
+        <div
+          id="hud-inspector-mesa"
+          className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-stone-900 border-2 border-[#1E130C]/15 dark:border-stone-800 shadow-xl space-y-4 transition-all"
+        >
+          {/* Header del Inspector */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 dark:border-stone-800 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-[#1E130C] text-amber-300 flex flex-col items-center justify-center font-serif font-black shadow-md border border-amber-500/30">
+                <span className="text-base leading-none">
+                  {mesaActivaInspector.label || (
+                    mesaActivaInspector.piso === "terraza"
+                      ? `T${mesaActivaInspector.numero}`
+                      : mesaActivaInspector.numero <= 9
+                      ? `P${mesaActivaInspector.numero}`
+                      : `M${mesaActivaInspector.numero - 9}`
+                  )}
+                </span>
+                <span className="text-[7.5px] font-mono text-stone-400 mt-0.5">
+                  M-{mesaActivaInspector.numero}
+                </span>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                    {mesaActivaInspector.label || `Mesa ${mesaActivaInspector.numero}`}
+                  </h3>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 font-bold capitalize">
+                    {mesaActivaInspector.subzona === "patio_exterior"
+                      ? "Patio Exterior (Alameda)"
+                      : mesaActivaInspector.subzona === "salon_interior"
+                      ? "Salón Interior"
+                      : "Terraza Mirador (Piso 2)"}
+                  </span>
+                  <span className="text-xs text-stone-400 font-mono">
+                    ({mesaActivaInspector.tipo})
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 text-xs text-stone-500 mt-0.5">
+                  <span className="flex items-center gap-1 font-medium">
+                    <Users size={12} className="text-amber-600" />
+                    <strong>{mesaActivaInspector.capacidad}</strong> sillas totales
+                  </span>
+                  <span>&bull;</span>
+                  <span className="flex items-center gap-1 font-medium">
+                    <Clock size={12} className="text-stone-400" />
+                    Permanencia: <strong>
+                      {getPedidoMesa(mesaActivaInspector.numero)?.created_at
+                        ? `${Math.max(5, Math.round((Date.now() - new Date(getPedidoMesa(mesaActivaInspector.numero)!.created_at).getTime()) / 60000))} min`
+                        : "Sin consumo activo"}
+                    </strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Selector Rápido de Estado de la Mesa */}
+            <div className="flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700 text-xs font-bold">
+              {(["libre", "ocupada", "reservada", "limpieza"] as EstadoMesa[]).map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    updateMesa(mesaActivaInspector.id, { estado: st });
+                  }}
+                  className={`px-3 py-1.5 rounded-xl transition capitalize cursor-pointer text-xs ${
+                    mesaActivaInspector.estado === st
+                      ? st === "libre"
+                        ? "bg-emerald-600 text-white shadow-xs"
+                        : st === "ocupada"
+                        ? "bg-amber-600 text-white shadow-xs"
+                        : st === "reservada"
+                        ? "bg-purple-600 text-white shadow-xs"
+                        : "bg-blue-600 text-white shadow-xs"
+                      : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                  }`}
+                >
+                  {st === "libre" && "🟢 Libre"}
+                  {st === "ocupada" && "🟡 En Consumo"}
+                  {st === "reservada" && "🟣 Reserva"}
+                  {st === "limpieza" && "🧹 Limpieza"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* BANNER DE ALERTA PRIORITARIA (CUENTA PEDIDA O MOZO) */}
+          {(() => {
+            const al = alertas.find((a) => a.mesa_numero === mesaActivaInspector.numero && !a.atendida);
+            if (!al) return null;
+            const minEspera = al.created_at
+              ? Math.max(1, Math.round((Date.now() - new Date(al.created_at).getTime()) / 60000))
+              : 2;
+
+            if (al.tipo === "cuenta_pedida") {
+              const ped = getPedidoMesa(mesaActivaInspector.numero);
+              return (
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-red-600/15 via-amber-600/15 to-red-600/15 border-2 border-red-500/50 shadow-md flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-md animate-pulse">
+                      <CreditCard size={20} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-serif font-black text-sm text-red-900 dark:text-red-200">
+                          ¡CLIENTES ESPERANDO LA CUENTA HACE {minEspera} MINUTOS!
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-600 text-white font-black animate-pulse">
+                          PRIORIDAD ALTA
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-600 dark:text-stone-300">
+                        Total acumulado de la comanda: <strong className="text-stone-900 dark:text-white font-mono text-sm">Bs {ped?.total.toFixed(2) || "0.00"}</strong>. Atiende al cliente para liberar la mesa.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`/pago/${ped?.id || "PED-1020"}?modo=mesa`}
+                      onClick={() => {
+                        soundManager.playVintageRegisterDing();
+                        marcarAlertaAtendida(al.id);
+                      }}
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-md flex items-center gap-1.5 transition active:scale-95"
+                    >
+                      <CreditCard size={14} />
+                      <span>Cobrar en Caja / QR</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playSuccessTone();
+                        marcarAlertaAtendida(al.id);
+                      }}
+                      className="px-3 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold hover:bg-stone-300 cursor-pointer"
+                    >
+                      Marcar Atendida
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
+            if (al.tipo === "llamado") {
+              return (
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/15 to-amber-500/15 border-2 border-amber-500/50 shadow-md flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center shadow-md animate-bounce">
+                      <Bell size={20} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-serif font-black text-sm text-amber-950 dark:text-amber-200">
+                          ¡COMENSAL SOLICITA MESERO HACE {minEspera} MINUTOS!
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 font-black animate-pulse">
+                          LLAMADO ACTIVO
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-600 dark:text-stone-300">
+                        Los clientes requieren asistencia o tomar nueva orden en la mesa.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playSuccessTone();
+                      marcarAlertaAtendida(al.id);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
+                  >
+                    <Check size={14} />
+                    <span>Marcar Asistido</span>
+                  </button>
+                </div>
+              );
+            }
+
+            return null;
+          })()}
+
+          {/* DESGLOSE SILLA POR SILLA: QUÉ PIDIÓ CADA COMENSAL */}
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Users size={16} className="text-[#991B24]" />
+                <h4 className="font-serif text-sm font-bold text-stone-900 dark:text-stone-100">
+                  Desglose Silla por Silla ("Qué pidió cada comensal")
+                </h4>
+              </div>
+
+              {/* Resumen Total */}
+              {getPedidoMesa(mesaActivaInspector.numero) && (
+                <div className="text-xs font-mono font-bold text-stone-600 dark:text-stone-300 flex items-center gap-2">
+                  <span>Total Acumulado Mesa:</span>
+                  <span className="text-sm font-black text-[#991B24] dark:text-amber-400">
+                    Bs {getPedidoMesa(mesaActivaInspector.numero)?.total.toFixed(2)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Grid de Sillas */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[...Array(mesaActivaInspector.capacidad)].map((_, i) => {
+                const seatNum = i + 1;
+                const pedido = getPedidoMesa(mesaActivaInspector.numero);
+                const itemsSilla = pedido?.items?.filter((it) => it.asiento_numero === seatNum) || [];
+                const subtotalSilla = itemsSilla.reduce((acc, it) => acc + it.subtotal, 0);
+                const nombreGuardado = mesaActivaInspector.asientos_nombres?.[seatNum];
+                const nombreComensal = nombreGuardado || itemsSilla[0]?.comensal_nombre || `Silla ${seatNum}`;
+                const isChairOccupied = itemsSilla.length > 0 || !!nombreGuardado || (mesaActivaInspector.estado === "ocupada" && seatNum <= 2);
+                const isSelectedSeat = asientoInspectorSeleccionado === seatNum;
+
+                return (
+                  <div
+                    key={seatNum}
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setAsientoInspectorSeleccionado(seatNum);
+                    }}
+                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer space-y-2.5 flex flex-col justify-between ${
+                      isSelectedSeat
+                        ? "bg-amber-500/10 border-amber-500 ring-2 ring-amber-500/40 shadow-md"
+                        : isChairOccupied
+                        ? "bg-stone-50 dark:bg-stone-800/80 border-stone-200 dark:border-stone-700 hover:border-amber-400"
+                        : "bg-stone-100/40 dark:bg-stone-800/30 border-dashed border-stone-300 dark:border-stone-700 opacity-60"
+                    }`}
+                  >
+                    <div>
+                      {/* Cabecera Silla */}
+                      <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700 pb-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span
+                            className={`w-6 h-6 rounded-full flex items-center justify-center font-mono font-black text-[11px] shrink-0 ${
+                              isChairOccupied
+                                ? "bg-[#D49B54] text-[#1E130C] shadow-xs"
+                                : "bg-stone-300 dark:bg-stone-700 text-stone-600 dark:text-stone-300"
+                            }`}
+                          >
+                            {seatNum}
+                          </span>
+                          <span className="font-bold text-xs text-stone-900 dark:text-stone-100 truncate">
+                            {nombreComensal}
+                          </span>
+                        </div>
+
+                        <span className="font-mono text-xs font-black text-[#991B24] dark:text-amber-400 shrink-0">
+                          Bs {subtotalSilla.toFixed(2)}
+                        </span>
+                      </div>
+
+                      {/* Lista de productos pedidos por esta silla */}
+                      <div className="pt-2 space-y-2">
+                        {itemsSilla.length > 0 ? (
+                          itemsSilla.map((it, idx) => (
+                            <div
+                              key={idx}
+                              className="p-2 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-[11px] space-y-1"
+                            >
+                              <div className="flex items-start justify-between gap-1">
+                                <span className="font-bold text-stone-800 dark:text-stone-200 leading-snug">
+                                  {it.cantidad}x {it.producto_nombre}
+                                </span>
+                                <span className="font-mono font-bold text-stone-900 dark:text-stone-100 shrink-0">
+                                  Bs {it.subtotal.toFixed(2)}
+                                </span>
+                              </div>
+
+                              <div className="flex flex-wrap items-center gap-1">
+                                {/* Estación */}
+                                <span className="text-[9px] px-1.5 py-0.2 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-medium">
+                                  {it.estacion === "cafeteria" && "☕ Cafetería"}
+                                  {it.estacion === "vitrina" && "🥐 Vitrina"}
+                                  {it.estacion === "cocina" && "🍕 Cocina"}
+                                </span>
+
+                                {/* Estado del ítem */}
+                                <span
+                                  className={`text-[9px] px-1.5 py-0.2 rounded-md font-bold ${
+                                    it.estado === "entregado"
+                                      ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300"
+                                      : it.estado === "listo"
+                                      ? "bg-blue-100 text-blue-800"
+                                      : "bg-amber-100 text-amber-800"
+                                  }`}
+                                >
+                                  {it.estado === "entregado" && "✅ Entregado"}
+                                  {it.estado === "listo" && "🟢 Listo"}
+                                  {it.estado === "en_preparacion" && "🟡 Preparando"}
+                                  {it.estado === "pendiente" && "⏳ Pendiente"}
+                                </span>
+                              </div>
+
+                              {/* Chips de personalización */}
+                              {it.chips_seleccionados && it.chips_seleccionados.length > 0 && (
+                                <div className="text-[9.5px] text-stone-400 italic">
+                                  {it.chips_seleccionados.join(", ")}
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-4 text-center text-stone-400 text-[11px] italic">
+                            {isChairOccupied ? "Sin comanda directa" : "Silla vacía"}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Botón de cobro individual para esta silla */}
+                    {subtotalSilla > 0 && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          soundManager.playVintageRegisterDing();
+                          alert(`Cobro individual emitido para ${nombreComensal} (Silla ${seatNum}): Bs ${subtotalSilla.toFixed(2)}.`);
+                        }}
+                        className="w-full py-1.5 rounded-xl bg-stone-900 hover:bg-black text-[#FAF7F2] font-bold text-[10.5px] transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-xs"
+                      >
+                        <CreditCard size={11} />
+                        <span>Cobrar Silla ({subtotalSilla.toFixed(0)} Bs)</span>
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* BARRA INFERIOR DE ACCIONES RÁPIDAS DE MESA */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-stone-200 dark:border-stone-800">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setModalDetalleMesa(mesaActivaInspector);
+                  setSubTabDetalle("cuenta_separada");
+                }}
+                className="px-3.5 py-2 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+              >
+                <Split size={14} />
+                <span>Dividir Cuenta por Sillas</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const ped = getPedidoMesa(mesaActivaInspector.numero);
+                  const total = ped?.total || 0;
+                  const partes = mesaActivaInspector.capacidad;
+                  alert(`Total comanda Bs ${total.toFixed(2)} dividido entre ${partes} personas = Bs ${(total / partes).toFixed(2)} por persona.`);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Dividir en Partes Iguales (÷{mesaActivaInspector.capacidad})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setCartMesa(mesaActivaInspector.numero);
+                  window.location.href = `/catalogo?mesa=${mesaActivaInspector.numero}`;
+                }}
+                className="px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-500/30 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Plus size={14} />
+                <span>Agregar Ronda / Pedido</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  updateMesa(mesaActivaInspector.id, { estado: "limpieza" });
+                }}
+                className="px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+              >
+                <Sparkles size={13} />
+                <span>Marcar Limpieza</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm(`¿Liberar Mesa ${mesaActivaInspector.numero} y dejarla disponible?`)) {
+                    soundManager.playSuccessTone();
+                    updateMesa(mesaActivaInspector.id, { estado: "libre" });
+                  }
+                }}
+                className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer active:scale-95"
+              >
+                <Check size={14} />
+                <span>Liberar Mesa</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── MODAL VISOR DE PLANO DE EVACUACIÓN OFICIAL ── */}
       <AnimatePresence>
