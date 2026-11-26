@@ -328,6 +328,7 @@ export default function HomePage() {
   const [metodoPagoCuenta, setMetodoPagoCuenta] = useState<"efectivo" | "tarjeta" | "qr">("efectivo");
   const [avisoMeseroEnviado, setAvisoMeseroEnviado] = useState(false);
   const [heroPastryIndex, setHeroPastryIndex] = useState(0);
+  const [pisoMesaRapida, setPisoMesaRapida] = useState<"planta_baja" | "terraza">("planta_baja");
 
   const handleLlamarMesero = (mesaNum: number, modoOverride?: "llamado" | "cuenta") => {
     const modoActivo = modoOverride || modoModalMesero;
@@ -747,6 +748,65 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── 1.1. RIBBON FLOTANTE DE DELICIAS ARTESANALES (MICRO-INTERACCIONES & PROFUNDIDAD) ── */}
+      <section className="w-full bg-[#FAF7F2] border-b border-[#EAE2D5] py-6 overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-mono uppercase font-black tracking-wider text-[#991B24]">
+                Horneado Hoy • Tandas Frescas 07:30 y 16:30
+              </span>
+            </div>
+            <a
+              href="#catalogo"
+              className="text-xs font-bold text-[#8C5332] hover:text-[#1E130C] flex items-center gap-1 transition group"
+            >
+              <span>Ver Vitrina Completa</span>
+              <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {PHOTO_RIBBON_ITEMS.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.07 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  const el = document.getElementById("catalogo");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-[#EAE2D5] p-3 shadow-xs hover:shadow-xl hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-stone-100 mb-2.5">
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-amber-300 border border-white/20">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition-colors">
+                    {item.nombre}
+                  </h4>
+                  <p className="text-[10px] text-[#785E4F] line-clamp-1">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── 1.2. BANNER OFICIAL: LA CARTA FÍSICA AUTÉNTICA DE 6 PÁGINAS ── */}
       <section className="w-full bg-[#1E130C] text-white py-12 border-y border-amber-950/50 relative overflow-hidden flex flex-col items-center">
         {/* Patrón de fondo sutil */}
@@ -1001,9 +1061,44 @@ export default function HomePage() {
                   </p>
                 </div>
                 
-                {/* 12 Mesas Rápidas */}
-                <div className="grid grid-cols-6 gap-1.5 pt-1">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                {/* Selector de Piso Rápido: Planta Baja (15 mesas) vs Terraza (6 mesas) */}
+                <div className="flex items-center gap-1 p-0.5 rounded-lg bg-[#F3ECE1] border border-[#EAE2D5]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setPisoMesaRapida("planta_baja");
+                    }}
+                    className={`flex-1 py-1 px-2 rounded-md text-[10px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                      pisoMesaRapida === "planta_baja"
+                        ? "bg-[#1E130C] text-white shadow-2xs"
+                        : "text-[#785E4F] hover:text-[#1E130C]"
+                    }`}
+                  >
+                    <span>Planta Baja (M1–15)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      setPisoMesaRapida("terraza");
+                    }}
+                    className={`flex-1 py-1 px-2 rounded-md text-[10px] font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                      pisoMesaRapida === "terraza"
+                        ? "bg-[#991B24] text-white shadow-2xs"
+                        : "text-[#785E4F] hover:text-[#1E130C]"
+                    }`}
+                  >
+                    <span>Terraza (M16–21)</span>
+                  </button>
+                </div>
+
+                {/* Grilla Dinámica de Mesas por Piso */}
+                <div className="grid grid-cols-5 gap-1.5 pt-1">
+                  {(pisoMesaRapida === "planta_baja"
+                    ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                    : [16, 17, 18, 19, 20, 21]
+                  ).map((num) => (
                     <Link
                       key={num}
                       href={`/mesa/${num}`}
@@ -1011,7 +1106,7 @@ export default function HomePage() {
                         soundManager.playTactileClick();
                         setMesa(num);
                       }}
-                      className="py-1 rounded-lg bg-[#FAF7F2] hover:bg-[#1E130C] hover:text-white border border-[#EAE2D5] text-[#1E130C] font-mono text-[11px] font-bold text-center transition"
+                      className="py-1.5 rounded-lg bg-[#FAF7F2] hover:bg-[#1E130C] hover:text-white border border-[#EAE2D5] text-[#1E130C] font-mono text-[11px] font-bold text-center transition active:scale-95 shadow-2xs"
                       title={`Ir a Mesa ${num}`}
                     >
                       M{num}
@@ -1112,7 +1207,7 @@ export default function HomePage() {
               Colección Dencker Pan
             </h2>
             <p className="text-[#785E4F] text-sm leading-relaxed">
-              Masa madre viva de 24 horas, hojaldres con 100% mantequilla e infusiones de altura. Explora con fotos reales de presentación exterior y corte interior con IA.
+              Masa madre viva de 24 horas, hojaldres con 100% mantequilla e infusiones de altura. Explora con fotografías reales de vitrina y textura de corte artesanal.
             </p>
           </div>
 
@@ -1156,7 +1251,7 @@ export default function HomePage() {
                 </button>
               </div>
 
-              {/* Selector Global de Fotos: Exterior vs Corte Interior (IA) */}
+              {/* Selector Global de Fotos: Exterior vs Corte Interior Artesanal */}
               <div className="flex items-center justify-between sm:justify-end gap-2 px-1">
                 <span className="text-[11px] font-bold text-[#A8988D] uppercase tracking-wider hidden sm:inline">
                   Fotos:
@@ -1191,7 +1286,7 @@ export default function HomePage() {
                     }`}
                   >
                     <Sparkles size={12} className="text-[#D97706]" />
-                    <span>🔪 Corte Interior (IA)</span>
+                    <span>🔪 Textura & Corte Interior</span>
                   </button>
                 </div>
               </div>
@@ -1321,7 +1416,7 @@ export default function HomePage() {
                       }`}
                     />
 
-                    {/* Imagen Corte Interior (IA) */}
+                    {/* Imagen Corte Interior Artesanal */}
                     <img
                       src={getImagenInterior(starProduct)}
                       alt={`${starProduct.nombre} corte interior`}
@@ -1371,7 +1466,7 @@ export default function HomePage() {
                         <span className="px-2.5 py-1 rounded-xl bg-white/10 border border-white/10">Textura Ultra Crujiente</span>
                         <span className="px-2.5 py-1 rounded-xl bg-white/10 border border-white/10">Horneado Diario</span>
                         <span className="px-2.5 py-1 rounded-xl bg-[#991B24]/30 text-[#FDF3E7] border border-[#991B24]/50">
-                          {getVistaActual(starProduct.id) === "corte" ? "🔪 Vista: Corte Interior (IA)" : "🥐 Vista: Exterior Dorado"}
+                          {getVistaActual(starProduct.id) === "corte" ? "🔪 Vista: Textura de Corte Artesanal" : "🥐 Vista: Presentación en Vitrina"}
                         </span>
                       </div>
                     </div>
@@ -1551,7 +1646,7 @@ export default function HomePage() {
                               }`}
                             />
 
-                            {/* Imagen Corte Interior (IA) */}
+                            {/* Imagen Corte Interior Artesanal */}
                             <img
                               src={imgInterior}
                               alt={`${prod.nombre} corte interior`}
@@ -1707,7 +1802,7 @@ export default function HomePage() {
                       }`}
                     />
 
-                    {/* Imagen Corte Interior (IA) */}
+                    {/* Imagen Corte Interior Artesanal */}
                     <img
                       src={getImagenInterior(starProduct)}
                       alt={`${starProduct.nombre} corte interior`}
@@ -1800,7 +1895,7 @@ export default function HomePage() {
                         }`}
                       />
 
-                      {/* Imagen Corte Interior (IA) */}
+                      {/* Imagen Corte Interior Artesanal */}
                       <img
                         src={imgInterior}
                         alt={`${prod.nombre} corte interior`}
@@ -2127,7 +2222,7 @@ export default function HomePage() {
                       }`}
                     >
                       <Sparkles size={12} className="text-[#D97706]" />
-                      <span>🔪 Corte Interior (IA)</span>
+                      <span>🔪 Textura & Corte Interior</span>
                     </button>
                   </div>
 
