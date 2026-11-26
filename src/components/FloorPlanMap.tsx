@@ -2117,6 +2117,9 @@ export default function FloorPlanMap({
                   if (confirm(`¿Liberar Mesa ${mesaActivaInspector.numero} y dejarla disponible?`)) {
                     soundManager.playSuccessTone();
                     updateMesa(mesaActivaInspector.id, { estado: "libre" });
+                    alertas
+                      .filter((a) => a.mesa_numero === mesaActivaInspector.numero && !a.atendida)
+                      .forEach((a) => marcarAlertaAtendida(a.id));
                   }
                 }}
                 className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer active:scale-95"

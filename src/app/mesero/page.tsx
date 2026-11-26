@@ -55,10 +55,31 @@ export default function MeseroPage() {
   const [modoVista, setModoVista] = useState<"plano" | "tarjetas">("plano");
   const [filtroEstado, setFiltroEstado] = useState<EstadoMesa | "todas">("todas");
   const [ticketCuentaModal, setTicketCuentaModal] = useState<boolean>(false);
+  const [asientoComandaActivo, setAsientoComandaActivo] = useState<number>(1);
+  const [modalPizzaMesero, setModalPizzaMesero] = useState<Producto | null>(null);
+  const [tamanoPizzaMesero, setTamanoPizzaMesero] = useState<4 | 6 | 8>(4);
+
+  const PIZZA_SIZES_MAP: Record<string, { p4: number; p6: number; p8: number }> = {
+    prod_pizza_margarita: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_jamon_queso: { p4: 35, p6: 50, p8: 65 },
+    prod_pizza_hawaiana: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_funghi: { p4: 35, p6: 50, p8: 65 },
+    prod_pizza_choclo_amarillo: { p4: 35, p6: 50, p8: 70 },
+    prod_pizza_bacon: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_palmito: { p4: 40, p6: 55, p8: 70 },
+    prod_pizza_portuguesa: { p4: 45, p6: 55, p8: 80 },
+    prod_pizza_criolla: { p4: 45, p6: 65, p8: 80 },
+    prod_pizza_salame: { p4: 45, p6: 65, p8: 80 },
+    prod_pizza_pollo_catupiri: { p4: 45, p6: 65, p8: 80 },
+  };
+
   const [itemsNuevaComanda, setItemsNuevaComanda] = useState<{
     producto: Producto;
     cantidad: number;
     notas?: string;
+    asiento_numero?: number;
+    comensal_nombre?: string;
+    chips_seleccionados?: string[];
   }[]>([]);
 
   // Pedidos enviados por clientes vía QR pendientes de verificación
@@ -143,17 +164,75 @@ export default function MeseroPage() {
     soundManager.playSuccessTone();
   };
 
-  const agregarItemAComanda = (prod: Producto) => {
-    soundManager.playClick();
+  const agregarProductoDirecto = (
+    prod: Producto,
+    cantidad: number = 1,
+    chips?: string[],
+    asientoNum?: number,
+    notas?: string
+  ) => {
+    const silla = asientoNum || asientoComandaActivo;
+    const nombreComensal =
+      mesaSeleccionada?.asientos_nombres?.[silla] || `Silla ${silla}`;
     setItemsNuevaComanda((prev) => {
-      const idx = prev.findIndex((i) => i.producto.id === prod.id);
+      const idx = prev.findIndex(
+        (i) => i.producto.id === prod.id && i.asiento_numero === silla
+      );
       if (idx >= 0) {
         const copy = [...prev];
-        copy[idx].cantidad += 1;
+        copy[idx].cantidad += cantidad;
         return copy;
       }
-      return [...prev, { producto: prod, cantidad: 1 }];
+      return [
+        ...prev,
+        {
+          producto: prod,
+          cantidad,
+          notas,
+          asiento_numero: silla,
+          comensal_nombre: nombreComensal,
+          chips_seleccionados: chips || [],
+        },
+      ];
     });
+  };
+
+  const agregarItemAComanda = (prod: Producto) => {
+    soundManager.playClick();
+    const esPizzaTradicional =
+      prod.categoria_id === "c_pizzas" && prod.id !== "prod_pizza_especial_dencker";
+
+    if (esPizzaTradicional) {
+      setModalPizzaMesero(prod);
+      setTamanoPizzaMesero(4);
+      return;
+    }
+
+    agregarProductoDirecto(prod, 1, undefined, asientoComandaActivo);
+  };
+
+  const confirmarPizzaTamano = () => {
+    if (!modalPizzaMesero) return;
+    const p4 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p4 || modalPizzaMesero.precio;
+    const p6 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p6 || Math.round(p4 * 1.38);
+    const p8 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p8 || Math.round(p4 * 1.75);
+    const precio = tamanoPizzaMesero === 4 ? p4 : tamanoPizzaMesero === 6 ? p6 : p8;
+
+    const itemAdaptado: Producto = {
+      ...modalPizzaMesero,
+      id: `${modalPizzaMesero.id}__size_${tamanoPizzaMesero}p`,
+      nombre: `${modalPizzaMesero.nombre} (${tamanoPizzaMesero} porc)`,
+      precio,
+    };
+
+    agregarProductoDirecto(
+      itemAdaptado,
+      1,
+      [`${tamanoPizzaMesero} Porciones`],
+      asientoComandaActivo
+    );
+    soundManager.playSuccessTone();
+    setModalPizzaMesero(null);
   };
 
   // Ronda Express rápida de 1-clic para la mesa seleccionada
@@ -174,6 +253,8 @@ export default function MeseroPage() {
         estado: "pendiente",
         chips_seleccionados: [],
         notas: "Ronda Express",
+        asiento_numero: 1,
+        comensal_nombre: mesaSeleccionada.asientos_nombres?.[1] || "Silla 1",
       });
     } else {
       const itemsPayload: ItemPedido[] = [
@@ -189,6 +270,8 @@ export default function MeseroPage() {
           estado: "pendiente",
           chips_seleccionados: [],
           notas: "Ronda Express",
+          asiento_numero: 1,
+          comensal_nombre: mesaSeleccionada.asientos_nombres?.[1] || "Silla 1",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -225,8 +308,10 @@ export default function MeseroPage() {
           subtotal: item.producto.precio * item.cantidad,
           estacion: item.producto.estacion,
           estado: "pendiente",
-          chips_seleccionados: [],
+          chips_seleccionados: item.chips_seleccionados || [],
           notas: item.notas,
+          asiento_numero: item.asiento_numero,
+          comensal_nombre: item.comensal_nombre,
         });
       });
     } else {
@@ -240,8 +325,10 @@ export default function MeseroPage() {
         subtotal: item.producto.precio * item.cantidad,
         estacion: item.producto.estacion,
         estado: "pendiente",
-        chips_seleccionados: [],
+        chips_seleccionados: item.chips_seleccionados || [],
         notas: item.notas,
+        asiento_numero: item.asiento_numero,
+        comensal_nombre: item.comensal_nombre,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }));
@@ -917,15 +1004,50 @@ export default function MeseroPage() {
                 </div>
                 <button
                   onClick={() => setModalComandaAbierto(false)}
-                  className="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-500"
+                  className="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-500 cursor-pointer"
                 >
                   <X size={20} />
                 </button>
               </div>
 
+              {/* Asignar comanda a Asiento / Silla específica */}
+              <div className="px-4 py-2.5 bg-amber-500/10 dark:bg-amber-950/20 border-b border-amber-500/20 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-1.5 shrink-0 text-xs font-bold text-amber-950 dark:text-amber-200">
+                  <Users size={14} className="text-[#991B24]" />
+                  <span>Asiento:</span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {Array.from({ length: mesaSeleccionada.sillas || mesaSeleccionada.capacidad || 4 }).map((_, i) => {
+                    const seatNum = i + 1;
+                    const isSelected = asientoComandaActivo === seatNum;
+                    const nombreAsignado = mesaSeleccionada.asientos_nombres?.[seatNum];
+                    return (
+                      <button
+                        key={seatNum}
+                        type="button"
+                        onClick={() => {
+                          soundManager.playClick();
+                          setAsientoComandaActivo(seatNum);
+                        }}
+                        className={`px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${
+                          isSelected
+                            ? "bg-[#991B24] text-white shadow-xs"
+                            : "bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-amber-50"
+                        }`}
+                      >
+                        <span>👤 Silla {seatNum}</span>
+                        {nombreAsignado && (
+                          <span className="text-[10px] opacity-80">({nombreAsignado})</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Categorías & Buscador */}
               <div className="p-4 border-b border-stone-100 dark:border-stone-800 space-y-3">
-                <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                   <button
                     onClick={() => setFiltroCategoria("todas")}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold ${
@@ -1021,12 +1143,22 @@ export default function MeseroPage() {
                             key={index}
                             className="p-2.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-between text-xs"
                           >
-                            <div>
-                              <span className="font-bold text-stone-800 dark:text-stone-200">
-                                {item.producto.nombre}
-                              </span>
-                              <div className="text-[10px] text-stone-400">
-                                Bs {item.producto.precio.toFixed(2)} c/u
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="px-1.5 py-0.2 rounded-md bg-amber-500/15 text-amber-900 dark:text-amber-300 font-mono text-[10px] font-bold border border-amber-500/30">
+                                  👤 Silla {item.asiento_numero || 1}
+                                </span>
+                                <span className="font-bold text-stone-800 dark:text-stone-200">
+                                  {item.producto.nombre}
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-stone-400 flex items-center gap-2">
+                                <span>Bs {item.producto.precio.toFixed(2)} c/u</span>
+                                {item.chips_seleccionados && item.chips_seleccionados.length > 0 && (
+                                  <span className="text-amber-600 dark:text-amber-400 font-medium">
+                                    • {item.chips_seleccionados.join(", ")}
+                                  </span>
+                                )}
                               </div>
                             </div>
 
@@ -1159,6 +1291,86 @@ export default function MeseroPage() {
                   <Printer size={14} /> Imprimir Pre-cuenta
                 </button>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* ── Modal Selector de Porciones Pizza Mesero ── */}
+      <AnimatePresence>
+        {modalPizzaMesero && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ scale: 0.94, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.94, opacity: 0 }}
+              className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-3xl p-5 shadow-2xl border border-stone-200 dark:border-stone-800 space-y-4"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="text-2xl">🍕</span>
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 mt-1">
+                    {modalPizzaMesero.nombre}
+                  </h3>
+                  <p className="text-xs text-stone-500">
+                    Mesa {mesaSeleccionada?.numero} • Silla {asientoComandaActivo}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setModalPizzaMesero(null)}
+                  className="p-1.5 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-400 cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {(() => {
+                const p4 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p4 || modalPizzaMesero.precio;
+                const p6 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p8 || Math.round(p4 * 1.75);
+
+                return (
+                  <div className="space-y-3">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-amber-900 dark:text-amber-400 block">
+                      Selecciona Tamaño de Pizza:
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { porc: 4 as const, precio: p4, label: "4 Porc", sub: "Individual" },
+                        { porc: 6 as const, precio: p6, label: "6 Porc", sub: "Compartir" },
+                        { porc: 8 as const, precio: p8, label: "8 Porc", sub: "Familiar" },
+                      ].map((sz) => (
+                        <button
+                          key={sz.porc}
+                          type="button"
+                          onClick={() => {
+                            soundManager.playClick();
+                            setTamanoPizzaMesero(sz.porc);
+                          }}
+                          className={`p-2.5 rounded-2xl border text-center transition flex flex-col items-center cursor-pointer ${
+                            tamanoPizzaMesero === sz.porc
+                              ? "bg-[#991B24] text-white border-[#991B24] shadow-md ring-2 ring-amber-400/40"
+                              : "bg-stone-50 dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100"
+                          }`}
+                        >
+                          <span className="text-xs font-bold uppercase">{sz.label}</span>
+                          <span className="text-[9px] opacity-75">{sz.sub}</span>
+                          <span className="text-xs font-mono font-black mt-1 text-amber-300">
+                            Bs {sz.precio}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={confirmarPizzaTamano}
+                      className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs uppercase tracking-wider shadow-lg transition active:scale-95 cursor-pointer mt-2"
+                    >
+                      Agregar a Comanda • {tamanoPizzaMesero} Porciones
+                    </button>
+                  </div>
+                );
+              })()}
             </motion.div>
           </div>
         )}

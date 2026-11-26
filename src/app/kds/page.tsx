@@ -146,7 +146,7 @@ export default function KDSPage() {
           </div>
 
           {/* Filtros de Estación con estilo Apple Segmented */}
-          <div className="flex items-center gap-1 bg-black/60 p-1.5 rounded-2xl border border-amber-900/30 overflow-x-auto">
+          <div className="flex items-center gap-1 bg-black/60 p-1.5 rounded-2xl border border-amber-900/30 overflow-x-auto no-scrollbar">
             {(
               [
                 { id: "todos", label: "Todas", icon: Filter },

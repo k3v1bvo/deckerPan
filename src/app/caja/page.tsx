@@ -227,7 +227,7 @@ export default function CajaPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Columna Izquierda: Cola de Mesas y Pedidos Pendientes */}
         <div className="lg:col-span-5 space-y-4">
           <div className="flex items-center justify-between">

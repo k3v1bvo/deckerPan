@@ -767,7 +767,7 @@ export default function AdminPage() {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
         {/* ── Segmented Control Tabs con Estilo Artesanal ── */}
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-[#EDE5DA] border border-[#DDD3C6] max-w-5xl overflow-x-auto shadow-xs">
+        <div className="relative flex items-center p-1.5 rounded-2xl bg-[#EDE5DA] border border-[#DDD3C6] max-w-5xl overflow-x-auto no-scrollbar touch-pan-x shadow-xs">
           {(
             [
               { id: "productos", label: "Catálogo & Precios", icon: UtensilsCrossed },

@@ -803,9 +803,14 @@ export const useSystemStore = create<SystemStore>()(
             pedido && m.numero === pedido.mesa_numero ? { ...m, estado: 'libre' as EstadoMesa } : m
           );
 
+          const alertasUpdated = state.alertas.map((a) =>
+            pedido && a.mesa_numero === pedido.mesa_numero ? { ...a, atendida: true } : a
+          );
+
           return {
             pedidos: pedidosUpdated,
             mesas: mesasUpdated,
+            alertas: alertasUpdated,
             sesionCaja: sesionUpdated,
             pagos: [nuevoPago, ...(state.pagos || [])],
           };

@@ -104,6 +104,10 @@ export default function MesaPage({ params }: PageProps) {
   const [avisoCuentaEnviado, setAvisoCuentaEnviado] = useState(false);
   const [cambioEfectivoEstimado, setCambioEfectivoEstimado] = useState<number | null>(null);
 
+  // Asiento individual en la mesa
+  const [asientoCliente, setAsientoCliente] = useState<number>(1);
+  const [nombreComensalCliente, setNombreComensalCliente] = useState<string>("");
+
   const {
     items,
     addItem,
@@ -310,6 +314,8 @@ export default function MesaPage({ params }: PageProps) {
             notas: i.notas,
             estacion: i.producto.estacion,
             estado: "pendiente",
+            asiento_numero: asientoCliente,
+            comensal_nombre: nombreComensalCliente.trim() || `Comensal Silla ${asientoCliente}`,
           }));
           await supabase.from("items_pedido").insert(itemsPayload);
           if (isUUID(mesaId)) {
@@ -325,7 +331,7 @@ export default function MesaPage({ params }: PageProps) {
         mesa_numero: mesaNum,
         estado: "pendiente",
         total: total(),
-        cliente_nombre: `Mesa ${mesaNum}`,
+        cliente_nombre: nombreComensalCliente.trim() ? `${nombreComensalCliente} (Mesa ${mesaNum})` : `Mesa ${mesaNum}`,
         es_ronda: false,
         items: items.map((i, idx) => ({
           id: `item-${Date.now()}-${idx}`,
@@ -339,6 +345,8 @@ export default function MesaPage({ params }: PageProps) {
           notas: i.notas,
           estacion: i.producto.estacion,
           estado: "pendiente",
+          asiento_numero: asientoCliente,
+          comensal_nombre: nombreComensalCliente.trim() || `Comensal Silla ${asientoCliente}`,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })),
@@ -569,6 +577,44 @@ export default function MesaPage({ params }: PageProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* ── Selector de Asiento / Silla para comanda individual en mesa ── */}
+        <div className="p-3.5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+              <span>👤</span>
+              <span>¿En qué silla estás sentado?</span>
+            </span>
+            <input
+              type="text"
+              placeholder="Tu nombre (ej. Carlos)"
+              value={nombreComensalCliente}
+              onChange={(e) => setNombreComensalCliente(e.target.value)}
+              className="text-xs px-3 py-1.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 w-36 sm:w-44 font-medium placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-600"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+            {[1, 2, 3, 4, 5, 6].map((num) => (
+              <button
+                key={num}
+                type="button"
+                onClick={() => {
+                  soundManager.playTactileClick();
+                  setAsientoCliente(num);
+                }}
+                className={`flex-1 min-w-[50px] py-1.5 rounded-xl font-bold transition flex flex-col items-center justify-center cursor-pointer ${
+                  asientoCliente === num
+                    ? "bg-[#D49B54] text-[#1E130C] shadow-md ring-2 ring-amber-600/40 font-black"
+                    : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200"
+                }`}
+              >
+                <span className="text-[8.5px] uppercase tracking-wider opacity-75 leading-tight">Silla</span>
+                <span className="text-xs leading-none font-mono font-bold">{num}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* ── Search Bar ── */}
         <div className="relative">
