@@ -757,7 +757,7 @@ export default function MeseroPage() {
           <motion.div
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="fixed bottom-6 inset-x-4 max-w-2xl mx-auto z-40 bg-stone-900/90 dark:bg-stone-950/95 backdrop-blur-2xl border border-white/15 p-3 rounded-3xl shadow-2xl flex items-center justify-between gap-3 text-white"
+            className="fixed bottom-6 sm:inset-x-4 inset-x-2 max-w-2xl mx-auto z-40 bg-[#1E130C]/95 backdrop-blur-2xl border-2 border-amber-500/30 p-2.5 sm:p-3 rounded-3xl shadow-2xl flex items-center justify-between gap-2 sm:gap-3 text-white"
           >
             <div className="flex items-center gap-2 pl-2">
               <span className="p-2 rounded-2xl bg-amber-500 text-stone-950 font-bold">
@@ -767,7 +767,7 @@ export default function MeseroPage() {
                 <span className="font-serif font-bold text-sm block">
                   Mesa {mesaSeleccionada.numero} — Ronda Express
                 </span>
-                <span className="text-[10px] text-stone-400">1-Tap para añadir directamente</span>
+                <span className="text-[10px] text-amber-200/70">1-Tap para añadir directamente</span>
               </div>
             </div>
 
@@ -791,7 +791,7 @@ export default function MeseroPage() {
 
               <button
                 onClick={() => setModalComandaAbierto(true)}
-                className="p-2 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white shadow-md transition ml-1"
+                className="p-2 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white shadow-md transition ml-1 cursor-pointer"
                 title="Abrir menú completo"
               >
                 <Plus size={16} />
@@ -973,34 +973,34 @@ export default function MeseroPage() {
         {/* ── Modal Comanda Completa ── */}
         <AnimatePresence>
           {modalComandaAbierto && mesaSeleccionada && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md">
               <motion.div
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
-                className="w-full max-w-3xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border border-stone-200 dark:border-stone-800"
+                className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border-2 border-[#D5C7B5]"
               >
                 {/* Header Modal */}
-                <div className="p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between bg-stone-50 dark:bg-stone-950">
+                <div className="p-4 sm:p-5 border-b-2 border-amber-500/30 flex items-center justify-between bg-[#1E130C] text-white shrink-0">
                   <div>
-                    <h3 className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100">
+                    <h3 className="font-serif font-bold text-lg text-white">
                       Comanda de Sala — Mesa {mesaSeleccionada.numero}
                     </h3>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                    <p className="text-xs text-amber-200/70">
                       Selecciona productos para despachar a Cocina y Vitrina
                     </p>
                   </div>
                   <button
                     onClick={() => setModalComandaAbierto(false)}
-                    className="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-500 cursor-pointer"
+                    className="p-2 rounded-full hover:bg-white/10 text-stone-300 cursor-pointer transition"
                   >
                     <X size={20} />
                   </button>
                 </div>
 
                 {/* Asignar comanda a Asiento / Silla específica */}
-                <div className="px-4 py-2.5 bg-amber-500/10 dark:bg-amber-950/20 border-b border-amber-500/20 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
-                  <div className="flex items-center gap-1.5 shrink-0 text-xs font-bold text-amber-950 dark:text-amber-200">
+                <div className="px-4 py-2.5 bg-[#FAF6EF] border-b-2 border-[#D8C7B2] flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0 text-xs font-bold text-amber-950">
                     <Users size={14} className="text-[#991B24]" />
                     <span>Asiento:</span>
                   </div>
@@ -1017,9 +1017,9 @@ export default function MeseroPage() {
                             soundManager.playClick();
                             setAsientoComandaActivo(seatNum);
                           }}
-                          className={`px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${isSelected
-                            ? "bg-[#991B24] text-white shadow-xs"
-                            : "bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-amber-50"
+                          className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap ${isSelected
+                            ? "bg-[#991B24] text-white shadow-xs border-2 border-[#7F1D1D]"
+                            : "bg-white text-stone-900 border-2 border-[#D5C7B5] hover:border-amber-600 hover:bg-[#FFFDF9]"
                             }`}
                         >
                           <span>👤 Silla {seatNum}</span>
@@ -1033,13 +1033,13 @@ export default function MeseroPage() {
                 </div>
 
                 {/* Categorías & Buscador */}
-                <div className="p-4 border-b border-stone-100 dark:border-stone-800 space-y-3">
+                <div className="p-4 border-b-2 border-[#EAE0D2] bg-white space-y-3 shrink-0">
                   <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                     <button
                       onClick={() => setFiltroCategoria("todas")}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold ${filtroCategoria === "todas"
-                        ? "bg-amber-900 dark:bg-amber-700 text-white"
-                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${filtroCategoria === "todas"
+                        ? "bg-[#991B24] text-white shadow-xs border border-[#7F1D1D]"
+                        : "bg-[#FAF6EF] text-stone-800 border-2 border-[#D5C7B5] hover:bg-[#F2ECE1]"
                         }`}
                     >
                       Todos
@@ -1048,9 +1048,9 @@ export default function MeseroPage() {
                       <button
                         key={c.id}
                         onClick={() => setFiltroCategoria(c.id)}
-                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 ${filtroCategoria === c.id
-                          ? "bg-amber-900 dark:bg-amber-700 text-white"
-                          : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition cursor-pointer ${filtroCategoria === c.id
+                          ? "bg-[#991B24] text-white shadow-xs border border-[#7F1D1D]"
+                          : "bg-[#FAF6EF] text-stone-800 border-2 border-[#D5C7B5] hover:bg-[#F2ECE1]"
                           }`}
                       >
                         <span>{c.emoji}</span>
@@ -1060,21 +1060,21 @@ export default function MeseroPage() {
                   </div>
 
                   <div className="relative">
-                    <Search size={16} className="absolute left-3 top-3 text-stone-400" />
+                    <Search size={16} className="absolute left-3 top-3 text-stone-500" />
                     <input
                       type="text"
                       placeholder="Buscar café de especialidad, marraqueta, tarta..."
                       value={busquedaProducto}
                       onChange={(e) => setBusquedaProducto(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 text-xs rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-800 dark:focus:ring-amber-500 text-stone-900 dark:text-stone-100"
+                      className="w-full pl-9 pr-4 py-2 text-xs rounded-2xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white focus:outline-none focus:border-amber-700 text-stone-950 font-medium placeholder:text-stone-500"
                     />
                   </div>
                 </div>
 
                 {/* Split Content: Products Grid & Order Cart Summary */}
-                <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-stone-200 dark:divide-stone-800">
+                <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#D5C7B5] bg-[#FAF7F2]">
                   {/* Products Picker */}
-                  <div className="p-4 overflow-y-auto max-h-80 md:max-h-none space-y-2">
+                  <div className="p-4 overflow-y-auto max-h-80 md:max-h-none space-y-2.5">
                     {productos
                       .filter((p) => {
                         const matchCat =
@@ -1088,21 +1088,21 @@ export default function MeseroPage() {
                         <div
                           key={prod.id}
                           onClick={() => agregarItemAComanda(prod)}
-                          className="p-3 rounded-2xl border border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-800/80 hover:border-amber-400 dark:hover:border-amber-600 cursor-pointer flex items-center justify-between transition group shadow-2xs"
+                          className="p-3 rounded-2xl border-2 border-[#D5C7B5] bg-white hover:border-amber-600 hover:bg-[#FFFDF9] cursor-pointer flex items-center justify-between transition group shadow-2xs"
                         >
                           <div>
-                            <div className="font-bold text-xs text-stone-900 dark:text-stone-100 group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors">
+                            <div className="font-bold text-xs text-stone-950 group-hover:text-[#991B24] transition-colors">
                               {prod.nombre}
                             </div>
-                            <span className="text-[10px] text-stone-400 capitalize">
+                            <span className="text-[10px] text-stone-500 capitalize">
                               {prod.estacion}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono font-bold text-amber-900 dark:text-amber-300">
+                            <span className="text-xs font-mono font-black text-amber-950">
                               Bs {prod.precio.toFixed(2)}
                             </span>
-                            <span className="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-700 group-hover:bg-amber-900 group-hover:text-white flex items-center justify-center text-xs font-bold transition">
+                            <span className="w-6 h-6 rounded-full bg-[#FAF6EF] border border-[#D5C7B5] group-hover:bg-[#991B24] group-hover:text-white group-hover:border-[#991B24] flex items-center justify-center text-xs font-bold transition">
                               +
                             </span>
                           </div>
@@ -1111,14 +1111,14 @@ export default function MeseroPage() {
                   </div>
 
                   {/* Current New Round Queue */}
-                  <div className="p-4 flex flex-col justify-between bg-stone-50/50 dark:bg-stone-950/40">
+                  <div className="p-4 flex flex-col justify-between bg-white">
                     <div className="space-y-3">
-                      <span className="text-xs font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider block">
+                      <span className="text-xs font-black text-stone-950 uppercase tracking-wider block">
                         Ronda a Despachar ({itemsNuevaComanda.length} ítems)
                       </span>
 
                       {itemsNuevaComanda.length === 0 ? (
-                        <div className="py-12 text-center text-stone-400 text-xs italic">
+                        <div className="py-12 text-center text-stone-500 text-xs italic">
                           Haz clic en productos a la izquierda para armar la comanda
                         </div>
                       ) : (
@@ -1126,21 +1126,21 @@ export default function MeseroPage() {
                           {itemsNuevaComanda.map((item, index) => (
                             <div
                               key={index}
-                              className="p-2.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-between text-xs"
+                              className="p-2.5 rounded-2xl bg-[#FAF6EF] border-2 border-[#D5C7B5] flex items-center justify-between text-xs"
                             >
                               <div className="space-y-0.5">
                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="px-1.5 py-0.2 rounded-md bg-amber-500/15 text-amber-900 dark:text-amber-300 font-mono text-[10px] font-bold border border-amber-500/30">
+                                  <span className="px-1.5 py-0.2 rounded-md bg-amber-200 text-amber-950 font-mono text-[10px] font-bold border border-amber-300">
                                     👤 Silla {item.asiento_numero || 1}
                                   </span>
-                                  <span className="font-bold text-stone-800 dark:text-stone-200">
+                                  <span className="font-bold text-stone-950">
                                     {item.producto.nombre}
                                   </span>
                                 </div>
-                                <div className="text-[10px] text-stone-400 flex items-center gap-2">
+                                <div className="text-[10px] text-stone-600 flex items-center gap-2">
                                   <span>Bs {item.producto.precio.toFixed(2)} c/u</span>
                                   {item.chips_seleccionados && item.chips_seleccionados.length > 0 && (
-                                    <span className="text-amber-600 dark:text-amber-400 font-medium">
+                                    <span className="text-amber-800 font-bold">
                                       • {item.chips_seleccionados.join(", ")}
                                     </span>
                                   )}
@@ -1161,11 +1161,11 @@ export default function MeseroPage() {
                                       return copy;
                                     });
                                   }}
-                                  className="w-6 h-6 rounded-lg bg-stone-100 dark:bg-stone-700 flex items-center justify-center font-bold text-xs"
+                                  className="w-6 h-6 rounded-lg bg-white border border-[#D5C7B5] hover:bg-stone-100 flex items-center justify-center font-bold text-xs cursor-pointer text-stone-800"
                                 >
                                   -
                                 </button>
-                                <span className="font-mono font-bold w-4 text-center">
+                                <span className="font-mono font-bold w-4 text-center text-stone-950">
                                   {item.cantidad}
                                 </span>
                                 <button
@@ -1177,7 +1177,7 @@ export default function MeseroPage() {
                                       return copy;
                                     });
                                   }}
-                                  className="w-6 h-6 rounded-lg bg-stone-100 dark:bg-stone-700 flex items-center justify-center font-bold text-xs"
+                                  className="w-6 h-6 rounded-lg bg-white border border-[#D5C7B5] hover:bg-stone-100 flex items-center justify-center font-bold text-xs cursor-pointer text-stone-800"
                                 >
                                   +
                                 </button>
@@ -1188,10 +1188,10 @@ export default function MeseroPage() {
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-stone-200 dark:border-stone-800 space-y-3">
-                      <div className="flex items-center justify-between text-xs font-bold text-stone-800 dark:text-stone-200">
+                    <div className="pt-4 border-t-2 border-[#D5C7B5] space-y-3">
+                      <div className="flex items-center justify-between text-xs font-black text-stone-950">
                         <span>Total Ronda:</span>
-                        <span className="font-serif text-base font-black text-amber-900 dark:text-amber-400">
+                        <span className="font-serif text-base font-black text-[#991B24]">
                           Bs{" "}
                           {itemsNuevaComanda
                             .reduce((acc, it) => acc + it.producto.precio * it.cantidad, 0)
@@ -1202,7 +1202,7 @@ export default function MeseroPage() {
                       <button
                         disabled={itemsNuevaComanda.length === 0}
                         onClick={enviarComanda}
-                        className="w-full py-3 rounded-2xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs shadow-md disabled:opacity-40 transition active:scale-95"
+                        className="w-full py-3 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold text-xs shadow-md disabled:opacity-40 transition active:scale-95 cursor-pointer border border-amber-400/30"
                       >
                         Enviar a Cocina / Vitrina
                       </button>

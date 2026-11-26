@@ -36,14 +36,14 @@ export default function SoundToggle() {
   };
 
   return (
-    <div className="fixed top-20 right-4 z-40 sm:top-24 sm:right-6">
+    <div className="fixed bottom-24 right-4 z-40 sm:bottom-6 sm:right-6">
       <motion.button
         whileHover={{ scale: 1.05, y: -2 }}
         whileTap={{ scale: 0.95, y: 1 }}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
         onClick={handleToggle}
         aria-label={isMuted ? "Activar sonido artesanal" : "Silenciar sonido artesanal"}
-        className={`relative px-3.5 py-2.5 rounded-full backdrop-blur-2xl border shadow-xl flex items-center gap-2.5 transition-colors duration-200 select-none ${
+        className={`relative px-3.5 py-2.5 rounded-full backdrop-blur-2xl border shadow-xl flex items-center gap-2.5 transition-colors duration-200 select-none cursor-pointer ${
           isMuted
             ? "bg-[#18100A]/90 border-stone-800 text-stone-400 hover:text-stone-200 shadow-black/40"
             : "bg-[#18100A]/95 border-[#527953]/50 text-[#CDE0C9] shadow-[0_8px_24px_rgba(30,19,12,0.45)] hover:border-[#6B9E6C]"
@@ -69,10 +69,10 @@ export default function SoundToggle() {
       <AnimatePresence>
         {showTooltip && (
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+            initial={{ opacity: 0, y: -8, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.95 }}
-            className="absolute right-0 top-14 whitespace-nowrap px-3 py-1.5 rounded-xl bg-stone-950/95 border border-amber-500/30 text-amber-200 text-[10px] font-semibold shadow-2xl backdrop-blur-md flex items-center gap-1.5"
+            exit={{ opacity: 0, y: -8, scale: 0.95 }}
+            className="absolute right-0 bottom-14 whitespace-nowrap px-3 py-1.5 rounded-xl bg-stone-950/95 border border-amber-500/30 text-amber-200 text-[10px] font-semibold shadow-2xl backdrop-blur-md flex items-center gap-1.5"
           >
             <Sparkles size={11} className="text-amber-400" />
             <span>{isMuted ? "Sonido desactivado" : "Efectos ASMR activados (Crujido & Porcelana)"}</span>

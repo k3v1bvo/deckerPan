@@ -578,16 +578,7 @@ export default function HomePage() {
         {/* Textura sutil y cálida de panadería */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#1E130C_1px,transparent_1px)] [background-size:16px_16px]" />
 
-        {/* Toldo a Rayas Auténtico de la Panadería Dencker (del Menú Oficial) */}
-        <div className="w-full max-w-7xl mx-auto px-4 -mt-2 overflow-hidden select-none pointer-events-none">
-          <img
-            src="/img/brand/awning-marquee-official.png"
-            alt="Toldo Tradicional Dencker Pan"
-            className="w-full h-auto object-cover max-h-16 sm:max-h-24 drop-shadow-xs"
-          />
-        </div>
-
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 pt-4 pb-14 lg:py-12 relative z-10">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 pt-6 pb-14 lg:py-14 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
             {/* Columna Izquierda: Identidad, Título Editorial & Acciones */}
@@ -847,13 +838,14 @@ export default function HomePage() {
           <div className="bg-gradient-to-r from-[#991B24]/95 via-[#7F1D1D] to-[#1E130C] rounded-3xl p-6 sm:p-10 border-2 border-amber-500/30 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
             
             <div className="space-y-3.5 text-left max-w-2xl">
-              {/* Rótulo Oficial MENU DENCKER del PDF */}
-              <div className="mb-2">
-                <img
-                  src="/img/brand/menu-dencker-banner-official.png"
-                  alt="MENU DENCKER Oficial"
-                  className="h-10 sm:h-12 w-auto object-contain drop-shadow"
-                />
+              {/* Rótulo Oficial MENU DENCKER con Alta Legibilidad */}
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-2xl bg-[#1E130C] border-2 border-amber-400/60 shadow-lg mb-2">
+                <span className="font-serif font-black tracking-[0.2em] uppercase text-amber-300 text-sm sm:text-base">
+                  MENÚ DENCKER
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#991B24] text-white font-black border border-amber-400/30">
+                  OFICIAL
+                </span>
               </div>
 
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-amber-400/30 text-amber-300 text-xs font-bold shadow-xs">
@@ -922,41 +914,41 @@ export default function HomePage() {
 
           </div>
 
-          {/* ── Banner de los 3 Emblemas Oficiales Dencker ── */}
+          {/* ── Banner de los 3 Emblemas Oficiales Dencker con Alto Contraste ── */}
           <div className="w-full mt-6 pt-6 border-t border-white/15 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             {/* Emblema 1 */}
-            <div className="flex items-center gap-3.5 bg-black/35 p-3.5 rounded-2xl border border-white/10 shadow-sm">
-              <div className="w-12 h-12 rounded-xl bg-white/10 p-1.5 flex items-center justify-center shrink-0 border border-white/10">
+            <div className="flex items-center gap-3.5 bg-[#1E130C] p-4 rounded-3xl border-2 border-amber-500/40 shadow-xl hover:border-amber-400 transition group">
+              <div className="w-14 h-14 rounded-2xl bg-white p-2.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
                 <img
                   src="/img/brand/logo-1-chef-hat.svg"
                   alt="Sombrero Chef Dencker"
-                  className="w-full h-full object-contain filter drop-shadow"
+                  className="w-full h-full object-contain filter drop-shadow-xs"
                 />
               </div>
               <div className="text-left">
-                <h4 className="font-serif font-bold text-xs text-amber-200 uppercase tracking-wider">Insignia Maestra</h4>
-                <p className="text-[11px] text-stone-300">Sombrero Chef & Bigote Dencker</p>
+                <h4 className="font-serif font-black text-xs text-amber-300 uppercase tracking-wider">Insignia Maestra</h4>
+                <p className="text-[11px] text-stone-200 font-medium">Sombrero Chef &amp; Bigote Dencker</p>
               </div>
             </div>
 
             {/* Emblema 2 */}
-            <div className="flex items-center gap-3.5 bg-black/35 p-3.5 rounded-2xl border border-white/10 shadow-sm">
-              <div className="w-16 h-10 rounded-xl overflow-hidden shadow-sm shrink-0 border border-white/10">
+            <div className="flex items-center gap-3.5 bg-[#1E130C] p-4 rounded-3xl border-2 border-amber-500/40 shadow-xl hover:border-amber-400 transition group">
+              <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform overflow-hidden">
                 <img
                   src="/img/brand/logo-2-dencker-coffee-vintage.png"
                   alt="Boleto Vintage Dencker Coffee"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div className="text-left">
-                <h4 className="font-serif font-bold text-xs text-amber-200 uppercase tracking-wider">Boleto Clásico</h4>
-                <p className="text-[11px] text-stone-300">Dencker Coffee & Panadería Vintage</p>
+                <h4 className="font-serif font-black text-xs text-amber-300 uppercase tracking-wider">Boleto Clásico</h4>
+                <p className="text-[11px] text-stone-200 font-medium">Dencker Coffee &amp; Panadería Vintage</p>
               </div>
             </div>
 
             {/* Emblema 3 */}
-            <div className="flex items-center gap-3.5 bg-black/35 p-3.5 rounded-2xl border border-white/10 shadow-sm">
-              <div className="w-12 h-12 rounded-xl bg-white/10 p-1 flex items-center justify-center shrink-0 border border-white/10">
+            <div className="flex items-center gap-3.5 bg-[#1E130C] p-4 rounded-3xl border-2 border-amber-500/40 shadow-xl hover:border-amber-400 transition group">
+              <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
                 <img
                   src="/img/brand/logo-3-don-dencker-badge.png"
                   alt="Don Dencker Sello"
@@ -964,8 +956,8 @@ export default function HomePage() {
                 />
               </div>
               <div className="text-left">
-                <h4 className="font-serif font-bold text-xs text-amber-200 uppercase tracking-wider">Sello de Tradición</h4>
-                <p className="text-[11px] text-stone-300">Don Dencker con Taza Humeante</p>
+                <h4 className="font-serif font-black text-xs text-amber-300 uppercase tracking-wider">Sello de Tradición</h4>
+                <p className="text-[11px] text-stone-200 font-medium">Don Dencker con Taza Humeante</p>
               </div>
             </div>
           </div>

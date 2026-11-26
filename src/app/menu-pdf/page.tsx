@@ -314,7 +314,7 @@ export default function MenuPdfPage() {
   }, [mesas, mesaFiltroCarpas]);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] font-sans print:bg-white print:p-0 selection:bg-[#EAE0D3] relative">
+    <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] font-sans print:bg-white print:p-0 selection:bg-[#EAE0D3] relative">
       {/* Textura sutil y cálida de panadería (idéntica al landing page) */}
       <div className="fixed inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#1E130C_1px,transparent_1px)] [background-size:16px_16px] print:hidden" />
       
@@ -421,7 +421,7 @@ export default function MenuPdfPage() {
       </section>
 
       {/* ── BARRA STICKY DE SECCIONES (IDÉNTICA A LA NAVEGACIÓN DEL LANDING) ── */}
-      <nav className="sticky top-16 z-30 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#EAE2D5] py-2.5 px-4 sm:px-6 lg:px-8 shadow-xs print:hidden">
+      <nav className="sticky top-16 z-30 bg-[#F2ECE1]/95 backdrop-blur-md border-b-2 border-[#D5C7B5] py-2.5 px-4 sm:px-6 lg:px-8 shadow-xs print:hidden">
         <div className="w-full max-w-[1560px] mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
             <span className="text-[11px] font-bold text-[#785E4F] uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">

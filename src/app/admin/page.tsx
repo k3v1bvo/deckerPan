@@ -899,8 +899,8 @@ export default function AdminPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
-        {/* ── Segmented Control Tabs con Estilo Artesanal ── */}
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-[#EDE5DA] border border-[#DDD3C6] max-w-5xl overflow-x-auto no-scrollbar touch-pan-x shadow-xs">
+        {/* ── Segmented Control Tabs con Estilo Artesanal Responsive ── */}
+        <div className="relative flex items-center p-1.5 rounded-2xl bg-white border-2 border-[#D5C7B5] w-full max-w-full overflow-x-auto scrollbar-none shadow-sm gap-1.5">
           {(
             [
               { id: "productos", label: "Catálogo & Precios", icon: UtensilsCrossed },
@@ -923,14 +923,14 @@ export default function AdminPage() {
                   soundManager.playClick();
                   setTabActiva(tab.id);
                 }}
-                className={`relative flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all z-10 cursor-pointer whitespace-nowrap ${
-                  isActive ? "text-white font-black" : "text-[#5C3D28] hover:text-[#1E130C] hover:bg-white/40"
+                className={`relative shrink-0 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all z-10 cursor-pointer whitespace-nowrap ${
+                  isActive ? "text-white font-black" : "text-stone-800 hover:text-stone-950 hover:bg-[#FAF6EF]"
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="adminTabHighlight"
-                    className="absolute inset-0 bg-[#991B24] rounded-xl shadow-md border border-amber-400/40 -z-10"
+                    className="absolute inset-0 bg-[#991B24] rounded-xl shadow-md border-2 border-[#7F1D1D] -z-10"
                     transition={{ type: "spring", damping: 30, stiffness: 450 }}
                   />
                 )}
@@ -960,7 +960,7 @@ export default function AdminPage() {
             </div>
 
             {/* Quick adjust total capacity dock */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-6">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-6">
               <div>
                 <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <Users size={18} className="text-amber-600" />
@@ -1007,7 +1007,7 @@ export default function AdminPage() {
                 return (
                   <div
                     key={m.id}
-                    className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between h-48 hover:border-amber-400 dark:hover:border-amber-600 transition group"
+                    className="p-4 sm:p-5 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between h-48 hover:border-amber-400 dark:hover:border-amber-600 transition group"
                   >
                     <div className="flex items-start justify-between">
                       <div>
@@ -1106,7 +1106,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
+            <div className="p-4 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
                 <button
                   onClick={() => setFiltroCategoria("todas")}
@@ -1263,7 +1263,7 @@ export default function AdminPage() {
                     return (
                       <div
                         key={prod.id}
-                        className="p-5 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between hover:border-amber-400 dark:hover:border-amber-600 transition group"
+                        className="p-4 sm:p-5 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between hover:border-amber-400 dark:hover:border-amber-600 transition group"
                       >
                         <div className="space-y-3">
                           <div className="flex items-start justify-between gap-3">
@@ -1452,9 +1452,9 @@ export default function AdminPage() {
               </div>
             ) : (
               /* VISTA 2: PLANILLA / TABLA RÁPIDA DE PRECIOS */
-              <div className="overflow-x-auto rounded-3xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-xs">
+              <div className="overflow-x-auto rounded-3xl border-2 border-[#D5C7B5] bg-white shadow-sm">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-stone-50 dark:bg-stone-950/70 border-b border-stone-200 dark:border-stone-800 text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider">
+                  <thead className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-[11px] font-black text-stone-900 uppercase tracking-wider">
                     <tr>
                       <th className="py-3.5 px-4 w-16">Foto</th>
                       <th className="py-3.5 px-4">Producto & Receta</th>
@@ -1767,7 +1767,7 @@ export default function AdminPage() {
             </div>
 
             {/* Formulario de Configuración SIAT */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-6">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-4">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
@@ -1978,7 +1978,7 @@ export default function AdminPage() {
             </div>
 
             {/* Listado de Facturas Emitidas */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
@@ -2041,10 +2041,10 @@ export default function AdminPage() {
                   </div>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
                   <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-500 font-bold uppercase tracking-wider text-[10px]">
+                      <tr className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-stone-900 font-black uppercase tracking-wider text-[10px]">
                         <th className="py-2.5 px-3">Nº Factura</th>
                         <th className="py-2.5 px-3">Fecha & Hora</th>
                         <th className="py-2.5 px-3">Cliente / Razón Social</th>
@@ -2258,7 +2258,7 @@ export default function AdminPage() {
               {reservas.map((res) => (
                 <div
                   key={res.id}
-                  className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4"
+                  className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -2404,7 +2404,7 @@ export default function AdminPage() {
             </div>
 
             {/* Filtros por Rol y Buscador */}
-            <div className="p-4 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
+            <div className="p-4 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
                 {[
                   { id: "todos", label: "Todo el Personal" },
@@ -2665,7 +2665,7 @@ export default function AdminPage() {
             </div>
 
             {/* SECCIÓN 1: PERSONAL EN TURNO EN VIVO */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <Users size={18} className="text-emerald-500" />
@@ -2740,7 +2740,7 @@ export default function AdminPage() {
             </div>
 
             {/* SECCIÓN 2: CONFIGURACIÓN DE LA GEOCERCA GPS */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-5">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="space-y-0.5">
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
@@ -2910,7 +2910,7 @@ export default function AdminPage() {
             </div>
 
             {/* SECCIÓN 3: TABLA DE HISTORIAL Y AUDITORÍA DE ASISTENCIA */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
@@ -2965,10 +2965,10 @@ export default function AdminPage() {
                   No se encontraron marcados con los filtros seleccionados.
                 </div>
               ) : (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
                   <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-500 dark:text-stone-400 uppercase font-mono text-[10px]">
+                      <tr className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-stone-900 font-black uppercase font-mono text-[10px]">
                         <th className="py-2.5 px-3">Colaborador</th>
                         <th className="py-2.5 px-3">Tipo</th>
                         <th className="py-2.5 px-3">Fecha & Hora</th>
@@ -3136,7 +3136,7 @@ export default function AdminPage() {
             {/* 4 Bento Cards Ejecutivas */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1: Ventas Totales */}
-              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
                     <DollarSign size={16} className="text-amber-600" />
@@ -3171,7 +3171,7 @@ export default function AdminPage() {
               </div>
 
               {/* Card 2: Margen & Utilidad Neta */}
-              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
                     <TrendingUp size={14} className="text-emerald-600" />
@@ -3195,7 +3195,7 @@ export default function AdminPage() {
               </div>
 
               {/* Card 3: Ticket Promedio y Volumen */}
-              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Receipt size={14} className="text-blue-600" />
@@ -3222,7 +3222,7 @@ export default function AdminPage() {
               </div>
 
               {/* Card 4: Caja Registradora & Turno Actual */}
-              <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Clock size={14} className="text-amber-600" />
@@ -3252,7 +3252,7 @@ export default function AdminPage() {
             </div>
 
             {/* ── SECCIÓN CRÍTICA: INGRESOS POR TURNOS (SHIFT INTELLIGENCE) ── */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-6">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
@@ -3458,7 +3458,7 @@ export default function AdminPage() {
             </div>
 
             {/* ── REGISTRO DETALLADO DE PAGOS: ¿QUIÉN PAGÓ? ¿CUÁNTO PAGÓ? ¿CUÁNDO PAGÓ? ── */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-5">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="space-y-0.5">
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
@@ -3510,10 +3510,10 @@ export default function AdminPage() {
               </div>
 
               {/* Tabla de Transacciones */}
-              <div className="overflow-x-auto rounded-2xl border border-stone-200 dark:border-stone-800">
+              <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="bg-stone-50 dark:bg-stone-800/80 text-stone-500 uppercase tracking-wider font-semibold border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                    <tr className="bg-[#FAF6EF] text-stone-900 uppercase tracking-wider font-black border-b-2 border-[#D8C7B2] text-[11px]">
                       <th className="py-3 px-4">ID Transacción</th>
                       <th className="py-3 px-4">Fecha & Hora</th>
                       <th className="py-3 px-4">Cliente / Mesa</th>
@@ -3625,7 +3625,7 @@ export default function AdminPage() {
             </div>
 
             {/* ── HISTORIAL DE AUDITORÍA DE ARQUEOS DE CAJA POR TURNO ── */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
@@ -3706,7 +3706,7 @@ export default function AdminPage() {
             </div>
 
             {/* Top 5 Productos con barras de progreso */}
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
               <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
                 <Sparkles size={18} className="text-amber-600" />
                 Top 5 Productos Estrella y Contribución de Ganancia
@@ -4045,7 +4045,7 @@ export default function AdminPage() {
         {/* ── TAB: QRS DINÁMICOS POR MESA (IMPRIMIBLES) ── */}
         {tabActiva === "qr_mesas" && (
           <div className="space-y-6">
-            <div className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
+            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
               <div className="space-y-1">
                 <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <QrCode size={20} className="text-amber-600" />
@@ -4229,15 +4229,15 @@ export default function AdminPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800"
+              className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-4 border-2 border-[#D5C7B5]"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800">
-                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+              <div className="flex items-center justify-between pb-3 border-b-2 border-[#EAE0D2]">
+                <h3 className="font-serif text-lg font-black text-stone-950">
                   {mesaAEditar ? `Editar Mesa ${mesaAEditar.numero}` : "Agregar Nueva Mesa"}
                 </h3>
                 <button
                   onClick={() => setModalMesaAbierto(false)}
-                  className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
+                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer transition"
                 >
                   <X size={18} />
                 </button>
@@ -4245,7 +4245,7 @@ export default function AdminPage() {
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Número de Mesa
                   </label>
                   <input
@@ -4254,12 +4254,12 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setFormMesa({ ...formMesa, numero: parseInt(e.target.value) || 1 })
                     }
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Capacidad (Personas)
                   </label>
                   <input
@@ -4270,12 +4270,12 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setFormMesa({ ...formMesa, capacidad: parseInt(e.target.value) || 1 })
                     }
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Forma de la Mesa
                   </label>
                   <select
@@ -4283,7 +4283,7 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setFormMesa({ ...formMesa, tipo: e.target.value as TipoMesa })
                     }
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   >
                     <option value="cuadrada">Cuadrada</option>
                     <option value="redonda">Redonda</option>
@@ -4292,13 +4292,13 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Zona Asignada
                   </label>
                   <select
                     value={formMesa.zona_id}
                     onChange={(e) => setFormMesa({ ...formMesa, zona_id: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   >
                     {zonas.map((z) => (
                       <option key={z.id} value={z.id}>
@@ -4312,13 +4312,13 @@ export default function AdminPage() {
               <div className="grid grid-cols-2 gap-2 pt-2">
                 <button
                   onClick={guardarMesa}
-                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs hover:bg-amber-950 transition"
+                  className="py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold text-xs shadow-md border border-amber-400/30 transition cursor-pointer"
                 >
                   Guardar Mesa
                 </button>
                 <button
                   onClick={() => setModalMesaAbierto(false)}
-                  className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition"
+                  className="py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs hover:bg-[#FAF6EF] transition cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -4336,12 +4336,12 @@ export default function AdminPage() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-2xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-200 dark:border-stone-800 overflow-hidden text-stone-900 dark:text-stone-100"
+              className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border-2 border-[#D5C7B5] overflow-hidden text-stone-900"
             >
               {/* Encabezado del Modal */}
-              <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between gap-3 bg-stone-50 dark:bg-stone-950/60 shrink-0">
+              <div className="p-4 sm:p-5 border-b-2 border-[#D5C7B5] flex items-center justify-between gap-3 bg-[#FAF6EF] shrink-0">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-xl shrink-0 overflow-hidden">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border-2 border-amber-500/30 flex items-center justify-center text-xl shrink-0 overflow-hidden">
                     {formProducto.imagen_url ? (
                       <img src={formProducto.imagen_url} alt="Preview" className="w-full h-full object-cover" />
                     ) : (
@@ -4349,10 +4349,10 @@ export default function AdminPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-serif text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100 truncate">
+                    <h3 className="font-serif text-base sm:text-lg font-black text-stone-950 truncate">
                       {productoAEditar ? `Editar: ${productoAEditar.nombre}` : "Nuevo Producto en Catálogo"}
                     </h3>
-                    <p className="text-[11px] text-stone-500 dark:text-stone-400 truncate">
+                    <p className="text-[11px] text-stone-600 font-bold truncate">
                       {categorias.find((c) => c.id === formProducto.categoria_id)?.nombre || "General"} • Estación {formProducto.estacion}
                     </p>
                   </div>
@@ -4361,21 +4361,21 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setModalProductoAbierto(false)}
-                  className="p-2 rounded-full text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800 transition cursor-pointer shrink-0"
+                  className="p-2 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-200 transition cursor-pointer shrink-0"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               {/* Selector de Pestañas Organizadas */}
-              <div className="px-4 pt-2 bg-stone-100/70 dark:bg-stone-900/80 border-b border-stone-200 dark:border-stone-800 flex items-center gap-1 overflow-x-auto scrollbar-none shrink-0">
+              <div className="px-4 pt-2 bg-[#FAF6EF] border-b-2 border-[#D5C7B5] flex items-center gap-1 overflow-x-auto scrollbar-none shrink-0">
                 <button
                   type="button"
                   onClick={() => { soundManager.playTactileClick(); setTabProductoModal("general"); }}
                   className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
                     tabProductoModal === "general"
-                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
-                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
                   }`}
                 >
                   <UtensilsCrossed size={14} />
@@ -4387,14 +4387,14 @@ export default function AdminPage() {
                   onClick={() => { soundManager.playTactileClick(); setTabProductoModal("precios"); }}
                   className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
                     tabProductoModal === "precios"
-                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
-                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
                   }`}
                 >
                   <DollarSign size={14} />
                   <span>2. Precios y Tamaños</span>
                   {formProducto.tiene_tamanios && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 font-mono">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-900 font-mono font-bold">
                       {formProducto.tamanios.length}p
                     </span>
                   )}
@@ -4405,8 +4405,8 @@ export default function AdminPage() {
                   onClick={() => { soundManager.playTactileClick(); setTabProductoModal("imagen"); }}
                   className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
                     tabProductoModal === "imagen"
-                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
-                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
                   }`}
                 >
                   <ImageIcon size={14} />
@@ -4421,14 +4421,14 @@ export default function AdminPage() {
                   onClick={() => { soundManager.playTactileClick(); setTabProductoModal("personalizacion"); }}
                   className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
                     tabProductoModal === "personalizacion"
-                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
-                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
                   }`}
                 >
                   <Sparkles size={14} />
                   <span>4. Personalización</span>
                   {formProducto.chips_list.length > 0 && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 font-mono">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-900 font-mono font-bold">
                       {formProducto.chips_list.length}
                     </span>
                   )}
@@ -5079,16 +5079,16 @@ export default function AdminPage() {
               </div>
 
               {/* Footer con Acciones Principales */}
-              <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/60 flex items-center justify-between gap-3 shrink-0">
-                <div className="text-[11px] text-stone-500 font-medium hidden sm:block">
-                  Pestaña activa: <strong className="capitalize">{tabProductoModal}</strong> • Todos los cambios se guardan localmente y en la nube
+              <div className="p-4 border-t-2 border-[#D5C7B5] bg-[#FAF6EF] flex items-center justify-between gap-3 shrink-0">
+                <div className="text-[11px] text-stone-600 font-bold hidden sm:block">
+                  Pestaña activa: <strong className="capitalize text-stone-950">{tabProductoModal}</strong> • Todos los cambios se guardan localmente y en la nube
                 </div>
 
                 <div className="flex items-center gap-2 ml-auto w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => setModalProductoAbierto(false)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs hover:bg-stone-300 transition cursor-pointer"
+                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs hover:bg-[#FAF6EF] transition cursor-pointer"
                   >
                     Cancelar
                   </button>
@@ -5096,7 +5096,7 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={guardarProducto}
-                    className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer"
+                    className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs transition flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer border border-amber-400/30"
                   >
                     <Check size={15} />
                     <span>Guardar Producto</span>
@@ -5293,25 +5293,25 @@ export default function AdminPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800"
+              className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-4 border-2 border-[#D5C7B5]"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800">
+              <div className="flex items-center justify-between pb-3 border-b-2 border-[#EAE0D2]">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                  <div className="p-2 rounded-xl bg-[#991B24]/10 text-[#991B24] border border-[#991B24]/20">
                     <Users size={18} />
                   </div>
                   <div>
-                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                    <h3 className="font-serif text-lg font-black text-stone-950">
                       {usuarioStaffAEditar ? "Editar Colaborador" : "Nuevo Colaborador"}
                     </h3>
-                    <p className="text-[11px] text-stone-400">
+                    <p className="text-[11px] text-stone-500">
                       Asigna estación y PIN de seguridad de 4 dígitos
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setModalStaffAbierto(false)}
-                  className="p-1.5 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
+                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer transition"
                 >
                   <X size={18} />
                 </button>
@@ -5320,7 +5320,7 @@ export default function AdminPage() {
               <form onSubmit={handleGuardarStaff} className="space-y-3.5 text-xs">
                 {/* Nombre Completo */}
                 <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Nombre Completo *
                   </label>
                   <input
@@ -5329,13 +5329,13 @@ export default function AdminPage() {
                     placeholder="Ej. Camila Rojas"
                     value={formStaff.nombre}
                     onChange={(e) => setFormStaff({ ...formStaff, nombre: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   />
                 </div>
 
                 {/* Rol / Estación */}
                 <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Estación Operativa & Rol *
                   </label>
                   <select
@@ -5356,7 +5356,7 @@ export default function AdminPage() {
                           : formStaff.cargo,
                       });
                     }}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   >
                     <option value="mesero">🍽️ Sala & Mesero (Mesas, Croquis y Comandas)</option>
                     <option value="cocina">👨‍🍳 Cocina & Barismo KDS (Despacho de Tickets)</option>
@@ -5367,7 +5367,7 @@ export default function AdminPage() {
 
                 {/* Cargo descriptivo */}
                 <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Cargo / Puesto de Trabajo
                   </label>
                   <input
@@ -5375,20 +5375,20 @@ export default function AdminPage() {
                     placeholder="Ej. Mesero Salón Turno Mañana"
                     value={formStaff.cargo}
                     onChange={(e) => setFormStaff({ ...formStaff, cargo: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   />
                 </div>
 
                 {/* PIN de 4 dígitos */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-bold text-stone-700 dark:text-stone-300">
+                    <label className="font-black text-stone-900">
                       Código PIN Táctil (4 Dígitos) *
                     </label>
                     <button
                       type="button"
                       onClick={handleGenerarPinAleatorio}
-                      className="text-xs text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1.5 font-semibold cursor-pointer"
+                      className="text-xs text-[#991B24] hover:underline flex items-center gap-1.5 font-bold cursor-pointer"
                     >
                       <KeyRound size={15} />
                       <span>Generar al azar</span>
@@ -5405,16 +5405,16 @@ export default function AdminPage() {
                       const val = e.target.value.replace(/\D/g, "").slice(0, 4);
                       setFormStaff({ ...formStaff, pin: val });
                     }}
-                    className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-lg font-bold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full p-3 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-mono text-xl font-black tracking-widest text-center focus:outline-none focus:border-amber-700"
                   />
-                  <span className="text-[11px] text-stone-400 mt-1 block">
+                  <span className="text-[11px] text-stone-500 mt-1 block">
                     Este PIN lo digitará el colaborador en la pantalla táctil de su estación.
                   </span>
                 </div>
 
                 {/* Teléfono / WhatsApp */}
                 <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                  <label className="font-black text-stone-900 block mb-1">
                     Teléfono / WhatsApp (Opcional)
                   </label>
                   <input
@@ -5422,14 +5422,14 @@ export default function AdminPage() {
                     placeholder="+591 76911000"
                     value={formStaff.telefono}
                     onChange={(e) => setFormStaff({ ...formStaff, telefono: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none"
+                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                   />
                 </div>
 
                 {/* Estado Activo */}
-                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF6EF] border-2 border-[#D5C7B5]">
                   <div>
-                    <span className="font-bold text-stone-800 dark:text-stone-200 block text-xs sm:text-sm">
+                    <span className="font-black text-stone-950 block text-xs sm:text-sm">
                       Estado de la Cuenta
                     </span>
                     <span className="text-xs text-stone-500">
@@ -5440,22 +5440,22 @@ export default function AdminPage() {
                     type="checkbox"
                     checked={formStaff.activo}
                     onChange={(e) => setFormStaff({ ...formStaff, activo: e.target.checked })}
-                    className="w-5 h-5 rounded text-amber-600 focus:ring-amber-500 cursor-pointer"
+                    className="w-5 h-5 rounded text-[#991B24] accent-[#991B24] focus:ring-[#991B24] cursor-pointer"
                   />
                 </div>
 
                 {/* Botón Guardar */}
-                <div className="pt-4 border-t border-stone-200 dark:border-stone-800 flex items-center justify-end gap-3">
+                <div className="pt-4 border-t-2 border-[#EAE0D2] flex items-center justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setModalStaffAbierto(false)}
-                    className="px-4 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs sm:text-sm hover:bg-stone-200 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs sm:text-sm hover:bg-[#FAF6EF] cursor-pointer transition"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
+                    className="px-6 py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs sm:text-sm shadow-md border border-amber-400/30 transition flex items-center gap-2 cursor-pointer active:scale-95"
                   >
                     <Save size={16} />
                     <span>Guardar Colaborador</span>
