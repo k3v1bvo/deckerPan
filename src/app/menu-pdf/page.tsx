@@ -128,7 +128,13 @@ export default function MenuPdfPage() {
       estacion: "cocina",
     };
 
-    addItem(itemProducto, [`${porciones} Porciones`], notasPersonalizadas || notasPizza || undefined);
+    addItem(
+      itemProducto,
+      [`${porciones} Porciones`],
+      notasPersonalizadas || notasPizza || undefined,
+      `${porciones} porc`,
+      precioFinal
+    );
     soundManager.playPastryCrinkle();
     setFeedbackAgregado(`${itemProducto.nombre} (Bs ${precioFinal})`);
     setTimeout(() => setFeedbackAgregado(null), 1800);

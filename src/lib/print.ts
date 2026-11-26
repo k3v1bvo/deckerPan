@@ -1,7 +1,8 @@
 // ==============================================================================
-// DENCKER PAN — MOTOR DE IMPRESIÓN PROFESIONAL (Tickets Térmicos, Reportes y QRs)
-// Aísla el documento objetivo en un contexto limpio (sin menús, fondos ni botones)
-// Compatible con impresoras térmicas de 80mm/58mm, impresoras láser y PDF
+// DENCKER PAN — MOTOR DE IMPRESIÓN PROFESIONAL AISLADO (Tickets 80mm, Arqueos, QRs)
+// Aísla estrictamente el documento objetivo en un Portal Dedicado (#dencker-print-portal)
+// Oculta completamente la página web, barra de navegación, menús y fondos durante la impresión.
+// Compatible al 100% con impresoras térmicas (80mm/58mm), impresoras láser, PDF y móviles.
 // ==============================================================================
 
 export interface PrintOptions {
@@ -11,53 +12,25 @@ export interface PrintOptions {
 }
 
 /**
- * Imprime un elemento específico del DOM de forma aislada y profesional
- * mediante un iframe temporal, evitando que se imprima la página web completa.
+ * Obtiene o crea el portal dedicado de impresión en el body del documento.
  */
-export function printElementById(elementId: string, options: PrintOptions = {}) {
-  if (typeof window === "undefined") return;
-
-  const { pageType = "thermal", title = "Dencker Pan" } = options;
-  const sourceElement = document.getElementById(elementId);
-
-  if (!sourceElement) {
-    console.warn(`[Dencker Print] No se encontró el elemento con ID "${elementId}". Ejecutando fallback window.print()`);
-    window.print();
-    return;
+function getOrCreatePrintPortal(): HTMLElement {
+  let portal = document.getElementById("dencker-print-portal");
+  if (!portal) {
+    portal = document.createElement("div");
+    portal.id = "dencker-print-portal";
+    portal.className = "dencker-print-portal";
+    document.body.appendChild(portal);
   }
+  return portal;
+}
 
-  // Clonar el nodo para no alterar el DOM interactivo
-  const clone = sourceElement.cloneNode(true) as HTMLElement;
-
-  // Remover botones, barras de scroll y elementos marcados como no imprimibles
-  const elementsToRemove = clone.querySelectorAll(
-    "button, input, select, textarea, .no-print, [data-no-print='true']"
-  );
-  elementsToRemove.forEach((el) => el.remove());
-
-  // Crear iframe invisible para aislar completamente el contexto de impresión
-  const iframe = document.createElement("iframe");
-  iframe.style.position = "fixed";
-  iframe.style.right = "0";
-  iframe.style.bottom = "0";
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "none";
-  iframe.style.visibility = "hidden";
-  iframe.title = title;
-  document.body.appendChild(iframe);
-
-  const doc = iframe.contentWindow?.document;
-  if (!doc) {
-    window.print();
-    return;
-  }
-
-  // Estilos CSS dedicados según el tipo de documento
-  let pageStyles = "";
-
+/**
+ * Genera las reglas CSS necesarias según el tipo de documento para inyectar en impresión.
+ */
+function getStylesForPageType(pageType: "thermal" | "letter" | "a4" | "carpas"): string {
   if (pageType === "thermal") {
-    pageStyles = `
+    return `
       @page {
         size: 80mm auto;
         margin: 0;
@@ -77,11 +50,27 @@ export function printElementById(elementId: string, options: PrintOptions = {}) 
         width: 74mm !important;
         max-width: 80mm !important;
         margin: 0 auto !important;
-        padding: 4mm 2.5mm !important;
+        padding: 3mm 2mm !important;
       }
-      .ticket-container {
+      #dencker-print-portal {
+        display: block !important;
+        visibility: visible !important;
+        width: 74mm !important;
+        max-width: 80mm !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .ticket-container, .ticket-termico, .ticket-80mm {
         width: 100% !important;
-        box-sizing: border-box !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
       }
       img {
         max-width: 65% !important;
@@ -132,25 +121,31 @@ export function printElementById(elementId: string, options: PrintOptions = {}) 
       .mt-2 { margin-top: 6px !important; }
       .mb-2 { margin-bottom: 6px !important; }
     `;
-  } else if (pageType === "letter" || pageType === "a4") {
-    pageStyles = `
+  }
+
+  if (pageType === "letter" || pageType === "a4") {
+    return `
       @page {
         size: letter portrait;
-        margin: 12mm 15mm;
+        margin: 10mm 12mm;
       }
       html, body {
         margin: 0 !important;
         padding: 0 !important;
         background: #ffffff !important;
         color: #1a1a1a !important;
-        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        font-family: system-ui, -apple-system, sans-serif !important;
         font-size: 11.5px !important;
         line-height: 1.45 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      body {
+      #dencker-print-portal {
+        display: block !important;
+        visibility: visible !important;
+        width: 100% !important;
         padding: 10px !important;
+        background: #ffffff !important;
       }
       .report-header {
         border-bottom: 2.5px solid #1e130c !important;
@@ -211,100 +206,166 @@ export function printElementById(elementId: string, options: PrintOptions = {}) 
         font-size: 10px !important;
       }
     `;
-  } else if (pageType === "carpas") {
-    pageStyles = `
-      @page {
-        size: A4 portrait;
-        margin: 8mm;
-      }
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-        color: #1e130c !important;
-        font-family: system-ui, -apple-system, sans-serif !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      .grid-carpas {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12mm !important;
-      }
-      .carpa-card {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-        border: 2px dashed #991b24 !important;
-        border-radius: 16px !important;
-        padding: 16px !important;
-        text-align: center !important;
-        background-color: #ffffff !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-      }
-      .cut-line {
-        width: 100% !important;
-        border-top: 1px dashed #94a3b8 !important;
-        margin: 8px 0 !important;
-        position: relative !important;
-      }
-      .cut-line::after {
-        content: "✂ Doblar o cortar por aquí" !important;
-        font-size: 8px !important;
-        color: #64748b !important;
-        background: #fff !important;
-        padding: 0 4px !important;
-        position: relative !important;
-        top: -6px !important;
-      }
-    `;
   }
 
-  doc.open();
-  doc.write(`
-    <!DOCTYPE html>
-    <html lang="es">
-      <head>
-        <meta charset="utf-8" />
-        <title>${title}</title>
-        <style>
-          ${pageStyles}
-        </style>
-      </head>
-      <body>
-        <div class="ticket-container">
-          ${clone.innerHTML}
-        </div>
-      </body>
-    </html>
-  `);
-  doc.close();
+  // Carpas QR para Mesas
+  return `
+    @page {
+      size: A4 portrait;
+      margin: 8mm;
+    }
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #1e130c !important;
+      font-family: system-ui, -apple-system, sans-serif !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    #dencker-print-portal {
+      display: block !important;
+      visibility: visible !important;
+      width: 100% !important;
+      padding: 4mm !important;
+      background: #ffffff !important;
+    }
+    .grid-carpas, #qrs-mesas-imprimibles {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12mm !important;
+    }
+    .carpa-card {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      border: 2px dashed #991b24 !important;
+      border-radius: 16px !important;
+      padding: 16px !important;
+      text-align: center !important;
+      background-color: #ffffff !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+    }
+    .cut-line {
+      width: 100% !important;
+      border-top: 1px dashed #94a3b8 !important;
+      margin: 8px 0 !important;
+      position: relative !important;
+    }
+    .cut-line::after {
+      content: "✂ Doblar o cortar por aquí" !important;
+      font-size: 8px !important;
+      color: #64748b !important;
+      background: #fff !important;
+      padding: 0 4px !important;
+      position: relative !important;
+      top: -6px !important;
+    }
+  `;
+}
 
-  // Esperar a que carguen imágenes / fuentes antes de disparar el diálogo
-  const images = doc.getElementsByTagName("img");
+/**
+ * Imprime un elemento específico del DOM de forma aislada y profesional
+ * mediante el Portal Dedicado (#dencker-print-portal).
+ * Garantiza que NUNCA se imprima la página completa ni elementos exteriores.
+ */
+export function printElementById(elementId: string, options: PrintOptions = {}) {
+  if (typeof window === "undefined") return;
+
+  const { pageType = "thermal", title = "Dencker Pan" } = options;
+  const sourceElement = document.getElementById(elementId);
+
+  if (!sourceElement) {
+    console.warn(`[Dencker Print] No se encontró el elemento con ID "${elementId}". Cancelando impresión para evitar imprimir la página completa.`);
+    return;
+  }
+
+  // 1. Clonar el elemento objetivo
+  const clone = sourceElement.cloneNode(true) as HTMLElement;
+
+  // 2. Limpiar botones, controles de formulario y elementos no imprimibles
+  const elementsToRemove = clone.querySelectorAll(
+    "button, input, select, textarea, .no-print, [data-no-print='true']"
+  );
+  elementsToRemove.forEach((el) => el.remove());
+
+  // 3. Montar el contenido limpio en el portal de impresión dedicado
+  const portal = getOrCreatePrintPortal();
+  portal.innerHTML = "";
+  
+  const wrapper = document.createElement("div");
+  wrapper.className = pageType === "thermal" ? "ticket-container" : "report-container";
+  wrapper.appendChild(clone);
+  portal.appendChild(wrapper);
+
+  // 4. Inyectar estilos dinámicos de impresión aislada
+  const styleId = "dencker-dynamic-print-style";
+  let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
+  if (!styleEl) {
+    styleEl = document.createElement("style");
+    styleEl.id = styleId;
+    document.head.appendChild(styleEl);
+  }
+
+  const customPageCss = getStylesForPageType(pageType);
+  styleEl.innerHTML = `
+    @media screen {
+      #dencker-print-portal {
+        display: none !important;
+        visibility: hidden !important;
+      }
+    }
+    @media print {
+      ${customPageCss}
+    }
+  `;
+
+  // Cambiar el título temporal del documento para el nombre del archivo PDF generado
+  const previousTitle = document.title;
+  if (title) {
+    document.title = title;
+  }
+
+  // 5. Activar clase de aislamiento en el body
+  document.body.classList.add("is-printing-isolated");
+
+  // 6. Función de limpieza post-impresión
+  let cleanedUp = false;
+  const cleanup = () => {
+    if (cleanedUp) return;
+    cleanedUp = true;
+    document.body.classList.remove("is-printing-isolated");
+    portal.innerHTML = "";
+    if (title) {
+      document.title = previousTitle;
+    }
+    if (styleEl && document.head.contains(styleEl)) {
+      document.head.removeChild(styleEl);
+    }
+  };
+
+  window.addEventListener("afterprint", cleanup, { once: true });
+
+  // 7. Esperar carga de imágenes del ticket y disparar impresión limpia
+  const images = portal.getElementsByTagName("img");
   let loadedCount = 0;
   const totalImages = images.length;
 
   const triggerPrint = () => {
     try {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-    } catch (e) {
-      console.error("[Dencker Print] Error al imprimir desde iframe:", e);
       window.print();
+    } catch (e) {
+      console.error("[Dencker Print] Error al ejecutar window.print():", e);
     } finally {
-      setTimeout(() => {
-        if (document.body.contains(iframe)) {
-          document.body.removeChild(iframe);
-        }
-      }, 1500);
+      // Timeout de respaldo por si el navegador no dispara onafterprint
+      setTimeout(cleanup, 2500);
     }
   };
 
   if (totalImages === 0) {
-    setTimeout(triggerPrint, 120);
+    setTimeout(triggerPrint, 80);
   } else {
     for (let i = 0; i < totalImages; i++) {
       if (images[i].complete) {
@@ -321,10 +382,9 @@ export function printElementById(elementId: string, options: PrintOptions = {}) 
       }
     }
     if (loadedCount >= totalImages) {
-      setTimeout(triggerPrint, 120);
+      setTimeout(triggerPrint, 80);
     } else {
-      // Timeout de seguridad en caso de que alguna imagen tarde
-      setTimeout(triggerPrint, 600);
+      setTimeout(triggerPrint, 500);
     }
   }
 }

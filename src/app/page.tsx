@@ -556,7 +556,13 @@ export default function HomePage() {
   const agregarAlCarritoRapido = (p: Producto, e: React.MouseEvent) => {
     e.stopPropagation();
     soundManager.playPastryCrinkle();
-    addItem(p);
+    const esPizza = p.categoria_id === "c_pizzas" || p.nombre.toLowerCase().includes("pizza");
+    const tieneTamanios = (p.tamanios && p.tamanios.length > 0) || esPizza;
+    if (tieneTamanios) {
+      abrirModalProducto(p);
+    } else {
+      addItem(p);
+    }
   };
 
   const getItemCantidadEnCarrito = (id: string) => {
@@ -1996,12 +2002,35 @@ export default function HomePage() {
                               {/* Precios y Botón de Añadir */}
                               <div className="pt-2 sm:pt-3 border-t border-white/15 flex items-center justify-between gap-1">
                                 <div>
-                                  <span className="text-[8px] sm:text-[9px] text-[#A8988D] block font-medium uppercase tracking-wider">
-                                    Precio
-                                  </span>
-                                  <span className="font-sans text-xs sm:text-base font-extrabold text-white">
-                                    Bs {prod.precio.toFixed(2)}
-                                  </span>
+                                  {(() => {
+                                    const esPizza = prod.categoria_id === "c_pizzas" || prod.nombre.toLowerCase().includes("pizza");
+                                    const p4 = prod.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p4 || prod.precio;
+                                    const p6 = prod.tamanios?.find((t) => t.nombre.includes("6"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p6 || Math.round(p4 * 1.38);
+                                    const p8 = prod.tamanios?.find((t) => t.nombre.includes("8"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p8 || Math.round(p4 * 1.75);
+
+                                    if (esPizza || (prod.tamanios && prod.tamanios.length > 0)) {
+                                      return (
+                                        <div className="flex flex-col text-left">
+                                          <span className="text-[7.5px] sm:text-[8.5px] uppercase font-bold text-amber-300/80 tracking-wider">
+                                            4p: {p4} | 6p: {p6} | 8p: {p8}
+                                          </span>
+                                          <span className="font-sans text-xs sm:text-sm font-extrabold text-amber-200">
+                                            Bs {p4} – {p8}
+                                          </span>
+                                        </div>
+                                      );
+                                    }
+                                    return (
+                                      <>
+                                        <span className="text-[8px] sm:text-[9px] text-[#A8988D] block font-medium uppercase tracking-wider">
+                                          Precio
+                                        </span>
+                                        <span className="font-sans text-xs sm:text-base font-extrabold text-white">
+                                          Bs {prod.precio.toFixed(2)}
+                                        </span>
+                                      </>
+                                    );
+                                  })()}
                                 </div>
 
                                 {cantidadEnCarrito > 0 ? (
@@ -2240,12 +2269,35 @@ export default function HomePage() {
                         {/* Precios y Botón de Añadir */}
                         <div className="pt-3 border-t border-white/15 flex items-center justify-between">
                           <div>
-                            <span className="text-[9px] text-[#A8988D] block font-medium uppercase tracking-wider">
-                              Precio
-                            </span>
-                            <span className="font-sans text-base font-extrabold text-white">
-                              Bs {prod.precio.toFixed(2)}
-                            </span>
+                            {(() => {
+                              const esPizza = prod.categoria_id === "c_pizzas" || prod.nombre.toLowerCase().includes("pizza");
+                              const p4 = prod.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p4 || prod.precio;
+                              const p6 = prod.tamanios?.find((t) => t.nombre.includes("6"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p6 || Math.round(p4 * 1.38);
+                              const p8 = prod.tamanios?.find((t) => t.nombre.includes("8"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p8 || Math.round(p4 * 1.75);
+
+                              if (esPizza || (prod.tamanios && prod.tamanios.length > 0)) {
+                                return (
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-[8.5px] uppercase font-bold text-amber-300/80 tracking-wider">
+                                      4p: {p4} | 6p: {p6} | 8p: {p8}
+                                    </span>
+                                    <span className="font-sans text-sm sm:text-base font-extrabold text-amber-200">
+                                      Bs {p4} – {p8}
+                                    </span>
+                                  </div>
+                                );
+                              }
+                              return (
+                                <>
+                                  <span className="text-[9px] text-[#A8988D] block font-medium uppercase tracking-wider">
+                                    Precio
+                                  </span>
+                                  <span className="font-sans text-base font-extrabold text-white">
+                                    Bs {prod.precio.toFixed(2)}
+                                  </span>
+                                </>
+                              );
+                            })()}
                           </div>
 
                           {cantidadEnCarrito > 0 ? (
@@ -2800,7 +2852,9 @@ export default function HomePage() {
                       addItem(
                         itemFinal,
                         esPizzaTradicional ? [`${tamanoPizzaModal} Porciones`] : chipsSeleccionados,
-                        notaPersonalizada || undefined
+                        notaPersonalizada || undefined,
+                        esPizzaTradicional ? `${tamanoPizzaModal} porc` : undefined,
+                        precioCalculado
                       );
                       setProductoModal(null);
                     }}

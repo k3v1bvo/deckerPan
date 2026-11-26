@@ -95,6 +95,8 @@ export interface CartItem {
   cantidad: number;
   chips_seleccionados: string[];
   notas?: string;
+  tamanio?: string;
+  precio_unitario?: number;
 }
 
 export interface ItemPedido {
@@ -106,6 +108,7 @@ export interface ItemPedido {
   cantidad: number;
   precio_unitario: number;
   subtotal: number;
+  tamanio?: string;
   notas?: string;
   chips_seleccionados: string[];
   estacion: Estacion;

@@ -1047,9 +1047,15 @@ interface CartStore {
   items: CartItem[];
   mesaNumero: number | null;
   pedidoId: string | null;
-  addItem: (producto: Producto, chips?: string[], notas?: string) => void;
-  removeItem: (productoId: string) => void;
-  updateCantidad: (productoId: string, cantidad: number) => void;
+  addItem: (
+    producto: Producto,
+    chips?: string[],
+    notas?: string,
+    tamanio?: string,
+    precioUnitario?: number
+  ) => void;
+  removeItem: (productoId: string, tamanio?: string) => void;
+  updateCantidad: (productoId: string, cantidad: number, tamanio?: string) => void;
   clearCart: () => void;
   setMesa: (numero: number) => void;
   setPedidoId: (id: string) => void;
@@ -1062,44 +1068,68 @@ export const useCartStore = create<CartStore>((set, get) => ({
   mesaNumero: null,
   pedidoId: null,
 
-  addItem: (producto, chips = [], notas) =>
+  addItem: (producto, chips = [], notas, tamanio, precioUnitario) =>
     set((state) => {
-      const existing = state.items.find(
+      const effectivePrice = precioUnitario !== undefined ? precioUnitario : producto.precio;
+      const existingIndex = state.items.findIndex(
         (i) =>
           i.producto.id === producto.id &&
-          JSON.stringify(i.chips_seleccionados) === JSON.stringify(chips)
+          (i.tamanio || "") === (tamanio || "") &&
+          JSON.stringify(i.chips_seleccionados || []) === JSON.stringify(chips || [])
       );
-      if (existing) {
-        return {
-          items: state.items.map((i) =>
-            i.producto.id === producto.id &&
-            JSON.stringify(i.chips_seleccionados) === JSON.stringify(chips)
-              ? { ...i, cantidad: i.cantidad + 1 }
-              : i
-          ),
+
+      if (existingIndex > -1) {
+        const updated = [...state.items];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          cantidad: updated[existingIndex].cantidad + 1,
+          precio_unitario: effectivePrice,
         };
+        return { items: updated };
       }
+
       return {
         items: [
           ...state.items,
-          { producto, cantidad: 1, chips_seleccionados: chips, notas },
+          {
+            producto,
+            cantidad: 1,
+            chips_seleccionados: chips,
+            notas,
+            tamanio,
+            precio_unitario: effectivePrice,
+          },
         ],
       };
     }),
 
-  removeItem: (productoId) =>
+  removeItem: (productoId, tamanio) =>
     set((state) => ({
-      items: state.items.filter((i) => i.producto.id !== productoId),
+      items: state.items.filter((i) => {
+        if (tamanio !== undefined) {
+          return !(i.producto.id === productoId && (i.tamanio || "") === (tamanio || ""));
+        }
+        return i.producto.id !== productoId;
+      }),
     })),
 
-  updateCantidad: (productoId, cantidad) =>
+  updateCantidad: (productoId, cantidad, tamanio) =>
     set((state) => ({
       items:
         cantidad <= 0
-          ? state.items.filter((i) => i.producto.id !== productoId)
-          : state.items.map((i) =>
-              i.producto.id === productoId ? { ...i, cantidad } : i
-            ),
+          ? state.items.filter((i) => {
+              if (tamanio !== undefined) {
+                return !(i.producto.id === productoId && (i.tamanio || "") === (tamanio || ""));
+              }
+              return i.producto.id !== productoId;
+            })
+          : state.items.map((i) => {
+              const matches =
+                tamanio !== undefined
+                  ? i.producto.id === productoId && (i.tamanio || "") === (tamanio || "")
+                  : i.producto.id === productoId;
+              return matches ? { ...i, cantidad } : i;
+            }),
     })),
 
   clearCart: () => set({ items: [], pedidoId: null }),
@@ -1109,8 +1139,13 @@ export const useCartStore = create<CartStore>((set, get) => ({
     const liveProds = useSystemStore.getState().productos;
     return get().items.reduce((sum, i) => {
       const live = liveProds?.find((p) => p.id === i.producto.id);
-      const precio = live ? live.precio : i.producto.precio;
-      return sum + precio * i.cantidad;
+      const unitPrice =
+        i.precio_unitario !== undefined
+          ? i.precio_unitario
+          : live
+          ? live.precio
+          : i.producto.precio;
+      return sum + unitPrice * i.cantidad;
     }, 0);
   },
   count: () => get().items.reduce((sum, i) => sum + i.cantidad, 0),

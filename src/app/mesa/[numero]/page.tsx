@@ -303,20 +303,24 @@ export default function MesaPage({ params }: PageProps) {
           if (newPedidoId) setPedidoId(newPedidoId);
         }
         if (newPedidoId) {
-          const itemsPayload = items.map((i) => ({
-            pedido_id: newPedidoId,
-            producto_id: isUUID(i.producto.id) ? i.producto.id : null,
-            producto_nombre: i.producto.nombre,
-            cantidad: i.cantidad,
-            precio_unitario: i.producto.precio,
-            subtotal: i.cantidad * i.producto.precio,
-            chips_seleccionados: i.chips_seleccionados,
-            notas: i.notas,
-            estacion: i.producto.estacion,
-            estado: "pendiente",
-            asiento_numero: asientoCliente,
-            comensal_nombre: nombreComensalCliente.trim() || `Comensal Silla ${asientoCliente}`,
-          }));
+          const itemsPayload = items.map((i) => {
+            const unitPrice = i.precio_unitario ?? i.producto.precio;
+            return {
+              pedido_id: newPedidoId,
+              producto_id: isUUID(i.producto.id) ? i.producto.id : null,
+              producto_nombre: i.tamanio ? `${i.producto.nombre} (${i.tamanio})` : i.producto.nombre,
+              cantidad: i.cantidad,
+              precio_unitario: unitPrice,
+              subtotal: i.cantidad * unitPrice,
+              tamanio: i.tamanio,
+              chips_seleccionados: i.chips_seleccionados,
+              notas: i.notas,
+              estacion: i.producto.estacion,
+              estado: "pendiente",
+              asiento_numero: asientoCliente,
+              comensal_nombre: nombreComensalCliente.trim() || `Comensal Silla ${asientoCliente}`,
+            };
+          });
           await supabase.from("items_pedido").insert(itemsPayload);
           if (isUUID(mesaId)) {
             await supabase.from("mesas").update({ estado: "ocupada" }).eq("id", mesaId);
@@ -333,23 +337,27 @@ export default function MesaPage({ params }: PageProps) {
         total: total(),
         cliente_nombre: nombreComensalCliente.trim() ? `${nombreComensalCliente} (Mesa ${mesaNum})` : `Mesa ${mesaNum}`,
         es_ronda: false,
-        items: items.map((i, idx) => ({
-          id: `item-${Date.now()}-${idx}`,
-          pedido_id: newPedidoId || `ped-${Date.now()}`,
-          producto_id: i.producto.id,
-          producto_nombre: i.producto.nombre,
-          cantidad: i.cantidad,
-          precio_unitario: i.producto.precio,
-          subtotal: i.cantidad * i.producto.precio,
-          chips_seleccionados: i.chips_seleccionados,
-          notas: i.notas,
-          estacion: i.producto.estacion,
-          estado: "pendiente",
-          asiento_numero: asientoCliente,
-          comensal_nombre: nombreComensalCliente.trim() || `Comensal Silla ${asientoCliente}`,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })),
+        items: items.map((i, idx) => {
+          const unitPrice = i.precio_unitario ?? i.producto.precio;
+          return {
+            id: `item-${Date.now()}-${idx}`,
+            pedido_id: newPedidoId || `ped-${Date.now()}`,
+            producto_id: i.producto.id,
+            producto_nombre: i.tamanio ? `${i.producto.nombre} (${i.tamanio})` : i.producto.nombre,
+            cantidad: i.cantidad,
+            precio_unitario: unitPrice,
+            subtotal: i.cantidad * unitPrice,
+            tamanio: i.tamanio,
+            chips_seleccionados: i.chips_seleccionados,
+            notas: i.notas,
+            estacion: i.producto.estacion,
+            estado: "pendiente",
+            asiento_numero: asientoCliente,
+            comensal_nombre: nombreComensalCliente.trim() || `Comensal Silla ${asientoCliente}`,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+        }),
       });
 
       // Emitir alerta inmediata de alta prioridad al mesero de turno
@@ -410,7 +418,9 @@ export default function MesaPage({ params }: PageProps) {
     addItem(
       itemFinal,
       esPizzaTradicional ? [`${tamanoPizzaModal} Porciones`] : chipsSeleccionados,
-      notaProducto || undefined
+      notaProducto || undefined,
+      esPizzaTradicional ? `${tamanoPizzaModal} porc` : undefined,
+      precioCalculado
     );
     setProductoModal(null);
   };
@@ -740,16 +750,37 @@ export default function MesaPage({ params }: PageProps) {
                 </div>
 
                 <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-stone-100 dark:border-stone-800/60">
-                  <span className="font-mono font-black text-sm text-amber-900 dark:text-amber-400">
-                    Bs {prod.precio.toFixed(2)}
-                  </span>
+                  {(() => {
+                    const esPizza = prod.categoria_id === "c_pizzas" || prod.nombre.toLowerCase().includes("pizza");
+                    const p4 = prod.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p4 || prod.precio;
+                    const p6 = prod.tamanios?.find((t) => t.nombre.includes("6"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p6 || Math.round(p4 * 1.38);
+                    const p8 = prod.tamanios?.find((t) => t.nombre.includes("8"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p8 || Math.round(p4 * 1.75);
+
+                    if (esPizza || (prod.tamanios && prod.tamanios.length > 0)) {
+                      return (
+                        <div className="flex flex-col text-left">
+                          <span className="text-[8px] sm:text-[9px] uppercase font-bold text-amber-700 dark:text-amber-300">
+                            4p: {p4} | 6p: {p6} | 8p: {p8}
+                          </span>
+                          <span className="font-mono font-black text-xs text-amber-950 dark:text-amber-200">
+                            Bs {p4} – {p8}
+                          </span>
+                        </div>
+                      );
+                    }
+                    return (
+                      <span className="font-mono font-black text-sm text-amber-900 dark:text-amber-400">
+                        Bs {prod.precio.toFixed(2)}
+                      </span>
+                    );
+                  })()}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       abrirModal(prod);
                     }}
                     className="w-8 h-8 rounded-xl bg-amber-900 dark:bg-amber-600 text-white flex items-center justify-center font-bold text-base shadow-xs hover:bg-amber-950 transition active:scale-90"
-                    title="Añadir o personalizar"
+                    title="Añadir o elegir porción"
                   >
                     +
                   </button>

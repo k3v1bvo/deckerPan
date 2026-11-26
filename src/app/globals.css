@@ -371,15 +371,42 @@
 }
 
 /* ── Print Styles (Tickets Térmicos 80mm / 58mm, Reportes y Menú A4) ── */
-@media print {
-  /* Ocultar elementos de navegación e interfaz global */
-  header, nav, aside, footer, button, .no-print, [role="navigation"], [data-no-print="true"] {
+@media screen {
+  #dencker-print-portal {
     display: none !important;
+    visibility: hidden !important;
   }
+}
 
+@media print {
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  /* ── AISLAMIENTO ESTRICTO: Cuando el portal de impresión está activo, ocultar TODO lo demás ── */
+  body.is-printing-isolated > *:not(#dencker-print-portal) {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.is-printing-isolated #dencker-print-portal {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Ocultar elementos de navegación e interfaz global en cualquier impresión */
+  header, nav, aside, footer, button, input, select, textarea, .no-print, [role="navigation"], [data-no-print="true"], .role-nav {
+    display: none !important;
   }
 
   body {
@@ -406,6 +433,15 @@
     width: 100% !important;
     height: auto !important;
     display: block !important;
+  }
+
+  /* Si se imprime un ticket dentro de un modal sin el portal, ocultar el resto de la página */
+  body:not(.is-printing-isolated):has(#recibo-termico) main > *:not(.fixed),
+  body:not(.is-printing-isolated):has(#factura-siat-termica) main > *:not(.fixed),
+  body:not(.is-printing-isolated):has(#precuenta-mesero-print) main > *:not(.fixed),
+  body:not(.is-printing-isolated):has(#recibo-pago-historial-print) main > *:not(.fixed),
+  body:not(.is-printing-isolated):has(#arqueo-caja-print) main > *:not(.fixed) {
+    display: none !important;
   }
 
   /* Ticket Térmico Oficial (80mm / 58mm) */

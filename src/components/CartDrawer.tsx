@@ -84,14 +84,17 @@ export default function CartDrawer() {
         es_ronda: false,
         items: items.map((i, idx) => {
           const live = storeProductos.find((p) => p.id === i.producto.id) || i.producto;
+          const unitPrice = i.precio_unitario ?? live.precio;
+          const nombreFinal = i.tamanio ? `${live.nombre} (${i.tamanio})` : live.nombre;
           return {
             id: `item-web-${Date.now()}-${idx}`,
             pedido_id: `ped-web-${Date.now()}`,
             producto_id: live.id,
-            producto_nombre: live.nombre,
+            producto_nombre: nombreFinal,
             cantidad: i.cantidad,
-            precio_unitario: live.precio,
-            subtotal: i.cantidad * live.precio,
+            precio_unitario: unitPrice,
+            subtotal: i.cantidad * unitPrice,
+            tamanio: i.tamanio,
             chips_seleccionados: i.chips_seleccionados,
             notas: i.notas,
             estacion: live.estacion || "vitrina",
@@ -188,8 +191,10 @@ export default function CartDrawer() {
 
       items.forEach((item, idx) => {
         const live = storeProductos.find((p) => p.id === item.producto.id) || item.producto;
-        texto += `\n${idx + 1}. *${item.cantidad}x ${live.nombre}*\n`;
-        texto += `   • Subtotal: Bs ${(item.cantidad * live.precio).toFixed(2)}\n`;
+        const unitPrice = item.precio_unitario ?? live.precio;
+        const nombreConTamanio = item.tamanio ? `${live.nombre} (${item.tamanio})` : live.nombre;
+        texto += `\n${idx + 1}. *${item.cantidad}x ${nombreConTamanio}*\n`;
+        texto += `   • Subtotal: Bs ${(item.cantidad * unitPrice).toFixed(2)} (Bs ${unitPrice.toFixed(2)} c/u)\n`;
         if (item.chips_seleccionados && item.chips_seleccionados.length > 0) {
           texto += `   • Opciones: ${item.chips_seleccionados.join(", ")}\n`;
         }
@@ -451,8 +456,10 @@ export default function CartDrawer() {
                   </div>
 
                   <div className="space-y-2.5">
-                    {items.map((item) => {
+                    {items.map((item, idx) => {
                       const live = storeProductos.find((p) => p.id === item.producto.id) || item.producto;
+                      const unitPrice = item.precio_unitario ?? live.precio;
+                      const itemKey = `${item.producto.id}_${item.tamanio || ""}_${idx}`;
                       return (
                         <motion.div
                           layout
@@ -460,7 +467,7 @@ export default function CartDrawer() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={springTransition}
-                          key={item.producto.id}
+                          key={itemKey}
                           className="p-3.5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs flex items-center gap-3.5"
                         >
                           <div className="w-14 h-14 rounded-xl bg-[#F5EFEB] overflow-hidden shrink-0 border border-[#EAE2D5] flex items-center justify-center">
@@ -476,11 +483,19 @@ export default function CartDrawer() {
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <h5 className="font-serif font-bold text-xs text-[#1E130C] truncate">
-                              {live.nombre}
+                            <h5 className="font-serif font-bold text-xs text-[#1E130C] truncate flex items-center gap-1.5 flex-wrap">
+                              <span>{live.nombre}</span>
+                              {item.tamanio && (
+                                <span className="px-1.5 py-0.5 rounded-md bg-[#991B24]/10 text-[#991B24] font-mono font-bold text-[10px] border border-[#991B24]/20">
+                                  {item.tamanio}
+                                </span>
+                              )}
                             </h5>
                             <span className="text-xs font-mono font-bold text-[#991B24] block mt-0.5">
-                              Bs {(live.precio * item.cantidad).toFixed(2)}
+                              Bs {(unitPrice * item.cantidad).toFixed(2)}
+                              <span className="text-[10px] text-[#785E4F] font-normal ml-1">
+                                (Bs {unitPrice.toFixed(2)} c/u)
+                              </span>
                             </span>
                             {item.chips_seleccionados && item.chips_seleccionados.length > 0 && (
                               <p className="text-[10px] text-[#527953] truncate mt-0.5 font-medium">
@@ -495,7 +510,7 @@ export default function CartDrawer() {
                               transition={springButton}
                               onClick={() => {
                                 soundManager.playTactileClick();
-                                updateCantidad(item.producto.id, item.cantidad - 1);
+                                updateCantidad(item.producto.id, item.cantidad - 1, item.tamanio);
                               }}
                               className="w-7 h-7 rounded-lg bg-white border border-[#EAE2D5] text-[#1E130C] flex items-center justify-center hover:bg-[#F5EFEB] transition-colors"
                               aria-label="Restar una unidad"
@@ -512,7 +527,7 @@ export default function CartDrawer() {
                               transition={springButton}
                               onClick={() => {
                                 soundManager.playTactileClick();
-                                updateCantidad(item.producto.id, item.cantidad + 1);
+                                updateCantidad(item.producto.id, item.cantidad + 1, item.tamanio);
                               }}
                               className="w-7 h-7 rounded-lg bg-[#991B24] text-white flex items-center justify-center hover:bg-[#7F1D1D] transition-colors"
                               aria-label="Sumar una unidad"
