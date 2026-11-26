@@ -68,6 +68,7 @@ import { CloudStorageProvider } from "@/types";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, REAL_PRODUCT_PHOTOS, MENU_PDF_PAGES } from "@/lib/seed-data";
 import { parsearLinkContadora, exportarLibroVentasCsv } from "@/lib/siat-utils";
+import { printElementById } from "@/lib/print";
 
 export default function AdminPage() {
   const {
@@ -1962,7 +1963,7 @@ export default function AdminPage() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden p-6 space-y-4"
                   >
-                    <div className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
+                    <div id="factura-siat-termica" className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
                       {/* Logo Oficial Vectorizado */}
                       <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
                         <img
@@ -2058,7 +2059,13 @@ export default function AdminPage() {
 
                     <div className="grid grid-cols-2 gap-2 pt-2">
                       <button
-                        onClick={() => window.print()}
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          printElementById("factura-siat-termica", {
+                            pageType: "thermal",
+                            title: `Factura_SIAT_${facturaSeleccionadaModal.numeroFactura}`,
+                          });
+                        }}
                         className="py-2.5 rounded-xl bg-amber-900 text-white font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-amber-950 transition cursor-pointer"
                       >
                         <Printer size={14} /> Imprimir Factura
@@ -2953,7 +2960,10 @@ export default function AdminPage() {
                 <button
                   onClick={() => {
                     soundManager.playTactileClick();
-                    window.print();
+                    printElementById("reporte-financiero-admin-print", {
+                      pageType: "letter",
+                      title: `Reporte_Financiero_Dencker_${filtroPeriodo}`,
+                    });
                   }}
                   className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs sm:text-sm font-bold border border-white/10 transition flex items-center gap-2 active:scale-95 cursor-pointer"
                 >
@@ -3573,6 +3583,132 @@ export default function AdminPage() {
                 ))}
               </div>
             </div>
+
+            {/* ── Reporte Financiero Imprimible (A4 / Letter Formato Ejecutivo) ── */}
+            <div id="reporte-financiero-admin-print" className="hidden">
+              <div className="report-header">
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <img
+                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    alt="Dencker Pan"
+                    style={{ height: "52px", width: "auto" }}
+                  />
+                  <div>
+                    <h2 style={{ margin: "0", fontSize: "17px", fontWeight: "bold" }}>
+                      DENCKER PAN CAFETERÍA & PANADERÍA
+                    </h2>
+                    <p style={{ margin: "0", fontSize: "10px", color: "#555" }}>
+                      Av. Daniel Salamanca, Cochabamba, Bolivia &bull; NIT: 1028391024 &bull; Tel: +591 76911000
+                    </p>
+                    <p style={{ margin: "0", fontSize: "9px", color: "#777" }}>
+                      Masa Madre Viva &bull; Granos 4 Llamas de Caranavi (1700 msnm)
+                    </p>
+                  </div>
+                </div>
+                <div style={{ textAlign: "right", fontSize: "10px" }}>
+                  <p style={{ margin: "0", fontWeight: "bold", fontSize: "13px", color: "#991B24" }}>
+                    REPORTE FINANCIERO Y AUDITORÍA
+                  </p>
+                  <p style={{ margin: "2px 0 0 0" }}>
+                    Período: <strong>{filtroPeriodo.toUpperCase()}</strong> &bull; Turno: <strong>{filtroTurno.toUpperCase()}</strong>
+                  </p>
+                  <p style={{ margin: "2px 0 0 0" }}>
+                    Emisión: {new Date().toLocaleString("es-BO")}
+                  </p>
+                </div>
+              </div>
+
+              {/* Bento Grid Resumen */}
+              <div className="bento-grid">
+                <div className="bento-item">
+                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ventas del Período</span>
+                  <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0" }}>
+                    Bs {statsFinancieras.totalVentas.toFixed(2)}
+                  </p>
+                  <span style={{ fontSize: "9px", color: "#16a34a" }}>
+                    Margen Bruto: +{statsFinancieras.margenBrutoPct}%
+                  </span>
+                </div>
+                <div className="bento-item">
+                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ganancia Neta Estimada</span>
+                  <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0", color: "#16a34a" }}>
+                    Bs {statsFinancieras.gananciaNeta.toFixed(2)}
+                  </p>
+                  <span style={{ fontSize: "9px", color: "#666" }}>
+                    Costo Insumos: Bs {statsFinancieras.costoInsumos.toFixed(2)}
+                  </span>
+                </div>
+                <div className="bento-item">
+                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ticket Promedio</span>
+                  <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0" }}>
+                    Bs {statsFinancieras.ticketPromedio.toFixed(2)}
+                  </p>
+                  <span style={{ fontSize: "9px", color: "#2563eb" }}>
+                    {statsFinancieras.totalTransacciones} Transacciones
+                  </span>
+                </div>
+                <div className="bento-item">
+                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Cobros por Método</span>
+                  <p style={{ fontSize: "11px", fontWeight: "bold", margin: "2px 0" }}>
+                    Efectivo: Bs {statsFinancieras.totalEfectivo.toFixed(2)}
+                  </p>
+                  <p style={{ fontSize: "11px", fontWeight: "bold", margin: "0" }}>
+                    QR Simple: Bs {statsFinancieras.totalQr.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Detalle de transacciones */}
+              <h4 style={{ fontSize: "11.5px", fontWeight: "bold", margin: "14px 0 4px 0", borderBottom: "1.5px solid #222", paddingBottom: "3px" }}>
+                DETALLE DE TRANSACCIONES AUDITADAS ({statsFinancieras.transaccionesFiltradas.length} operaciones)
+              </h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>N° Transacción</th>
+                    <th>Fecha y Hora</th>
+                    <th>Cliente / Mesa</th>
+                    <th>Turno</th>
+                    <th>Método</th>
+                    <th style={{ textAlign: "right" }}>Total BOB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {statsFinancieras.transaccionesFiltradas.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} style={{ textAlign: "center", color: "#777", fontStyle: "italic", padding: "12px" }}>
+                        No se registraron transacciones en el período seleccionado.
+                      </td>
+                    </tr>
+                  ) : (
+                    statsFinancieras.transaccionesFiltradas.map((t, i) => (
+                      <tr key={i}>
+                        <td style={{ fontFamily: "monospace", fontSize: "10px" }}>{t.id}</td>
+                        <td>{new Date(t.created_at).toLocaleString("es-BO")}</td>
+                        <td>{t.cliente_nombre || (t.mesa_numero ? `Mesa ${t.mesa_numero}` : "Mostrador")}</td>
+                        <td style={{ textTransform: "capitalize" }}>{t.turno || "Tarde"}</td>
+                        <td style={{ textTransform: "uppercase", fontWeight: "bold" }}>{t.metodo}</td>
+                        <td style={{ textAlign: "right", fontWeight: "bold", fontFamily: "monospace" }}>
+                          Bs {t.monto.toFixed(2)}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+
+              {/* Firmas de Control */}
+              <div className="signatures-box">
+                <div>
+                  <div className="sig-line"></div>
+                  <p>Responsable de Finanzas / Cajero(a)</p>
+                </div>
+                <div>
+                  <div className="sig-line"></div>
+                  <p>Gerencia General &bull; Dencker Pan</p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -3771,8 +3907,14 @@ export default function AdminPage() {
                 </Link>
 
                 <button
-                  onClick={() => window.print()}
-                  className="px-5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white text-xs font-bold shadow-md transition flex items-center gap-2 active:scale-95"
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    printElementById("qrs-mesas-imprimibles", {
+                      pageType: "carpas",
+                      title: "Carpas_QR_Mesas_DenckerPan",
+                    });
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white text-xs font-bold shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer"
                 >
                   <Printer size={15} />
                   <span>Imprimir Todos los QRs</span>
@@ -3800,7 +3942,7 @@ export default function AdminPage() {
             </div>
 
             {/* Grilla de Tarjetas Imprimibles */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 print:grid-cols-2 print:gap-8">
+            <div id="qrs-mesas-imprimibles" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 print:grid-cols-2 print:gap-8">
               {mesas.map((m) => {
                 const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Salón";
                 const mesaUrl = `${baseUrlMesas || "https://tienda.denckerpan.com"}/mesa/${m.numero}`;
@@ -3808,47 +3950,67 @@ export default function AdminPage() {
                 return (
                   <div
                     key={m.id}
-                    className="p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-200/80 dark:border-amber-900/40 shadow-sm flex flex-col items-center text-center justify-between space-y-4 break-inside-avoid print:border-black print:p-6"
+                    id={`carpa-mesa-${m.numero}`}
+                    className="p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-200/80 dark:border-amber-900/40 shadow-sm flex flex-col items-center text-center justify-between space-y-4 break-inside-avoid print:border-2 print:border-black print:p-6"
                   >
                     <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100">
                       <img
-                        src="/img/logo/logo.png"
-                        alt="Logo"
-                        className="w-7 h-7 object-contain"
+                        src="/img/brand/logo-3-don-dencker-badge.png"
+                        alt="Logo Don Dencker"
+                        className="w-9 h-9 object-contain"
                       />
-                      <span className="font-serif font-black text-sm tracking-wider uppercase">
-                        Dencker Pan
-                      </span>
+                      <div className="text-left leading-tight">
+                        <span className="font-serif font-black text-sm tracking-wider uppercase block">
+                          Dencker Pan
+                        </span>
+                        <span className="text-[9px] text-amber-900 font-sans font-semibold">
+                          Masa Madre & Café 4 Llamas
+                        </span>
+                      </div>
                     </div>
 
                     <div className="space-y-1">
-                      <div className="font-serif text-2xl font-black text-amber-950 dark:text-amber-300">
+                      <div className="font-serif text-3xl font-black text-amber-950 dark:text-amber-300">
                         MESA {m.numero}
                       </div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#527953] bg-[#EBF3EA] px-2.5 py-0.5 rounded-full inline-block">
-                        {zonaNombre} • {m.capacidad} Pers.
+                        {zonaNombre} • {m.capacidad} Personas
                       </span>
                     </div>
 
                     {/* QR Code SVG Vectorial */}
-                    <div className="p-3 bg-white rounded-2xl border border-stone-200 shadow-inner flex items-center justify-center">
+                    <div className="p-3 bg-white rounded-2xl border-2 border-stone-300 shadow-inner flex items-center justify-center">
                       <QRCodeSVG
                         value={mesaUrl}
-                        size={130}
+                        size={135}
                         level="M"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-[11px] font-medium text-stone-600 dark:text-stone-300 leading-tight">
-                        Escanea para ver el menú y ordenar
+                      <p className="text-[11px] font-bold text-stone-800 dark:text-stone-200 leading-tight">
+                        Escanea para ver la carta y pedir desde tu mesa
                       </p>
-                      <p className="text-[9px] font-mono text-stone-400 truncate max-w-[200px]">
-                        {mesaUrl}
+                      <p className="text-[9px] font-mono text-stone-500">
+                        WiFi: Dencker-Clientes &bull; Cochabamba
                       </p>
                     </div>
 
                     <div className="w-full pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-center gap-2 print:hidden">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          printElementById(`carpa-mesa-${m.numero}`, {
+                            pageType: "carpas",
+                            title: `Carpa_QR_Mesa_${m.numero}`,
+                          });
+                        }}
+                        className="py-1.5 px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition"
+                        title="Imprimir carpa individual"
+                      >
+                        <Printer size={13} /> Imprimir Carpa
+                      </button>
                       <Link
                         href={`/mesa/${m.numero}`}
                         target="_blank"
@@ -3862,7 +4024,7 @@ export default function AdminPage() {
                           soundManager.playSuccessTone();
                           alert(`¡Enlace copiado de Mesa ${m.numero}!`);
                         }}
-                        className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-100"
+                        className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-100 cursor-pointer"
                         title="Copiar enlace"
                       >
                         <Copy size={14} />
@@ -4255,111 +4417,113 @@ export default function AdminPage() {
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100"
             >
-              {/* Encabezado Ticket Térmico */}
-              <div className="flex items-center justify-between pb-3 border-b border-dashed border-stone-300 dark:border-stone-700">
-                <div className="flex items-center gap-2">
-                  <img
-                    src="/img/logo/logo.png"
-                    alt="Logo Dencker Pan"
-                    className="w-7 h-7 object-contain"
-                  />
-                  <div>
-                    <h3 className="font-serif font-black text-sm tracking-wider uppercase">
-                      Dencker Pan
-                    </h3>
-                    <p className="text-[10px] text-stone-500">Cafetería & Panadería Artesanal</p>
+              <div id="recibo-pago-historial-print" className="ticket-termico space-y-4 p-2 bg-white text-stone-900 rounded-2xl">
+                {/* Encabezado Ticket Térmico */}
+                <div className="flex items-center justify-between pb-3 border-b border-dashed border-stone-300 dark:border-stone-700">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="/img/logo/logo.png"
+                      alt="Logo Dencker Pan"
+                      className="w-7 h-7 object-contain"
+                    />
+                    <div>
+                      <h3 className="font-serif font-black text-sm tracking-wider uppercase">
+                        Dencker Pan
+                      </h3>
+                      <p className="text-[10px] text-stone-500">Cafetería & Panadería Artesanal</p>
+                    </div>
                   </div>
-                </div>
-                <button
-                  onClick={() => setReciboModalPago(null)}
-                  className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* Cuerpo del Recibo */}
-              <div className="space-y-2.5 text-xs font-mono">
-                <div className="flex items-center justify-between text-stone-500">
-                  <span>Nº Comprobante:</span>
-                  <span className="font-bold text-stone-900 dark:text-stone-100">{reciboModalPago.id}</span>
-                </div>
-                <div className="flex items-center justify-between text-stone-500">
-                  <span>Fecha & Hora:</span>
-                  <span className="font-semibold text-stone-800 dark:text-stone-200">
-                    {new Date(reciboModalPago.created_at).toLocaleString("es-BO")}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-stone-500">
-                  <span>Turno:</span>
-                  <span className="font-bold uppercase text-amber-800 dark:text-amber-400">
-                    {reciboModalPago.turno || "Tarde"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-stone-500">
-                  <span>Cajero:</span>
-                  <span className="font-semibold text-stone-800 dark:text-stone-200">
-                    {reciboModalPago.cajero || "Cajero Principal"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-stone-500">
-                  <span>Cliente:</span>
-                  <span className="font-bold text-stone-900 dark:text-stone-100">
-                    {reciboModalPago.cliente_nombre || "Cliente Mostrador"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-stone-500">
-                  <span>Destino / Mesa:</span>
-                  <span className="font-semibold text-stone-800 dark:text-stone-200">
-                    {reciboModalPago.mesa_numero ? `Mesa ${reciboModalPago.mesa_numero}` : "Para Llevar / Retiro"}
-                  </span>
+                  <button
+                    onClick={() => setReciboModalPago(null)}
+                    className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 no-print"
+                  >
+                    <X size={18} />
+                  </button>
                 </div>
 
-                <div className="pt-2 border-t border-dashed border-stone-300 dark:border-stone-700" />
-
-                <div className="flex items-center justify-between text-sm py-1 font-bold">
-                  <span>Total Pagado:</span>
-                  <span className="font-serif text-lg text-emerald-700 dark:text-emerald-400 font-mono">
-                    Bs {reciboModalPago.monto.toFixed(2)}
-                  </span>
-                </div>
-
-                <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-1">
-                  <div className="flex items-center justify-between font-bold text-[11px]">
-                    <span className="text-stone-600 dark:text-stone-300">Método de Cobro:</span>
-                    <span className="text-stone-900 dark:text-stone-100 uppercase">
-                      {reciboModalPago.metodo === "qr" ? "QR Simple BNB/BCP" : "Efectivo BOB"}
+                {/* Cuerpo del Recibo */}
+                <div className="space-y-2.5 text-xs font-mono">
+                  <div className="flex items-center justify-between text-stone-500">
+                    <span>Nº Comprobante:</span>
+                    <span className="font-bold text-stone-900">{reciboModalPago.id}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-stone-500">
+                    <span>Fecha & Hora:</span>
+                    <span className="font-semibold text-stone-800">
+                      {new Date(reciboModalPago.created_at).toLocaleString("es-BO")}
                     </span>
                   </div>
-                  {reciboModalPago.metodo === "efectivo" && (
-                    <div className="flex items-center justify-between text-[11px] text-stone-500">
-                      <span>Recibido: Bs {(reciboModalPago.monto_recibido || reciboModalPago.monto).toFixed(2)}</span>
-                      <span>Cambio: Bs {(reciboModalPago.cambio || 0).toFixed(2)}</span>
-                    </div>
-                  )}
-                  {reciboModalPago.metodo === "qr" && (
-                    <div className="text-[10px] text-purple-700 dark:text-purple-300">
-                      Liquidación inmediata Interoperable ASFI ✓
-                    </div>
-                  )}
-                </div>
-
-                {/* Código QR de validación */}
-                <div className="py-2 flex flex-col items-center justify-center space-y-1">
-                  <div className="p-2 bg-white rounded-xl border border-stone-200 shadow-inner">
-                    <QRCodeSVG
-                      value={`https://decker-pan.vercel.app/comprobante/${reciboModalPago.id}`}
-                      size={90}
-                    />
+                  <div className="flex items-center justify-between text-stone-500">
+                    <span>Turno:</span>
+                    <span className="font-bold uppercase text-amber-800">
+                      {reciboModalPago.turno || "Tarde"}
+                    </span>
                   </div>
-                  <span className="text-[9px] text-stone-400">Escanea para verificar validez digital</span>
-                </div>
+                  <div className="flex items-center justify-between text-stone-500">
+                    <span>Cajero:</span>
+                    <span className="font-semibold text-stone-800">
+                      {reciboModalPago.cajero || "Cajero Principal"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-stone-500">
+                    <span>Cliente:</span>
+                    <span className="font-bold text-stone-900">
+                      {reciboModalPago.cliente_nombre || "Cliente Mostrador"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-stone-500">
+                    <span>Destino / Mesa:</span>
+                    <span className="font-semibold text-stone-800">
+                      {reciboModalPago.mesa_numero ? `Mesa ${reciboModalPago.mesa_numero}` : "Para Llevar / Retiro"}
+                    </span>
+                  </div>
 
-                <p className="text-[10px] text-center text-stone-400 italic">
-                  NIT: 1028492023 • Facturación Computarizada en Línea
-                  <br />
-                  ¡Gracias por su visita a Dencker Pan!
-                </p>
+                  <div className="pt-2 border-t border-dashed border-stone-300" />
+
+                  <div className="flex items-center justify-between text-sm py-1 font-bold">
+                    <span>Total Pagado:</span>
+                    <span className="font-serif text-lg text-emerald-700 font-mono">
+                      Bs {reciboModalPago.monto.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1">
+                    <div className="flex items-center justify-between font-bold text-[11px]">
+                      <span className="text-stone-600">Método de Cobro:</span>
+                      <span className="text-stone-900 uppercase">
+                        {reciboModalPago.metodo === "qr" ? "QR Simple BNB/BCP" : "Efectivo BOB"}
+                      </span>
+                    </div>
+                    {reciboModalPago.metodo === "efectivo" && (
+                      <div className="flex items-center justify-between text-[11px] text-stone-500">
+                        <span>Recibido: Bs {(reciboModalPago.monto_recibido || reciboModalPago.monto).toFixed(2)}</span>
+                        <span>Cambio: Bs {(reciboModalPago.cambio || 0).toFixed(2)}</span>
+                      </div>
+                    )}
+                    {reciboModalPago.metodo === "qr" && (
+                      <div className="text-[10px] text-purple-700">
+                        Liquidación inmediata Interoperable ASFI ✓
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Código QR de validación */}
+                  <div className="py-2 flex flex-col items-center justify-center space-y-1">
+                    <div className="p-2 bg-white rounded-xl border border-stone-200 shadow-inner">
+                      <QRCodeSVG
+                        value={`https://decker-pan.vercel.app/comprobante/${reciboModalPago.id}`}
+                        size={90}
+                      />
+                    </div>
+                    <span className="text-[9px] text-stone-400">Escanea para verificar validez digital</span>
+                  </div>
+
+                  <p className="text-[10px] text-center text-stone-400 italic">
+                    NIT: 1028492023 • Facturación Computarizada en Línea
+                    <br />
+                    ¡Gracias por su visita a Dencker Pan!
+                  </p>
+                </div>
               </div>
 
               {/* Botones de Acción */}
@@ -4367,16 +4531,19 @@ export default function AdminPage() {
                 <button
                   onClick={() => {
                     soundManager.playTactileClick();
-                    window.print();
+                    printElementById("recibo-pago-historial-print", {
+                      title: `Recibo_${reciboModalPago.id}`,
+                      pageType: "thermal",
+                    });
                   }}
-                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
                 >
                   <Printer size={14} />
-                  <span>Imprimir</span>
+                  <span>Imprimir 80mm</span>
                 </button>
                 <button
                   onClick={() => setReciboModalPago(null)}
-                  className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition text-center"
+                  className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition text-center cursor-pointer"
                 >
                   Cerrar
                 </button>

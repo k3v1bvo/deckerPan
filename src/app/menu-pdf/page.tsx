@@ -43,6 +43,7 @@ import {
 import { Producto, Categoria, Mesa } from "@/types";
 import { soundManager } from "@/lib/sound";
 import { getStaffSession } from "@/lib/auth";
+import { printElementById } from "@/lib/print";
 
 type ModoMenu = "oficial_pdf" | "dinamico_vivo" | "imprimir_a4" | "carpas_qr";
 
@@ -285,7 +286,17 @@ export default function MenuPdfPage() {
 
   const handleImprimir = () => {
     soundManager.playTactileClick();
-    window.print();
+    if (modo === "carpas_qr") {
+      printElementById("carpas-menu-pdf-print", {
+        title: "Carpas_QR_Dencker_Pan",
+        pageType: "carpas",
+      });
+    } else {
+      printElementById("menu-dinamico-paginas-print", {
+        title: "Menu_Oficial_Dencker_Pan_A4",
+        pageType: "a4",
+      });
+    }
   };
 
   // Mesas para el modo Carpas QR
@@ -671,7 +682,7 @@ export default function MenuPdfPage() {
 
 
           {/* ── GRID DOBLE PÁGINA (EDITORIAL BISTRO EN PANTALLAS ANCHAS) ── */}
-          <div className="w-full flex flex-col items-center space-y-12 sm:space-y-16 print:space-y-0">
+          <div id="menu-dinamico-paginas-print" className="w-full flex flex-col items-center space-y-12 sm:space-y-16 print:space-y-0">
           
           {/* ── PÁGINA 1: PORTADA OFICIAL (TOLDO VINTAGE + ME NU + DON DENCKER) ── */}
           <div id="menu-pagina-1" className="w-full max-w-4xl bg-[#FAF6EF] rounded-3xl shadow-xl border-2 border-[#991B24]/20 overflow-hidden relative flex flex-col justify-between min-h-0 md:min-h-0 md:min-h-[1020px] p-4 sm:p-8 lg:p-12 text-center print-page space-y-6">
@@ -2331,7 +2342,7 @@ export default function MenuPdfPage() {
           </div>
 
           {/* Grid de Carpas */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div id="carpas-menu-pdf-print" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {mesasParaCarpas.map((mesa) => {
               const urlMesa = `${baseUrl}/mesa/${mesa.numero}`;
               return (

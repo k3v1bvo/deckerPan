@@ -370,9 +370,74 @@
   z-index: 40;
 }
 
-/* ── Print Styles (Tickets Térmicos 80mm / 58mm) ── */
+/* ── Print Styles (Tickets Térmicos 80mm / 58mm, Reportes y Menú A4) ── */
 @media print {
-  /* ── Carta Digital / Menú PDF (A4 por página estricta) ── */
+  /* Ocultar elementos de navegación e interfaz global */
+  header, nav, aside, footer, button, .no-print, [role="navigation"], [data-no-print="true"] {
+    display: none !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: auto !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* Neutralizar overlays y modales oscuros al imprimir */
+  .fixed.inset-0 {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  /* Ticket Térmico Oficial (80mm / 58mm) */
+  .ticket-termico, .ticket-80mm {
+    width: 76mm !important;
+    max-width: 80mm !important;
+    margin: 0 auto !important;
+    padding: 3mm 2mm !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .ticket-58mm {
+    width: 54mm !important;
+    max-width: 58mm !important;
+    margin: 0 auto !important;
+    padding: 2mm 1mm !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 9.5px !important;
+    line-height: 1.3 !important;
+  }
+
+  .ticket-termico img {
+    filter: grayscale(100%) contrast(150%) !important;
+  }
+
+  /* Carta Digital / Menú PDF (A4 por página estricta) */
   .print-page {
     page-break-after: always !important;
     break-after: page !important;
@@ -382,49 +447,23 @@
     margin: 0 !important;
     box-shadow: none !important;
     border: none !important;
+    background: white !important;
   }
 
-  * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-  body { background: white !important; color: black !important; font-family: 'Courier New', monospace; }
-  .no-print { display: none !important; }
-  .print-only { display: block !important; }
-
-  .ticket-80mm { width: 80mm; margin: 0 auto; }
-  .ticket-58mm { width: 58mm; margin: 0 auto; }
-
-  .ticket-header-inv {
-    background: black !important;
-    color: white !important;
-    padding: 8mm;
-    text-align: center;
-    font-size: 18pt;
-    font-weight: bold;
-    letter-spacing: 2px;
+  /* Carpas QR para Mesas */
+  .carpas-print-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12mm !important;
   }
 
-  .ticket-row {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px dashed #000;
-    padding: 2mm 0;
-    font-size: 10pt;
-  }
-
-  .ticket-total {
-    font-size: 14pt;
-    font-weight: bold;
-    border-top: 2px solid black;
-    padding-top: 3mm;
-    margin-top: 3mm;
-  }
-
-  .ticket-cambio {
-    background: black !important;
-    color: white !important;
-    padding: 3mm;
-    text-align: center;
-    font-size: 16pt;
-    font-weight: bold;
+  .carpa-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border: 2px dashed #000000 !important;
+    padding: 14px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
   }
 }
 

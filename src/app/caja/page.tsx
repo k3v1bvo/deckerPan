@@ -25,6 +25,7 @@ import { Pedido, MetodoPago, BILLETES_BOLIVIANOS, FacturaEmitida } from "@/types
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
+import { printElementById } from "@/lib/print";
 
 export default function CajaPage() {
   const {
@@ -170,7 +171,10 @@ export default function CajaPage() {
 
   const imprimirRecibo = () => {
     soundManager.playTactileClick();
-    window.print();
+    printElementById("recibo-termico", {
+      pageType: "thermal",
+      title: `Ticket_Dencker_${pedidoSeleccionado?.id || "Recibo"}`,
+    });
   };
 
   const ejecutarCierreCaja = () => {
@@ -1054,17 +1058,103 @@ export default function CajaPage() {
                 className="w-full p-2.5 text-xs rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-800"
               />
 
+              {/* Comprobante imprimible de arqueo oculto en pantalla normal */}
+              <div id="arqueo-caja-print" className="hidden">
+                <div className="ticket-termico">
+                  <div className="text-center pb-2 border-b border-dashed border-stone-400">
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Dencker Pan"
+                      className="h-12 w-auto mx-auto mb-1"
+                    />
+                    <h3 className="font-bold text-sm">DENCKER PAN</h3>
+                    <p className="text-[10px] font-bold">ARQUEO DE CAJA & CIERRE DE TURNO</p>
+                    <p className="text-[9px]">Av. Daniel Salamanca, Cochabamba</p>
+                    <p className="text-[9px]">Fecha: {new Date().toLocaleString("es-BO")}</p>
+                    <p className="text-[9px]">Cajero: {sesionCaja?.cajero || "Cajero Principal"} &bull; Turno: {sesionCaja?.turno?.toUpperCase() || "ACTIVO"}</p>
+                  </div>
+
+                  <div className="py-2 text-[10px] space-y-1 border-b border-dashed border-stone-400">
+                    <div className="flex justify-between font-bold">
+                      <span>Total Efectivo Contado:</span>
+                      <span>Bs {totalArqueoContado.toFixed(2)}</span>
+                    </div>
+                    {sesionCaja && (
+                      <div className="flex justify-between">
+                        <span>Efectivo Esperado:</span>
+                        <span>Bs {sesionCaja.efectivo_esperado.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {sesionCaja && (
+                      <div className="flex justify-between font-bold">
+                        <span>Diferencia:</span>
+                        <span>Bs {(totalArqueoContado - sesionCaja.efectivo_esperado).toFixed(2)}</span>
+                      </div>
+                    )}
+                    {sesionCaja && (
+                      <div className="flex justify-between">
+                        <span>Ventas del Turno:</span>
+                        <span>Bs {sesionCaja.total_ventas.toFixed(2)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Desglose de billetes */}
+                  <div className="py-2 text-[9px] border-b border-dashed border-stone-400">
+                    <p className="font-bold mb-1 text-[10px]">Desglose de Efectivo:</p>
+                    {BILLETES_BOLIVIANOS.filter((b) => (conteoBilletes[b.valor] || 0) > 0).map((b) => (
+                      <div key={b.valor} className="flex justify-between">
+                        <span>{conteoBilletes[b.valor]}x {b.label}</span>
+                        <span>Bs {((conteoBilletes[b.valor] || 0) * b.valor).toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {notasCierre && (
+                    <div className="py-2 text-[9px] border-b border-dashed border-stone-400">
+                      <p className="font-bold">Observaciones:</p>
+                      <p className="italic">{notasCierre}</p>
+                    </div>
+                  )}
+
+                  {/* Firmas */}
+                  <div className="pt-6 pb-2 text-[9px] text-center space-y-4">
+                    <div>
+                      <div className="w-36 border-t border-black mx-auto mb-1"></div>
+                      <p>Firma Cajero(a)</p>
+                    </div>
+                    <div>
+                      <div className="w-36 border-t border-black mx-auto mb-1"></div>
+                      <p>Firma Supervisor / Administrador</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Botones Modal */}
-              <div className="grid grid-cols-2 gap-2 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundManager.playTactileClick();
+                    printElementById("arqueo-caja-print", {
+                      pageType: "thermal",
+                      title: `Arqueo_Caja_${Date.now()}`,
+                    });
+                  }}
+                  className="py-3 px-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-stone-300"
+                >
+                  <Printer size={14} /> Imprimir Arqueo
+                </button>
                 <button
                   onClick={ejecutarCierreCaja}
-                  className="py-3 rounded-xl bg-amber-900 text-white font-bold text-xs hover:bg-amber-950 transition"
+                  className="py-3 px-2 rounded-xl bg-amber-900 text-white font-bold text-xs hover:bg-amber-950 transition cursor-pointer"
                 >
-                  Finalizar & Cerrar Turno
+                  Finalizar Cierre
                 </button>
                 <button
                   onClick={() => setModalArqueoAbierto(false)}
-                  className="py-3 rounded-xl bg-stone-100 text-stone-600 font-semibold text-xs hover:bg-stone-200 transition"
+                  className="py-3 px-2 rounded-xl bg-stone-100 text-stone-600 font-semibold text-xs hover:bg-stone-200 transition cursor-pointer"
                 >
                   Cancelar
                 </button>

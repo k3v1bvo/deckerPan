@@ -29,6 +29,7 @@ import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import FloorPlanMap from "@/components/FloorPlanMap";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
+import { printElementById } from "@/lib/print";
 
 export default function MeseroPage() {
   const {
@@ -1239,56 +1240,98 @@ export default function MeseroPage() {
               exit={{ opacity: 0, scale: 0.95 }}
               className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-3xl p-6 shadow-2xl border border-stone-200 dark:border-stone-800 space-y-4"
             >
-              <div className="text-center pb-3 border-b border-stone-200 dark:border-stone-800">
-                <span className="font-serif text-2xl font-black text-amber-950 dark:text-amber-400">
-                  Dencker Pan
-                </span>
-                <p className="text-xs text-stone-500">Cafetería & Panadería de Autor</p>
-                <div className="mt-2 text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 py-1 px-3 rounded-full inline-block">
-                  Cuenta Mesa {mesaSeleccionada.numero}
-                </div>
-              </div>
-
-              {(() => {
-                const pedido = getPedidoActivo(mesaSeleccionada.numero);
-                if (!pedido) return null;
-
-                return (
-                  <div className="space-y-2 text-xs">
-                    <div className="divide-y divide-stone-100 dark:divide-stone-800 max-h-48 overflow-y-auto">
-                      {pedido.items?.map((it) => (
-                        <div key={it.id} className="py-1.5 flex justify-between">
-                          <span>
-                            {it.cantidad}x {it.producto_nombre}
-                          </span>
-                          <span className="font-mono font-bold">Bs {it.subtotal.toFixed(2)}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="pt-3 border-t-2 border-dashed border-stone-300 dark:border-stone-700 flex justify-between text-base font-serif font-black text-amber-950 dark:text-amber-200">
-                      <span>Total a Pagar:</span>
-                      <span>Bs {pedido.total.toFixed(2)}</span>
-                    </div>
+              <div id="precuenta-mesero-print" className="ticket-termico space-y-3 font-mono text-xs text-stone-900">
+                <div className="text-center pb-3 border-b border-dashed border-stone-300">
+                  <img
+                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    alt="Dencker Pan"
+                    className="h-12 w-auto mx-auto mb-1 object-contain"
+                  />
+                  <h3 className="font-serif text-base font-black tracking-wide">
+                    DENCKER PAN
+                  </h3>
+                  <p className="text-[10px] font-bold text-amber-900">Masa Madre & Café 4 Llamas</p>
+                  <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba</p>
+                  <div className="mt-2 text-xs font-bold bg-stone-100 text-stone-900 py-1 px-3 rounded-full border border-stone-300 inline-block font-sans">
+                    PRE-CUENTA DE SALA • MESA {mesaSeleccionada.numero}
                   </div>
-                );
-              })()}
+                  <div className="flex justify-between text-[10px] text-stone-600 pt-2">
+                    <span>Fecha: {new Date().toLocaleDateString("es-BO")}</span>
+                    <span>Hora: {new Date().toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" })}</span>
+                  </div>
+                </div>
+
+                {(() => {
+                  const pedido = getPedidoActivo(mesaSeleccionada.numero);
+                  if (!pedido) {
+                    return (
+                      <div className="py-4 text-center text-xs text-stone-500 italic">
+                        No hay consumos activos registrados en esta mesa.
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between text-[10px] font-bold text-stone-500 border-b border-stone-300 pb-0.5">
+                        <span>CANT / DETALLE</span>
+                        <span>SUBTOTAL</span>
+                      </div>
+                      <div className="divide-y divide-dashed divide-stone-200 max-h-56 overflow-y-auto space-y-1">
+                        {pedido.items?.map((it) => (
+                          <div key={it.id} className="pt-1 flex justify-between items-start text-[11px] leading-tight">
+                            <div>
+                              <span>{it.cantidad}x {it.producto_nombre}</span>
+                              {it.asiento_numero && (
+                                <span className="block text-[9px] text-stone-500">
+                                  👤 Silla {it.asiento_numero} {it.comensal_nombre ? `(${it.comensal_nombre})` : ""}
+                                </span>
+                              )}
+                              {it.chips_seleccionados && it.chips_seleccionados.length > 0 && (
+                                <span className="block text-[9px] text-amber-800">
+                                  • {it.chips_seleccionados.join(", ")}
+                                </span>
+                              )}
+                            </div>
+                            <span className="font-mono font-bold shrink-0">Bs {it.subtotal.toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="pt-3 border-t-2 border-dashed border-stone-400 flex justify-between text-sm font-bold text-stone-950">
+                        <span>TOTAL A PAGAR:</span>
+                        <span className="font-mono text-base font-black">Bs {pedido.total.toFixed(2)}</span>
+                      </div>
+
+                      <div className="pt-2 border-t border-dashed border-stone-300 text-center text-[9px] text-stone-600 space-y-1 font-sans">
+                        <p className="font-bold">Solicita tu factura o comprobante al mesero</p>
+                        <p className="text-stone-500">Aceptamos Efectivo, QR Simple y Tarjeta</p>
+                        <p className="text-[8px] text-stone-400 italic">Pre-cuenta no válida como crédito fiscal</p>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
 
               <div className="pt-2 grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => setTicketCuentaModal(false)}
-                  className="py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition"
-                >
-                  Cerrar
-                </button>
-                <button
+                  type="button"
                   onClick={() => {
-                    soundManager.playSuccessTone();
-                    setTicketCuentaModal(false);
+                    soundManager.playTactileClick();
+                    printElementById("precuenta-mesero-print", {
+                      pageType: "thermal",
+                      title: `Precuenta_Mesa_${mesaSeleccionada.numero}`,
+                    });
                   }}
-                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white text-xs font-bold hover:bg-amber-950 transition flex items-center justify-center gap-1.5"
+                  className="py-2.5 rounded-xl bg-amber-900 hover:bg-amber-950 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                 >
                   <Printer size={14} /> Imprimir Pre-cuenta
+                </button>
+                <button
+                  onClick={() => setTicketCuentaModal(false)}
+                  className="py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer"
+                >
+                  Cerrar
                 </button>
               </div>
             </motion.div>
