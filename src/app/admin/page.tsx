@@ -844,9 +844,9 @@ export default function AdminPage() {
 
   return (
     <StaffAuthGuard requiredRole="admin" roleTitle="Administración General">
-      <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-36 font-sans">
+      <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
       {/* ── Header Dencker Pan Administración ── */}
-      <header className="bg-[#1E130C] border-b border-amber-500/20 text-white px-4 lg:px-8 py-3.5 shadow-xl">
+      <header className="bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">

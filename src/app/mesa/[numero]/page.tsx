@@ -428,9 +428,9 @@ export default function MesaPage({ params }: PageProps) {
   const itemEnCarrito = (id: string) => items.find((i) => i.producto.id === id);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-36 font-sans">
+    <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
       {/* ── Header Flotante Dencker Pan ── */}
-      <header className="sticky top-0 z-30 bg-[#1E130C] border-b border-amber-500/20 text-white shadow-xl pt-safe">
+      <header className="sticky top-0 z-30 bg-[#1E130C] border-b-2 border-amber-500/30 text-white shadow-xl pt-safe">
         {/* Toldo Mini Auténtico Dencker */}
         <div className="w-full shrink-0 overflow-hidden select-none">
           <img
@@ -514,7 +514,7 @@ export default function MesaPage({ params }: PageProps) {
       </header>
 
       <div className="max-w-2xl mx-auto px-4 pt-4 space-y-4">
-        {/* ── Live Order Tracker (Card Apple Pro) ── */}
+        {/* ── Live Order Tracker (Card Apple Pro con Alto Contraste) ── */}
         <AnimatePresence>
           {pedidoEstado && (
             <motion.div
@@ -522,34 +522,34 @@ export default function MesaPage({ params }: PageProps) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ type: "spring", damping: 25 }}
-              className="p-4 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-lg space-y-3"
+              className="p-4 sm:p-5 rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-[0_4px_20px_rgba(30,19,12,0.06)] space-y-3"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 font-serif font-bold text-sm text-stone-900 dark:text-stone-100">
-                  <Clock size={16} className="text-amber-600" />
+                <div className="flex items-center gap-2 font-serif font-black text-sm text-stone-950">
+                  <Clock size={16} className="text-[#991B24]" />
                   <span>Seguimiento de tu Pedido</span>
                 </div>
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${ESTADO_LABELS[pedidoEstado].color}`}
+                  className={`text-xs font-black px-2.5 py-0.5 rounded-full border-2 ${ESTADO_LABELS[pedidoEstado].color}`}
                 >
                   {ESTADO_LABELS[pedidoEstado].label}
                 </span>
               </div>
 
-              <p className="text-xs text-stone-500 dark:text-stone-400">
+              <p className="text-xs text-stone-700 font-medium">
                 {ESTADO_LABELS[pedidoEstado].desc}
               </p>
 
               {/* Steps Progress Indicator */}
-              <div className="grid grid-cols-4 gap-1 pt-1">
+              <div className="grid grid-cols-4 gap-1.5 pt-1">
                 {[1, 2, 3, 4].map((step) => {
                   const currentStep = ESTADO_LABELS[pedidoEstado].step;
                   const isDone = currentStep >= step;
                   return (
                     <div
                       key={step}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${
-                        isDone ? "bg-amber-600" : "bg-stone-200 dark:bg-stone-800"
+                      className={`h-2 rounded-full transition-all duration-500 ${
+                        isDone ? "bg-[#991B24]" : "bg-[#E5DCD0]"
                       }`}
                     />
                   );
@@ -560,7 +560,7 @@ export default function MesaPage({ params }: PageProps) {
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
                   <button
                     onClick={() => setCartOpen(true)}
-                    className="flex-1 py-2 px-3 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-bold hover:bg-stone-200 dark:hover:bg-stone-700 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#FAF6EF] text-stone-900 border-2 border-[#D8C7B2] text-xs font-bold hover:bg-[#F2EAE0] transition flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Plus size={13} />
                     <span>Pedir otra ronda</span>
@@ -570,14 +570,14 @@ export default function MesaPage({ params }: PageProps) {
                       soundManager.playTactileClick();
                       setModalCuentaAbierto(true);
                     }}
-                    className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white text-xs font-black transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer border border-amber-800"
                   >
                     <Receipt size={14} />
                     <span>Traer la Cuenta</span>
                   </button>
                   <button
                     onClick={() => setShowPayment(true)}
-                    className="py-2 px-3 rounded-xl bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                    className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-stone-900 border-2 border-stone-300 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
                     title="Pagar online inmediatamente por QR o Efectivo"
                   >
                     <span>💳 Pagar Online</span>
@@ -589,9 +589,9 @@ export default function MesaPage({ params }: PageProps) {
         </AnimatePresence>
 
         {/* ── Selector de Asiento / Silla para comanda individual en mesa ── */}
-        <div className="p-3.5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm space-y-2.5">
+        <div className="p-3.5 sm:p-4 rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-[0_2px_12px_rgba(30,19,12,0.04)] space-y-2.5">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+            <span className="text-xs font-black text-stone-950 flex items-center gap-1.5">
               <span>👤</span>
               <span>¿En qué silla estás sentado?</span>
             </span>
@@ -600,7 +600,7 @@ export default function MesaPage({ params }: PageProps) {
               placeholder="Tu nombre (ej. Carlos)"
               value={nombreComensalCliente}
               onChange={(e) => setNombreComensalCliente(e.target.value)}
-              className="text-xs px-3 py-1.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 w-36 sm:w-44 font-medium placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-600"
+              className="text-xs px-3 py-1.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-950 font-bold placeholder:text-stone-500 w-36 sm:w-44 focus:outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-500/20"
             />
           </div>
 
@@ -615,11 +615,11 @@ export default function MesaPage({ params }: PageProps) {
                 }}
                 className={`flex-1 min-w-[50px] py-1.5 rounded-xl font-bold transition flex flex-col items-center justify-center cursor-pointer ${
                   asientoCliente === num
-                    ? "bg-[#D49B54] text-[#1E130C] shadow-md ring-2 ring-amber-600/40 font-black"
-                    : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200"
+                    ? "bg-[#991B24] text-white border-2 border-[#7F1D1D] shadow-md ring-2 ring-amber-400/40 font-black"
+                    : "bg-[#FAF6EF] hover:bg-[#F2EAE0] text-stone-800 border-2 border-[#D8C7B2] font-bold"
                 }`}
               >
-                <span className="text-[8.5px] uppercase tracking-wider opacity-75 leading-tight">Silla</span>
+                <span className="text-[8.5px] uppercase tracking-wider opacity-90 leading-tight">Silla</span>
                 <span className="text-xs leading-none font-mono font-bold">{num}</span>
               </button>
             ))}
@@ -628,13 +628,13 @@ export default function MesaPage({ params }: PageProps) {
 
         {/* ── Search Bar ── */}
         <div className="relative">
-          <Search size={16} className="absolute left-3.5 top-3 text-stone-400" />
+          <Search size={16} className="absolute left-3.5 top-3 text-stone-500" />
           <input
             type="text"
             placeholder="Buscar en el menú artesanal (café, croissant, sándwich)..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-2xs focus:outline-none focus:ring-2 focus:ring-amber-700 text-stone-900 dark:text-stone-100 placeholder:text-stone-400"
+            className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-sm focus:outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-500/20 text-stone-950 font-medium placeholder:text-stone-500"
           />
         </div>
 
@@ -654,10 +654,10 @@ export default function MesaPage({ params }: PageProps) {
                   soundManager.playClick();
                   setCategoriaActiva(cat.id);
                 }}
-                className={`px-3.5 py-1.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                   isActive
-                    ? "bg-amber-900 dark:bg-amber-600 text-white shadow-md shadow-amber-950/20"
-                    : "bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200/80 dark:border-stone-700 hover:bg-stone-100"
+                    ? "bg-[#991B24] text-white border-2 border-[#7F1D1D] shadow-md shadow-red-950/20 font-black"
+                    : "bg-white hover:bg-[#FAF6EF] text-stone-800 border-2 border-[#D5C7B5] font-bold"
                 }`}
               >
                 <span>{cat.emoji}</span>
@@ -700,7 +700,7 @@ export default function MesaPage({ params }: PageProps) {
         </AnimatePresence>
 
         {/* ── Products Grid ── */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {productosFiltrados().map((prod) => {
             const enCarrito = itemEnCarrito(prod.id);
 
@@ -710,11 +710,11 @@ export default function MesaPage({ params }: PageProps) {
                 whileHover={{ y: -3 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => abrirModal(prod)}
-                className="rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-3 shadow-xs hover:border-amber-300 dark:hover:border-amber-700 cursor-pointer flex flex-col justify-between transition-all select-none"
+                className="rounded-3xl bg-white border-2 border-[#D5C7B5] hover:border-amber-600 p-3 sm:p-3.5 shadow-[0_2px_12px_rgba(30,19,12,0.04)] hover:shadow-lg cursor-pointer flex flex-col justify-between transition-all select-none"
               >
                 <div>
                   {/* Image / Emoji Showcase */}
-                  <div className="h-32 sm:h-36 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200/50 dark:from-stone-800 dark:to-stone-850 flex items-center justify-center text-4xl relative overflow-hidden mb-2.5">
+                  <div className="h-32 sm:h-36 rounded-2xl bg-gradient-to-br from-[#F5EFE6] to-[#EAE0D2] border border-[#E0D5C5] flex items-center justify-center text-4xl relative overflow-hidden mb-2.5 shadow-inner">
                     {prod.imagen_url ? (
                       <img
                         src={prod.imagen_url}
@@ -726,30 +726,30 @@ export default function MesaPage({ params }: PageProps) {
                     )}
 
                     {prod.es_mas_vendido && (
-                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-amber-900/90 text-amber-100 font-bold text-[9px] uppercase tracking-wider backdrop-blur-xs">
+                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-[#991B24] text-white font-black text-[9px] uppercase tracking-wider shadow-sm border border-amber-400/40">
                         Top
                       </span>
                     )}
 
                     {enCarrito && (
-                      <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-amber-600 text-white font-mono font-bold text-xs flex items-center justify-center shadow-md">
+                      <span className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-[#991B24] text-white font-mono font-black text-xs flex items-center justify-center shadow-md border border-white">
                         {enCarrito.cantidad}
                       </span>
                     )}
                   </div>
 
-                  <h3 className="font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100 line-clamp-2 min-h-[2.2rem] sm:min-h-[2.5rem] leading-snug">
+                  <h3 className="font-serif font-black text-xs sm:text-sm text-stone-950 line-clamp-2 min-h-[2.2rem] sm:min-h-[2.5rem] leading-snug">
                     {prod.nombre}
                   </h3>
 
                   {prod.descripcion && (
-                    <p className="text-[11px] text-stone-500 dark:text-stone-400 line-clamp-2 mt-0.5 leading-relaxed hidden xs:block">
+                    <p className="text-[11px] text-stone-600 font-medium line-clamp-2 mt-0.5 leading-relaxed hidden xs:block">
                       {prod.descripcion}
                     </p>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-stone-100 dark:border-stone-800/60">
+                <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#EAE0D2]">
                   {(() => {
                     const esPizza = prod.categoria_id === "c_pizzas" || prod.nombre.toLowerCase().includes("pizza");
                     const p4 = prod.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[prod.id]?.p4 || prod.precio;
@@ -759,17 +759,17 @@ export default function MesaPage({ params }: PageProps) {
                     if (esPizza || (prod.tamanios && prod.tamanios.length > 0)) {
                       return (
                         <div className="flex flex-col text-left">
-                          <span className="text-[8px] sm:text-[9px] uppercase font-bold text-amber-700 dark:text-amber-300">
+                          <span className="text-[8px] sm:text-[9px] uppercase font-bold text-amber-900">
                             4p: {p4} | 6p: {p6} | 8p: {p8}
                           </span>
-                          <span className="font-mono font-black text-xs text-amber-950 dark:text-amber-200">
+                          <span className="font-mono font-black text-xs text-[#991B24]">
                             Bs {p4} – {p8}
                           </span>
                         </div>
                       );
                     }
                     return (
-                      <span className="font-mono font-black text-sm text-amber-900 dark:text-amber-400">
+                      <span className="font-mono font-black text-sm sm:text-base text-[#991B24]">
                         Bs {prod.precio.toFixed(2)}
                       </span>
                     );
@@ -779,7 +779,7 @@ export default function MesaPage({ params }: PageProps) {
                       e.stopPropagation();
                       abrirModal(prod);
                     }}
-                    className="w-8 h-8 rounded-xl bg-amber-900 dark:bg-amber-600 text-white flex items-center justify-center font-bold text-base shadow-xs hover:bg-amber-950 transition active:scale-90"
+                    className="w-8 h-8 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white border border-[#7F1D1D] flex items-center justify-center font-black text-base shadow-sm transition active:scale-90"
                     title="Añadir o elegir porción"
                   >
                     +
@@ -793,10 +793,10 @@ export default function MesaPage({ params }: PageProps) {
         {productosFiltrados().length === 0 && (
           <div className="py-20 text-center space-y-2">
             <div className="text-4xl">🔍</div>
-            <p className="font-bold text-sm text-stone-600 dark:text-stone-300">
+            <p className="font-bold text-sm text-stone-700">
               No encontramos resultados para tu búsqueda
             </p>
-            <p className="text-xs text-stone-400">Prueba con palabras como café, pan o tarta</p>
+            <p className="text-xs text-stone-500">Prueba con palabras como café, pan o tarta</p>
           </div>
         )}
       </div>
@@ -817,17 +817,17 @@ export default function MesaPage({ params }: PageProps) {
                 soundManager.playClick();
                 setCartOpen(true);
               }}
-              className="w-full bg-stone-900/95 dark:bg-stone-950/95 backdrop-blur-2xl border border-white/20 p-3.5 rounded-full shadow-2xl flex items-center justify-between text-white group"
+              className="w-full bg-[#1E130C] border-2 border-amber-500/50 p-3.5 rounded-full shadow-2xl flex items-center justify-between text-white group cursor-pointer"
             >
               <div className="flex items-center gap-3 pl-1">
-                <span className="w-8 h-8 rounded-full bg-amber-500 text-stone-950 font-bold flex items-center justify-center text-xs shadow-md">
+                <span className="w-8 h-8 rounded-full bg-[#991B24] text-white font-black flex items-center justify-center text-xs shadow-md border border-amber-400/40">
                   {count()}
                 </span>
                 <span className="font-bold text-xs tracking-wide">Ver Mi Pedido</span>
               </div>
 
               <div className="flex items-center gap-2 pr-1">
-                <span className="font-mono font-bold text-sm text-amber-300">
+                <span className="font-mono font-black text-sm text-amber-300">
                   Bs {total().toFixed(2)}
                 </span>
                 <span className="w-6 h-6 rounded-full bg-white/10 group-hover:bg-white/20 flex items-center justify-center text-xs transition">
@@ -848,7 +848,7 @@ export default function MesaPage({ params }: PageProps) {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="w-full max-w-lg bg-white dark:bg-stone-900 rounded-t-[28px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl border-t sm:border border-stone-200 dark:border-stone-800 max-h-[85vh] overflow-y-auto space-y-4 pb-safe"
+              className="w-full max-w-lg bg-white rounded-t-[28px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl border-t-2 sm:border-2 border-[#D5C7B5] max-h-[85vh] overflow-y-auto space-y-4 pb-safe text-stone-950"
             >
               {(() => {
                 const esPizzaTradicional =
@@ -869,17 +869,17 @@ export default function MesaPage({ params }: PageProps) {
                   <>
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-serif text-xl font-bold text-stone-900 dark:text-stone-100">
+                        <h3 className="font-serif text-xl font-black text-stone-950">
                           {productoModal.nombre}
                         </h3>
-                        <span className="font-mono font-bold text-base text-amber-900 dark:text-amber-400">
+                        <span className="font-mono font-black text-lg text-[#991B24]">
                           Bs {precioCalculado.toFixed(2)}
                           {esPizzaTradicional ? ` (${tamanoPizzaModal} porc)` : ""}
                         </span>
                       </div>
                       <button
                         onClick={() => setProductoModal(null)}
-                        className="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500"
+                        className="p-2 rounded-full hover:bg-stone-100 text-stone-500 cursor-pointer"
                       >
                         <X size={20} />
                       </button>
@@ -887,8 +887,8 @@ export default function MesaPage({ params }: PageProps) {
 
                     {/* Selector de Porciones para Pizzas */}
                     {esPizzaTradicional && (
-                      <div className="p-3 rounded-2xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-500/30 space-y-1.5">
-                        <label className="text-[10px] font-mono font-bold text-amber-900 dark:text-amber-400 uppercase tracking-wider block">
+                      <div className="p-3.5 rounded-2xl bg-[#FAF6EF] border-2 border-[#D8C7B2] space-y-1.5">
+                        <label className="text-[10px] font-mono font-bold text-amber-950 uppercase tracking-wider block">
                           Selecciona Tamaño (Porciones):
                         </label>
                         <div className="grid grid-cols-3 gap-2">
@@ -904,16 +904,16 @@ export default function MesaPage({ params }: PageProps) {
                                 soundManager.playClick();
                                 setTamanoPizzaModal(sz.porc);
                               }}
-                              className={`py-2 px-1 rounded-xl text-center border transition flex flex-col items-center cursor-pointer ${
+                              className={`py-2 px-1 rounded-xl text-center border-2 transition flex flex-col items-center cursor-pointer ${
                                 tamanoPizzaModal === sz.porc
-                                  ? "bg-amber-900 dark:bg-amber-600 text-white border-amber-900 dark:border-amber-600 shadow-sm"
-                                  : "bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:bg-amber-50"
+                                  ? "bg-[#991B24] text-white border-[#7F1D1D] shadow-sm font-black"
+                                  : "bg-white text-stone-800 border-[#D5C7B5] hover:bg-amber-50 font-bold"
                               }`}
                             >
                               <span className="text-xs">{sz.icon}</span>
                               <div className="text-[10px] uppercase font-bold mt-0.5">{sz.label}</div>
-                              <div className="text-[9px] text-stone-500 dark:text-stone-400">{sz.sub}</div>
-                              <div className={`text-xs font-mono font-black mt-0.5 ${tamanoPizzaModal === sz.porc ? "text-amber-300" : "text-amber-800 dark:text-amber-400"}`}>
+                              <div className={`text-[9px] ${tamanoPizzaModal === sz.porc ? "text-amber-200" : "text-stone-500"}`}>{sz.sub}</div>
+                              <div className={`text-xs font-mono font-black mt-0.5 ${tamanoPizzaModal === sz.porc ? "text-amber-300" : "text-[#991B24]"}`}>
                                 Bs {sz.precio}
                               </div>
                             </button>
@@ -926,7 +926,7 @@ export default function MesaPage({ params }: PageProps) {
               })()}
 
               {productoModal.descripcion && (
-                <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                <p className="text-xs text-stone-600 font-medium leading-relaxed">
                   {productoModal.descripcion}
                 </p>
               )}
@@ -935,7 +935,7 @@ export default function MesaPage({ params }: PageProps) {
               {productoModal.chips_personalizacion &&
                 productoModal.chips_personalizacion.length > 0 && (
                   <div>
-                    <label className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-2">
+                    <label className="text-[11px] font-bold text-stone-600 uppercase tracking-wider block mb-2">
                       Personalización rápida
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -950,10 +950,10 @@ export default function MesaPage({ params }: PageProps) {
                                 isSelected ? prev.filter((c) => c !== chip) : [...prev, chip]
                               );
                             }}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border-2 ${
                               isSelected
-                                ? "bg-amber-900 dark:bg-amber-600 text-white shadow-xs"
-                                : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+                                ? "bg-[#991B24] text-white border-[#7F1D1D] shadow-xs font-black"
+                                : "bg-[#FAF6EF] text-stone-800 border-[#D8C7B2] hover:bg-stone-200 font-bold"
                             }`}
                           >
                             {isSelected && <Check size={12} />}
@@ -967,14 +967,14 @@ export default function MesaPage({ params }: PageProps) {
 
               {/* Notas especiales */}
               <div>
-                <label className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-1.5">
+                <label className="text-[11px] font-bold text-stone-600 uppercase tracking-wider block mb-1.5">
                   Instrucciones para Cocina / Barista
                 </label>
                 <textarea
                   value={notaProducto}
                   onChange={(e) => setNotaProducto(e.target.value)}
                   placeholder="Ej. Muy caliente, sin azúcar, por favor..."
-                  className="w-full p-3 text-xs rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-800 text-stone-900 dark:text-stone-100 resize-none h-20"
+                  className="w-full p-3 text-xs rounded-2xl border-2 border-[#D5C7B5] bg-white focus:outline-none focus:border-amber-700 text-stone-950 resize-none h-20 placeholder:text-stone-400 font-medium"
                 />
               </div>
 
@@ -996,7 +996,7 @@ export default function MesaPage({ params }: PageProps) {
                 return (
                   <button
                     onClick={agregarAlCarrito}
-                    className="w-full py-3.5 rounded-2xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs shadow-lg transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs border-2 border-[#7F1D1D] shadow-lg transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Plus size={16} />
                     <span>
@@ -1014,41 +1014,41 @@ export default function MesaPage({ params }: PageProps) {
       {/* ── Drawer Carrito Completo ── */}
       <AnimatePresence>
         {cartOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs">
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="w-full max-w-md bg-white dark:bg-stone-900 h-full shadow-2xl flex flex-col border-l border-stone-200 dark:border-stone-800"
+              className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col border-l-2 border-[#D5C7B5]"
             >
               {/* Header Carrito */}
-              <div className="p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between bg-stone-50 dark:bg-stone-950">
+              <div className="p-5 border-b-2 border-amber-500/30 flex items-center justify-between bg-[#1E130C] text-white">
                 <div className="flex items-center gap-2">
-                  <span className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                  <span className="font-serif text-lg font-bold text-white">
                     Tu Pedido — Mesa {numero}
                   </span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#991B24] text-white font-black border border-amber-400/40">
                     {count()}
                   </span>
                 </div>
                 <button
                   onClick={() => setCartOpen(false)}
-                  className="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-500"
+                  className="p-2 rounded-full hover:bg-white/10 text-stone-300 cursor-pointer"
                 >
                   <X size={20} />
                 </button>
               </div>
 
               {/* Items List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F2ECE1]/40">
                 {items.length === 0 ? (
                   <div className="py-24 text-center space-y-3">
                     <div className="text-5xl">🛒</div>
-                    <p className="font-bold text-stone-700 dark:text-stone-300 text-sm">
+                    <p className="font-bold text-stone-800 text-sm">
                       Tu pedido está vacío
                     </p>
-                    <p className="text-xs text-stone-400">
+                    <p className="text-xs text-stone-500">
                       Selecciona productos de nuestro menú artesanal
                     </p>
                   </div>
@@ -1056,21 +1056,21 @@ export default function MesaPage({ params }: PageProps) {
                   items.map((it, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-between text-xs"
+                      className="p-3.5 rounded-2xl bg-white border-2 border-[#D5C7B5] shadow-xs flex items-center justify-between text-xs"
                     >
                       <div className="flex-1 pr-2">
-                        <div className="font-bold text-stone-900 dark:text-stone-100">
+                        <div className="font-serif font-black text-stone-950 text-sm">
                           {it.producto.nombre}
                         </div>
                         {it.chips_seleccionados.length > 0 && (
-                          <div className="text-[10px] text-amber-700 dark:text-amber-400 mt-0.5">
+                          <div className="text-[10px] text-amber-900 font-bold mt-0.5">
                             {it.chips_seleccionados.join(", ")}
                           </div>
                         )}
                         {it.notas && (
-                          <p className="text-[10px] text-stone-400 italic">"{it.notas}"</p>
+                          <p className="text-[10px] text-stone-500 italic">"{it.notas}"</p>
                         )}
-                        <span className="font-mono font-bold text-amber-900 dark:text-amber-400">
+                        <span className="font-mono font-black text-[#991B24] text-sm">
                           Bs {(it.producto.precio * it.cantidad).toFixed(2)}
                         </span>
                       </div>
@@ -1078,14 +1078,14 @@ export default function MesaPage({ params }: PageProps) {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => updateCantidad(it.producto.id, it.cantidad - 1)}
-                          className="w-7 h-7 rounded-xl bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 flex items-center justify-center font-bold text-xs"
+                          className="w-7 h-7 rounded-xl bg-white border-2 border-stone-300 text-stone-900 flex items-center justify-center font-bold text-xs hover:bg-stone-100 cursor-pointer"
                         >
                           <Minus size={12} />
                         </button>
-                        <span className="font-mono font-bold w-4 text-center">{it.cantidad}</span>
+                        <span className="font-mono font-black w-4 text-center text-stone-950">{it.cantidad}</span>
                         <button
                           onClick={() => updateCantidad(it.producto.id, it.cantidad + 1)}
-                          className="w-7 h-7 rounded-xl bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 flex items-center justify-center font-bold text-xs"
+                          className="w-7 h-7 rounded-xl bg-white border-2 border-stone-300 text-stone-900 flex items-center justify-center font-bold text-xs hover:bg-stone-100 cursor-pointer"
                         >
                           <Plus size={12} />
                         </button>
@@ -1097,12 +1097,12 @@ export default function MesaPage({ params }: PageProps) {
 
               {/* Footer Carrito */}
               {items.length > 0 && (
-                <div className="p-5 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 space-y-3">
+                <div className="p-5 border-t-2 border-[#D5C7B5] bg-[#FBF9F5] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-stone-600 dark:text-stone-400">
+                    <span className="font-bold text-xs text-stone-700">
                       Total a Confirmar:
                     </span>
-                    <span className="font-serif text-xl font-black text-amber-900 dark:text-amber-400 font-mono">
+                    <span className="font-serif text-2xl font-black text-[#991B24] font-mono">
                       Bs {total().toFixed(2)}
                     </span>
                   </div>
@@ -1110,7 +1110,7 @@ export default function MesaPage({ params }: PageProps) {
                   <button
                     disabled={submitting}
                     onClick={confirmarPedido}
-                    className="w-full py-3.5 rounded-2xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs shadow-lg transition active:scale-98 disabled:opacity-50"
+                    className="w-full py-3.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs border-2 border-[#7F1D1D] shadow-lg transition active:scale-98 disabled:opacity-50 cursor-pointer"
                   >
                     {submitting ? "Enviando a Cocina..." : "Confirmar y Enviar Pedido"}
                   </button>

@@ -561,16 +561,14 @@ export default function FloorPlanMap({
             top: `${y}%`,
             transform: "translate(-50%, -50%)",
           }}
-          className={`absolute rounded-full flex items-center justify-center transition-all duration-300 z-10 group/chair ${
-            isChairSelected
-              ? "w-6 h-6 sm:w-7 sm:h-7 bg-[#991B24] border-2 border-white text-white shadow-lg ring-4 ring-[#991B24]/50 scale-125 z-30"
-              : isChairOccupied
+          className={`absolute rounded-full flex items-center justify-center transition-all duration-300 z-10 group/chair ${isChairSelected
+            ? "w-6 h-6 sm:w-7 sm:h-7 bg-[#991B24] border-2 border-white text-white shadow-lg ring-4 ring-[#991B24]/50 scale-125 z-30"
+            : isChairOccupied
               ? "w-5 h-5 sm:w-6 sm:h-6 bg-[#D49B54] border-2 border-white dark:border-[#1E130C] text-[#1E130C] shadow-md hover:scale-125 cursor-pointer ring-1 ring-amber-600/50"
               : "w-4 h-4 sm:w-5 sm:h-5 bg-stone-200/80 dark:bg-stone-800 border border-stone-400/50 text-stone-500 shadow-2xs hover:scale-110 cursor-pointer"
-          }`}
-          title={`Silla ${seatNum}: ${nombreComensal || (isChairOccupied ? "Ocupado" : "Libre")}${
-            subtotalSilla > 0 ? ` • Bs ${subtotalSilla.toFixed(2)}` : ""
-          }`}
+            }`}
+          title={`Silla ${seatNum}: ${nombreComensal || (isChairOccupied ? "Ocupado" : "Libre")}${subtotalSilla > 0 ? ` • Bs ${subtotalSilla.toFixed(2)}` : ""
+            }`}
         >
           <span className="text-[7.5px] font-mono font-black leading-none">
             {seatNum}
@@ -615,7 +613,7 @@ export default function FloorPlanMap({
     <div className="w-full space-y-4">
       {/* ── BARRA SUPERIOR DE CONTROL: PISOS, VISOR DE PLANO & MODO EDICIÓN ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EAE2D5] dark:border-stone-800 shadow-xs">
-        
+
         {/* Selector de Piso (Planta Baja ⇄ Terraza), Visor y Blueprint */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Selector de Plantas */}
@@ -626,11 +624,10 @@ export default function FloorPlanMap({
                 soundManager.playTactileClick();
                 setPisoActivo("planta_baja");
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
-                pisoActivo === "planta_baja"
-                  ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
-                  : "text-[#785E4F] dark:text-stone-300 hover:text-[#1E130C]"
-              }`}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${pisoActivo === "planta_baja"
+                ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
+                : "text-[#785E4F] dark:text-stone-300 hover:text-[#1E130C]"
+                }`}
             >
               <span>🏠 Planta Baja (Salón & Patio)</span>
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono">
@@ -648,11 +645,10 @@ export default function FloorPlanMap({
                 soundManager.playTactileClick();
                 setPisoActivo("terraza");
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
-                pisoActivo === "terraza"
-                  ? "bg-[#991B24] text-white shadow-sm"
-                  : "text-[#785E4F] dark:text-stone-300 hover:text-[#1E130C]"
-              }`}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${pisoActivo === "terraza"
+                ? "bg-[#991B24] text-white shadow-sm"
+                : "text-[#785E4F] dark:text-stone-300 hover:text-[#1E130C]"
+                }`}
             >
               <span>☀️ Terraza Jardín (Piso 2)</span>
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono">
@@ -688,11 +684,10 @@ export default function FloorPlanMap({
                   soundManager.playTactileClick();
                   setMostrarZonas((prev) => !prev);
                 }}
-                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
-                  mostrarZonas
-                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
-                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${mostrarZonas
+                  ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                  : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                  }`}
                 title="Mostrar u ocultar nombres de zonas en el plano"
               >
                 <span>🏷️ Zonas</span>
@@ -704,11 +699,10 @@ export default function FloorPlanMap({
                   soundManager.playTactileClick();
                   setMostrarPasillo((prev) => !prev);
                 }}
-                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
-                  mostrarPasillo
-                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
-                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${mostrarPasillo
+                  ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                  : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                  }`}
                 title="Mostrar u ocultar pasillo central de acceso"
               >
                 <span>🚶 Pasillo</span>
@@ -720,11 +714,10 @@ export default function FloorPlanMap({
                   soundManager.playTactileClick();
                   setMostrarSignage((prev) => !prev);
                 }}
-                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
-                  mostrarSignage
-                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
-                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${mostrarSignage
+                  ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                  : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                  }`}
                 title="Mostrar u ocultar extintores y salidas"
               >
                 <span>🧯 Señalética</span>
@@ -736,11 +729,10 @@ export default function FloorPlanMap({
                   soundManager.playTactileClick();
                   setMostrarGrid((prev) => !prev);
                 }}
-                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
-                  mostrarGrid
-                    ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
-                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${mostrarGrid
+                  ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+                  : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                  }`}
                 title="Mostrar u ocultar cuadrícula técnica"
               >
                 <span>📐 Grilla</span>
@@ -752,11 +744,10 @@ export default function FloorPlanMap({
                   soundManager.playTactileClick();
                   setModoBlueprint((prev) => !prev);
                 }}
-                className={`px-2 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${
-                  modoBlueprint
-                    ? "bg-sky-700 text-white shadow-xs"
-                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-                }`}
+                className={`px-2 py-1.5 rounded-lg font-bold text-[11px] transition flex items-center gap-1 cursor-pointer ${modoBlueprint
+                  ? "bg-sky-700 text-white shadow-xs"
+                  : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                  }`}
                 title="Superponer fotografía técnica original del plano"
               >
                 {modoBlueprint ? <Eye size={12} /> : <EyeOff size={12} />}
@@ -773,11 +764,10 @@ export default function FloorPlanMap({
                 soundManager.playTactileClick();
                 setModoCalor(false);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                !modoCalor
-                  ? "bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs"
-                  : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${!modoCalor
+                ? "bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs"
+                : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                }`}
             >
               <Layers size={13} />
               <span>Operativo</span>
@@ -789,11 +779,10 @@ export default function FloorPlanMap({
                 soundManager.playTactileClick();
                 setModoCalor(true);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                modoCalor
-                  ? "bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-md shadow-red-600/30 font-black animate-pulse"
-                  : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${modoCalor
+                ? "bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-md shadow-red-600/30 font-black animate-pulse"
+                : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                }`}
             >
               <Thermometer size={14} className={modoCalor ? "text-white" : "text-amber-600"} />
               <span>Mapa de Calor</span>
@@ -809,11 +798,10 @@ export default function FloorPlanMap({
                   soundManager.playClick();
                   setMetricaCalor("ocupacion");
                 }}
-                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${
-                  metricaCalor === "ocupacion"
-                    ? "bg-red-600 text-white shadow-xs"
-                    : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
-                }`}
+                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${metricaCalor === "ocupacion"
+                  ? "bg-red-600 text-white shadow-xs"
+                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                  }`}
               >
                 👥 Aforo / Sillas
               </button>
@@ -823,11 +811,10 @@ export default function FloorPlanMap({
                   soundManager.playClick();
                   setMetricaCalor("consumo");
                 }}
-                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${
-                  metricaCalor === "consumo"
-                    ? "bg-red-600 text-white shadow-xs"
-                    : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
-                }`}
+                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${metricaCalor === "consumo"
+                  ? "bg-red-600 text-white shadow-xs"
+                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                  }`}
               >
                 💰 Consumo Bs
               </button>
@@ -837,11 +824,10 @@ export default function FloorPlanMap({
                   soundManager.playClick();
                   setMetricaCalor("tiempo");
                 }}
-                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${
-                  metricaCalor === "tiempo"
-                    ? "bg-red-600 text-white shadow-xs"
-                    : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
-                }`}
+                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${metricaCalor === "tiempo"
+                  ? "bg-red-600 text-white shadow-xs"
+                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                  }`}
               >
                 ⏱️ Rotación
               </button>
@@ -912,13 +898,12 @@ export default function FloorPlanMap({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold border ${
-                metricasAforo.porcentajeTotal >= 85
-                  ? "bg-red-500/20 text-red-400 border-red-500/40 animate-pulse"
-                  : metricasAforo.porcentajeTotal >= 50
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold border ${metricasAforo.porcentajeTotal >= 85
+                ? "bg-red-500/20 text-red-400 border-red-500/40 animate-pulse"
+                : metricasAforo.porcentajeTotal >= 50
                   ? "bg-amber-500/20 text-amber-400 border-amber-500/40"
                   : "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
-              }`}
+                }`}
             >
               <Activity size={20} />
             </div>
@@ -929,19 +914,18 @@ export default function FloorPlanMap({
                   Ocupación de Cafetería: {metricasAforo.porcentajeTotal}%
                 </span>
                 <span
-                  className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                    metricasAforo.porcentajeTotal >= 85
-                      ? "bg-red-500 text-white animate-pulse"
-                      : metricasAforo.porcentajeTotal >= 50
+                  className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${metricasAforo.porcentajeTotal >= 85
+                    ? "bg-red-500 text-white animate-pulse"
+                    : metricasAforo.porcentajeTotal >= 50
                       ? "bg-amber-500 text-stone-950"
                       : "bg-emerald-500 text-white"
-                  }`}
+                    }`}
                 >
                   {metricasAforo.porcentajeTotal >= 85
                     ? "🔥 ALTA AFLUENCIA"
                     : metricasAforo.porcentajeTotal >= 50
-                    ? "🟡 MODERADO"
-                    : "🟢 ESPACIO LIBRE"}
+                      ? "🟡 MODERADO"
+                      : "🟢 ESPACIO LIBRE"}
                 </span>
               </div>
               <p className="text-xs text-stone-300 font-medium">
@@ -985,13 +969,12 @@ export default function FloorPlanMap({
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(100, metricasAforo.porcentajeTotal)}%` }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className={`h-full rounded-full transition-all ${
-              metricasAforo.porcentajeTotal >= 85
-                ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 shadow-[0_0_12px_#ef4444]"
-                : metricasAforo.porcentajeTotal >= 50
+            className={`h-full rounded-full transition-all ${metricasAforo.porcentajeTotal >= 85
+              ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 shadow-[0_0_12px_#ef4444]"
+              : metricasAforo.porcentajeTotal >= 50
                 ? "bg-gradient-to-r from-emerald-500 via-yellow-500 to-amber-500"
                 : "bg-gradient-to-r from-emerald-400 to-emerald-500"
-            }`}
+              }`}
           />
         </div>
       </div>
@@ -1010,11 +993,10 @@ export default function FloorPlanMap({
               soundManager.playTactileClick();
               setFiltroEstadoLive("todas");
             }}
-            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
-              filtroEstadoLive === "todas"
-                ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
-                : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
-            }`}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${filtroEstadoLive === "todas"
+              ? "bg-[#1E130C] text-[#FAF7F2] shadow-xs"
+              : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+              }`}
           >
             <span>Todas</span>
             <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px] font-mono">
@@ -1028,11 +1010,10 @@ export default function FloorPlanMap({
               soundManager.playTactileClick();
               setFiltroEstadoLive("libres");
             }}
-            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
-              filtroEstadoLive === "libres"
-                ? "bg-emerald-600 text-white shadow-xs"
-                : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100"
-            }`}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${filtroEstadoLive === "libres"
+              ? "bg-emerald-600 text-white shadow-xs"
+              : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100"
+              }`}
           >
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span>🟢 Libres</span>
@@ -1047,11 +1028,10 @@ export default function FloorPlanMap({
               soundManager.playTactileClick();
               setFiltroEstadoLive("ocupadas");
             }}
-            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
-              filtroEstadoLive === "ocupadas"
-                ? "bg-amber-600 text-white shadow-xs"
-                : "bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 hover:bg-amber-100"
-            }`}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${filtroEstadoLive === "ocupadas"
+              ? "bg-amber-600 text-white shadow-xs"
+              : "bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 hover:bg-amber-100"
+              }`}
           >
             <span className="w-2 h-2 rounded-full bg-amber-500" />
             <span>🟡 En Consumo</span>
@@ -1069,13 +1049,12 @@ export default function FloorPlanMap({
                 setMesaSeleccionadaInterna(primeraMesaCuenta.id);
               }
             }}
-            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
-              filtroEstadoLive === "cuenta"
-                ? "bg-red-600 text-white shadow-md animate-pulse font-black"
-                : metricasFiltros.pidenCuenta > 0
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${filtroEstadoLive === "cuenta"
+              ? "bg-red-600 text-white shadow-md animate-pulse font-black"
+              : metricasFiltros.pidenCuenta > 0
                 ? "bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/40 hover:bg-red-500/25 animate-pulse font-bold"
                 : "bg-stone-100 dark:bg-stone-800 text-stone-400 opacity-60"
-            }`}
+              }`}
           >
             <CreditCard size={13} />
             <span>💳 Pidiendo Cuenta</span>
@@ -1095,13 +1074,12 @@ export default function FloorPlanMap({
                 setMesaSeleccionadaInterna(primeraMesaLlamado.id);
               }
             }}
-            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
-              filtroEstadoLive === "llamado"
-                ? "bg-amber-500 text-stone-950 shadow-md animate-pulse font-black"
-                : metricasFiltros.llamadosMozo > 0
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${filtroEstadoLive === "llamado"
+              ? "bg-amber-500 text-stone-950 shadow-md animate-pulse font-black"
+              : metricasFiltros.llamadosMozo > 0
                 ? "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/40 hover:bg-amber-500/25 animate-pulse font-bold"
                 : "bg-stone-100 dark:bg-stone-800 text-stone-400 opacity-60"
-            }`}
+              }`}
           >
             <Bell size={13} />
             <span>🔔 Llamados Mozo</span>
@@ -1118,11 +1096,10 @@ export default function FloorPlanMap({
               soundManager.playTactileClick();
               setFiltroEstadoLive("limpieza");
             }}
-            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${
-              filtroEstadoLive === "limpieza"
-                ? "bg-blue-600 text-white shadow-xs"
-                : "bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 hover:bg-blue-100"
-            }`}
+            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer text-xs ${filtroEstadoLive === "limpieza"
+              ? "bg-blue-600 text-white shadow-xs"
+              : "bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 hover:bg-blue-100"
+              }`}
           >
             <Sparkles size={13} />
             <span>🧹 Limpieza</span>
@@ -1151,10 +1128,10 @@ export default function FloorPlanMap({
 
       {/* ── LIENZO ARQUITECTÓNICO DEL PLANO (CANVAS 2.5D INTERACTIVO) ── */}
       <div
-        className="w-full relative min-h-[620px] sm:min-h-[720px] rounded-3xl overflow-hidden border-2 border-[#1E130C]/20 dark:border-stone-800 bg-[#FAF7F2] dark:bg-[#120D0A] shadow-inner select-none p-2 sm:p-4 flex items-center justify-center"
+        className="w-full relative min-h-[620px] sm:min-h-[720px] rounded-3xl overflow-hidden border-2 border-[#D5C7B5] bg-[#F2ECE1] shadow-inner select-none p-2 sm:p-4 flex items-center justify-center"
         style={{
           backgroundImage:
-            "radial-gradient(#1E130C 0.75px, transparent 0.75px), radial-gradient(#991B24 0.75px, #FAF7F2 0.75px)",
+            "radial-gradient(#1E130C 0.75px, transparent 0.75px), radial-gradient(#991B24 0.75px, #F2ECE1 0.75px)",
           backgroundSize: "28px 28px",
           backgroundPosition: "0 0, 14px 14px",
         }}
@@ -1164,7 +1141,7 @@ export default function FloorPlanMap({
           ref={canvasRef}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          className="relative w-full max-w-[920px] aspect-[920/960] mx-auto select-none overflow-hidden rounded-2xl shadow-xl border border-stone-300 dark:border-stone-800 bg-white"
+          className="relative w-full max-w-[920px] aspect-[920/960] mx-auto select-none overflow-hidden rounded-2xl shadow-2xl border-2 border-[#D5C7B5] bg-white"
         >
           {/* Capa Blueprint Semitransparente (Fondo técnico del Plano de Evacuación Oficial) */}
           {modoBlueprint && pisoActivo === "planta_baja" && (
@@ -1523,23 +1500,23 @@ export default function FloorPlanMap({
               filtroEstadoLive === "todas"
                 ? true
                 : filtroEstadoLive === "libres"
-                ? mesa.estado === "libre" && !pedido
-                : filtroEstadoLive === "ocupadas"
-                ? mesa.estado === "ocupada" || !!pedido
-                : filtroEstadoLive === "cuenta"
-                ? alertaMesa?.tipo === "cuenta_pedida"
-                : filtroEstadoLive === "llamado"
-                ? alertaMesa?.tipo === "llamado"
-                : filtroEstadoLive === "limpieza"
-                ? mesa.estado === "limpieza"
-                : true;
+                  ? mesa.estado === "libre" && !pedido
+                  : filtroEstadoLive === "ocupadas"
+                    ? mesa.estado === "ocupada" || !!pedido
+                    : filtroEstadoLive === "cuenta"
+                      ? alertaMesa?.tipo === "cuenta_pedida"
+                      : filtroEstadoLive === "llamado"
+                        ? alertaMesa?.tipo === "llamado"
+                        : filtroEstadoLive === "limpieza"
+                          ? mesa.estado === "limpieza"
+                          : true;
 
             const displayLabel = mesa.label || (
               mesa.piso === "terraza"
                 ? `T${mesa.numero}`
                 : mesa.numero <= 9
-                ? `P${mesa.numero}`
-                : `M${mesa.numero - 9}`
+                  ? `P${mesa.numero}`
+                  : `M${mesa.numero - 9}`
             );
 
             const statusStyles = {
@@ -1584,9 +1561,8 @@ export default function FloorPlanMap({
                   top: `${mesa.pos_y}%`,
                   transform: "translate(-50%, -50%)",
                 }}
-                className={`absolute cursor-pointer transition-all duration-300 group select-none z-10 ${
-                  isDragging ? "scale-110 z-30 cursor-grabbing" : "hover:scale-105 active:scale-95"
-                } ${!matchesFilter ? "opacity-30 filter grayscale-[50%] scale-90" : "opacity-100"}`}
+                className={`absolute cursor-pointer transition-all duration-300 group select-none z-10 ${isDragging ? "scale-110 z-30 cursor-grabbing" : "hover:scale-105 active:scale-95"
+                  } ${!matchesFilter ? "opacity-30 filter grayscale-[50%] scale-90" : "opacity-100"}`}
               >
                 {/* Banner Flotante de Atención Prioritaria encima de la mesa */}
                 {alertaMesa?.tipo === "cuenta_pedida" && (
@@ -1618,17 +1594,14 @@ export default function FloorPlanMap({
 
                 {/* Superficie de la mesa */}
                 <div
-                  className={`relative flex flex-col items-center justify-center p-1.5 sm:p-2 transition-all shadow-md backdrop-blur-md border-2 ${
-                    modoCalor ? heat.tableBg : statusStyles.border
-                  } ${
-                    isRound
+                  className={`relative flex flex-col items-center justify-center p-1.5 sm:p-2 transition-all shadow-md backdrop-blur-md border-2 ${modoCalor ? heat.tableBg : statusStyles.border
+                    } ${isRound
                       ? "rounded-full w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18"
                       : isRect
-                      ? "rounded-2xl w-22 sm:w-26 md:w-28 h-14 sm:h-16 md:h-18"
-                      : "rounded-2xl w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18"
-                  } ${isSelected ? "ring-4 ring-amber-600 shadow-xl" : ""} ${
-                    tieneAlerta ? "ring-4 ring-red-500 animate-pulse bg-red-500/30" : ""
-                  }`}
+                        ? "rounded-2xl w-22 sm:w-26 md:w-28 h-14 sm:h-16 md:h-18"
+                        : "rounded-2xl w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18"
+                    } ${isSelected ? "ring-4 ring-amber-600 shadow-xl" : ""} ${tieneAlerta ? "ring-4 ring-red-500 animate-pulse bg-red-500/30" : ""
+                    }`}
                 >
                   {/* Etiqueta Arquitectónica Oficial (P1-P9, M1-M6, T16-T21) */}
                   <div className="flex flex-col items-center leading-none">
@@ -1732,8 +1705,8 @@ export default function FloorPlanMap({
                     mesaActivaInspector.piso === "terraza"
                       ? `T${mesaActivaInspector.numero}`
                       : mesaActivaInspector.numero <= 9
-                      ? `P${mesaActivaInspector.numero}`
-                      : `M${mesaActivaInspector.numero - 9}`
+                        ? `P${mesaActivaInspector.numero}`
+                        : `M${mesaActivaInspector.numero - 9}`
                   )}
                 </span>
                 <span className="text-[7.5px] font-mono text-stone-400 mt-0.5">
@@ -1750,8 +1723,8 @@ export default function FloorPlanMap({
                     {mesaActivaInspector.subzona === "patio_exterior"
                       ? "Patio Exterior (Alameda)"
                       : mesaActivaInspector.subzona === "salon_interior"
-                      ? "Salón Interior"
-                      : "Terraza Mirador (Piso 2)"}
+                        ? "Salón Interior"
+                        : "Terraza Mirador (Piso 2)"}
                   </span>
                   <span className="text-xs text-stone-400 font-mono">
                     ({mesaActivaInspector.tipo})
@@ -1786,17 +1759,16 @@ export default function FloorPlanMap({
                     soundManager.playTactileClick();
                     updateMesa(mesaActivaInspector.id, { estado: st });
                   }}
-                  className={`px-3 py-1.5 rounded-xl transition capitalize cursor-pointer text-xs ${
-                    mesaActivaInspector.estado === st
-                      ? st === "libre"
-                        ? "bg-emerald-600 text-white shadow-xs"
-                        : st === "ocupada"
+                  className={`px-3 py-1.5 rounded-xl transition capitalize cursor-pointer text-xs ${mesaActivaInspector.estado === st
+                    ? st === "libre"
+                      ? "bg-emerald-600 text-white shadow-xs"
+                      : st === "ocupada"
                         ? "bg-amber-600 text-white shadow-xs"
                         : st === "reservada"
-                        ? "bg-purple-600 text-white shadow-xs"
-                        : "bg-blue-600 text-white shadow-xs"
-                      : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
-                  }`}
+                          ? "bg-purple-600 text-white shadow-xs"
+                          : "bg-blue-600 text-white shadow-xs"
+                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-200"
+                    }`}
                 >
                   {st === "libre" && "🟢 Libre"}
                   {st === "ocupada" && "🟡 En Consumo"}
@@ -1945,24 +1917,22 @@ export default function FloorPlanMap({
                       soundManager.playTactileClick();
                       setAsientoInspectorSeleccionado(seatNum);
                     }}
-                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer space-y-2.5 flex flex-col justify-between ${
-                      isSelectedSeat
-                        ? "bg-amber-500/10 border-amber-500 ring-2 ring-amber-500/40 shadow-md"
-                        : isChairOccupied
+                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer space-y-2.5 flex flex-col justify-between ${isSelectedSeat
+                      ? "bg-amber-500/10 border-amber-500 ring-2 ring-amber-500/40 shadow-md"
+                      : isChairOccupied
                         ? "bg-stone-50 dark:bg-stone-800/80 border-stone-200 dark:border-stone-700 hover:border-amber-400"
                         : "bg-stone-100/40 dark:bg-stone-800/30 border-dashed border-stone-300 dark:border-stone-700 opacity-60"
-                    }`}
+                      }`}
                   >
                     <div>
                       {/* Cabecera Silla */}
                       <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700 pb-2">
                         <div className="flex items-center gap-2 min-w-0">
                           <span
-                            className={`w-6 h-6 rounded-full flex items-center justify-center font-mono font-black text-[11px] shrink-0 ${
-                              isChairOccupied
-                                ? "bg-[#D49B54] text-[#1E130C] shadow-xs"
-                                : "bg-stone-300 dark:bg-stone-700 text-stone-600 dark:text-stone-300"
-                            }`}
+                            className={`w-6 h-6 rounded-full flex items-center justify-center font-mono font-black text-[11px] shrink-0 ${isChairOccupied
+                              ? "bg-[#D49B54] text-[#1E130C] shadow-xs"
+                              : "bg-stone-300 dark:bg-stone-700 text-stone-600 dark:text-stone-300"
+                              }`}
                           >
                             {seatNum}
                           </span>
@@ -2003,13 +1973,12 @@ export default function FloorPlanMap({
 
                                 {/* Estado del ítem */}
                                 <span
-                                  className={`text-[9px] px-1.5 py-0.2 rounded-md font-bold ${
-                                    it.estado === "entregado"
-                                      ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300"
-                                      : it.estado === "listo"
+                                  className={`text-[9px] px-1.5 py-0.2 rounded-md font-bold ${it.estado === "entregado"
+                                    ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300"
+                                    : it.estado === "listo"
                                       ? "bg-blue-100 text-blue-800"
                                       : "bg-amber-100 text-amber-800"
-                                  }`}
+                                    }`}
                                 >
                                   {it.estado === "entregado" && "✅ Entregado"}
                                   {it.estado === "listo" && "🟢 Listo"}
@@ -2174,33 +2143,30 @@ export default function FloorPlanMap({
                   <button
                     type="button"
                     onClick={() => setTipoPlanoVisor("anotado")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-                      tipoPlanoVisor === "anotado"
-                        ? "bg-[#991B24] text-white shadow-xs"
-                        : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
-                    }`}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${tipoPlanoVisor === "anotado"
+                      ? "bg-[#991B24] text-white shadow-xs"
+                      : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                      }`}
                   >
                     🟢 Plano Anotado (Mesas Reales &amp; Puntos)
                   </button>
                   <button
                     type="button"
                     onClick={() => setTipoPlanoVisor("original")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-                      tipoPlanoVisor === "original"
-                        ? "bg-[#1E130C] text-white shadow-xs"
-                        : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
-                    }`}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${tipoPlanoVisor === "original"
+                      ? "bg-[#1E130C] text-white shadow-xs"
+                      : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                      }`}
                   >
                     🏛️ Plano Arquitectónico Limpio
                   </button>
                   <button
                     type="button"
                     onClick={() => setTipoPlanoVisor("croquis")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-                      tipoPlanoVisor === "croquis"
-                        ? "bg-amber-700 text-white shadow-xs"
-                        : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
-                    }`}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${tipoPlanoVisor === "croquis"
+                      ? "bg-amber-700 text-white shadow-xs"
+                      : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                      }`}
                   >
                     📝 Croquis Manuscrito (PB &amp; Terraza)
                   </button>
@@ -2218,8 +2184,8 @@ export default function FloorPlanMap({
                     tipoPlanoVisor === "anotado"
                       ? "/img/planos/plano-evacuacion-anotado.jpg"
                       : tipoPlanoVisor === "original"
-                      ? "/img/planos/plano-evacuacion-original.jpg"
-                      : "/img/planos/croquis-distribucion-manual.png"
+                        ? "/img/planos/plano-evacuacion-original.jpg"
+                        : "/img/planos/croquis-distribucion-manual.png"
                   }
                   alt={
                     tipoPlanoVisor === "croquis"
@@ -2346,11 +2312,10 @@ export default function FloorPlanMap({
                         key={c}
                         type="button"
                         onClick={() => setNuevaMesaData({ ...nuevaMesaData, capacidad: c })}
-                        className={`flex-1 py-2 rounded-xl font-bold border transition ${
-                          nuevaMesaData.capacidad === c
-                            ? "bg-[#991B24] text-white border-[#7F1D1D]"
-                            : "bg-stone-50 border-stone-200 hover:bg-stone-100"
-                        }`}
+                        className={`flex-1 py-2 rounded-xl font-bold border transition ${nuevaMesaData.capacidad === c
+                          ? "bg-[#991B24] text-white border-[#7F1D1D]"
+                          : "bg-stone-50 border-stone-200 hover:bg-stone-100"
+                          }`}
                       >
                         {c}
                       </button>
@@ -2409,11 +2374,10 @@ export default function FloorPlanMap({
                           updateMesa(mesaEnEdicion.id, { capacidad: s, sillas: s });
                           setMesaEnEdicion({ ...mesaEnEdicion, capacidad: s, sillas: s });
                         }}
-                        className={`flex-1 py-1.5 rounded-xl font-bold border transition ${
-                          mesaEnEdicion.capacidad === s
-                            ? "bg-[#991B24] text-white border-[#7F1D1D]"
-                            : "bg-stone-50 border-stone-200"
-                        }`}
+                        className={`flex-1 py-1.5 rounded-xl font-bold border transition ${mesaEnEdicion.capacidad === s
+                          ? "bg-[#991B24] text-white border-[#7F1D1D]"
+                          : "bg-stone-50 border-stone-200"
+                          }`}
                       >
                         {s}
                       </button>
@@ -2432,11 +2396,10 @@ export default function FloorPlanMap({
                           updateMesa(mesaEnEdicion.id, { tipo: t });
                           setMesaEnEdicion({ ...mesaEnEdicion, tipo: t });
                         }}
-                        className={`py-2 rounded-xl font-bold border capitalize transition ${
-                          mesaEnEdicion.tipo === t
-                            ? "bg-[#1E130C] text-white"
-                            : "bg-stone-50 border-stone-200"
-                        }`}
+                        className={`py-2 rounded-xl font-bold border capitalize transition ${mesaEnEdicion.tipo === t
+                          ? "bg-[#1E130C] text-white"
+                          : "bg-stone-50 border-stone-200"
+                          }`}
                       >
                         {t}
                       </button>
@@ -2492,8 +2455,8 @@ export default function FloorPlanMap({
                         modalDetalleMesa.piso === "terraza"
                           ? `T${modalDetalleMesa.numero}`
                           : modalDetalleMesa.numero <= 9
-                          ? `P${modalDetalleMesa.numero}`
-                          : `M${modalDetalleMesa.numero - 9}`
+                            ? `P${modalDetalleMesa.numero}`
+                            : `M${modalDetalleMesa.numero - 9}`
                       )}
                     </span>
                     <span className="text-[7.5px] font-mono text-stone-400 mt-0.5">
@@ -2507,16 +2470,16 @@ export default function FloorPlanMap({
                           modalDetalleMesa.piso === "terraza"
                             ? `Mesa T${modalDetalleMesa.numero}`
                             : modalDetalleMesa.numero <= 9
-                            ? `Mesa P${modalDetalleMesa.numero}`
-                            : `Mesa M${modalDetalleMesa.numero - 9}`
+                              ? `Mesa P${modalDetalleMesa.numero}`
+                              : `Mesa M${modalDetalleMesa.numero - 9}`
                         )}
                       </span>
                       <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 font-bold capitalize">
                         {modalDetalleMesa.subzona === "patio_exterior"
                           ? "Patio Exterior"
                           : modalDetalleMesa.subzona === "salon_interior"
-                          ? "Salón Interior"
-                          : "Terraza Mirador"}
+                            ? "Salón Interior"
+                            : "Terraza Mirador"}
                       </span>
                     </h3>
                     <p className="text-xs text-stone-500">
@@ -2537,32 +2500,29 @@ export default function FloorPlanMap({
               <div className="grid grid-cols-3 gap-1.5 p-1 bg-stone-100 dark:bg-stone-800 rounded-2xl text-xs font-bold">
                 <button
                   onClick={() => setSubTabDetalle("general")}
-                  className={`py-2 rounded-xl transition ${
-                    subTabDetalle === "general"
-                      ? "bg-white dark:bg-stone-900 shadow-xs text-stone-900 dark:text-stone-100"
-                      : "text-stone-600 dark:text-stone-400"
-                  }`}
+                  className={`py-2 rounded-xl transition ${subTabDetalle === "general"
+                    ? "bg-white dark:bg-stone-900 shadow-xs text-stone-900 dark:text-stone-100"
+                    : "text-stone-600 dark:text-stone-400"
+                    }`}
                 >
                   Comanda General
                 </button>
                 <button
                   onClick={() => setSubTabDetalle("asientos")}
-                  className={`py-2 rounded-xl transition flex items-center justify-center gap-1 ${
-                    subTabDetalle === "asientos"
-                      ? "bg-white dark:bg-stone-900 shadow-xs text-stone-900 dark:text-stone-100"
-                      : "text-stone-600 dark:text-stone-400"
-                  }`}
+                  className={`py-2 rounded-xl transition flex items-center justify-center gap-1 ${subTabDetalle === "asientos"
+                    ? "bg-white dark:bg-stone-900 shadow-xs text-stone-900 dark:text-stone-100"
+                    : "text-stone-600 dark:text-stone-400"
+                    }`}
                 >
                   <Users size={12} />
                   <span>Sillas ({modalDetalleMesa.capacidad})</span>
                 </button>
                 <button
                   onClick={() => setSubTabDetalle("cuenta_separada")}
-                  className={`py-2 rounded-xl transition flex items-center justify-center gap-1 ${
-                    subTabDetalle === "cuenta_separada"
-                      ? "bg-[#991B24] text-white shadow-xs"
-                      : "text-[#991B24]"
-                  }`}
+                  className={`py-2 rounded-xl transition flex items-center justify-center gap-1 ${subTabDetalle === "cuenta_separada"
+                    ? "bg-[#991B24] text-white shadow-xs"
+                    : "text-[#991B24]"
+                    }`}
                 >
                   <Split size={12} />
                   <span>Dividir Cuenta</span>

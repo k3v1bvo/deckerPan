@@ -75,7 +75,7 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-20 font-sans">
+    <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-20 font-sans">
       {/* ── Toldo Mini Auténtico Dencker ── */}
       <div className="w-full shrink-0 overflow-hidden select-none sticky top-0 z-40">
         <img
@@ -86,22 +86,22 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
       </div>
 
       {/* ── Header Dencker Pan ── */}
-      <header className="sticky top-2.5 sm:top-3 z-30 bg-[#1E130C] border-b border-amber-500/20 text-white px-4 py-3 shadow-xl">
+      <header className="sticky top-2.5 sm:top-3 z-30 bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 py-3 shadow-xl">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <Link
             href={`/mesa/${pedido.mesa_numero}`}
-            className="flex items-center gap-1.5 text-xs text-amber-200 hover:text-white transition font-semibold"
+            className="flex items-center gap-1.5 text-xs text-amber-200 hover:text-white transition font-bold"
           >
             <ArrowLeft size={16} />
             <span>Volver a Mesa {pedido.mesa_numero}</span>
           </Link>
           <div className="flex items-center gap-2">
-            <span className="font-serif font-bold text-sm text-white">Pago de Comanda</span>
+            <span className="font-serif font-black text-sm text-white">Pago de Comanda</span>
             <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
               Mesa {pedido.mesa_numero}
             </span>
           </div>
-          <span className="text-xs font-mono text-amber-300 font-bold">
+          <span className="text-xs font-mono text-amber-300 font-black">
             Bs {total.toFixed(2)}
           </span>
         </div>
@@ -112,38 +112,38 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="p-8 rounded-3xl bg-white dark:bg-stone-900 border border-emerald-300 dark:border-emerald-700 shadow-2xl text-center space-y-4"
+            className="p-8 rounded-3xl bg-white border-2 border-emerald-500 shadow-2xl text-center space-y-4"
           >
-            <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+            <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner border border-emerald-300">
               <CheckCircle2 size={48} />
             </div>
             <div>
-              <h2 className="font-serif text-2xl font-bold text-stone-900 dark:text-stone-100">
+              <h2 className="font-serif text-2xl font-black text-stone-950">
                 ¡Pago Registrado con Éxito!
               </h2>
-              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+              <p className="text-xs text-stone-600 mt-1 font-medium">
                 La caja central y el mesero han sido notificados. Tu comprobante digital está listo.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-800 text-xs text-left space-y-1">
-              <div className="flex justify-between font-bold">
-                <span>Total Abonado:</span>
-                <span className="font-mono text-emerald-600">Bs {total.toFixed(2)}</span>
+            <div className="p-4 rounded-2xl bg-[#FAF6EF] border-2 border-[#D8C7B2] text-xs text-left space-y-1">
+              <div className="flex justify-between font-black">
+                <span className="text-stone-800">Total Abonado:</span>
+                <span className="font-mono text-[#991B24]">Bs {total.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-stone-500">
+              <div className="flex justify-between text-stone-600 font-medium">
                 <span>Método:</span>
-                <span className="capitalize">{metodo}</span>
+                <span className="capitalize font-bold text-stone-900">{metodo}</span>
               </div>
-              <div className="flex justify-between text-stone-500">
+              <div className="flex justify-between text-stone-600 font-medium">
                 <span>Mesa:</span>
-                <span>Mesa {pedido.mesa_numero}</span>
+                <span className="font-bold text-stone-900">Mesa {pedido.mesa_numero}</span>
               </div>
             </div>
 
             <Link
               href={`/mesa/${pedido.mesa_numero}`}
-              className="w-full py-3 rounded-2xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs shadow-md block text-center"
+              className="w-full py-3.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs shadow-md block text-center border-2 border-[#7F1D1D]"
             >
               Volver al Menú Principal
             </Link>
@@ -151,26 +151,26 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
         ) : (
           <>
             {/* ── Resumen de Consumo ── */}
-            <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-stone-100 dark:border-stone-800">
+            <div className="p-5 rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#EAE0D2]">
                 <div>
-                  <h3 className="font-serif font-bold text-base text-stone-900 dark:text-stone-100">
+                  <h3 className="font-serif font-black text-base text-stone-950">
                     Mesa {pedido.mesa_numero} — Dencker Pan
                   </h3>
-                  <span className="text-[11px] text-stone-400">Detalle de productos consumidos</span>
+                  <span className="text-[11px] text-stone-500 font-medium">Detalle de productos consumidos</span>
                 </div>
-                <span className="font-serif text-2xl font-black text-amber-900 dark:text-amber-400 font-mono">
+                <span className="font-serif text-2xl font-black text-[#991B24] font-mono">
                   Bs {total.toFixed(2)}
                 </span>
               </div>
 
-              <div className="divide-y divide-stone-100 dark:divide-stone-800 text-xs">
+              <div className="divide-y divide-[#EAE0D2] text-xs">
                 {pedido.items?.map((it, idx) => (
                   <div key={idx} className="py-2 flex items-center justify-between">
-                    <span>
+                    <span className="font-medium text-stone-900">
                       {it.cantidad}x {it.producto_nombre}
                     </span>
-                    <span className="font-mono font-bold text-stone-700 dark:text-stone-300">
+                    <span className="font-mono font-black text-[#991B24]">
                       Bs {it.subtotal.toFixed(2)}
                     </span>
                   </div>
@@ -178,8 +178,8 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
               </div>
             </div>
 
-            {/* ── Apple Segmented Tab Selector ── */}
-            <div className="flex items-center p-1.5 rounded-2xl bg-stone-200 dark:bg-stone-800 border border-stone-300/60 dark:border-stone-700">
+            {/* ── Tab Selector de Métodos de Pago ── */}
+            <div className="grid grid-cols-3 gap-2">
               {[
                 { id: "qr", label: "QR Simple", icon: QrCode },
                 { id: "efectivo", label: "Efectivo", icon: Banknote },
@@ -194,10 +194,10 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                       soundManager.playClick();
                       setMetodo(tab.id as typeof metodo);
                     }}
-                    className={`relative flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex items-center justify-center gap-1.5 py-3 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                       isActive
-                        ? "bg-white dark:bg-stone-900 text-stone-950 dark:text-white shadow-md"
-                        : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                        ? "bg-[#991B24] text-white border-2 border-[#7F1D1D] shadow-md font-black ring-2 ring-amber-400/30"
+                        : "bg-white hover:bg-[#FAF6EF] text-stone-800 border-2 border-[#D5C7B5] font-bold"
                     }`}
                   >
                     <Icon size={14} />
@@ -209,25 +209,25 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
 
             {/* ── METODO 1: QR SIMPLE ── */}
             {metodo === "qr" && (
-              <div className="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs text-center space-y-4">
+              <div className="p-6 rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-sm text-center space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-amber-700 dark:text-amber-400 font-bold">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-amber-800 font-black">
                     Interoperable Bolivia • ASFI
                   </span>
-                  <h4 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                  <h4 className="font-serif text-lg font-black text-stone-950">
                     Escanea con tu App Bancaria
                   </h4>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600 font-medium">
                     {qrBancarioBanco || "BCP, Banco Unión, BNB, Mercantil Santa Cruz, Banco Sol, Fie"}
                   </p>
-                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                    Titular: <span className="font-semibold text-stone-900 dark:text-stone-200">{qrBancarioTitular || "Dencker Pan S.R.L."}</span>
+                  <p className="text-[11px] text-stone-600 font-medium">
+                    Titular: <span className="font-bold text-stone-950">{qrBancarioTitular || "Dencker Pan S.R.L."}</span>
                   </p>
                 </div>
 
                 {/* QR Visual */}
-                <div className="p-4 bg-white rounded-3xl border-2 border-amber-300 inline-block shadow-lg">
-                  <div className="w-56 h-56 bg-stone-50 rounded-2xl flex flex-col items-center justify-center relative p-2 overflow-hidden">
+                <div className="p-4 bg-white rounded-3xl border-2 border-amber-400 inline-block shadow-lg">
+                  <div className="w-56 h-56 bg-stone-50 rounded-2xl flex flex-col items-center justify-center relative p-2 overflow-hidden border border-stone-200">
                     <img
                       src={qrBancarioUrl || "/img/logo/logo.png"}
                       alt="QR Bancario Oficial"
@@ -235,13 +235,13 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                     />
                   </div>
                   <div className="pt-2 text-center">
-                    <span className="text-xs font-mono font-bold text-amber-950">
+                    <span className="text-sm font-mono font-black text-[#991B24]">
                       Monto: Bs {total.toFixed(2)}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-xs text-stone-500">
+                <div className="flex items-center justify-center gap-2 text-xs text-stone-600 font-medium">
                   <span>Glosa: Dencker Mesa {pedido.mesa_numero}</span>
                   <button
                     onClick={() => {
@@ -249,15 +249,15 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                       setCopiado(true);
                       setTimeout(() => setCopiado(false), 2000);
                     }}
-                    className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-600"
+                    className="p-1 rounded-lg hover:bg-stone-100 text-stone-700 cursor-pointer"
                   >
-                    {copiado ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+                    {copiado ? <Check size={14} className="text-emerald-600 font-bold" /> : <Copy size={14} />}
                   </button>
                 </div>
 
                 <button
                   onClick={handleConfirmarPago}
-                  className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition active:scale-98 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-lg transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <ShieldCheck size={16} /> Ya realicé la transferencia QR
                 </button>
@@ -266,12 +266,12 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
 
             {/* ── METODO 2: EFECTIVO BOLIVIANOS ── */}
             {metodo === "efectivo" && (
-              <div className="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-5">
+              <div className="p-6 rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-sm space-y-5">
                 <div>
-                  <h4 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                  <h4 className="font-serif text-lg font-black text-stone-950">
                     ¿Con cuánto vas a abonar?
                   </h4>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600 font-medium">
                     El mesero te traerá el cambio exacto directamente a la mesa
                   </p>
                 </div>
@@ -288,13 +288,13 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                           soundManager.playClick();
                           setBilleteSeleccionado(den);
                         }}
-                        className={`p-3 rounded-2xl border text-center transition-all ${
+                        className={`p-3 rounded-2xl border-2 text-center transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-amber-900 dark:bg-amber-600 text-white border-amber-950 shadow-md scale-102"
-                            : "bg-stone-50 dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-100"
+                            ? "bg-[#991B24] text-white border-[#7F1D1D] shadow-md font-black ring-2 ring-amber-400/30 scale-102"
+                            : "bg-white hover:bg-[#FAF6EF] border-[#D5C7B5] text-stone-900 font-bold"
                         }`}
                       >
-                        <div className="text-[10px] uppercase font-bold opacity-75">Billete</div>
+                        <div className="text-[10px] uppercase font-bold opacity-80">Billete</div>
                         <div className="font-serif font-black text-xl font-mono">Bs {den}</div>
                       </motion.button>
                     );
@@ -305,13 +305,13 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                       soundManager.playClick();
                       setBilleteSeleccionado(total);
                     }}
-                    className={`p-3 rounded-2xl border text-center transition-all ${
+                    className={`p-3 rounded-2xl border-2 text-center transition-all cursor-pointer ${
                       billeteSeleccionado === total
-                        ? "bg-amber-900 dark:bg-amber-600 text-white border-amber-950 shadow-md scale-102"
-                        : "bg-stone-50 dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-100"
+                        ? "bg-[#991B24] text-white border-[#7F1D1D] shadow-md font-black ring-2 ring-amber-400/30 scale-102"
+                        : "bg-white hover:bg-[#FAF6EF] border-[#D5C7B5] text-stone-900 font-bold"
                     }`}
                   >
-                    <div className="text-[10px] uppercase font-bold opacity-75">Pago Exacto</div>
+                    <div className="text-[10px] uppercase font-bold opacity-80">Pago Exacto</div>
                     <div className="font-serif font-black text-xl font-mono">
                       Bs {total.toFixed(0)}
                     </div>
@@ -319,23 +319,23 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                 </div>
 
                 {/* Box de Cambio */}
-                <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 flex items-center justify-between text-xs">
+                <div className="p-4 rounded-2xl bg-emerald-100/90 border-2 border-emerald-500 flex items-center justify-between text-xs text-emerald-950 font-bold shadow-xs">
                   <div>
-                    <span className="font-bold text-amber-950 dark:text-amber-200 block">
+                    <span className="font-black text-emerald-950 block">
                       Cambio para el cliente:
                     </span>
-                    <span className="text-[11px] text-amber-800/80 dark:text-amber-300/70">
+                    <span className="text-[11px] text-emerald-900 font-medium">
                       Entregas Bs {billeteSeleccionado.toFixed(2)}
                     </span>
                   </div>
-                  <span className="font-serif text-2xl font-black text-amber-900 dark:text-amber-300 font-mono">
+                  <span className="font-serif text-2xl font-black text-emerald-950 font-mono">
                     Bs {cambio.toFixed(2)}
                   </span>
                 </div>
 
                 <button
                   onClick={handleConfirmarPago}
-                  className="w-full py-3.5 rounded-2xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white font-bold text-xs shadow-lg transition active:scale-98"
+                  className="w-full py-3.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs border-2 border-[#7F1D1D] shadow-lg transition active:scale-98 cursor-pointer"
                 >
                   Solicitar Cobro en Efectivo
                 </button>
@@ -344,12 +344,12 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
 
             {/* ── METODO 3: SPLIT BILL (DIVIDIR CUENTA) ── */}
             {metodo === "split" && (
-              <div className="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-5">
+              <div className="p-6 rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-sm space-y-5">
                 <div>
-                  <h4 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                  <h4 className="font-serif text-lg font-black text-stone-950">
                     Dividir en Partes Iguales
                   </h4>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600 font-medium">
                     Divide el monto entre los amigos o colegas presentes en la mesa
                   </p>
                 </div>
@@ -363,34 +363,34 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
                         soundManager.playClick();
                         setSplitPersonas(num);
                       }}
-                      className={`w-12 h-12 rounded-2xl font-bold text-sm transition-all flex flex-col items-center justify-center ${
+                      className={`w-12 h-12 rounded-2xl font-black text-sm transition-all flex flex-col items-center justify-center cursor-pointer border-2 ${
                         splitPersonas === num
-                          ? "bg-amber-900 dark:bg-amber-600 text-white shadow-md scale-105"
-                          : "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200"
+                          ? "bg-[#991B24] text-white border-[#7F1D1D] shadow-md scale-105"
+                          : "bg-white hover:bg-[#FAF6EF] text-stone-900 border-[#D5C7B5] font-bold"
                       }`}
                     >
                       <span>{num}</span>
-                      <span className="text-[9px] opacity-75">pax</span>
+                      <span className="text-[9px] opacity-80">pax</span>
                     </button>
                   ))}
                 </div>
 
                 {/* Tarjeta de Cuota por Persona */}
-                <div className="p-5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-center space-y-1">
-                  <span className="text-xs text-stone-500 uppercase tracking-wider font-semibold">
+                <div className="p-5 rounded-2xl bg-[#FAF6EF] border-2 border-[#D8C7B2] text-center space-y-1 shadow-xs">
+                  <span className="text-xs text-stone-600 uppercase tracking-wider font-bold">
                     Cuota Individual por Persona
                   </span>
-                  <div className="font-serif text-3xl font-black text-amber-900 dark:text-amber-400 font-mono">
+                  <div className="font-serif text-3xl font-black text-[#991B24] font-mono">
                     Bs {(total / splitPersonas).toFixed(2)}
                   </div>
-                  <span className="text-[11px] text-stone-400 block">
+                  <span className="text-[11px] text-stone-500 block font-medium">
                     {splitPersonas} personas aportando equitativamente
                   </span>
                 </div>
 
                 <button
                   onClick={handleConfirmarPago}
-                  className="w-full py-3.5 rounded-2xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white font-bold text-xs shadow-lg transition active:scale-98"
+                  className="w-full py-3.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs border-2 border-[#7F1D1D] shadow-lg transition active:scale-98 cursor-pointer"
                 >
                   Registrar Cobro Dividido
                 </button>

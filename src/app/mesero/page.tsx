@@ -393,9 +393,9 @@ export default function MeseroPage() {
 
   return (
     <StaffAuthGuard requiredRole="mesero" roleTitle="Sala & Meseros">
-      <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-36 font-sans">
+      <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
         {/* ── Header Dencker Pan Bistró ── */}
-        <header className="bg-[#1E130C] border-b border-amber-500/20 text-white px-4 lg:px-8 py-3.5 shadow-xl">
+        <header className="bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 lg:px-8 py-3.5 shadow-xl">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
@@ -460,7 +460,7 @@ export default function MeseroPage() {
                 <button
                   onClick={() => setModoVista("plano")}
                   className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${modoVista === "plano"
-                    ? "bg-[#FAF7F2] text-[#1E130C] shadow-md font-extrabold"
+                    ? "bg-[#F2ECE1] text-[#1E130C] shadow-md font-extrabold"
                     : "text-stone-300 hover:text-white"
                     }`}
                 >
@@ -469,7 +469,7 @@ export default function MeseroPage() {
                 <button
                   onClick={() => setModoVista("tarjetas")}
                   className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${modoVista === "tarjetas"
-                    ? "bg-[#FAF7F2] text-[#1E130C] shadow-md font-extrabold"
+                    ? "bg-[#F2ECE1] text-[#1E130C] shadow-md font-extrabold"
                     : "text-stone-300 hover:text-white"
                     }`}
                 >
@@ -496,16 +496,16 @@ export default function MeseroPage() {
             <motion.div
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-5 rounded-3xl bg-amber-500/15 border-2 border-amber-500/40 shadow-xl space-y-3"
+              className="p-5 rounded-3xl bg-[#FFF9EE] border-2 border-amber-500/60 shadow-xl space-y-3"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5 text-amber-950 dark:text-amber-200 font-bold text-sm">
+                <div className="flex items-center gap-2.5 text-amber-950 font-black text-sm">
                   <span className="p-2 rounded-2xl bg-amber-600 text-white animate-pulse">
                     <Bell size={18} />
                   </span>
                   <span>Pedidos QR en Mesa por Verificar ({pedidosPendientesQR.length})</span>
                 </div>
-                <span className="text-xs text-amber-800 dark:text-amber-300 font-medium hidden sm:inline">
+                <span className="text-xs text-amber-900 font-bold hidden sm:inline">
                   Acércate a la mesa, verifica la orden con el cliente y mándala a cocina
                 </span>
               </div>
@@ -514,38 +514,38 @@ export default function MeseroPage() {
                 {pedidosPendientesQR.map((ped) => (
                   <div
                     key={ped.id}
-                    className="p-4 rounded-2xl bg-white dark:bg-stone-800 border border-amber-300 dark:border-amber-700/50 shadow-md space-y-3 flex flex-col justify-between"
+                    className="p-4 rounded-2xl bg-white border-2 border-[#D5C7B5] shadow-md space-y-3 flex flex-col justify-between"
                   >
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="font-serif font-bold text-base text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                        <span className="font-serif font-black text-base text-amber-950 flex items-center gap-1.5">
                           <span>Mesa {ped.mesa_numero}</span>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold border border-amber-300">
                             QR Móvil
                           </span>
                         </span>
-                        <span className="font-mono text-sm font-bold text-stone-900 dark:text-stone-100">
+                        <span className="font-mono text-sm font-black text-stone-950">
                           Bs {ped.total.toFixed(2)}
                         </span>
                       </div>
 
-                      <div className="text-xs text-stone-600 dark:text-stone-300 space-y-1 max-h-24 overflow-y-auto pr-1">
+                      <div className="text-xs text-stone-700 space-y-1 max-h-24 overflow-y-auto pr-1">
                         {ped.items?.map((it, idx) => (
                           <div key={idx} className="flex items-center justify-between">
-                            <span className="truncate">• {it.cantidad}x {it.producto_nombre}</span>
-                            <span className="text-[10px] text-stone-400 font-mono">Bs {it.subtotal.toFixed(2)}</span>
+                            <span className="truncate font-medium">• {it.cantidad}x {it.producto_nombre}</span>
+                            <span className="text-[10px] text-stone-500 font-mono font-bold">Bs {it.subtotal.toFixed(2)}</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-2 border-t border-stone-100 dark:border-stone-700">
+                    <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D2]">
                       <button
                         onClick={() => {
                           const m = mesas.find((x) => x.numero === ped.mesa_numero);
                           if (m) abrirDetalleMesa(m);
                         }}
-                        className="px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 text-xs font-semibold hover:bg-stone-50"
+                        className="px-3 py-2 rounded-xl border-2 border-[#D5C7B5] text-stone-700 text-xs font-bold hover:bg-[#FAF6EF]"
                       >
                         Ver Mesa
                       </button>
@@ -568,16 +568,16 @@ export default function MeseroPage() {
             <motion.div
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 rounded-3xl bg-red-500/10 border border-red-500/30 backdrop-blur-xl shadow-lg space-y-3"
+              className="p-4 rounded-3xl bg-[#FEF2F2] border-2 border-red-500/40 shadow-lg space-y-3"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-red-700 dark:text-red-300 font-bold text-sm">
+                <div className="flex items-center gap-2 text-red-900 font-black text-sm">
                   <span className="p-1.5 rounded-xl bg-red-600 text-white animate-bounce">
                     <Bell size={16} />
                   </span>
                   <span>Llamadas de Atención Inmediata ({alertasPendientes.length})</span>
                 </div>
-                <span className="text-xs text-red-600 dark:text-red-400 font-medium">
+                <span className="text-xs text-red-700 font-bold">
                   Prioridad de servicio
                 </span>
               </div>
@@ -588,30 +588,30 @@ export default function MeseroPage() {
                   return (
                     <div
                       key={alerta.id}
-                      className={`flex items-center justify-between p-3.5 rounded-2xl border shadow-sm transition-all ${esCuenta
-                        ? "bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/60 shadow-amber-500/10"
-                        : "bg-white dark:bg-stone-800 border-red-200 dark:border-red-900/40"
+                      className={`flex items-center justify-between p-3.5 rounded-2xl border-2 shadow-sm transition-all ${esCuenta
+                        ? "bg-[#FFF9EE] border-amber-400 shadow-amber-500/10"
+                        : "bg-white border-red-300"
                         }`}
                     >
                       <div className="text-xs min-w-0 pr-2">
                         <span
-                          className={`font-bold flex items-center gap-1.5 ${esCuenta
-                            ? "text-amber-800 dark:text-amber-300"
-                            : "text-red-600 dark:text-red-400"
+                          className={`font-black flex items-center gap-1.5 ${esCuenta
+                            ? "text-amber-900"
+                            : "text-red-700"
                             }`}
                         >
                           {esCuenta ? <Receipt size={14} /> : <Bell size={14} />}
                           <span>Mesa {alerta.mesa_numero}</span>
                           <span
-                            className={`text-[9px] uppercase font-mono px-1.5 py-0.5 rounded font-bold ${esCuenta
-                              ? "bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200"
-                              : "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300"
+                            className={`text-[9px] uppercase font-mono px-1.5 py-0.5 rounded font-black border ${esCuenta
+                              ? "bg-amber-200 text-amber-950 border-amber-300"
+                              : "bg-red-100 text-red-800 border-red-300"
                               }`}
                           >
                             {esCuenta ? "Traer Cuenta" : alerta.tipo.replace("_", " ")}
                           </span>
                         </span>
-                        <p className="text-stone-700 dark:text-stone-300 mt-1 text-[11px] font-medium leading-snug">
+                        <p className="text-stone-800 mt-1 text-[11px] font-semibold leading-snug">
                           {alerta.mensaje}
                         </p>
                       </div>
@@ -621,7 +621,7 @@ export default function MeseroPage() {
                           soundManager.playSuccessTone();
                         }}
                         className={`px-3 py-1.5 text-xs font-bold rounded-xl text-white transition shadow-sm active:scale-95 shrink-0 cursor-pointer ${esCuenta
-                          ? "bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold"
+                          ? "bg-amber-600 hover:bg-amber-500 text-stone-950 font-black"
                           : "bg-red-600 hover:bg-red-700"
                           }`}
                       >
@@ -639,9 +639,9 @@ export default function MeseroPage() {
             <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
               <button
                 onClick={() => setZonaSeleccionada("todas")}
-                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all relative ${zonaSeleccionada === "todas"
-                  ? "bg-amber-900 dark:bg-amber-700 text-white shadow-md shadow-amber-950/20"
-                  : "bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200/80 dark:border-stone-700"
+                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all relative cursor-pointer ${zonaSeleccionada === "todas"
+                  ? "bg-[#991B24] text-white border-2 border-[#7F1D1D] shadow-md shadow-red-950/20 font-black"
+                  : "bg-white hover:bg-[#FAF6EF] text-stone-900 border-2 border-[#D5C7B5] font-bold shadow-xs"
                   }`}
               >
                 Todas las Zonas ({mesas.length})
@@ -653,9 +653,9 @@ export default function MeseroPage() {
                   <button
                     key={z.id}
                     onClick={() => setZonaSeleccionada(z.id)}
-                    className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${isActive
-                      ? "bg-amber-900 dark:bg-amber-700 text-white shadow-md shadow-amber-950/20"
-                      : "bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200/80 dark:border-stone-700"
+                    className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${isActive
+                      ? "bg-[#991B24] text-white border-2 border-[#7F1D1D] shadow-md shadow-red-950/20 font-black"
+                      : "bg-white hover:bg-[#FAF6EF] text-stone-900 border-2 border-[#D5C7B5] font-bold shadow-xs"
                       }`}
                   >
                     {z.nombre} ({count})
@@ -665,8 +665,8 @@ export default function MeseroPage() {
             </div>
 
             {mesaSeleccionada && (
-              <div className="text-xs font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+              <div className="text-xs font-bold text-amber-900 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping" />
                 Mesa {mesaSeleccionada.numero} seleccionada en panel
               </div>
             )}
@@ -695,28 +695,28 @@ export default function MeseroPage() {
                     whileHover={{ y: -3 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => abrirDetalleMesa(mesa)}
-                    className={`p-4 rounded-3xl bg-white dark:bg-stone-800 border transition-all shadow-xs cursor-pointer flex flex-col justify-between h-44 ${isSelected
-                      ? "border-amber-600 ring-2 ring-amber-600/30 dark:ring-amber-500/40"
-                      : "border-stone-200 dark:border-stone-700 hover:border-amber-300"
-                      } ${tieneAlerta ? "ring-2 ring-red-500 bg-red-50/50 dark:bg-red-950/20" : ""}`}
+                    className={`p-4 rounded-3xl bg-white border-2 transition-all shadow-sm hover:shadow-md cursor-pointer flex flex-col justify-between h-44 ${isSelected
+                      ? "border-[#991B24] ring-2 ring-[#991B24]/30 bg-[#FFFDF9]"
+                      : "border-[#D5C7B5] hover:border-amber-600"
+                      } ${tieneAlerta ? "ring-2 ring-red-500 bg-red-50/50" : ""}`}
                   >
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span className="font-serif text-xl font-bold">Mesa {mesa.numero}</span>
+                          <span className="font-serif text-xl font-black text-stone-950">Mesa {mesa.numero}</span>
                           {tieneAlerta && <Bell size={14} className="text-red-600 animate-bounce" />}
                         </div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400 capitalize">
+                        <p className="text-xs text-stone-600 font-medium capitalize">
                           {zonas.find((z) => z.id === mesa.zona_id)?.nombre || "Sala"} • {mesa.tipo}
                         </p>
                       </div>
 
                       <span
-                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${mesa.estado === "libre"
-                          ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300"
+                        className={`text-[10px] font-black px-2.5 py-0.5 rounded-full capitalize border ${mesa.estado === "libre"
+                          ? "bg-emerald-100 text-emerald-800 border-emerald-300"
                           : mesa.estado === "ocupada"
-                            ? "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300"
-                            : "bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300"
+                            ? "bg-amber-100 text-amber-900 border-amber-300"
+                            : "bg-stone-100 text-stone-700 border-stone-300"
                           }`}
                       >
                         {mesa.estado}
@@ -724,24 +724,24 @@ export default function MeseroPage() {
                     </div>
 
                     {pedido ? (
-                      <div className="p-2 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 space-y-0.5">
-                        <div className="flex items-center justify-between text-xs font-bold text-amber-900 dark:text-amber-200">
+                      <div className="p-2.5 rounded-2xl bg-[#FAF6EF] border-2 border-[#D8C7B2] space-y-0.5">
+                        <div className="flex items-center justify-between text-xs font-black text-amber-950">
                           <span>Comanda activa:</span>
-                          <span className="font-mono">Bs {pedido.total.toFixed(2)}</span>
+                          <span className="font-mono text-[#991B24]">Bs {pedido.total.toFixed(2)}</span>
                         </div>
-                        <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                        <p className="text-[11px] text-stone-600 font-medium">
                           {pedido.items?.length || 0} productos pedidos
                         </p>
                       </div>
                     ) : (
-                      <div className="text-xs text-stone-400 italic">Mesa disponible para recibir comensales</div>
+                      <div className="text-xs text-stone-500 italic">Mesa disponible para recibir comensales</div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 border-t border-stone-100 dark:border-stone-700/60 text-xs text-stone-500">
+                    <div className="flex items-center justify-between pt-2 border-t border-[#EAE0D2] text-xs text-stone-600 font-medium">
                       <span className="flex items-center gap-1">
                         <Users size={12} /> Cap. {mesa.capacidad}
                       </span>
-                      <span className="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1">
+                      <span className="font-bold text-[#991B24] flex items-center gap-1">
                         Gestionar <ChevronRight size={13} />
                       </span>
                     </div>
@@ -809,22 +809,22 @@ export default function MeseroPage() {
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", damping: 28, stiffness: 280 }}
-                className="w-full max-w-lg bg-white dark:bg-stone-900 h-full shadow-2xl flex flex-col border-l border-stone-200 dark:border-stone-800"
+                className="w-full max-w-lg bg-white h-full shadow-2xl flex flex-col border-l-2 border-[#D5C7B5]"
               >
                 {/* Header Drawer */}
-                <div className="p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between bg-stone-50 dark:bg-stone-950">
+                <div className="p-5 border-b-2 border-amber-500/30 flex items-center justify-between bg-[#1E130C] text-white">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-900 dark:bg-amber-700 text-white flex items-center justify-center font-serif text-2xl font-black shadow-md">
+                    <div className="w-12 h-12 rounded-2xl bg-[#991B24] text-white flex items-center justify-center font-serif text-2xl font-black shadow-md border border-amber-400/30">
                       {mesaSeleccionada.numero}
                     </div>
                     <div>
-                      <h2 className="font-serif text-xl font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <h2 className="font-serif text-xl font-bold text-white flex items-center gap-2">
                         Mesa {mesaSeleccionada.numero}
-                        <span className="text-xs font-sans font-medium text-stone-500">
+                        <span className="text-xs font-sans font-medium text-amber-200/80">
                           ({mesaSeleccionada.tipo})
                         </span>
                       </h2>
-                      <p className="text-xs text-stone-500 dark:text-stone-400">
+                      <p className="text-xs text-amber-200/70">
                         Capacidad: {mesaSeleccionada.capacidad} personas •{" "}
                         {zonas.find((z) => z.id === mesaSeleccionada.zona_id)?.nombre || "Sala"}
                       </p>
@@ -833,17 +833,17 @@ export default function MeseroPage() {
 
                   <button
                     onClick={() => setMesaSeleccionada(null)}
-                    className="p-2.5 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-500 transition"
+                    className="p-2.5 rounded-full hover:bg-white/10 text-stone-300 transition cursor-pointer"
                   >
                     <X size={20} />
                   </button>
                 </div>
 
                 {/* Contenido Drawer */}
-                <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-[#FAF7F2]">
                   {/* Selector de Estado */}
                   <div>
-                    <label className="text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-2">
+                    <label className="text-[11px] font-black text-stone-800 uppercase tracking-wider block mb-2">
                       Estado Actual
                     </label>
                     <div className="grid grid-cols-4 gap-2">
@@ -851,9 +851,9 @@ export default function MeseroPage() {
                         <button
                           key={st}
                           onClick={() => handleCambiarEstadoMesa(st)}
-                          className={`py-2.5 px-2 text-xs font-bold rounded-2xl capitalize transition-all ${mesaSeleccionada.estado === st
-                            ? "bg-amber-900 dark:bg-amber-600 text-white shadow-md scale-102"
-                            : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+                          className={`py-2.5 px-2 text-xs font-bold rounded-2xl capitalize transition-all cursor-pointer ${mesaSeleccionada.estado === st
+                            ? "bg-[#991B24] text-white border-2 border-[#7F1D1D] shadow-md font-black"
+                            : "bg-white hover:bg-[#FAF6EF] text-stone-800 border-2 border-[#D5C7B5] font-bold"
                             }`}
                         >
                           {st}
@@ -868,21 +868,21 @@ export default function MeseroPage() {
 
                     if (!pedido) {
                       return (
-                        <div className="p-8 text-center border-2 border-dashed border-stone-200 dark:border-stone-800 rounded-3xl space-y-4">
-                          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center justify-center mx-auto">
+                        <div className="p-8 text-center border-2 border-dashed border-[#D5C7B5] rounded-3xl space-y-4 bg-white shadow-xs">
+                          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-800 flex items-center justify-center mx-auto border border-amber-300">
                             <Utensils size={28} />
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-stone-800 dark:text-stone-200">
+                            <p className="text-sm font-black text-stone-950">
                               Mesa sin comanda activa
                             </p>
-                            <p className="text-xs text-stone-500 dark:text-stone-400 max-w-xs mx-auto mt-1">
+                            <p className="text-xs text-stone-600 max-w-xs mx-auto mt-1 font-medium">
                               Abre una comanda para registrar productos y enviar comandas a Cocina y Vitrina.
                             </p>
                           </div>
                           <button
                             onClick={() => setModalComandaAbierto(true)}
-                            className="px-5 py-2.5 rounded-2xl bg-amber-900 dark:bg-amber-700 text-white text-xs font-bold shadow-md hover:bg-amber-950 transition flex items-center gap-2 mx-auto active:scale-95"
+                            className="px-5 py-2.5 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs font-black shadow-md transition flex items-center gap-2 mx-auto active:scale-95 cursor-pointer border border-[#7F1D1D]"
                           >
                             <Plus size={16} /> Abrir Comanda
                           </button>
@@ -893,35 +893,35 @@ export default function MeseroPage() {
                     return (
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
+                          <span className="text-[11px] font-black text-stone-800 uppercase tracking-wider">
                             Comanda Activa (#{pedido.id.substring(pedido.id.length - 4)})
                           </span>
-                          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 uppercase font-mono">
+                          <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 uppercase font-mono">
                             {pedido.estado}
                           </span>
                         </div>
 
                         {/* Items List */}
-                        <div className="divide-y divide-stone-100 dark:divide-stone-800 border border-stone-200 dark:border-stone-800 rounded-3xl bg-stone-50/50 dark:bg-stone-950/40 p-3 max-h-72 overflow-y-auto">
+                        <div className="divide-y divide-[#EAE0D2] border-2 border-[#D5C7B5] rounded-3xl bg-white p-3 max-h-72 overflow-y-auto shadow-xs">
                           {pedido.items?.map((it) => (
                             <div
                               key={it.id}
                               className="py-2.5 px-2 flex items-center justify-between text-xs"
                             >
                               <div>
-                                <span className="font-bold text-stone-900 dark:text-stone-100">
+                                <span className="font-bold text-stone-950">
                                   {it.cantidad}x {it.producto_nombre}
                                 </span>
                                 {it.notas && (
-                                  <p className="text-[11px] text-amber-700 dark:text-amber-400">
+                                  <p className="text-[11px] text-amber-900 font-medium">
                                     Nota: {it.notas}
                                   </p>
                                 )}
-                                <span className="text-[10px] text-stone-400 block capitalize">
+                                <span className="text-[10px] text-stone-500 block capitalize font-medium">
                                   Estación: {it.estacion} • Estado: {it.estado}
                                 </span>
                               </div>
-                              <span className="font-mono font-bold text-stone-800 dark:text-stone-200">
+                              <span className="font-mono font-black text-[#991B24]">
                                 Bs {it.subtotal.toFixed(2)}
                               </span>
                             </div>
@@ -929,9 +929,9 @@ export default function MeseroPage() {
                         </div>
 
                         {/* Total Box */}
-                        <div className="flex items-center justify-between p-4 rounded-2xl bg-amber-100/70 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/50 text-amber-950 dark:text-amber-100 font-bold">
-                          <span>Total Acumulado:</span>
-                          <span className="text-xl font-serif font-black">
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#FFF9EE] border-2 border-amber-400 text-amber-950 font-bold shadow-xs">
+                          <span className="text-stone-800 font-bold">Total Acumulado:</span>
+                          <span className="text-2xl font-serif font-black text-[#991B24] font-mono">
                             Bs {pedido.total.toFixed(2)}
                           </span>
                         </div>
@@ -939,7 +939,7 @@ export default function MeseroPage() {
                         {pedido.estado === "pendiente" && (
                           <button
                             onClick={() => verificarYMandarACocina(pedido.id, mesaSeleccionada.numero)}
-                            className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 active:scale-95 transition"
+                            className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xs shadow-lg flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
                           >
                             <CheckCircle2 size={16} />
                             <span>✅ Verificar Orden con Cliente y Mandar a Cocina 👨‍🍳</span>
@@ -950,13 +950,13 @@ export default function MeseroPage() {
                         <div className="grid grid-cols-2 gap-3 pt-2">
                           <button
                             onClick={() => setModalComandaAbierto(true)}
-                            className="py-3 px-4 rounded-2xl bg-amber-900 dark:bg-amber-700 text-white text-xs font-bold flex items-center justify-center gap-2 hover:bg-amber-950 shadow-md transition active:scale-95"
+                            className="py-3 px-4 rounded-2xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs font-black flex items-center justify-center gap-2 shadow-md transition active:scale-95 cursor-pointer border border-[#7F1D1D]"
                           >
                             <Plus size={16} /> Agregar Ronda
                           </button>
                           <button
                             onClick={solicitarCuenta}
-                            className="py-3 px-4 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md transition active:scale-95"
+                            className="py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black flex items-center justify-center gap-2 shadow-md transition active:scale-95 cursor-pointer"
                           >
                             <Receipt size={16} /> Pedir Cuenta
                           </button>
