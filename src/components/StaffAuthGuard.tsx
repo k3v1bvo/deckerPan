@@ -168,29 +168,54 @@ export default function StaffAuthGuard({
     const esAdmin = session.user.role === "admin";
 
     return (
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen bg-[#FAF7F2] text-[#1E130C]">
+        {/* Toldo Mini Auténtico Dencker en el tope supremo */}
+        <div className="w-full shrink-0 overflow-hidden select-none sticky top-0 z-50 print:hidden">
+          <img
+            src="/img/brand/awning-marquee-official.png"
+            alt="Toldo Dencker"
+            className="w-full h-2.5 sm:h-3 object-cover shadow-xs"
+          />
+        </div>
+
         {/* Barra superior de Turno Activo */}
         <aside
           aria-label="Control de turno de personal"
-          className="sticky top-0 z-50 bg-[#140D08]/95 backdrop-blur-md border-b border-amber-900/40 px-4 sm:px-6 py-2.5 text-white text-xs flex flex-wrap items-center justify-between gap-3 shadow-lg"
+          className="sticky top-2.5 sm:top-3 z-40 bg-[#160D08]/98 backdrop-blur-xl border-b border-amber-500/20 px-3 sm:px-6 py-2.5 text-white text-xs flex flex-wrap items-center justify-between gap-3 shadow-lg print:hidden"
         >
-          {/* Datos del Operador */}
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <div className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-              <RoleIcon size={18} />
+          {/* Datos del Operador & Logo */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <Link
+              href="/"
+              className="w-8 h-8 rounded-full bg-white/10 p-1 border border-amber-400/30 flex items-center justify-center shrink-0 hover:scale-105 transition"
+              title="Volver a Inicio"
+            >
+              <img
+                src={DENCKER_ASSETS.logoLight}
+                alt="Don Dencker"
+                className="w-full h-full object-contain drop-shadow"
+              />
+            </Link>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <div className="p-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
+              <RoleIcon size={16} />
             </div>
-            <div>
-              <span className="font-bold text-sm text-amber-100">{session.user.nombre}</span>
-              <span className="text-stone-400 text-xs hidden sm:inline ml-2">
-                • {roleTitle}
+            <div className="leading-tight">
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-xs sm:text-sm text-white font-serif">{session.user.nombre}</span>
+                <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                  {roleTitle}
+                </span>
+              </div>
+              <span className="text-amber-300/70 text-[10px] font-mono hidden sm:inline">
+                Turno Activo &bull; Dencker Pan S.R.L.
               </span>
             </div>
           </div>
 
           {/* Selector de Estación (ESTRICTAMENTE SOLO PARA GERENCIA / ADMIN) */}
           {esAdmin && (
-            <div className="hidden md:flex items-center gap-1.5 p-1 rounded-2xl bg-black/50 border border-white/10">
+            <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/60 border border-amber-500/20 overflow-x-auto max-w-full">
               {ADMIN_STATIONS.map((st) => {
                 const active = pathname.startsWith(st.href);
                 const Icon = st.icon;
@@ -199,13 +224,13 @@ export default function StaffAuthGuard({
                     key={st.id}
                     href={st.href}
                     onClick={() => soundManager.playClick()}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition active:scale-95 ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 whitespace-nowrap ${
                       active
-                        ? "bg-amber-600 text-white shadow-md font-bold"
+                        ? "bg-[#991B24] text-white shadow-md font-bold border border-amber-400/40"
                         : "text-stone-300 hover:text-white hover:bg-white/10"
                     }`}
                   >
-                    <Icon size={16} />
+                    <Icon size={14} className={active ? "text-amber-300" : "text-stone-400"} />
                     <span>{st.label}</span>
                   </Link>
                 );
@@ -214,23 +239,23 @@ export default function StaffAuthGuard({
           )}
 
           {/* Acciones de Cierre de Sesión y Salida */}
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={handleCerrarTurno}
-              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-red-950/60 hover:text-red-300 text-stone-200 text-xs font-semibold flex items-center gap-2 transition active:scale-95 cursor-pointer border border-white/10"
-              title="Bloquear terminal y cerrar turno"
-            >
-              <LogOut size={16} className="text-red-400" />
-              <span>Bloquear / Salir</span>
-            </button>
+          <div className="flex items-center gap-2">
             <Link
               href="/"
               onClick={() => soundManager.playClick()}
-              className="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-semibold flex items-center gap-2 transition active:scale-95 border border-amber-400/30"
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 border border-white/10"
             >
-              <Store size={16} />
-              <span>Tienda</span>
+              <Store size={14} className="text-amber-300" />
+              <span className="hidden sm:inline">Tienda</span>
             </Link>
+            <button
+              onClick={handleCerrarTurno}
+              className="px-3 py-1.5 rounded-xl bg-red-950/60 hover:bg-red-900 text-red-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer border border-red-700/40"
+              title="Bloquear terminal y cerrar turno"
+            >
+              <LogOut size={14} className="text-red-400" />
+              <span>Salir</span>
+            </button>
           </div>
         </aside>
 
@@ -245,51 +270,65 @@ export default function StaffAuthGuard({
   const RequiredIcon = ROLE_ICONS[requiredRole] || Lock;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#120B07] via-[#1C120B] to-[#120B07] text-white flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden select-none">
+    <div className="min-h-screen bg-gradient-to-b from-[#160D08] via-[#1E130C] to-[#160D08] text-white flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden select-none">
+      {/* Toldo Mini Auténtico Dencker en el borde superior */}
+      <div className="absolute top-0 left-0 right-0 w-full overflow-hidden select-none">
+        <img
+          src="/img/brand/awning-marquee-official.png"
+          alt="Toldo Dencker"
+          className="w-full h-3 sm:h-4 object-cover"
+        />
+      </div>
+
       {/* Glows ambientales sutiles */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-600/10 blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-600/10 blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#991B24]/15 blur-[140px] pointer-events-none" />
 
       {/* Contenedor del Terminal */}
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 350, damping: 25 }}
-        className="relative z-10 w-full max-w-sm rounded-[32px] bg-[#18100A]/95 border border-amber-600/30 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl space-y-5 text-center"
+        className="relative z-10 w-full max-w-sm rounded-[32px] bg-[#1E130C]/95 border border-amber-500/30 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl space-y-5 text-center"
       >
         {/* Cabecera con Logotipo Oficial */}
         <div className="space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 p-2.5 mx-auto flex items-center justify-center shadow-inner">
+          <div className="w-16 h-16 rounded-2xl bg-white/10 border border-amber-500/30 p-2 mx-auto flex items-center justify-center shadow-inner">
             <img
               src={DENCKER_ASSETS.logoLight}
-              alt="Dencker Pan"
+              alt="Don Dencker"
               className="w-full h-full object-contain drop-shadow"
             />
           </div>
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
-            Terminal Operativo
-          </h2>
-          <p className="text-xs text-stone-400">
-            Dencker Pan • Cochabamba
+          <div className="flex items-center justify-center gap-2">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Dencker Pan
+            </h2>
+            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+              Staff
+            </span>
+          </div>
+          <p className="text-xs text-amber-200/70 font-mono">
+            Control de Acceso Seguro &bull; Cochabamba
           </p>
         </div>
 
         {/* Estación a la que se intenta acceder */}
-        <div className="p-3 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center gap-2.5 text-xs">
-          <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+        <div className="p-3 rounded-2xl bg-black/40 border border-amber-500/20 flex items-center justify-center gap-2.5 text-xs">
+          <div className="p-1.5 rounded-lg bg-[#991B24] text-white border border-amber-400/30">
             <RequiredIcon size={16} />
           </div>
           <div className="text-left">
             <span className="font-bold text-white block">{roleTitle}</span>
-            <span className="text-[10px] text-stone-400 capitalize">
-              Estación: {requiredRole}
+            <span className="text-[10px] text-amber-300/80 capitalize">
+              Terminal: {requiredRole}
             </span>
           </div>
         </div>
 
         {/* 4 Puntos de Entrada de PIN */}
         <div className="py-2">
-          <p className="text-[11px] text-stone-400 mb-2 font-medium">
+          <p className="text-[11px] text-stone-300 mb-2 font-medium">
             Ingresa tu código PIN de 4 dígitos:
           </p>
           <div className="flex items-center justify-center gap-4">
@@ -315,9 +354,9 @@ export default function StaffAuthGuard({
           <motion.div
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-1.5 text-xs text-red-400 font-semibold bg-red-950/40 border border-red-800/40 py-2 px-3 rounded-xl"
+            className="flex items-center justify-center gap-1.5 text-xs text-red-300 font-semibold bg-red-950/60 border border-red-700/60 py-2 px-3 rounded-xl"
           >
-            <XCircle size={14} className="shrink-0" />
+            <XCircle size={14} className="shrink-0 text-red-400" />
             <span>{errorMsg}</span>
           </motion.div>
         )}
@@ -330,7 +369,7 @@ export default function StaffAuthGuard({
               type="button"
               whileTap={{ scale: 0.92 }}
               onClick={() => handleKeyPress(num)}
-              className="h-12 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-mono text-lg font-bold flex items-center justify-center transition active:bg-amber-600/30 cursor-pointer shadow-xs"
+              className="h-12 rounded-2xl bg-white/10 hover:bg-white/15 border border-amber-500/20 text-white font-mono text-lg font-bold flex items-center justify-center transition active:bg-amber-600/30 cursor-pointer shadow-xs"
             >
               {num}
             </motion.button>
@@ -347,7 +386,7 @@ export default function StaffAuthGuard({
             type="button"
             whileTap={{ scale: 0.92 }}
             onClick={() => handleKeyPress("0")}
-            className="h-12 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-mono text-lg font-bold flex items-center justify-center transition active:bg-amber-600/30 cursor-pointer shadow-xs"
+            className="h-12 rounded-2xl bg-white/10 hover:bg-white/15 border border-amber-500/20 text-white font-mono text-lg font-bold flex items-center justify-center transition active:bg-amber-600/30 cursor-pointer shadow-xs"
           >
             0
           </motion.button>

@@ -237,41 +237,55 @@ export default function AsistenciaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0E0906] text-stone-100 flex flex-col justify-between selection:bg-amber-500 selection:text-stone-950 font-sans">
+    <div className="min-h-screen bg-[#120B07] text-stone-100 flex flex-col justify-between selection:bg-amber-500 selection:text-stone-950 font-sans">
+      {/* Toldo Mini Auténtico Dencker */}
+      <div className="w-full shrink-0 overflow-hidden select-none sticky top-0 z-40">
+        <img
+          src="/img/brand/awning-marquee-official.png"
+          alt="Toldo Dencker"
+          className="w-full h-2.5 sm:h-3 object-cover shadow-xs"
+        />
+      </div>
+
       {/* ── HEADER DE NAVEGACIÓN ── */}
-      <header className="sticky top-0 z-30 bg-[#160D08]/90 backdrop-blur-xl border-b border-amber-500/20 px-4 py-3">
+      <header className="sticky top-2.5 sm:top-3 z-30 bg-[#160D08]/95 backdrop-blur-xl border-b border-amber-500/20 px-4 py-3 shadow-xl">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 text-stone-300 hover:text-amber-300 text-xs font-bold transition-colors py-1 px-2.5 rounded-xl bg-white/5 hover:bg-white/10"
+            className="flex items-center gap-2 text-stone-300 hover:text-white text-xs font-bold transition-colors py-1.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10"
           >
             <ArrowLeft size={16} />
-            <span>Volver a la Cafetería</span>
+            <span>Volver a la Tienda</span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center">
               <img
                 src={DENCKER_ASSETS.logoLight}
                 alt="Don Dencker"
-                className="w-6 h-6 object-contain"
+                className="w-full h-full object-contain drop-shadow"
               />
             </div>
             <div className="leading-tight">
-              <span className="font-serif font-black text-sm text-white block">
-                Dencker Pan
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif font-black text-sm text-white block">
+                  Dencker Pan
+                </span>
+                <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                  Staff
+                </span>
+              </div>
               <span className="text-[10px] text-amber-300/80 font-mono">
-                Control de Asistencia GPS
+                Control de Asistencia Geocercada &bull; Cochabamba
               </span>
             </div>
           </div>
 
           <Link
             href="/admin?tab=asistencias"
-            className="text-xs font-semibold text-stone-400 hover:text-amber-200 transition flex items-center gap-1.5 py-1 px-2.5 rounded-xl bg-white/5 hover:bg-white/10"
+            className="text-xs font-bold text-amber-200 hover:text-white transition flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] border border-amber-400/40 shadow-sm"
           >
-            <ShieldCheck size={15} className="text-amber-400" />
+            <ShieldCheck size={15} className="text-amber-300" />
             <span className="hidden sm:inline">Panel Gerencia</span>
           </Link>
         </div>

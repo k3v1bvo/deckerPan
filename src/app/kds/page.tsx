@@ -23,6 +23,7 @@ import { useSystemStore } from "@/store";
 import { Estacion, EstadoItem, ItemPedido } from "@/types";
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
+import { DENCKER_ASSETS } from "@/lib/seed-data";
 
 export default function KDSPage() {
   const { pedidos, updateItemEstado, updatePedidoEstado, addAlerta } = useSystemStore();
@@ -114,27 +115,32 @@ export default function KDSPage() {
 
   return (
     <StaffAuthGuard requiredRole="cocina" roleTitle="Cocina & Barismo KDS">
-      <div className="min-h-screen bg-[#0d0907] text-stone-100 pb-28 font-sans selection:bg-amber-500 selection:text-black">
+      <div className="min-h-screen bg-[#120B07] text-stone-100 pb-28 font-sans selection:bg-amber-500 selection:text-black">
       {/* ── Header KDS Apple Pro High Contrast ── */}
-      <header className="bg-[#17100b]/90 backdrop-blur-2xl border-b border-amber-900/40 px-4 lg:px-8 py-3.5 shadow-2xl">
+      <header className="bg-[#1C110A] border-b border-amber-900/40 px-4 lg:px-8 py-3.5 shadow-2xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/logo/logo.png"
-                alt="Dencker Pan"
+                src={DENCKER_ASSETS.logoLight}
+                alt="Don Dencker"
                 className="w-full h-full object-contain drop-shadow"
               />
             </div>
             <div>
-              <h1 className="font-serif text-base lg:text-xl font-bold tracking-tight text-amber-100 flex items-center gap-2 flex-wrap">
-                KDS — Cocina & Barismo Dencker Pan
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="font-serif text-base lg:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                  KDS — Cocina & Barismo
+                </h1>
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                  Dencker Pan
+                </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" /> EN VIVO
                 </span>
-              </h1>
+              </div>
               <p className="text-amber-200/60 text-xs hidden sm:block">
-                Despacho en tiempo real y asignación por estación operativa
+                Despacho en tiempo real y asignación por estación operativa &bull; Cochabamba
               </p>
             </div>
           </div>
@@ -160,11 +166,11 @@ export default function KDSPage() {
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                     isActive
-                      ? "bg-amber-600 text-white shadow-md shadow-amber-950"
+                      ? "bg-[#991B24] text-white shadow-md shadow-red-950/50 border border-amber-400/30"
                       : "text-stone-400 hover:text-stone-200 hover:bg-white/5"
                   }`}
                 >
-                  <Icon size={14} />
+                  <Icon size={14} className={isActive ? "text-amber-300" : ""} />
                   <span>{est.label}</span>
                 </button>
               );

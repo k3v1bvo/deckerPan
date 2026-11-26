@@ -24,6 +24,7 @@ import { useSystemStore } from "@/store";
 import { Pedido, MetodoPago, BILLETES_BOLIVIANOS, FacturaEmitida } from "@/types";
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
+import { DENCKER_ASSETS } from "@/lib/seed-data";
 
 export default function CajaPage() {
   const {
@@ -180,24 +181,29 @@ export default function CajaPage() {
 
   return (
     <StaffAuthGuard requiredRole="caja" roleTitle="Caja POS & Facturación">
-      <div className="min-h-screen bg-[#FDFBF7] text-amber-950 pb-24">
+      <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-24 font-sans">
       {/* Header Caja */}
-      <header className="sticky top-0 z-40 bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 text-white px-4 lg:px-6 py-3 shadow-lg backdrop-blur-md">
+      <header className="sticky top-0 z-40 bg-[#1E130C] text-white px-4 lg:px-6 py-3.5 shadow-xl border-b border-amber-500/20">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/brand/logo-3-don-dencker-badge.png"
-                alt="Dencker Pan"
+                src={DENCKER_ASSETS.logoLight}
+                alt="Don Dencker"
                 className="w-full h-full object-contain drop-shadow"
               />
             </div>
             <div>
-              <h1 className="font-serif text-base lg:text-xl font-bold tracking-tight text-amber-100 truncate max-w-[220px] sm:max-w-none">
-                Caja & Facturación POS — Dencker Pan
-              </h1>
-              <p className="text-amber-200/60 text-xs">
-                Cobro en Bolivianos (Bs), QR Simple, Split de cuenta y arqueo ciego
+              <div className="flex items-center gap-2">
+                <h1 className="font-serif text-base lg:text-xl font-bold tracking-tight text-white truncate max-w-[220px] sm:max-w-none">
+                  Caja & Facturación POS
+                </h1>
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                  Dencker Pan
+                </span>
+              </div>
+              <p className="text-amber-200/70 text-xs">
+                Cobro en Bolivianos (Bs), QR Simple, Split de cuenta y arqueo ciego &bull; Cochabamba
               </p>
             </div>
           </div>
@@ -205,17 +211,17 @@ export default function CajaPage() {
           {/* Estado de Turno & Arqueo */}
           <div className="flex items-center gap-3">
             <div className="text-right text-xs">
-              <span className="text-stone-400 block">Ventas Turno:</span>
-              <span className="font-bold text-amber-300 text-sm">
+              <span className="text-stone-300 block">Ventas del Turno:</span>
+              <span className="font-bold text-amber-300 text-sm font-mono">
                 Bs {sesionCaja?.total_ventas.toFixed(2) || "0.00"}
               </span>
             </div>
 
             <button
               onClick={() => setModalArqueoAbierto(true)}
-              className="px-4 py-2 rounded-xl bg-amber-700 hover:bg-amber-600 text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer border border-amber-400/40 active:scale-95"
             >
-              <Calculator size={14} /> Cierre & Arqueo
+              <Calculator size={14} className="text-amber-300" /> Cierre & Arqueo
             </button>
           </div>
         </div>

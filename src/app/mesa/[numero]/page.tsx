@@ -410,9 +410,9 @@ export default function MesaPage({ params }: PageProps) {
   const itemEnCarrito = (id: string) => items.find((i) => i.producto.id === id);
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
-      {/* ── Header Flotante Apple Glass ── */}
-      <header className="sticky top-0 z-30 bg-[#281810]/95 backdrop-blur-2xl border-b border-white/10 text-white shadow-xl pt-safe">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-36 font-sans">
+      {/* ── Header Flotante Dencker Pan ── */}
+      <header className="sticky top-0 z-30 bg-[#1E130C] border-b border-amber-500/20 text-white shadow-xl pt-safe">
         {/* Toldo Mini Auténtico Dencker */}
         <div className="w-full shrink-0 overflow-hidden select-none">
           <img
@@ -431,12 +431,17 @@ export default function MesaPage({ params }: PageProps) {
               />
             </div>
             <div>
-              <div className="font-serif font-bold text-base text-white leading-tight">
-                Dencker Pan
+              <div className="flex items-center gap-2">
+                <span className="font-serif font-black text-base text-white leading-tight">
+                  Dencker Pan
+                </span>
+                <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                  Mesa {numero}
+                </span>
               </div>
               <div className="text-[11px] text-amber-200/80 font-mono flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Mesa {numero} • Menú Digital
+                Carta & Pedido Digital en Mesa
               </div>
             </div>
           </div>

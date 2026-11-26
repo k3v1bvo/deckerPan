@@ -28,6 +28,7 @@ import { Mesa, EstadoMesa, Producto, ItemPedido, Zona } from "@/types";
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import FloorPlanMap from "@/components/FloorPlanMap";
+import { DENCKER_ASSETS } from "@/lib/seed-data";
 
 export default function MeseroPage() {
   const {
@@ -303,27 +304,29 @@ export default function MeseroPage() {
 
   return (
     <StaffAuthGuard requiredRole="mesero" roleTitle="Sala & Meseros">
-      <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
-      {/* ── Apple Liquid Glass Header ── */}
-      <header className="bg-stone-900/90 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
+      <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-36 font-sans">
+      {/* ── Header Dencker Pan Bistró ── */}
+      <header className="bg-[#1E130C] border-b border-amber-500/20 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/logo/logo.png"
-                alt="Dencker Pan"
+                src={DENCKER_ASSETS.logoLight}
+                alt="Don Dencker"
                 className="w-full h-full object-contain drop-shadow"
               />
             </div>
             <div>
-              <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                Sala & Servicio en Vivo
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              <div className="flex items-center gap-2">
+                <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                  Sala & Servicio en Vivo
+                </h1>
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
                   {mesas.length} Mesas Activas
                 </span>
-              </h1>
-              <p className="text-stone-400 text-xs hidden sm:block">
-                Plano arquitectónico, rondas de barismo y atención en tiempo real
+              </div>
+              <p className="text-amber-200/70 text-xs hidden sm:block">
+                Plano arquitectónico, rondas de barismo y atención en tiempo real &bull; Cochabamba
               </p>
             </div>
           </div>
@@ -334,8 +337,8 @@ export default function MeseroPage() {
               onClick={() => setFiltroEstado(filtroEstado === "libre" ? "todas" : "libre")}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ${
                 filtroEstado === "libre"
-                  ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-105"
-                  : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/40 scale-105"
+                  : "bg-white/10 text-emerald-300 border border-emerald-500/30 hover:bg-white/15"
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -346,8 +349,8 @@ export default function MeseroPage() {
               onClick={() => setFiltroEstado(filtroEstado === "ocupada" ? "todas" : "ocupada")}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ${
                 filtroEstado === "ocupada"
-                  ? "bg-amber-500 text-stone-950 shadow-lg shadow-amber-500/30 scale-105"
-                  : "bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
+                  ? "bg-[#991B24] text-white shadow-lg shadow-red-950/40 scale-105 border border-amber-400/40"
+                  : "bg-white/10 text-amber-200 border border-amber-500/30 hover:bg-white/15"
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-amber-400" />
@@ -358,8 +361,8 @@ export default function MeseroPage() {
               onClick={() => setFiltroEstado(filtroEstado === "reservada" ? "todas" : "reservada")}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold hidden md:flex items-center gap-1.5 transition-all ${
                 filtroEstado === "reservada"
-                  ? "bg-purple-500 text-white shadow-lg shadow-purple-500/30 scale-105"
-                  : "bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/25"
+                  ? "bg-purple-600 text-white shadow-lg shadow-purple-950/40 scale-105"
+                  : "bg-white/10 text-purple-200 border border-purple-500/30 hover:bg-white/15"
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-purple-400" />
@@ -367,12 +370,12 @@ export default function MeseroPage() {
             </button>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-white/10 p-1 rounded-2xl border border-white/10 ml-2">
+            <div className="flex items-center bg-black/40 p-1 rounded-2xl border border-amber-500/20 ml-2">
               <button
                 onClick={() => setModoVista("plano")}
                 className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
                   modoVista === "plano"
-                    ? "bg-white text-stone-900 shadow-md"
+                    ? "bg-[#FAF7F2] text-[#1E130C] shadow-md font-extrabold"
                     : "text-stone-300 hover:text-white"
                 }`}
               >
@@ -382,7 +385,7 @@ export default function MeseroPage() {
                 onClick={() => setModoVista("tarjetas")}
                 className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
                   modoVista === "tarjetas"
-                    ? "bg-white text-stone-900 shadow-md"
+                    ? "bg-[#FAF7F2] text-[#1E130C] shadow-md font-extrabold"
                     : "text-stone-300 hover:text-white"
                 }`}
               >
@@ -393,10 +396,10 @@ export default function MeseroPage() {
             {/* Marcado Asistencia GPS */}
             <Link
               href="/asistencia"
-              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 flex items-center gap-1.5 transition ml-1 shrink-0"
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 hover:bg-emerald-500/30 flex items-center gap-1.5 transition ml-1 shrink-0"
               title="Marcar Asistencia GPS"
             >
-              <Clock size={13} />
+              <Clock size={13} className="text-emerald-400" />
               <span className="hidden sm:inline">Asistencia GPS</span>
             </Link>
           </div>

@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { useSystemStore } from "@/store";
 import { soundManager } from "@/lib/sound";
+import { DENCKER_ASSETS } from "@/lib/seed-data";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -74,18 +75,32 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-20 font-sans">
-      {/* ── Apple Header ── */}
-      <header className="sticky top-0 z-30 bg-[#281810]/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 py-3.5 shadow-xl">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-20 font-sans">
+      {/* ── Toldo Mini Auténtico Dencker ── */}
+      <div className="w-full shrink-0 overflow-hidden select-none sticky top-0 z-40">
+        <img
+          src="/img/brand/awning-marquee-official.png"
+          alt="Toldo Dencker"
+          className="w-full h-2.5 sm:h-3 object-cover shadow-xs"
+        />
+      </div>
+
+      {/* ── Header Dencker Pan ── */}
+      <header className="sticky top-2.5 sm:top-3 z-30 bg-[#1E130C] border-b border-amber-500/20 text-white px-4 py-3 shadow-xl">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <Link
             href={`/mesa/${pedido.mesa_numero}`}
-            className="flex items-center gap-1.5 text-xs text-amber-200/80 hover:text-white transition"
+            className="flex items-center gap-1.5 text-xs text-amber-200 hover:text-white transition font-semibold"
           >
             <ArrowLeft size={16} />
             <span>Volver a Mesa {pedido.mesa_numero}</span>
           </Link>
-          <span className="font-serif font-bold text-sm text-white">Pago de Comanda</span>
+          <div className="flex items-center gap-2">
+            <span className="font-serif font-bold text-sm text-white">Pago de Comanda</span>
+            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+              Mesa {pedido.mesa_numero}
+            </span>
+          </div>
           <span className="text-xs font-mono text-amber-300 font-bold">
             Bs {total.toFixed(2)}
           </span>

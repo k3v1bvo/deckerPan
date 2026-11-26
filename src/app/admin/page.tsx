@@ -711,27 +711,29 @@ export default function AdminPage() {
 
   return (
     <StaffAuthGuard requiredRole="admin" roleTitle="Administración General">
-      <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 pb-36 font-sans">
-      {/* ── Apple Glass Admin Header ── */}
-      <header className="bg-stone-950/95 backdrop-blur-2xl border-b border-white/10 text-white px-4 lg:px-8 py-3.5 shadow-xl">
+      <div className="min-h-screen bg-[#FAF7F2] text-[#1E130C] pb-36 font-sans">
+      {/* ── Header Dencker Pan Administración ── */}
+      <header className="bg-[#1E130C] border-b border-amber-500/20 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1.5 border border-amber-500/30 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
-                src="/img/brand/logo-3-don-dencker-badge.png"
-                alt="Dencker Pan"
+                src={DENCKER_ASSETS.logoLight}
+                alt="Don Dencker"
                 className="w-full h-full object-contain drop-shadow"
               />
             </div>
             <div>
-              <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-                Administración & Operaciones
-                <span className="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                  Dencker Pan
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h1 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white">
+                  Administración & Operaciones
+                </h1>
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                  Dencker Pan S.R.L.
                 </span>
-              </h1>
-              <p className="text-stone-400 text-xs hidden sm:block">
-                Panel central de mesas, catálogo, equipo, cobros y finanzas
+              </div>
+              <p className="text-amber-200/70 text-xs hidden sm:block">
+                Panel central de mesas, catálogo, equipo, cobros y finanzas &bull; Cochabamba
               </p>
             </div>
           </div>
@@ -740,10 +742,10 @@ export default function AdminPage() {
             <Link
               href="/menu-pdf"
               target="_blank"
-              className="px-4 py-2 rounded-xl bg-amber-900/60 hover:bg-amber-900 text-amber-100 text-xs border border-amber-500/30 transition flex items-center gap-2 active:scale-95 font-semibold"
+              className="px-4 py-2 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs border border-amber-400/40 transition flex items-center gap-2 active:scale-95 font-bold shadow-sm"
             >
-              <FileText size={16} className="text-[#87A987]" />
-              <span>Menú en PDF</span>
+              <FileText size={15} className="text-amber-300" />
+              <span>Carta Oficial PDF</span>
             </Link>
 
             {/* Reset Fábrica */}
@@ -754,9 +756,9 @@ export default function AdminPage() {
                   soundManager.playSuccessTone();
                 }
               }}
-              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white text-xs border border-white/15 transition flex items-center gap-2 active:scale-95 font-semibold cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs border border-white/15 transition flex items-center gap-2 active:scale-95 font-semibold cursor-pointer"
             >
-              <RefreshCw size={16} />
+              <RefreshCw size={15} />
               <span>Reset Fábrica</span>
             </button>
           </div>
@@ -764,15 +766,15 @@ export default function AdminPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
-        {/* ── Apple HIG Segmented Control Slider ── */}
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-stone-200/80 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 max-w-5xl overflow-x-auto shadow-xs">
+        {/* ── Segmented Control Tabs con Estilo Artesanal ── */}
+        <div className="relative flex items-center p-1.5 rounded-2xl bg-[#EDE5DA] border border-[#DDD3C6] max-w-5xl overflow-x-auto shadow-xs">
           {(
             [
               { id: "productos", label: "Catálogo & Precios", icon: UtensilsCrossed },
-              { id: "mesas", label: "Mesas", icon: Layers },
+              { id: "mesas", label: "Mesas & Plano", icon: Layers },
               { id: "asistencias", label: "Asistencias GPS", icon: Clock },
               { id: "siat", label: "Facturas SIAT", icon: Receipt },
-              { id: "personal", label: "Personal", icon: Users },
+              { id: "personal", label: "Personal & PINs", icon: Users },
               { id: "qr_mesas", label: "QRs Mesas", icon: QrCode },
               { id: "reservas", label: "Reservas", icon: Calendar },
               { id: "metricas", label: "Finanzas", icon: BarChart3 },
@@ -788,18 +790,18 @@ export default function AdminPage() {
                   soundManager.playClick();
                   setTabActiva(tab.id);
                 }}
-                className={`relative flex-1 flex items-center justify-center gap-2 py-2.5 px-2.5 rounded-xl text-xs font-bold transition-all z-10 cursor-pointer whitespace-nowrap ${
-                  isActive ? "text-stone-950 dark:text-white font-extrabold" : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200"
+                className={`relative flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all z-10 cursor-pointer whitespace-nowrap ${
+                  isActive ? "text-white font-black" : "text-[#5C3D28] hover:text-[#1E130C] hover:bg-white/40"
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="adminTabHighlight"
-                    className="absolute inset-0 bg-white dark:bg-stone-800 rounded-xl shadow-md border border-stone-200/70 dark:border-stone-700 -z-10"
+                    className="absolute inset-0 bg-[#991B24] rounded-xl shadow-md border border-amber-400/40 -z-10"
                     transition={{ type: "spring", damping: 30, stiffness: 450 }}
                   />
                 )}
-                <Icon size={18} />
+                <Icon size={16} className={isActive ? "text-amber-300" : ""} />
                 <span>{tab.label}</span>
               </button>
             );
