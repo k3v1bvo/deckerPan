@@ -75,9 +75,9 @@ export default function FloorPlanMap({
   const [modalDetalleMesa, setModalDetalleMesa] = useState<Mesa | null>(null);
   const [subTabDetalle, setSubTabDetalle] = useState<"general" | "asientos" | "cuenta_separada">("general");
 
-  // Visor y Superposición de Plano de Evacuación Oficial
+  // Visor y Superposición de Plano de Evacuación Oficial y Croquis
   const [modalPlanoEvacuacion, setModalPlanoEvacuacion] = useState(false);
-  const [tipoPlanoVisor, setTipoPlanoVisor] = useState<"anotado" | "original">("anotado");
+  const [tipoPlanoVisor, setTipoPlanoVisor] = useState<"anotado" | "original" | "croquis">("anotado");
   const [modoBlueprint, setModoBlueprint] = useState(false);
 
   // Estados Mapa de Calor & Aforo en Vivo
@@ -1156,13 +1156,13 @@ export default function FloorPlanMap({
                 </button>
               </div>
 
-              {/* Selector de Vista: Plano Anotado vs Plano Limpio Original */}
-              <div className="flex items-center justify-between gap-2 bg-stone-100 dark:bg-stone-800 p-1 rounded-2xl">
-                <div className="flex gap-1">
+              {/* Selector de Vista: Plano Anotado vs Plano Limpio Original vs Croquis Hecho a Mano */}
+              <div className="flex flex-wrap items-center justify-between gap-2 bg-stone-100 dark:bg-stone-800 p-1.5 rounded-2xl">
+                <div className="flex flex-wrap gap-1">
                   <button
                     type="button"
                     onClick={() => setTipoPlanoVisor("anotado")}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                       tipoPlanoVisor === "anotado"
                         ? "bg-[#991B24] text-white shadow-xs"
                         : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
@@ -1173,13 +1173,24 @@ export default function FloorPlanMap({
                   <button
                     type="button"
                     onClick={() => setTipoPlanoVisor("original")}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                       tipoPlanoVisor === "original"
                         ? "bg-[#1E130C] text-white shadow-xs"
                         : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
                     }`}
                   >
                     🏛️ Plano Arquitectónico Limpio
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTipoPlanoVisor("croquis")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                      tipoPlanoVisor === "croquis"
+                        ? "bg-amber-700 text-white shadow-xs"
+                        : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+                    }`}
+                  >
+                    📝 Croquis Manuscrito (PB &amp; Terraza)
                   </button>
                 </div>
 
@@ -1194,9 +1205,15 @@ export default function FloorPlanMap({
                   src={
                     tipoPlanoVisor === "anotado"
                       ? "/img/planos/plano-evacuacion-anotado.jpg"
-                      : "/img/planos/plano-evacuacion-original.jpg"
+                      : tipoPlanoVisor === "original"
+                      ? "/img/planos/plano-evacuacion-original.jpg"
+                      : "/img/planos/croquis-distribucion-manual.png"
                   }
-                  alt="Plano de Evacuación Planta Baja"
+                  alt={
+                    tipoPlanoVisor === "croquis"
+                      ? "Croquis de Distribución Planta Baja y Terraza"
+                      : "Plano de Evacuación Planta Baja"
+                  }
                   className="w-full h-auto max-h-[550px] object-contain select-none"
                 />
               </div>
