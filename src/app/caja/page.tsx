@@ -18,6 +18,8 @@ import {
   X,
   CreditCard,
   Star,
+  RotateCcw,
+  Trash2,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSystemStore } from "@/store";
@@ -45,6 +47,8 @@ export default function CajaPage() {
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<Pedido | null>(null);
   const [metodoPago, setMetodoPago] = useState<MetodoPago>("efectivo");
   const [montoRecibido, setMontoRecibido] = useState<number>(0);
+  const [modoEntradaEfectivo, setModoEntradaEfectivo] = useState<"directo" | "acumular">("directo");
+  const [billetesRecibidosList, setBilletesRecibidosList] = useState<number[]>([]);
   const [splitPersonas, setSplitPersonas] = useState<number>(1);
   const [modalArqueoAbierto, setModalArqueoAbierto] = useState(false);
   const [modalReciboAbierto, setModalReciboAbierto] = useState(false);
@@ -118,6 +122,7 @@ export default function CajaPage() {
     soundManager.playTactileClick();
     setPedidoSeleccionado(p);
     setMontoRecibido(p.total);
+    setBilletesRecibidosList([]);
     setSplitPersonas(1);
     setPropinaPct(0);
     setPropinaCustom(0);
@@ -126,7 +131,50 @@ export default function CajaPage() {
 
   const agregarBillete = (valor: number) => {
     soundManager.playCoinRattle();
-    setMontoRecibido((prev) => prev + valor);
+    if (modoEntradaEfectivo === "directo") {
+      setMontoRecibido(valor);
+      setBilletesRecibidosList([valor]);
+    } else {
+      setBilletesRecibidosList((prev) => [...prev, valor]);
+      setMontoRecibido((prev) => {
+        if (billetesRecibidosList.length === 0 && prev === totalPagar) {
+          return valor;
+        }
+        return Number((prev + valor).toFixed(2));
+      });
+    }
+  };
+
+  const removerBilleteRecibido = (index: number) => {
+    soundManager.playClick();
+    const nuevaLista = billetesRecibidosList.filter((_, i) => i !== index);
+    setBilletesRecibidosList(nuevaLista);
+    const nuevoTotal = nuevaLista.reduce((acc, curr) => acc + curr, 0);
+    setMontoRecibido(Number(nuevoTotal.toFixed(2)));
+  };
+
+  const deshacerUltimoBillete = () => {
+    if (billetesRecibidosList.length === 0) {
+      setMontoRecibido(0);
+      return;
+    }
+    soundManager.playClick();
+    const nuevaLista = billetesRecibidosList.slice(0, -1);
+    setBilletesRecibidosList(nuevaLista);
+    const nuevoTotal = nuevaLista.reduce((acc, curr) => acc + curr, 0);
+    setMontoRecibido(Number(nuevoTotal.toFixed(2)));
+  };
+
+  const limpiarEfectivo = () => {
+    soundManager.playClick();
+    setMontoRecibido(0);
+    setBilletesRecibidosList([]);
+  };
+
+  const pagarMontoJusto = () => {
+    soundManager.playSuccessTone();
+    setMontoRecibido(totalPagar);
+    setBilletesRecibidosList([]);
   };
 
   const procesarCobro = () => {
@@ -442,23 +490,100 @@ export default function CajaPage() {
               {/* Detalle según Método de Pago */}
               {metodoPago === "efectivo" && (
                 <div className="space-y-4">
+                  {/* Encabezado con Selector de Modo de Efectivo */}
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
-                        <Banknote size={15} className="text-emerald-700" />
-                        Billetes & Monedas de Bolivia
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                      <label className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <Banknote size={16} className="text-emerald-700" />
+                        Cobro en Efectivo (Bs Bolivianos)
                       </label>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMontoRecibido(totalPagar);
-                          soundManager.playSuccessTone();
-                        }}
-                        className="text-[11px] font-bold text-amber-900 hover:text-amber-700 underline flex items-center gap-1"
-                      >
-                        Pagar Justo (Bs {totalPagar.toFixed(2)})
-                      </button>
+
+                      {/* Selector de Modo: Billete Único vs Acumular */}
+                      <div className="flex items-center gap-1 p-1 bg-stone-100 rounded-xl border border-stone-200">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            soundManager.playTactileClick();
+                            setModoEntradaEfectivo("directo");
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                            modoEntradaEfectivo === "directo"
+                              ? "bg-amber-900 text-white shadow-2xs"
+                              : "text-stone-600 hover:text-stone-900"
+                          }`}
+                          title="Al tocar un billete (ej. Bs 100), se fija directamente ese monto"
+                        >
+                          <span>🎯 Billete Único</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            soundManager.playTactileClick();
+                            setModoEntradaEfectivo("acumular");
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                            modoEntradaEfectivo === "acumular"
+                              ? "bg-amber-900 text-white shadow-2xs"
+                              : "text-stone-600 hover:text-stone-900"
+                          }`}
+                          title="Suma varios billetes y monedas consecutivamente"
+                        >
+                          <span>➕ Sumar Varios</span>
+                        </button>
+                      </div>
                     </div>
+
+                    {/* Fila de Billetes Ingresados con opción de eliminar individual */}
+                    {billetesRecibidosList.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-2.5 p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-2 flex-wrap"
+                      >
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[11px] font-bold text-amber-950 flex items-center gap-1">
+                            <span>Billetes entregados:</span>
+                          </span>
+                          {billetesRecibidosList.map((val, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2.5 py-1 rounded-xl bg-white border border-amber-400 text-amber-950 font-mono font-bold text-xs shadow-2xs flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-150"
+                            >
+                              <span>{val >= 1 ? `Bs ${val}` : `${val * 100} ctv`}</span>
+                              <button
+                                type="button"
+                                onClick={() => removerBilleteRecibido(idx)}
+                                className="text-stone-400 hover:text-rose-600 transition p-0.5 rounded-full hover:bg-rose-50 cursor-pointer"
+                                title="Quitar este billete (me equivoqué)"
+                              >
+                                <X size={12} />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center gap-2 ml-auto">
+                          <button
+                            type="button"
+                            onClick={deshacerUltimoBillete}
+                            className="text-[11px] font-bold text-amber-900 hover:text-amber-700 underline flex items-center gap-1 cursor-pointer"
+                            title="Deshacer último billete ingresado"
+                          >
+                            <RotateCcw size={12} />
+                            <span>Deshacer</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={limpiarEfectivo}
+                            className="text-[11px] font-bold text-rose-600 hover:text-rose-800 underline flex items-center gap-1 cursor-pointer"
+                            title="Borrar todos los billetes"
+                          >
+                            <Trash2 size={12} />
+                            <span>Borrar todo</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
 
                     {/* Tarjetas de Billetes Bolivianos Gráficos */}
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -468,84 +593,152 @@ export default function CajaPage() {
                         { val: 50,  label: "Bs 50",  bg: "from-[#4B2354] to-[#321639] border-purple-500/50 text-purple-100", tag: "José M. Baca" },
                         { val: 20,  label: "Bs 20",  bg: "from-[#78350F] to-[#542409] border-orange-500/50 text-orange-100", tag: "Genoveva Ríos" },
                         { val: 10,  label: "Bs 10",  bg: "from-[#1E3A5F] to-[#142640] border-blue-500/50 text-blue-100", tag: "Apiaguaiki" },
-                      ].map((b) => (
-                        <motion.button
-                          key={b.val}
-                          type="button"
-                          whileHover={{ y: -3, scale: 1.03 }}
-                          whileTap={{ scale: 0.94 }}
-                          onClick={() => {
-                            agregarBillete(b.val);
-                            soundManager.playSuccessTone();
-                          }}
-                          className={`p-2.5 rounded-2xl bg-gradient-to-br ${b.bg} border shadow-md flex flex-col justify-between h-20 text-left transition-all relative overflow-hidden group`}
-                        >
-                          <div className="flex justify-between items-start w-full">
-                            <span className="font-mono font-black text-sm tracking-tight">{b.label}</span>
-                            <span className="text-[8px] opacity-60 uppercase font-sans tracking-widest">BOB</span>
-                          </div>
-                          <div>
-                            <span className="text-[9px] opacity-75 font-sans block truncate">{b.tag}</span>
-                            <span className="text-[10px] font-bold text-white group-hover:underline">+ Agregar</span>
-                          </div>
-                        </motion.button>
-                      ))}
+                      ].map((b) => {
+                        const esSeleccionadoDirecto = modoEntradaEfectivo === "directo" && montoRecibido === b.val;
+                        const conteoEnLista = billetesRecibidosList.filter((v) => v === b.val).length;
+
+                        return (
+                          <motion.button
+                            key={b.val}
+                            type="button"
+                            whileHover={{ y: -3, scale: 1.03 }}
+                            whileTap={{ scale: 0.94 }}
+                            onClick={() => agregarBillete(b.val)}
+                            className={`p-2.5 rounded-2xl bg-gradient-to-br ${b.bg} border shadow-md flex flex-col justify-between h-20 text-left transition-all relative overflow-hidden group cursor-pointer ${
+                              esSeleccionadoDirecto ? "ring-3 ring-amber-400 border-white" : ""
+                            }`}
+                          >
+                            <div className="flex justify-between items-start w-full">
+                              <span className="font-mono font-black text-sm tracking-tight">{b.label}</span>
+                              <div className="flex items-center gap-1">
+                                {conteoEnLista > 0 && modoEntradaEfectivo === "acumular" && (
+                                  <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-stone-950 font-mono font-black text-[10px]">
+                                    x{conteoEnLista}
+                                  </span>
+                                )}
+                                <span className="text-[8px] opacity-60 uppercase font-sans tracking-widest">BOB</span>
+                              </div>
+                            </div>
+                            <div>
+                              <span className="text-[9px] opacity-75 font-sans block truncate">{b.tag}</span>
+                              <span className="text-[10px] font-bold text-white group-hover:underline">
+                                {modoEntradaEfectivo === "directo" ? "Fijar Billete" : "+ Sumar"}
+                              </span>
+                            </div>
+                          </motion.button>
+                        );
+                      })}
                     </div>
 
-                    {/* Monedas Bolivianas */}
-                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-stone-100">
-                      <span className="text-[11px] text-stone-500 font-semibold shrink-0">Monedas:</span>
-                      {[
-                        { val: 5, label: "Bs 5" },
-                        { val: 2, label: "Bs 2" },
-                        { val: 1, label: "Bs 1" },
-                        { val: 0.5, label: "50 ctv" },
-                      ].map((m) => (
-                        <motion.button
-                          key={m.val}
-                          type="button"
-                          whileHover={{ scale: 1.08 }}
-                          whileTap={{ scale: 0.92 }}
-                          onClick={() => {
-                            agregarBillete(m.val);
-                            soundManager.playSuccessTone();
-                          }}
-                          className="px-3 py-1.5 rounded-full bg-gradient-to-b from-amber-100 to-amber-200 border border-amber-300 text-amber-950 font-bold text-xs shadow-xs hover:shadow-sm"
-                        >
-                          +{m.label}
-                        </motion.button>
-                      ))}
+                    {/* Monedas Bolivianas & Barra de Acciones Rápidas */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 mt-2 pt-2 border-t border-stone-100">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[11px] text-stone-500 font-semibold shrink-0">Monedas:</span>
+                        {[
+                          { val: 5, label: "Bs 5" },
+                          { val: 2, label: "Bs 2" },
+                          { val: 1, label: "Bs 1" },
+                          { val: 0.5, label: "50 ctv" },
+                        ].map((m) => (
+                          <motion.button
+                            key={m.val}
+                            type="button"
+                            whileHover={{ scale: 1.06 }}
+                            whileTap={{ scale: 0.94 }}
+                            onClick={() => agregarBillete(m.val)}
+                            className="px-2.5 py-1 rounded-full bg-gradient-to-b from-amber-100 to-amber-200 border border-amber-300 text-amber-950 font-bold text-xs shadow-2xs hover:shadow-xs cursor-pointer"
+                          >
+                            +{m.label}
+                          </motion.button>
+                        ))}
+                      </div>
 
-                      <button
-                        type="button"
-                        onClick={() => setMontoRecibido(0)}
-                        className="ml-auto text-[11px] text-stone-400 hover:text-red-600 transition"
-                      >
-                        Limpiar
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={pagarMontoJusto}
+                          className="px-3 py-1 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300/80 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                          title="Cobrar exactamente el monto de la orden"
+                        >
+                          <span>🎯 Pagar Justo (Bs {totalPagar.toFixed(2)})</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={limpiarEfectivo}
+                          className="px-2.5 py-1 rounded-xl bg-stone-100 hover:bg-rose-50 text-stone-600 hover:text-rose-600 border border-stone-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                          title="Reiniciar monto recibido a cero"
+                        >
+                          <Trash2 size={12} />
+                          <span>Borrar (0)</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* Inputs de Monto y Cambio Calculado */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-semibold text-stone-500 block mb-1">
-                        Monto Recibido en Mano (Bs)
-                      </label>
-                      <input
-                        type="number"
-                        step="0.5"
-                        value={montoRecibido || ""}
-                        onChange={(e) => setMontoRecibido(parseFloat(e.target.value) || 0)}
-                        className="w-full text-2xl font-bold font-mono p-3 rounded-2xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-800 transition"
-                      />
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-bold text-stone-700">
+                          Monto Recibido en Mano (Bs)
+                        </label>
+                        {montoRecibido > 0 && (
+                          <button
+                            type="button"
+                            onClick={limpiarEfectivo}
+                            className="text-[11px] text-stone-400 hover:text-rose-600 underline cursor-pointer"
+                          >
+                            Limpiar
+                          </button>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-3 text-stone-400 font-bold text-lg">Bs</span>
+                        <input
+                          type="number"
+                          step="0.5"
+                          value={montoRecibido || ""}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            setMontoRecibido(val);
+                            setBilletesRecibidosList(val > 0 ? [val] : []);
+                          }}
+                          placeholder="0.00"
+                          className="w-full text-2xl font-bold font-mono pl-11 pr-10 py-2.5 rounded-2xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-800 transition"
+                        />
+                        {montoRecibido > 0 && (
+                          <button
+                            type="button"
+                            onClick={limpiarEfectivo}
+                            className="absolute right-3 top-3 p-1 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-200 transition cursor-pointer"
+                            title="Borrar monto"
+                          >
+                            <X size={16} />
+                          </button>
+                        )}
+                      </div>
                     </div>
+
                     <div>
-                      <label className="text-xs font-semibold text-stone-500 block mb-1">
-                        Cambio / Vuelto a Devolver
+                      <label className="text-xs font-bold text-stone-700 block mb-1">
+                        {montoRecibido >= totalPagar ? "Cambio / Vuelto a Devolver" : "Monto Restante por Cobrar"}
                       </label>
-                      <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-2xl font-bold font-mono text-emerald-800 flex items-center justify-between">
-                        <span>Bs {cambio.toFixed(2)}</span>
-                        {cambio > 0 && <span className="text-xs font-sans font-medium text-emerald-600">Entregar vuelto ✓</span>}
+                      <div className={`p-2.5 rounded-2xl border text-2xl font-bold font-mono flex items-center justify-between ${
+                        montoRecibido >= totalPagar
+                          ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                          : "bg-amber-50 border-amber-200 text-amber-900"
+                      }`}>
+                        <span>Bs {montoRecibido >= totalPagar ? cambio.toFixed(2) : (totalPagar - montoRecibido).toFixed(2)}</span>
+                        {montoRecibido >= totalPagar ? (
+                          cambio > 0 ? (
+                            <span className="text-xs font-sans font-bold text-emerald-700">Entregar vuelto ✓</span>
+                          ) : (
+                            <span className="text-xs font-sans font-bold text-stone-500">Pago Justo ✓</span>
+                          )
+                        ) : (
+                          <span className="text-xs font-sans font-bold text-amber-800">Falta cobrar ⚠</span>
+                        )}
                       </div>
                     </div>
                   </div>
