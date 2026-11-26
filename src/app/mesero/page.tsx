@@ -214,9 +214,9 @@ export default function MeseroPage() {
 
   const confirmarPizzaTamano = () => {
     if (!modalPizzaMesero) return;
-    const p4 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p4 || modalPizzaMesero.precio;
-    const p6 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p6 || Math.round(p4 * 1.38);
-    const p8 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p8 || Math.round(p4 * 1.75);
+    const p4 = modalPizzaMesero.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p4 || modalPizzaMesero.precio;
+    const p6 = modalPizzaMesero.tamanios?.find((t) => t.nombre.includes("6"))?.precio || PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p6 || Math.round(p4 * 1.38);
+    const p8 = modalPizzaMesero.tamanios?.find((t) => t.nombre.includes("8"))?.precio || PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p8 || Math.round(p4 * 1.75);
     const precio = tamanoPizzaMesero === 4 ? p4 : tamanoPizzaMesero === 6 ? p6 : p8;
 
     const itemAdaptado: Producto = {
@@ -1367,9 +1367,9 @@ export default function MeseroPage() {
               </div>
 
               {(() => {
-                const p4 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p4 || modalPizzaMesero.precio;
-                const p6 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p6 || Math.round(p4 * 1.38);
-                const p8 = PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p8 || Math.round(p4 * 1.75);
+                const p4 = modalPizzaMesero.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p4 || modalPizzaMesero.precio;
+                const p6 = modalPizzaMesero.tamanios?.find((t) => t.nombre.includes("6"))?.precio || PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = modalPizzaMesero.tamanios?.find((t) => t.nombre.includes("8"))?.precio || PIZZA_SIZES_MAP[modalPizzaMesero.id]?.p8 || Math.round(p4 * 1.75);
 
                 return (
                   <div className="space-y-3">

@@ -2652,9 +2652,9 @@ export default function HomePage() {
                 const esPizzaTradicional =
                   productoModal.categoria_id === "c_pizzas" &&
                   productoModal.id !== "prod_pizza_especial_dencker";
-                const p4 = PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
-                const p6 = PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
-                const p8 = PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
+                const p4 = productoModal.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
+                const p6 = productoModal.tamanios?.find((t) => t.nombre.includes("6"))?.precio || PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = productoModal.tamanios?.find((t) => t.nombre.includes("8"))?.precio || PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
                 const precioCalculado = esPizzaTradicional
                   ? tamanoPizzaModal === 4
                     ? p4
@@ -2770,9 +2770,9 @@ export default function HomePage() {
                 const esPizzaTradicional =
                   productoModal.categoria_id === "c_pizzas" &&
                   productoModal.id !== "prod_pizza_especial_dencker";
-                const p4 = PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
-                const p6 = PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
-                const p8 = PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
+                const p4 = productoModal.tamanios?.find((t) => t.nombre.includes("4"))?.precio || PIZZA_SIZES_MAP[productoModal.id]?.p4 || productoModal.precio;
+                const p6 = productoModal.tamanios?.find((t) => t.nombre.includes("6"))?.precio || PIZZA_SIZES_MAP[productoModal.id]?.p6 || Math.round(p4 * 1.38);
+                const p8 = productoModal.tamanios?.find((t) => t.nombre.includes("8"))?.precio || PIZZA_SIZES_MAP[productoModal.id]?.p8 || Math.round(p4 * 1.75);
                 const precioCalculado = esPizzaTradicional
                   ? tamanoPizzaModal === 4
                     ? p4

@@ -273,6 +273,9 @@ export default function AdminPage() {
   // Estados Gestión Productos
   const [modalProductoAbierto, setModalProductoAbierto] = useState(false);
   const [productoAEditar, setProductoAEditar] = useState<Producto | null>(null);
+  const [tabProductoModal, setTabProductoModal] = useState<"general" | "precios" | "imagen" | "personalizacion">("general");
+  const [nuevoChipInput, setNuevoChipInput] = useState("");
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
   const [filtroCategoria, setFiltroCategoria] = useState("todas");
   const [busquedaProducto, setBusquedaProducto] = useState("");
   const [subiendoImgBB, setSubiendoImgBB] = useState(false);
@@ -413,7 +416,21 @@ export default function AdminPage() {
     }
   };
 
-  const [formProducto, setFormProducto] = useState({
+  const [formProducto, setFormProducto] = useState<{
+    nombre: string;
+    descripcion: string;
+    categoria_id: string;
+    precio: number;
+    costo: number;
+    estacion: Estacion;
+    imagen_url: string;
+    chips_input: string;
+    chips_list: string[];
+    es_mas_vendido: boolean;
+    disponible: boolean;
+    tiene_tamanios: boolean;
+    tamanios: { nombre: string; precio: number }[];
+  }>({
     nombre: "",
     descripcion: "",
     categoria_id: categorias[0]?.id || "c1",
@@ -422,8 +439,11 @@ export default function AdminPage() {
     estacion: "cafeteria" as Estacion,
     imagen_url: "",
     chips_input: "Sin azúcar, Con Stevia, Bien caliente",
+    chips_list: ["Sin azúcar", "Con Stevia", "Bien caliente"],
     es_mas_vendido: false,
     disponible: true,
+    tiene_tamanios: false,
+    tamanios: [],
   });
 
   // Métricas computadas
@@ -613,85 +633,197 @@ export default function AdminPage() {
     setModalMesaAbierto(false);
   };
 
-  // --- Handlers Productos & ImgBB ---
+  // --- Handlers Productos & ImgBB / Storage ---
   const abrirModalNuevoProducto = () => {
     soundManager.playClick();
     setProductoAEditar(null);
+    setTabProductoModal("general");
+    setNuevoChipInput("");
     setFormProducto({
       nombre: "",
       descripcion: "",
-      categoria_id: categorias[0]?.id || "c1",
+      categoria_id: categorias[0]?.id || "c_cafes",
       precio: 20,
       costo: 6,
       estacion: "cafeteria",
       imagen_url: "",
       chips_input: "Sin azúcar, Con Stevia, Bien caliente",
+      chips_list: ["Sin azúcar", "Con Stevia", "Bien caliente"],
       es_mas_vendido: false,
       disponible: true,
+      tiene_tamanios: false,
+      tamanios: [],
     });
     setErrorImgBB(null);
+    setNubeExito(null);
     setModalProductoAbierto(true);
   };
 
   const abrirModalEditarProducto = (p: Producto) => {
     soundManager.playClick();
     setProductoAEditar(p);
+    setTabProductoModal("general");
+    setNuevoChipInput("");
+    const chips = p.chips_personalizacion || [];
+    const tieneTam = Boolean(p.tamanios && p.tamanios.length > 0);
     setFormProducto({
       nombre: p.nombre,
       descripcion: p.descripcion || "",
-      categoria_id: p.categoria_id || categorias[0]?.id || "c1",
+      categoria_id: p.categoria_id || categorias[0]?.id || "c_cafes",
       precio: p.precio,
       costo: p.costo,
       estacion: p.estacion,
       imagen_url: p.imagen_url || "",
-      chips_input: (p.chips_personalizacion || []).join(", "),
+      chips_input: chips.join(", "),
+      chips_list: [...chips],
       es_mas_vendido: p.es_mas_vendido,
       disponible: p.disponible,
+      tiene_tamanios: tieneTam,
+      tamanios: p.tamanios ? p.tamanios.map((t) => ({ ...t })) : [],
     });
     setErrorImgBB(null);
+    setNubeExito(null);
     setModalProductoAbierto(true);
   };
 
   const [proveedorCloud, setProveedorCloud] = useState<CloudStorageProvider>("cloudinary");
   const [nubeExito, setNubeExito] = useState<string | null>(null);
 
-  const handleSubirImagenImgBB = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const procesarArchivoImagen = (file: File) => {
     if (!file) return;
-
+    if (!file.type.startsWith("image/")) {
+      setErrorImgBB("Por favor selecciona un archivo de imagen válido (JPG, PNG, WEBP).");
+      return;
+    }
+    soundManager.playClick();
     setSubiendoImgBB(true);
     setErrorImgBB(null);
     setNubeExito(null);
 
-    try {
-      const res = await uploadImageMultiCloud(file, proveedorCloud);
-      setFormProducto((prev) => ({ ...prev, imagen_url: res.url || "" }));
-      setNubeExito(`Subido a ${res.provider.toUpperCase()} ✓`);
-      soundManager.playSuccessTone();
-    } catch (err: any) {
-      setErrorImgBB(err?.message || "Error al subir a la nube. Verifica tu conexión.");
-    } finally {
-      setSubiendoImgBB(false);
+    // 1. Carga inmediata garantizada al 100% con FileReader local
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      if (dataUrl) {
+        setFormProducto((prev) => ({ ...prev, imagen_url: dataUrl }));
+        setNubeExito("Foto cargada con éxito en tu dispositivo ✓");
+        soundManager.playSuccessTone();
+      }
+    };
+    reader.onerror = () => {
+      setErrorImgBB("Error al leer el archivo en tu dispositivo.");
+    };
+    reader.readAsDataURL(file);
+
+    // 2. Subida en segundo plano si hay proveedor configurado
+    uploadImageMultiCloud(file, proveedorCloud)
+      .then((res) => {
+        if (res.url) {
+          setFormProducto((prev) => ({ ...prev, imagen_url: res.url }));
+          setNubeExito(`Optimizada en nube (${res.provider.toUpperCase()}) ✓`);
+        }
+      })
+      .catch((err) => {
+        console.warn("Subida a nube secundaria omitida, manteniendo imagen local:", err);
+      })
+      .finally(() => {
+        setSubiendoImgBB(false);
+      });
+  };
+
+  const handleSubirImagenImgBB = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) procesarArchivoImagen(file);
+  };
+
+  const aplicarPresetTamanios = (tipo: "pizzas" | "cafe" | "pasteleria" | "bebidas") => {
+    soundManager.playClick();
+    if (tipo === "pizzas") {
+      setFormProducto((prev) => ({
+        ...prev,
+        tiene_tamanios: true,
+        tamanios: [
+          { nombre: "4 porc (Personal)", precio: Math.round(prev.precio || 35) },
+          { nombre: "6 porc (Mediana)", precio: Math.round((prev.precio || 35) * 1.43) },
+          { nombre: "8 porc (Familiar)", precio: Math.round((prev.precio || 35) * 1.95) },
+        ],
+      }));
+    } else if (tipo === "cafe") {
+      setFormProducto((prev) => ({
+        ...prev,
+        tiene_tamanios: true,
+        tamanios: [
+          { nombre: "Simple (6 oz)", precio: Math.round(prev.precio || 18) },
+          { nombre: "Doble / Grande (10 oz)", precio: Math.round((prev.precio || 18) + 6) },
+        ],
+      }));
+    } else if (tipo === "pasteleria") {
+      setFormProducto((prev) => ({
+        ...prev,
+        tiene_tamanios: true,
+        tamanios: [
+          { nombre: "Porción Individual", precio: Math.round(prev.precio || 20) },
+          { nombre: "Tarta Completa (8-10 p)", precio: Math.round((prev.precio || 20) * 4.5) },
+        ],
+      }));
+    } else if (tipo === "bebidas") {
+      setFormProducto((prev) => ({
+        ...prev,
+        tiene_tamanios: true,
+        tamanios: [
+          { nombre: "Vaso 350 ml", precio: Math.round(prev.precio || 14) },
+          { nombre: "Jarra 1 Litro", precio: Math.round((prev.precio || 14) * 2.5) },
+        ],
+      }));
     }
   };
 
+  const agregarChip = (chipTexto: string) => {
+    const clean = chipTexto.trim();
+    if (!clean) return;
+    if (formProducto.chips_list.includes(clean)) return;
+    soundManager.playClick();
+    const updated = [...formProducto.chips_list, clean];
+    setFormProducto((prev) => ({
+      ...prev,
+      chips_list: updated,
+      chips_input: updated.join(", "),
+    }));
+    setNuevoChipInput("");
+  };
+
+  const removerChip = (chipIndex: number) => {
+    soundManager.playClick();
+    const updated = formProducto.chips_list.filter((_, idx) => idx !== chipIndex);
+    setFormProducto((prev) => ({
+      ...prev,
+      chips_list: updated,
+      chips_input: updated.join(", "),
+    }));
+  };
+
   const guardarProducto = () => {
-    const chips = formProducto.chips_input
-      .split(",")
-      .map((c) => c.trim())
-      .filter(Boolean);
+    if (!formProducto.nombre.trim()) {
+      soundManager.playError();
+      setErrorImgBB("Por favor ingresa un nombre para el producto.");
+      setTabProductoModal("general");
+      return;
+    }
 
     const payload = {
-      nombre: formProducto.nombre,
-      descripcion: formProducto.descripcion,
+      nombre: formProducto.nombre.trim(),
+      descripcion: formProducto.descripcion.trim(),
       categoria_id: formProducto.categoria_id,
-      precio: formProducto.precio,
-      costo: formProducto.costo,
+      precio: Number(formProducto.precio) || 0,
+      costo: Number(formProducto.costo) || 0,
       estacion: formProducto.estacion,
       imagen_url: formProducto.imagen_url || undefined,
-      chips_personalizacion: chips,
-      es_mas_vendido: formProducto.es_mas_vendido,
-      disponible: formProducto.disponible,
+      chips_personalizacion: formProducto.chips_list,
+      es_mas_vendido: Boolean(formProducto.es_mas_vendido),
+      disponible: Boolean(formProducto.disponible),
+      tamanios: formProducto.tiene_tamanios && formProducto.tamanios.length > 0
+        ? formProducto.tamanios.filter((t) => t.nombre.trim())
+        : undefined,
       stock: -1,
     };
 
@@ -1248,6 +1380,34 @@ export default function AdminPage() {
                             <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">
                               {prod.descripcion}
                             </p>
+                          )}
+
+                          {/* Variantes de Tamaño si existen */}
+                          {prod.tamanios && prod.tamanios.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/30">
+                                🍕 {prod.tamanios.length} tamaños ({prod.tamanios.map((t) => `${t.nombre}: Bs ${t.precio}`).join(" • ")})
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Chips de Personalización Preview */}
+                          {prod.chips_personalizacion && prod.chips_personalizacion.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pt-0.5">
+                              {prod.chips_personalizacion.slice(0, 3).map((chip, i) => (
+                                <span
+                                  key={i}
+                                  className="text-[9px] px-1.5 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
+                                >
+                                  {chip}
+                                </span>
+                              ))}
+                              {prod.chips_personalizacion.length > 3 && (
+                                <span className="text-[9px] text-stone-400 font-semibold">
+                                  +{prod.chips_personalizacion.length - 3}
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
 
@@ -4145,262 +4305,780 @@ export default function AdminPage() {
         )}
       </AnimatePresence>
 
-      {/* ── Modal Producto con ImgBB ── */}
+      {/* ── Modal Producto Mejorado (Organizado en 4 Pestañas + Gestor de Fotos HD + Tamaños) ── */}
       <AnimatePresence>
         {modalProductoAbierto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-stone-200 dark:border-stone-800"
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-2xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-200 dark:border-stone-800 overflow-hidden text-stone-900 dark:text-stone-100"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800">
-                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
-                  {productoAEditar ? `Editar ${productoAEditar.nombre}` : "Nuevo Producto en Catálogo"}
-                </h3>
+              {/* Encabezado del Modal */}
+              <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between gap-3 bg-stone-50 dark:bg-stone-950/60 shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-xl shrink-0 overflow-hidden">
+                    {formProducto.imagen_url ? (
+                      <img src={formProducto.imagen_url} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      categorias.find((c) => c.id === formProducto.categoria_id)?.emoji || "🥐"
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-serif text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100 truncate">
+                      {productoAEditar ? `Editar: ${productoAEditar.nombre}` : "Nuevo Producto en Catálogo"}
+                    </h3>
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 truncate">
+                      {categorias.find((c) => c.id === formProducto.categoria_id)?.nombre || "General"} • Estación {formProducto.estacion}
+                    </p>
+                  </div>
+                </div>
+
                 <button
+                  type="button"
                   onClick={() => setModalProductoAbierto(false)}
-                  className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
+                  className="p-2 rounded-full text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800 transition cursor-pointer shrink-0"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              <div className="space-y-3 text-xs">
-                <div>
-                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                    Nombre del Producto
-                  </label>
-                  <input
-                    type="text"
-                    value={formProducto.nombre}
-                    onChange={(e) =>
-                      setFormProducto({ ...formProducto, nombre: e.target.value })
-                    }
-                    placeholder="ej. Latte con Almendras"
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
-                  />
-                </div>
+              {/* Selector de Pestañas Organizadas */}
+              <div className="px-4 pt-2 bg-stone-100/70 dark:bg-stone-900/80 border-b border-stone-200 dark:border-stone-800 flex items-center gap-1 overflow-x-auto scrollbar-none shrink-0">
+                <button
+                  type="button"
+                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("general"); }}
+                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
+                    tabProductoModal === "general"
+                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
+                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                  }`}
+                >
+                  <UtensilsCrossed size={14} />
+                  <span>1. General</span>
+                </button>
 
-                <div>
-                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                    Descripción
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={formProducto.descripcion}
-                    onChange={(e) =>
-                      setFormProducto({ ...formProducto, descripcion: e.target.value })
-                    }
-                    placeholder="Descripción para el menú QR..."
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                      Categoría
-                    </label>
-                    <select
-                      value={formProducto.categoria_id}
-                      onChange={(e) =>
-                        setFormProducto({ ...formProducto, categoria_id: e.target.value })
-                      }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
-                    >
-                      {categorias.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.emoji} {c.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                      Estación
-                    </label>
-                    <select
-                      value={formProducto.estacion}
-                      onChange={(e) =>
-                        setFormProducto({
-                          ...formProducto,
-                          estacion: e.target.value as Estacion,
-                        })
-                      }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
-                    >
-                      <option value="cafeteria">Cafetería</option>
-                      <option value="vitrina">Vitrina / Panadería</option>
-                      <option value="cocina">Cocina Caliente</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                      Precio de Venta (Bs)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.5"
-                      value={formProducto.precio}
-                      onChange={(e) =>
-                        setFormProducto({
-                          ...formProducto,
-                          precio: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 font-mono font-bold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                      Costo de Producción (Bs)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.5"
-                      value={formProducto.costo}
-                      onChange={(e) =>
-                        setFormProducto({
-                          ...formProducto,
-                          costo: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 font-mono"
-                    />
-                  </div>
-                </div>
-
-                {/* Margen Calculado */}
-                <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-xs">
-                  <span className="font-bold text-emerald-800 dark:text-emerald-300">
-                    Margen Bruto de Ganancia:
-                  </span>
-                  <span className="font-mono font-black text-emerald-900 dark:text-emerald-200">
-                    {margenBrutoPct}% (Bs {(formProducto.precio - formProducto.costo).toFixed(2)} por unidad)
-                  </span>
-                </div>
-
-                {/* Subida ImgBB */}
-                <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-amber-950 dark:text-amber-200 flex items-center gap-1.5">
-                      <ImageIcon size={14} /> Subir Imagen a ImgBB
+                <button
+                  type="button"
+                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("precios"); }}
+                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
+                    tabProductoModal === "precios"
+                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
+                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                  }`}
+                >
+                  <DollarSign size={14} />
+                  <span>2. Precios y Tamaños</span>
+                  {formProducto.tiene_tamanios && (
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 font-mono">
+                      {formProducto.tamanios.length}p
                     </span>
-                    {formProducto.imagen_url && (
-                      <span className="text-[10px] text-emerald-700 font-bold">Imagen vinculada ✓</span>
-                    )}
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("imagen"); }}
+                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
+                    tabProductoModal === "imagen"
+                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
+                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                  }`}
+                >
+                  <ImageIcon size={14} />
+                  <span>3. Foto & Portada</span>
+                  {formProducto.imagen_url && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("personalizacion"); }}
+                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
+                    tabProductoModal === "personalizacion"
+                      ? "border-amber-700 text-amber-900 dark:text-amber-400 bg-white dark:bg-stone-900 shadow-2xs"
+                      : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                  }`}
+                >
+                  <Sparkles size={14} />
+                  <span>4. Personalización</span>
+                  {formProducto.chips_list.length > 0 && (
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 font-mono">
+                      {formProducto.chips_list.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* Mensajes de Alerta y Notificaciones */}
+              {errorImgBB && (
+                <div className="mx-4 mt-3 p-2.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
+                  <AlertTriangle size={15} className="shrink-0" />
+                  <span>{errorImgBB}</span>
+                </div>
+              )}
+              {nubeExito && (
+                <div className="mx-4 mt-3 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2">
+                  <CheckCircle2 size={15} className="shrink-0" />
+                  <span>{nubeExito}</span>
+                </div>
+              )}
+
+              {/* Cuerpo de la Pestaña Activa */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-xs">
+                {/* ══════════════ PESTAÑA 1: GENERAL & COCINA ══════════════ */}
+                {tabProductoModal === "general" && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                        Nombre Comercial del Producto *
+                      </label>
+                      <input
+                        type="text"
+                        value={formProducto.nombre}
+                        onChange={(e) =>
+                          setFormProducto({ ...formProducto, nombre: e.target.value })
+                        }
+                        placeholder="Ej. Pizza Margarita, Latte con Almendras, Croissant de Mantequilla..."
+                        className="w-full p-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                          Categoría en Carta
+                        </label>
+                        <select
+                          value={formProducto.categoria_id}
+                          onChange={(e) =>
+                            setFormProducto({ ...formProducto, categoria_id: e.target.value })
+                          }
+                          className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium"
+                        >
+                          {categorias.map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.emoji} {c.nombre}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                          Estación de Preparación / KDS
+                        </label>
+                        <select
+                          value={formProducto.estacion}
+                          onChange={(e) =>
+                            setFormProducto({ ...formProducto, estacion: e.target.value as Estacion })
+                          }
+                          className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium"
+                        >
+                          <option value="cafeteria">☕ Cafetería & Barismo (Bebidas)</option>
+                          <option value="vitrina">🥐 Vitrina & Panadería (Despacho)</option>
+                          <option value="cocina">🍳 Cocina Caliente (Pizzas & Platos)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                        Descripción Gastronómica para el Cliente
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={formProducto.descripcion}
+                        onChange={(e) =>
+                          setFormProducto({ ...formProducto, descripcion: e.target.value })
+                        }
+                        placeholder="Ingredientes auténticos, notas de cata, horneado o detalles de preparación..."
+                        className="w-full p-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      {/* Switch Disponible */}
+                      <label className="flex items-center gap-3 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formProducto.disponible}
+                          onChange={(e) =>
+                            setFormProducto({ ...formProducto, disponible: e.target.checked })
+                          }
+                          className="w-4 h-4 accent-amber-700 rounded cursor-pointer"
+                        />
+                        <div>
+                          <span className="font-bold text-stone-900 dark:text-stone-100 block">
+                            ¿Disponible en Carta?
+                          </span>
+                          <span className="text-[10px] text-stone-500">
+                            {formProducto.disponible ? "Visible para pedidos en mesa y mozo" : "Pausado temporalmente por stock"}
+                          </span>
+                        </div>
+                      </label>
+
+                      {/* Switch Más Vendido */}
+                      <label className="flex items-center gap-3 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formProducto.es_mas_vendido}
+                          onChange={(e) =>
+                            setFormProducto({ ...formProducto, es_mas_vendido: e.target.checked })
+                          }
+                          className="w-4 h-4 accent-amber-700 rounded cursor-pointer"
+                        />
+                        <div>
+                          <span className="font-bold text-stone-900 dark:text-stone-100 block flex items-center gap-1">
+                            ⭐ Producto Estrella
+                          </span>
+                          <span className="text-[10px] text-stone-500">
+                            Destacado en el menú digital con badge oficial
+                          </span>
+                        </div>
+                      </label>
+                    </div>
                   </div>
+                )}
 
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleSubirImagenImgBB}
-                    className="hidden"
-                  />
+                {/* ══════════════ PESTAÑA 2: PRECIOS Y TAMAÑOS ══════════════ */}
+                {tabProductoModal === "precios" && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                          Precio de Venta Base (Bs) *
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-3 text-stone-400 font-bold">Bs</span>
+                          <input
+                            type="number"
+                            step="0.5"
+                            value={formProducto.precio}
+                            onChange={(e) =>
+                              setFormProducto({ ...formProducto, precio: parseFloat(e.target.value) || 0 })
+                            }
+                            className="w-full pl-10 pr-3 py-2.5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundManager.playClick();
-                        setProductoParaGaleria(productoAEditar);
-                        setGaleriaFotosAbierta(true);
+                      <div>
+                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                          Costo de Elaboración (Bs)
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-3 text-stone-400 font-bold">Bs</span>
+                          <input
+                            type="number"
+                            step="0.5"
+                            value={formProducto.costo}
+                            onChange={(e) =>
+                              setFormProducto({ ...formProducto, costo: parseFloat(e.target.value) || 0 })
+                            }
+                            className="w-full pl-10 pr-3 py-2.5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tarjeta de Rentabilidad y Margen Comercial */}
+                    <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-3">
+                      <div>
+                        <span className="font-bold text-stone-800 dark:text-stone-200 block">
+                          Margen Bruto de Ganancia:
+                        </span>
+                        <span className="text-[11px] text-stone-500">
+                          Ganancia líquida estimada: <strong>Bs {(formProducto.precio - formProducto.costo).toFixed(2)}</strong> por unidad
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className={`font-mono text-lg font-black ${
+                          margenBrutoPct >= 50
+                            ? "text-emerald-700 dark:text-emerald-400"
+                            : margenBrutoPct >= 30
+                            ? "text-amber-700 dark:text-amber-400"
+                            : "text-rose-700 dark:text-rose-400"
+                        }`}>
+                          {margenBrutoPct}%
+                        </span>
+                        <span className="text-[10px] text-stone-400 block">
+                          {margenBrutoPct >= 50 ? "✓ Margen Óptimo" : margenBrutoPct >= 30 ? "⚠ Margen Normal" : "✕ Margen Bajo"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* ── SECCIÓN DE VARIANTES POR TAMAÑOS / PORCIONES ── */}
+                    <div className="pt-2 border-t border-stone-200 dark:border-stone-800 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <h4 className="font-bold text-stone-900 dark:text-stone-100 text-xs flex items-center gap-1.5">
+                            <Layers size={14} className="text-amber-600" />
+                            Variantes por Tamaño o Porciones (Ej: Pizzas 4, 6 y 8 porc)
+                          </h4>
+                          <p className="text-[11px] text-stone-500">
+                            Permite al cliente elegir el tamaño y recalcula el precio automáticamente
+                          </p>
+                        </div>
+
+                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                          <input
+                            type="checkbox"
+                            checked={formProducto.tiene_tamanios}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setFormProducto((prev) => ({
+                                ...prev,
+                                tiene_tamanios: checked,
+                                tamanios: checked && prev.tamanios.length === 0
+                                  ? [
+                                      { nombre: "4 porc", precio: prev.precio || 35 },
+                                      { nombre: "6 porc", precio: Math.round((prev.precio || 35) * 1.4) },
+                                      { nombre: "8 porc", precio: Math.round((prev.precio || 35) * 1.9) },
+                                    ]
+                                  : prev.tamanios,
+                              }));
+                            }}
+                            className="sr-only peer"
+                          />
+                          <div className="w-10 h-5 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-700"></div>
+                        </label>
+                      </div>
+
+                      {formProducto.tiene_tamanios && (
+                        <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-3">
+                          {/* Presets Rápidos */}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-[10px] text-stone-400 font-bold uppercase mr-1">Plantillas:</span>
+                            <button
+                              type="button"
+                              onClick={() => aplicarPresetTamanios("pizzas")}
+                              className="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-900 dark:text-amber-300 font-bold text-[11px] hover:bg-amber-500/25 transition cursor-pointer"
+                            >
+                              🍕 Pizza (4, 6 y 8 porc)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => aplicarPresetTamanios("cafe")}
+                              className="px-2.5 py-1 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-[11px] hover:bg-stone-300 transition cursor-pointer"
+                            >
+                              ☕ Café (Simple / Doble)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => aplicarPresetTamanios("pasteleria")}
+                              className="px-2.5 py-1 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-[11px] hover:bg-stone-300 transition cursor-pointer"
+                            >
+                              🍰 Individual / Entera
+                            </button>
+                          </div>
+
+                          {/* Filas de Tamaños */}
+                          <div className="space-y-2">
+                            {formProducto.tamanios.map((tam, idx) => (
+                              <div key={idx} className="flex items-center gap-2">
+                                <input
+                                  type="text"
+                                  placeholder="Nombre de tamaño (ej. 4 porc)"
+                                  value={tam.nombre}
+                                  onChange={(e) => {
+                                    const updated = [...formProducto.tamanios];
+                                    updated[idx].nombre = e.target.value;
+                                    setFormProducto({ ...formProducto, tamanios: updated });
+                                  }}
+                                  className="flex-1 p-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-semibold"
+                                />
+                                <div className="relative w-28">
+                                  <span className="absolute left-2.5 top-2 text-stone-400 font-bold text-xs">Bs</span>
+                                  <input
+                                    type="number"
+                                    step="0.5"
+                                    placeholder="Precio"
+                                    value={tam.precio}
+                                    onChange={(e) => {
+                                      const updated = [...formProducto.tamanios];
+                                      updated[idx].precio = parseFloat(e.target.value) || 0;
+                                      setFormProducto({ ...formProducto, tamanios: updated });
+                                    }}
+                                    className="w-full pl-8 pr-2 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-mono font-bold"
+                                  />
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    soundManager.playClick();
+                                    const updated = formProducto.tamanios.filter((_, i) => i !== idx);
+                                    setFormProducto({ ...formProducto, tamanios: updated });
+                                  }}
+                                  className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
+                                  title="Eliminar tamaño"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              soundManager.playClick();
+                              setFormProducto((prev) => ({
+                                ...prev,
+                                tamanios: [...prev.tamanios, { nombre: `Tamaño ${prev.tamanios.length + 1}`, precio: prev.precio || 30 }],
+                              }));
+                            }}
+                            className="px-3 py-1.5 rounded-xl border border-dashed border-stone-300 dark:border-stone-700 hover:border-amber-600 text-stone-600 dark:text-stone-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                          >
+                            <Plus size={13} />
+                            <span>Agregar Otra Porción / Tamaño</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* ══════════════ PESTAÑA 3: FOTO & PORTADA HD ══════════════ */}
+                {tabProductoModal === "imagen" && (
+                  <div className="space-y-4">
+                    {/* Visualizador Hero Preview de la Foto Actual */}
+                    <div className="p-4 rounded-3xl bg-stone-50 dark:bg-stone-800/40 border border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row items-center gap-4">
+                      <div className="relative w-36 h-36 rounded-2xl overflow-hidden border-2 border-amber-500/40 bg-stone-200 dark:bg-stone-800 shadow-md shrink-0 flex items-center justify-center">
+                        {formProducto.imagen_url ? (
+                          <img
+                            src={formProducto.imagen_url}
+                            alt="Preview de producto"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-center p-3 text-stone-400">
+                            <ImageIcon size={32} className="mx-auto mb-1 opacity-50" />
+                            <span className="text-[10px] font-bold block">Sin Foto Asignada</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 space-y-2 text-center sm:text-left min-w-0">
+                        <div className="flex items-center justify-center sm:justify-start gap-2">
+                          <span className="font-bold text-sm text-stone-900 dark:text-stone-100 truncate">
+                            {formProducto.imagen_url ? "Imagen Vinculada ✓" : "Elige una foto para tu producto"}
+                          </span>
+                          {formProducto.imagen_url && (
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                              Activa
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                          {formProducto.imagen_url
+                            ? "Esta imagen se mostrará en alta definición en la carta digital QR de las mesas y en el catálogo del mozo."
+                            : "Puedes arrastrar una foto desde tu dispositivo o seleccionar una foto real del menú de Dencker Pan abajo."}
+                        </p>
+
+                        {formProducto.imagen_url && (
+                          <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundManager.playClick();
+                                setFormProducto((prev) => ({ ...prev, imagen_url: "" }));
+                                setNubeExito("Foto removida. Se usará el ícono de categoría.");
+                              }}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                            >
+                              <Trash2 size={12} />
+                              <span>Quitar Foto</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="px-3 py-1.5 rounded-xl bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                            >
+                              <Upload size={12} />
+                              <span>Cambiar por otra</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Zona Drag & Drop de Subida desde PC / Celular */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleSubirImagenImgBB}
+                      className="hidden"
+                    />
+
+                    <div
+                      onDragOver={(e) => { e.preventDefault(); setIsDraggingImage(true); }}
+                      onDragLeave={() => setIsDraggingImage(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDraggingImage(false);
+                        const file = e.dataTransfer.files?.[0];
+                        if (file) procesarArchivoImagen(file);
                       }}
-                      className="px-3.5 py-2 rounded-xl bg-amber-500/20 text-amber-900 dark:text-amber-200 font-bold text-xs border border-amber-500/40 hover:bg-amber-500/30 transition flex items-center gap-1.5 cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`p-6 rounded-3xl border-2 border-dashed text-center transition cursor-pointer flex flex-col items-center justify-center space-y-2 ${
+                        isDraggingImage
+                          ? "border-amber-600 bg-amber-500/10 scale-[1.01]"
+                          : "border-stone-300 dark:border-stone-700 hover:border-amber-500 hover:bg-amber-50/40 dark:hover:bg-amber-950/20"
+                      }`}
                     >
-                      <ImageIcon size={14} className="text-amber-600" />
-                      <span>Elegir Foto Real ({REAL_PRODUCT_PHOTOS.length})</span>
-                    </button>
+                      <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+                        <Upload size={22} className={subiendoImgBB ? "animate-bounce" : ""} />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="font-bold text-xs text-stone-900 dark:text-stone-100 block">
+                          {subiendoImgBB ? "Procesando y cargando imagen..." : "Haz clic para subir desde tu PC o celular, o arrastra la foto aquí"}
+                        </span>
+                        <span className="text-[10px] text-stone-400 block">
+                          Soporta fotos JPG, PNG, WEBP de cualquier resolución (Previsualización instantánea garantizada)
+                        </span>
+                      </div>
+                    </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <select
-                        value={proveedorCloud}
-                        onChange={(e) => setProveedorCloud(e.target.value as CloudStorageProvider)}
-                        className="p-1.5 text-xs rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 font-bold"
-                        title="Seleccionar proveedor de almacenamiento en la nube"
-                      >
-                        <option value="cloudinary">Cloudinary ☁️</option>
-                        <option value="supabase">Supabase 🗄️</option>
-                        <option value="imgbb">ImgBB 🚀</option>
-                      </select>
+                    {/* Selector Rápido de Fotos Reales Recomendadas del Local */}
+                    <div className="space-y-2 pt-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+                          <Sparkles size={14} className="text-amber-600" />
+                          Fotos reales recomendadas de Dencker Pan (1 toque para asignar):
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            soundManager.playClick();
+                            setProductoParaGaleria(productoAEditar);
+                            setGaleriaFotosAbierta(true);
+                          }}
+                          className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <span>Explorar las {REAL_PRODUCT_PHOTOS.length} fotos</span>
+                          <ExternalLink size={12} />
+                        </button>
+                      </div>
 
+                      {/* Rejilla de fotos rápidas */}
+                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                        {REAL_PRODUCT_PHOTOS
+                          .filter((foto) => {
+                            // Mostrar primero fotos según categoría
+                            if (formProducto.categoria_id === "c_pizzas") return foto.includes("pizza") || foto.includes("/img/products/");
+                            if (formProducto.categoria_id === "c_sandwiches") return foto.includes("sandwich") || foto.includes("croque") || foto.includes("lomito");
+                            if (formProducto.categoria_id === "c_cafes" || formProducto.categoria_id === "c_lattes") return foto.includes("coffee") || foto.includes("4llamas") || foto.includes("catuai");
+                            return foto.includes("/img/products/") || foto.includes("/img/brand/");
+                          })
+                          .slice(0, 12)
+                          .map((foto, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                soundManager.playSuccessTone();
+                                setFormProducto((prev) => ({ ...prev, imagen_url: foto }));
+                                setNubeExito("Foto real asignada al instante ✓");
+                              }}
+                              className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition group hover:scale-105 cursor-pointer ${
+                                formProducto.imagen_url === foto
+                                  ? "border-amber-600 ring-2 ring-amber-500"
+                                  : "border-stone-200 dark:border-stone-700 hover:border-amber-500"
+                              }`}
+                              title="Click para asignar esta foto"
+                            >
+                              <img src={foto} alt={`Foto real ${idx}`} className="w-full h-full object-cover" />
+                              {formProducto.imagen_url === foto && (
+                                <div className="absolute inset-0 bg-amber-900/60 flex items-center justify-center text-white">
+                                  <Check size={16} />
+                                </div>
+                              )}
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+
+                    {/* Enlace URL directo / Nube avanzada */}
+                    <div className="pt-2 border-t border-stone-200 dark:border-stone-800 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          placeholder="o pega aquí cualquier enlace URL web de la foto..."
+                          value={formProducto.imagen_url}
+                          onChange={(e) =>
+                            setFormProducto({ ...formProducto, imagen_url: e.target.value })
+                          }
+                          className="flex-1 p-2.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            soundManager.playClick();
+                            setProductoParaGaleria(productoAEditar);
+                            setGaleriaFotosAbierta(true);
+                          }}
+                          className="px-3.5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                        >
+                          <ImageIcon size={14} />
+                          <span>Galería Completa</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ══════════════ PESTAÑA 4: PERSONALIZACIÓN & CHIPS ══════════════ */}
+                {tabProductoModal === "personalizacion" && (
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-bold text-stone-900 dark:text-stone-100 text-xs mb-1">
+                        Chips de Preparación y Notas Frecuentes
+                      </h4>
+                      <p className="text-[11px] text-stone-500">
+                        Opciones de preparación rápida que el cliente o el mozo pueden seleccionar con 1 toque al pedir este producto.
+                      </p>
+                    </div>
+
+                    {/* Chips Activos */}
+                    <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-2">
+                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
+                        Chips Activos para este Producto ({formProducto.chips_list.length}):
+                      </span>
+
+                      {formProducto.chips_list.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {formProducto.chips_list.map((chip, idx) => (
+                            <span
+                              key={idx}
+                              className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/35 font-bold text-xs flex items-center gap-1.5"
+                            >
+                              <span>{chip}</span>
+                              <button
+                                type="button"
+                                onClick={() => removerChip(idx)}
+                                className="p-0.5 rounded-full hover:bg-amber-600/30 text-amber-700 dark:text-amber-400 cursor-pointer"
+                                title="Eliminar chip"
+                              >
+                                <X size={12} />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-stone-400 text-xs italic">
+                          No hay chips configurados. El cliente pedirá este producto en su presentación estándar.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Input para agregar nuevo chip */}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        placeholder="Escribe una opción de personalización (ej. Sin cebolla, Extra queso)..."
+                        value={nuevoChipInput}
+                        onChange={(e) => setNuevoChipInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            agregarChip(nuevoChipInput);
+                          }
+                        }}
+                        className="flex-1 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-semibold"
+                      />
                       <button
                         type="button"
-                        disabled={subiendoImgBB}
-                        onClick={() => fileInputRef.current?.click()}
-                        className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                        onClick={() => agregarChip(nuevoChipInput)}
+                        className="px-4 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1 cursor-pointer whitespace-nowrap"
                       >
-                        <Upload size={14} />
-                        <span>{subiendoImgBB ? "Subiendo..." : "Subir Nube"}</span>
+                        <Plus size={14} />
+                        <span>Agregar</span>
                       </button>
                     </div>
 
-                    <input
-                      type="text"
-                      placeholder="o pega URL de la imagen..."
-                      value={formProducto.imagen_url}
-                      onChange={(e) =>
-                        setFormProducto({ ...formProducto, imagen_url: e.target.value })
-                      }
-                      className="flex-1 min-w-[140px] p-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800"
-                    />
-                  </div>
-
-                  {errorImgBB && (
-                    <p className="text-[11px] text-red-600 font-medium">{errorImgBB}</p>
-                  )}
-
-                  {formProducto.imagen_url && (
-                    <div className="mt-2 flex items-center gap-3">
-                      <img
-                        src={formProducto.imagen_url}
-                        alt="Preview"
-                        className="w-14 h-14 rounded-xl object-cover border border-amber-300"
-                      />
-                      <span className="text-[10px] text-stone-500 truncate max-w-xs">
-                        {formProducto.imagen_url}
+                    {/* Sugerencias Rápidas de 1 Clic */}
+                    <div className="space-y-2 pt-2">
+                      <span className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block">
+                        Sugerencias Populares (Haz clic para agregar al instante):
                       </span>
-                    </div>
-                  )}
-                </div>
 
-                <div>
-                  <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                    Chips de Personalización (separados por coma)
-                  </label>
-                  <input
-                    type="text"
-                    value={formProducto.chips_input}
-                    onChange={(e) =>
-                      setFormProducto({ ...formProducto, chips_input: e.target.value })
-                    }
-                    placeholder="Sin azúcar, Con Stevia, Calentar en horno..."
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800"
-                  />
-                </div>
+                      <div className="space-y-1.5">
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            "Sin azúcar",
+                            "Con Stevia",
+                            "Leche deslactosada",
+                            "Leche de almendras",
+                            "Bien caliente",
+                            "Tibio",
+                            "Con hielo",
+                          ].map((sug, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => agregarChip(sug)}
+                              className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 dark:bg-stone-800 dark:hover:bg-amber-900/40 dark:text-stone-300 dark:hover:text-amber-200 border border-stone-200 dark:border-stone-700 text-[11px] font-medium transition cursor-pointer"
+                            >
+                              + {sug}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            "Calentar en horno",
+                            "Extra queso",
+                            "Sin cebolla",
+                            "Orégano extra",
+                            "Para llevar",
+                            "Cubiertos descartables",
+                          ].map((sug, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => agregarChip(sug)}
+                              className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 dark:bg-stone-800 dark:hover:bg-amber-900/40 dark:text-stone-300 dark:hover:text-amber-200 border border-stone-200 dark:border-stone-700 text-[11px] font-medium transition cursor-pointer"
+                            >
+                              + {sug}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-stone-200 dark:border-stone-800">
-                <button
-                  onClick={guardarProducto}
-                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs hover:bg-amber-950 transition"
-                >
-                  Guardar Producto
-                </button>
-                <button
-                  onClick={() => setModalProductoAbierto(false)}
-                  className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition"
-                >
-                  Cancelar
-                </button>
+              {/* Footer con Acciones Principales */}
+              <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/60 flex items-center justify-between gap-3 shrink-0">
+                <div className="text-[11px] text-stone-500 font-medium hidden sm:block">
+                  Pestaña activa: <strong className="capitalize">{tabProductoModal}</strong> • Todos los cambios se guardan localmente y en la nube
+                </div>
+
+                <div className="flex items-center gap-2 ml-auto w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => setModalProductoAbierto(false)}
+                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs hover:bg-stone-300 transition cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={guardarProducto}
+                    className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer"
+                  >
+                    <Check size={15} />
+                    <span>Guardar Producto</span>
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -4985,6 +5663,10 @@ export default function AdminPage() {
                               setFormProducto((prev) => ({ ...prev, imagen_url: fotoUrl }));
                               setGaleriaFotosAbierta(false);
                               setProductoParaGaleria(null);
+                            } else if (modalProductoAbierto) {
+                              soundManager.playSuccessTone();
+                              setFormProducto((prev) => ({ ...prev, imagen_url: fotoUrl }));
+                              setGaleriaFotosAbierta(false);
                             } else {
                               soundManager.playTactileClick();
                               setFotoSeleccionadaGaleria(fotoUrl);
@@ -5070,13 +5752,18 @@ export default function AdminPage() {
 
                     <button
                       type="button"
-                      disabled={!productoDestinoFotoId}
+                      disabled={!productoDestinoFotoId && !modalProductoAbierto}
                       onClick={() => {
                         if (productoDestinoFotoId) {
                           updateProducto(productoDestinoFotoId, { imagen_url: fotoSeleccionadaGaleria });
                           soundManager.playSuccessTone();
                           setFotoSeleccionadaGaleria(null);
                           setProductoDestinoFotoId("");
+                        } else if (modalProductoAbierto && fotoSeleccionadaGaleria) {
+                          setFormProducto((prev) => ({ ...prev, imagen_url: fotoSeleccionadaGaleria }));
+                          soundManager.playSuccessTone();
+                          setGaleriaFotosAbierta(false);
+                          setFotoSeleccionadaGaleria(null);
                         }
                       }}
                       className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold hover:bg-amber-950 disabled:opacity-40 transition cursor-pointer"

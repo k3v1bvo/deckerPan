@@ -65,6 +65,11 @@ export interface Categoria {
   imagen_url?: string;
 }
 
+export interface VarianteTamanio {
+  nombre: string;
+  precio: number;
+}
+
 export interface Producto {
   id: string;
   categoria_id?: string;
@@ -80,6 +85,7 @@ export interface Producto {
   stock: number;
   chips_personalizacion: string[];
   estacion: Estacion;
+  tamanios?: VarianteTamanio[];
   created_at?: string;
   updated_at?: string;
 }

@@ -2038,6 +2038,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 40,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 40 },
+      { "nombre": "6 porc", "precio": 55 },
+      { "nombre": "8 porc", "precio": 70 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 40)",
       "6 Porciones (+15 Bs -> Bs 55)",
@@ -2056,6 +2061,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": false,
     "stock": 45,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 35 },
+      { "nombre": "6 porc", "precio": 50 },
+      { "nombre": "8 porc", "precio": 65 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 35)",
       "6 Porciones (+15 Bs -> Bs 50)",
@@ -2074,6 +2084,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 40,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 40 },
+      { "nombre": "6 porc", "precio": 55 },
+      { "nombre": "8 porc", "precio": 70 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 40)",
       "6 Porciones (+15 Bs -> Bs 55)",
@@ -2092,6 +2107,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": false,
     "stock": 35,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 35 },
+      { "nombre": "6 porc", "precio": 50 },
+      { "nombre": "8 porc", "precio": 65 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 35)",
       "6 Porciones (+15 Bs -> Bs 50)",
@@ -2110,6 +2130,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": false,
     "stock": 35,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 35 },
+      { "nombre": "6 porc", "precio": 50 },
+      { "nombre": "8 porc", "precio": 70 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 35)",
       "6 Porciones (+15 Bs -> Bs 50)",
@@ -2128,6 +2153,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 35,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 40 },
+      { "nombre": "6 porc", "precio": 55 },
+      { "nombre": "8 porc", "precio": 70 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 40)",
       "6 Porciones (+15 Bs -> Bs 55)",
@@ -2146,6 +2176,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": false,
     "stock": 30,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 40 },
+      { "nombre": "6 porc", "precio": 55 },
+      { "nombre": "8 porc", "precio": 70 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 40)",
       "6 Porciones (+15 Bs -> Bs 55)",
@@ -2164,6 +2199,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 30,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 45 },
+      { "nombre": "6 porc", "precio": 55 },
+      { "nombre": "8 porc", "precio": 80 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 45)",
       "6 Porciones (+10 Bs -> Bs 55)",
@@ -2182,6 +2222,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 30,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 45 },
+      { "nombre": "6 porc", "precio": 65 },
+      { "nombre": "8 porc", "precio": 80 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 45)",
       "6 Porciones (+20 Bs -> Bs 65)",
@@ -2200,6 +2245,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 35,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 45 },
+      { "nombre": "6 porc", "precio": 65 },
+      { "nombre": "8 porc", "precio": 80 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 45)",
       "6 Porciones (+20 Bs -> Bs 65)",
@@ -2218,6 +2268,11 @@ export const SEED_PRODUCTOS: Producto[] = [
     "disponible": true,
     "es_mas_vendido": true,
     "stock": 35,
+    "tamanios": [
+      { "nombre": "4 porc", "precio": 45 },
+      { "nombre": "6 porc", "precio": 65 },
+      { "nombre": "8 porc", "precio": 80 }
+    ],
     "chips_personalizacion": [
       "4 Porciones (Bs 45)",
       "6 Porciones (+20 Bs -> Bs 65)",
