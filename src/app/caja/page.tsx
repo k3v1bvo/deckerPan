@@ -968,9 +968,9 @@ export default function CajaPage() {
                   /* ── ENCABEZADO FACTURA OFICIAL SIAT ── */
                   <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
                     <img
-                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      src="/img/brand/vectors/logo-dencker.svg"
                       alt="Dencker Pan"
-                      className="h-14 w-auto object-contain mx-auto mb-1.5"
+                      className="h-16 w-auto object-contain mx-auto mb-1.5"
                     />
                     <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
                       {facturacionSiatConfig.razonSocialEmisor || "DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."}
@@ -1002,9 +1002,9 @@ export default function CajaPage() {
                   /* ── ENCABEZADO RECIBO DE CONSUMO / COMPROBANTE ARTESANAL ── */
                   <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
                     <img
-                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      src="/img/brand/vectors/logo-dencker.svg"
                       alt="Dencker Pan"
-                      className="h-14 w-auto object-contain mx-auto mb-1.5"
+                      className="h-16 w-auto object-contain mx-auto mb-1.5"
                     />
                     <h4 className="font-black text-base font-serif text-stone-950 tracking-wider">
                       DENCKER PAN
@@ -1193,9 +1193,9 @@ export default function CajaPage() {
                 {/* Sello Don Dencker al pie de ambos comprobantes */}
                 <div className="flex items-center justify-center gap-2 pt-2 border-t border-dashed border-stone-300">
                   <img
-                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    src="/img/brand/vectors/mascot-don-dencker.svg"
                     alt="Sello Oficial Don Dencker"
-                    className="w-8 h-8 object-contain shrink-0"
+                    className="w-10 h-10 object-contain shrink-0"
                   />
                   <div className="text-left leading-tight">
                     <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
@@ -1335,9 +1335,9 @@ export default function CajaPage() {
                   {/* Encabezado Arqueo Oficial */}
                   <div className="text-center pb-2 border-b border-dashed border-stone-400">
                     <img
-                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      src="/img/brand/vectors/logo-dencker.svg"
                       alt="Dencker Pan"
-                      className="h-14 w-auto object-contain mx-auto mb-1.5"
+                      className="h-16 w-auto object-contain mx-auto mb-1.5"
                     />
                     <h3 className="font-serif font-black text-base tracking-wide text-stone-950">
                       DENCKER PAN

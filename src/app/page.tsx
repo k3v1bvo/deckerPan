@@ -45,6 +45,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import CoffeeLab from "@/components/CoffeeLab";
+import { DenckerLogo, AnimatedMascot } from "@/components/brand";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, SEED_CATEGORIAS, SEED_PRODUCTOS } from "@/lib/seed-data";
@@ -591,11 +592,7 @@ export default function HomePage() {
               
               {/* Sello de la Casa */}
               <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#F3ECE1] border border-[#E0D5C5] text-[#63493C] text-xs font-semibold shadow-2xs">
-                <img
-                  src="/img/brand/don-dencker-mascot-official.png"
-                  alt="Dencker Pan"
-                  className="w-5 h-5 object-contain"
-                />
+                <DenckerLogo className="w-6 h-6 shrink-0" color="#A02314" animated={true} />
                 <span className="font-serif font-bold tracking-wide uppercase text-[#1E130C]">
                   Dencker Pan
                 </span>
@@ -697,18 +694,14 @@ export default function HomePage() {
             <div className="lg:col-span-5 relative">
               
               {/* Mascota Croissant Saltarín Oficial Flotante con Diálogo */}
-              <div className="absolute -top-12 -right-4 sm:-right-8 z-30 flex flex-col items-end select-none pointer-events-none drop-shadow-2xl">
-                <div className="bg-[#FFFDF7] text-[#1E130C] border-2 border-[#D97706] rounded-2xl px-3 py-1.5 shadow-xl mb-1 text-[11px] font-black flex items-center gap-1.5 transform rotate-2">
-                  <span>🥐</span>
-                  <span>¡Recién horneado a las 16:30!</span>
-                </div>
-                <div className="w-28 h-28 sm:w-36 sm:h-36 transform hover:rotate-6 transition-transform">
-                  <img
-                    src="/img/brand/mascot-croissant-official.png"
-                    alt="Croissant Saltarín - Dencker Pan"
-                    className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.45)]"
-                  />
-                </div>
+              <div className="absolute -top-16 -right-2 sm:-right-6 z-30 flex flex-col items-end select-none pointer-events-auto drop-shadow-2xl">
+                <AnimatedMascot
+                  mascot="croissant"
+                  animation="bounce"
+                  speechBubble="¡Recién horneado a las 16:30!"
+                  speechBubblePosition="left"
+                  className="w-36 h-36 sm:w-44 sm:h-44"
+                />
               </div>
 
               <div className="relative rounded-3xl overflow-hidden border-2 border-[#EAE0D3] shadow-2xl group bg-[#1E130C]">
@@ -719,8 +712,8 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-                {/* Sello Flotante Superior */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none pr-14 sm:pr-24">
+                {/* Sello Flotante Superior: espacio libre para no chocar con la mascota */}
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none pr-36 sm:pr-48">
                   <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#1E130C] shadow-sm border border-[#D9CDBF] flex items-center gap-1.5">
                     <span>🥖</span> Horneado Diario a Mano
                   </span>
@@ -1062,12 +1055,13 @@ export default function HomePage() {
                 className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
                 {/* Escenario del Personaje Ilustrado */}
-                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                <div className="h-40 sm:h-48 w-full flex items-center justify-center relative my-1 overflow-visible">
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.22)_0%,transparent_72%)] pointer-events-none" />
-                  <img
-                    src="/img/brand/mascot-coffee-sun-official.png"
-                    alt="Don Café Sonriente y Sol"
-                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  <AnimatedMascot
+                    mascot="taza-sol"
+                    animation="float"
+                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    interactive={false}
                   />
                 </div>
                 <div>
@@ -1105,12 +1099,13 @@ export default function HomePage() {
                 className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
                 {/* Escenario del Personaje Ilustrado */}
-                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                <div className="h-40 sm:h-48 w-full flex items-center justify-center relative my-1 overflow-visible">
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(217,119,6,0.22)_0%,transparent_72%)] pointer-events-none" />
-                  <img
-                    src="/img/brand/mascot-croissant-official.png"
-                    alt="Croissant Saltarín"
-                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  <AnimatedMascot
+                    mascot="croissant"
+                    animation="bounce"
+                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    interactive={false}
                   />
                 </div>
                 <div>
@@ -1148,12 +1143,13 @@ export default function HomePage() {
                 className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
                 {/* Escenario del Personaje Ilustrado */}
-                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                <div className="h-40 sm:h-48 w-full flex items-center justify-center relative my-1 overflow-visible">
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(153,27,36,0.22)_0%,transparent_72%)] pointer-events-none" />
-                  <img
-                    src="/img/brand/mascot-sandwich-official.png"
-                    alt="Sándwich Feliz"
-                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  <AnimatedMascot
+                    mascot="sandwich"
+                    animation="pulse"
+                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    interactive={false}
                   />
                 </div>
                 <div>
@@ -1191,12 +1187,13 @@ export default function HomePage() {
                 className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
                 {/* Escenario del Personaje Ilustrado */}
-                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                <div className="h-40 sm:h-48 w-full flex items-center justify-center relative my-1 overflow-visible">
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.22)_0%,transparent_72%)] pointer-events-none" />
-                  <img
-                    src="/img/brand/mascot-pizza-official.png"
-                    alt="Pizza Skater con Gafas"
-                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  <AnimatedMascot
+                    mascot="pizza"
+                    animation="sway"
+                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    interactive={false}
                   />
                 </div>
                 <div>
@@ -2285,11 +2282,13 @@ export default function HomePage() {
               {/* Estado cuando no hay productos que coincidan */}
               {productosFiltrados.length === 0 && (
                 <div className="py-12 px-6 text-center rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-sm max-w-lg mx-auto space-y-4 my-8">
-                  <div className="w-20 h-20 mx-auto flex items-center justify-center">
-                    <img
-                      src="/img/brand/mascot-croissant-official.png"
-                      alt="Don Dencker"
-                      className="w-full h-full object-contain filter drop-shadow-md"
+                  <div className="w-28 h-28 mx-auto flex items-center justify-center">
+                    <AnimatedMascot
+                      mascot="sandwich"
+                      animation="bounce"
+                      speechBubble="¿Buscamos otra delicia?"
+                      speechBubblePosition="top"
+                      className="w-full h-full"
                     />
                   </div>
                   <div className="space-y-1">
@@ -3461,12 +3460,12 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-[#E6D9C8] pb-8">
             <div className="flex items-center gap-4 sm:gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-24 h-32 sm:w-32 sm:h-40 shrink-0 flex items-center justify-center relative">
+                <div className="w-28 h-36 sm:w-36 sm:h-48 shrink-0 flex items-center justify-center relative">
                   <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-xl pointer-events-none" />
-                  <img
-                    src="/img/brand/don-dencker-mascot-official.png"
-                    alt="Don Dencker - Mascota Oficial"
-                    className="w-full h-full object-contain drop-shadow-2xl select-none transform hover:scale-105 transition-transform duration-300 relative z-10"
+                  <AnimatedMascot
+                    mascot="don-dencker"
+                    animation="idle"
+                    className="w-full h-full drop-shadow-2xl relative z-10"
                   />
                 </div>
                 <div className="hidden sm:flex flex-col justify-center">
@@ -3720,12 +3719,8 @@ export default function HomePage() {
             {/* Columna 1: Marca & Esencia */}
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
-                  <img
-                    src={DENCKER_ASSETS.logoLight}
-                    alt="Don Dencker"
-                    className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] select-none"
-                  />
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+                  <DenckerLogo className="w-full h-full drop-shadow-[0_4px_16px_rgba(245,158,11,0.3)]" color="#F59E0B" animated={true} />
                 </div>
                 <div>
                   <span className="font-serif font-black text-2xl sm:text-3xl text-white block tracking-wide">

@@ -26,6 +26,7 @@ import { useSystemStore, useCartStore, useUIStore } from "@/store";
 import { SEED_CATEGORIAS, SEED_PRODUCTOS, DENCKER_ASSETS } from "@/lib/seed-data";
 import { supabase } from "@/lib/supabase";
 import { soundManager } from "@/lib/sound";
+import { AnimatedMascot, DenckerLogo } from "@/components/brand";
 
 interface PageProps {
   params: Promise<{ numero: string }>;
@@ -593,11 +594,11 @@ export default function MesaPage({ params }: PageProps) {
               Pide directamente desde tu mesa. Café de especialidad 4 Llamas y pan de masa madre viva.
             </p>
           </div>
-          <div className="w-16 h-20 sm:w-20 sm:h-24 shrink-0 flex items-center justify-center relative z-10">
-            <img
-              src="/img/brand/don-dencker-mascot-official.png"
-              alt="Don Dencker"
-              className="w-full h-full object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+          <div className="w-24 h-32 sm:w-28 sm:h-36 shrink-0 flex items-center justify-center relative z-10">
+            <AnimatedMascot
+              mascot="don-dencker"
+              animation="idle"
+              className="w-full h-full drop-shadow-[0_6px_16px_rgba(0,0,0,0.6)]"
             />
           </div>
           <div className="absolute right-0 top-0 bottom-0 w-32 bg-amber-500/10 blur-xl pointer-events-none" />

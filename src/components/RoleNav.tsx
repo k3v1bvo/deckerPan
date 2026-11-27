@@ -18,6 +18,7 @@ import {
 import { useCartStore, useUIStore } from "@/store";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
+import { DenckerLogo } from "@/components/brand";
 
 export default function RoleNav() {
   const pathname = usePathname();
@@ -52,12 +53,8 @@ export default function RoleNav() {
             onClick={() => soundManager.playSuccessTone()}
             className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0"
           >
-            <div className="h-11 sm:h-14 w-auto flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
-              <img
-                src={DENCKER_ASSETS.logoLight}
-                alt="Don Dencker"
-                className="h-full w-auto max-h-11 sm:max-h-14 object-contain select-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]"
-              />
+            <div className="h-10 sm:h-12 w-10 sm:w-12 flex items-center justify-center shrink-0">
+              <DenckerLogo className="w-full h-full drop-shadow-[0_2px_10px_rgba(245,158,11,0.4)]" color="#F59E0B" animated={true} />
             </div>
             <div className="leading-tight flex flex-col justify-center">
               <div className="flex items-center gap-1.5 sm:gap-2">

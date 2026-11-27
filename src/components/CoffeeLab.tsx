@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { soundManager } from "@/lib/sound";
 import { useCartStore, useUIStore } from "@/store";
+import { AnimatedMascot } from "@/components/brand";
 
 // ============================================================================
 // DATOS DEL LABORATORIO EXPERIMENTAL (GRANOS, EMULSIÓN, MARIDAJE)
@@ -521,11 +522,12 @@ export default function CoffeeLab() {
               {/* Badge Superior con Don Café Sonriente Barista */}
               <div className="flex items-center justify-between text-xs border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 shrink-0 relative">
-                    <img
-                      src="/img/brand/mascot-coffee-sun-official.png"
-                      alt="Don Café Sonriente - Barista Oficial"
-                      className="w-full h-full object-contain filter drop-shadow-md"
+                  <div className="w-12 h-12 shrink-0 relative flex items-center justify-center">
+                    <AnimatedMascot
+                      mascot="taza-sol"
+                      animation="float"
+                      className="w-full h-full"
+                      interactive={false}
                     />
                   </div>
                   <div>
@@ -643,11 +645,12 @@ export default function CoffeeLab() {
 
                 {/* Nota del Barista Ilustrado Don Café Sonriente */}
                 <div className="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-3 flex items-center gap-3">
-                  <div className="w-11 h-11 shrink-0">
-                    <img
-                      src="/img/brand/mascot-coffee-sun-official.png"
-                      alt="Don Café Sonriente"
-                      className="w-full h-full object-contain drop-shadow"
+                  <div className="w-12 h-12 shrink-0 flex items-center justify-center">
+                    <AnimatedMascot
+                      mascot="taza-sol"
+                      animation="float"
+                      className="w-full h-full"
+                      interactive={false}
                     />
                   </div>
                   <p className="text-[11px] text-amber-200/90 font-serif italic leading-relaxed">

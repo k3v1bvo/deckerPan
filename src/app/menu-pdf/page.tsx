@@ -729,7 +729,7 @@ export default function MenuPdfPage() {
               <div className="md:col-span-7 flex flex-col items-center justify-center relative">
                 <div className="relative w-72 sm:w-96 h-88 sm:h-[420px] flex items-center justify-center">
                   <img
-                    src="/img/brand/don-dencker-mascot-official.png"
+                    src="/img/brand/vectors/mascot-don-dencker.svg"
                     alt="Don Dencker Mascota Oficial"
                     className="w-full h-full object-contain drop-shadow-2xl select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -1132,8 +1132,8 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/don-dencker-mascot-official.png"
-                    alt="Don Dencker Mascota"
+                    src="/img/brand/vectors/mascot-taza-sol.svg"
+                    alt="Don Café Sonriente Mascota"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
                 </div>
@@ -1367,7 +1367,7 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/mascot-croissant-official.png"
+                    src="/img/brand/vectors/mascot-croissant.svg"
                     alt="Croissant Mascota Dencker"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -1696,7 +1696,7 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/mascot-sandwich-official.png"
+                    src="/img/brand/vectors/mascot-sandwich.svg"
                     alt="Pan Tostada Mascota Dencker"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -1946,7 +1946,7 @@ export default function MenuPdfPage() {
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center">
                   <img
-                    src="/img/brand/mascot-pizza-official.png"
+                    src="/img/brand/vectors/mascot-pizza.svg"
                     alt="Pizza Mascota Dencker"
                     className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
                   />
@@ -2270,7 +2270,7 @@ export default function MenuPdfPage() {
               <div className="p-4 rounded-2xl bg-white border border-[#E7DFD5] flex flex-col items-center space-y-2 shadow-2xs">
                 <div className="w-14 h-14 flex items-center justify-center">
                   <img
-                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    src="/img/brand/vectors/mascot-don-dencker.svg"
                     alt="Sello Don Dencker"
                     className="w-full h-full object-contain"
                   />
@@ -2367,9 +2367,9 @@ export default function MenuPdfPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <div className="w-12 h-12 mx-auto">
+                    <div className="w-14 h-14 mx-auto">
                       <img
-                        src="/img/brand/logo-3-don-dencker-badge.png"
+                        src="/img/brand/vectors/logo-dencker.svg"
                         alt="Logo Don Dencker"
                         className="w-full h-full object-contain"
                       />

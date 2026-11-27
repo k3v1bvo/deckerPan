@@ -6,22 +6,30 @@
 import { Zona, Mesa, Categoria, Producto, Reserva, Pago, SesionCaja, UsuarioStaff, RegistroAsistencia } from '@/types';
 
 export const DENCKER_ASSETS = {
-  // ── Los 3 Logos Oficiales Vectorizados & Alta Resolución ──
-  logo1ChefHatSvg: "/img/brand/logo-1-chef-hat.svg",
+  // ── Los Vectores Oficiales SVG Exactos de Alta Resolución ──
+  vectorLogoRed: "/img/brand/vectors/logo-dencker.svg",
+  vectorCroissant: "/img/brand/vectors/mascot-croissant.svg",
+  vectorCoffeeSun: "/img/brand/vectors/mascot-taza-sol.svg",
+  vectorSandwich: "/img/brand/vectors/mascot-sandwich.svg",
+  vectorPizza: "/img/brand/vectors/mascot-pizza.svg",
+  vectorDonDencker: "/img/brand/vectors/mascot-don-dencker.svg",
+
+  // ── Los 3 Logos Oficiales Vectorizados ──
+  logo1ChefHatSvg: "/img/brand/vectors/logo-dencker.svg",
   logo1ChefHatPng: "/img/brand/logo-1-chef-hat.png",
   logo2VintageTicketPng: "/img/brand/logo-2-dencker-coffee-vintage.png",
   logo2VintageTicketSvg: "/img/brand/logo-2-dencker-coffee-vintage.svg",
   logo3DonDenckerBadgePng: "/img/brand/logo-3-don-dencker-badge.png",
-  logo3DonDenckerBadgeSvg: "/img/brand/logo-3-don-dencker-badge.svg",
+  logo3DonDenckerBadgeSvg: "/img/brand/vectors/mascot-don-dencker.svg",
 
-  // ── Arte & Dibujos Oficiales Originales del Menú Físico (PDF) ──
-  mascotClean: "/img/brand/don-dencker-mascot-official.png",
-  mascotOfficial: "/img/brand/don-dencker-mascot-official.png",
-  mascotCoffee: "/img/brand/mascot-coffee-sun-official.png",
-  mascotCroissant: "/img/brand/mascot-croissant-official.png",
-  mascotBread: "/img/brand/mascot-sandwich-official.png",
-  mascotSandwich: "/img/brand/mascot-sandwich-official.png",
-  mascotPizza: "/img/brand/mascot-pizza-official.png",
+  // ── Arte & Dibujos Oficiales Originales del Menú Físico (Vectores SVG) ──
+  mascotClean: "/img/brand/vectors/mascot-don-dencker.svg",
+  mascotOfficial: "/img/brand/vectors/mascot-don-dencker.svg",
+  mascotCoffee: "/img/brand/vectors/mascot-taza-sol.svg",
+  mascotCroissant: "/img/brand/vectors/mascot-croissant.svg",
+  mascotBread: "/img/brand/vectors/mascot-sandwich.svg",
+  mascotSandwich: "/img/brand/vectors/mascot-sandwich.svg",
+  mascotPizza: "/img/brand/vectors/mascot-pizza.svg",
   awningMarquee: "/img/brand/awning-marquee-official.png",
   menuDenckerBanner: "/img/brand/menu-dencker-banner-official.png",
   checkeredRibbon: "/img/brand/checkered-bistro-ribbon-official.png",
@@ -32,13 +40,13 @@ export const DENCKER_ASSETS = {
   doodleSquiggle: "/img/brand/doodle-squiggle.png",
 
   // Logo Oficial Activo (Sello Don Dencker Badge Oficial)
-  logo: "/img/brand/logo-3-don-dencker-badge.png",
-  logoLight: "/img/brand/don-dencker-mascot-light.png",
-  logoGold: "/img/brand/don-dencker-mascot-gold.png",
-  logoChefHatLight: "/img/brand/logo-1-chef-hat-light.svg",
+  logo: "/img/brand/vectors/logo-dencker.svg",
+  logoLight: "/img/brand/vectors/logo-dencker.svg",
+  logoGold: "/img/brand/vectors/logo-dencker.svg",
+  logoChefHatLight: "/img/brand/vectors/logo-dencker.svg",
   logoPng: "/img/brand/logo-3-don-dencker-badge.png",
-  logoSvg: "/img/brand/don-dencker-badge.svg",
-  badgeClean: "/img/brand/logo-3-don-dencker-badge.png",
+  logoSvg: "/img/brand/vectors/logo-dencker.svg",
+  badgeClean: "/img/brand/vectors/mascot-don-dencker.svg",
   coffeeVintage: "/img/brand/logo-2-dencker-coffee-vintage.png",
   cafe4Llamas: "/img/brand/cafe-4llamas-pack.png",
   cafeCatuai: "/img/brand/cafe-catuai-badge.png",

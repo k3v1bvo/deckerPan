@@ -25,6 +25,7 @@ import { useCartStore, useUIStore, useSystemStore } from "@/store";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
 import { supabase } from "@/lib/supabase";
+import { DenckerLogo, AnimatedMascot } from "@/components/brand";
 
 const springTransition = { type: "spring", stiffness: 400, damping: 20 } as const;
 const springButton = { type: "spring", stiffness: 400, damping: 15 } as const;
@@ -261,12 +262,8 @@ export default function CartDrawer() {
             {/* Header Sensorial */}
             <header className="p-5 bg-gradient-to-b from-[#18100A] to-[#22160F] text-white flex items-center justify-between border-b border-[#3D271D]/40">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 p-1 flex items-center justify-center">
-                  <img
-                    src={DENCKER_ASSETS.logoLight}
-                    alt="Dencker Pan"
-                    className="w-full h-full object-contain drop-shadow"
-                  />
+                <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                  <DenckerLogo className="w-full h-full drop-shadow" color="#F59E0B" animated={true} />
                 </div>
                 <div>
                   <h3 className="font-serif font-bold text-base text-[#FAF7F2] tracking-tight">
@@ -297,15 +294,14 @@ export default function CartDrawer() {
             {/* Contenido Principal */}
             {items.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-5">
-                <div className="w-28 h-28 rounded-3xl bg-[#EAE2D5]/60 p-2 text-[#3D271D] flex items-center justify-center shadow-inner border border-[#D9CDBF] relative">
-                  <img
-                    src={DENCKER_ASSETS.mascotClean}
-                    alt="Don Dencker Mascota"
-                    className="w-full h-full object-contain drop-shadow"
+                <div className="w-32 h-32 flex items-center justify-center relative">
+                  <AnimatedMascot
+                    mascot="croissant"
+                    animation="bounce"
+                    speechBubble="¡Elige algo delicioso!"
+                    speechBubblePosition="top"
+                    className="w-full h-full"
                   />
-                  <span className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-full bg-[#991B24] text-white text-[9px] font-bold font-mono">
-                    Café 4 Llamas ☕
-                  </span>
                 </div>
                 <div className="space-y-1.5 max-w-xs">
                   <h4 className="font-serif font-bold text-xl text-[#1E130C]">

@@ -1227,9 +1227,9 @@ export default function MeseroPage() {
               <div id="precuenta-mesero-print" className="ticket-termico space-y-3 font-mono text-xs text-stone-900">
                 <div className="text-center pb-2.5 border-b border-dashed border-stone-300">
                   <img
-                    src="/img/brand/logo-3-don-dencker-badge.png"
+                    src="/img/brand/vectors/logo-dencker.svg"
                     alt="Dencker Pan"
-                    className="h-14 w-auto mx-auto mb-1 object-contain"
+                    className="h-16 w-auto mx-auto mb-1 object-contain"
                   />
                   <h3 className="font-serif text-base font-black tracking-wide text-stone-950">
                     DENCKER PAN

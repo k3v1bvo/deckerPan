@@ -67,6 +67,7 @@ import { uploadImageMultiCloud } from "@/lib/cloudStorage";
 import { CloudStorageProvider } from "@/types";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, REAL_PRODUCT_PHOTOS, MENU_PDF_PAGES } from "@/lib/seed-data";
+import { DenckerLogo } from "@/components/brand";
 import { parsearLinkContadora, exportarLibroVentasCsv, convertirNumeroALiteral } from "@/lib/siat-utils";
 import { printElementById } from "@/lib/print";
 
@@ -849,12 +850,8 @@ export default function AdminPage() {
       <header className="bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 lg:px-8 py-3.5 shadow-xl">
         <div className="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
-              <img
-                src={DENCKER_ASSETS.logoLight}
-                alt="Don Dencker"
-                className="w-full h-full object-contain drop-shadow"
-              />
+            <div className="w-11 h-11 flex items-center justify-center shrink-0">
+              <DenckerLogo className="w-full h-full drop-shadow" color="#F59E0B" animated={true} />
             </div>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
@@ -2118,9 +2115,9 @@ export default function AdminPage() {
                         {/* Logo Oficial Vectorizado */}
                         <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
                           <img
-                            src="/img/brand/logo-3-don-dencker-badge.png"
+                            src="/img/brand/vectors/logo-dencker.svg"
                             alt="Dencker Pan"
-                            className="h-12 w-auto object-contain mx-auto mb-1"
+                            className="h-14 w-auto object-contain mx-auto mb-1"
                           />
                           <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
                             {facturacionSiatConfig.razonSocialEmisor}
@@ -2196,9 +2193,9 @@ export default function AdminPage() {
                           </p>
                           <div className="flex items-center justify-center gap-2 pt-2 pb-1">
                             <img
-                              src="/img/brand/logo-3-don-dencker-badge.png"
+                              src="/img/brand/vectors/mascot-don-dencker.svg"
                               alt="Sello Oficial Don Dencker"
-                              className="w-9 h-9 object-contain shrink-0"
+                              className="w-10 h-10 object-contain shrink-0"
                             />
                             <div className="text-left leading-tight">
                               <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>

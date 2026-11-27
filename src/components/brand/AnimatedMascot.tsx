@@ -1,0 +1,274 @@
+"use client";
+
+import React from "react";
+import { motion, Variants } from "framer-motion";
+import { soundManager } from "@/lib/sound";
+import { DenckerLogo } from "./DenckerLogo";
+
+export type MascotType =
+  | "croissant"
+  | "taza-sol"
+  | "coffee"
+  | "sandwich"
+  | "pizza"
+  | "don-dencker"
+  | "personaje"
+  | "logo";
+
+export type AnimationType =
+  | "bounce"
+  | "float"
+  | "sway"
+  | "wave"
+  | "pulse"
+  | "idle"
+  | "none";
+
+interface AnimatedMascotProps {
+  mascot: MascotType;
+  animation?: AnimationType;
+  className?: string;
+  speechBubble?: string;
+  speechBubblePosition?: "top" | "bottom" | "left" | "right";
+  interactive?: boolean;
+  size?: number | string;
+  onClick?: () => void;
+  priority?: boolean;
+  color?: string;
+}
+
+const mascotPaths: Record<string, { src: string; alt: string; defaultAnim: AnimationType }> = {
+  croissant: {
+    src: "/img/brand/vectors/mascot-croissant.svg",
+    alt: "Croissant Saltarín - Dencker Pan",
+    defaultAnim: "bounce",
+  },
+  "taza-sol": {
+    src: "/img/brand/vectors/mascot-taza-sol.svg",
+    alt: "Don Café Sonriente & Sol - Dencker Pan",
+    defaultAnim: "float",
+  },
+  coffee: {
+    src: "/img/brand/vectors/mascot-taza-sol.svg",
+    alt: "Don Café Sonriente & Sol - Dencker Pan",
+    defaultAnim: "float",
+  },
+  sandwich: {
+    src: "/img/brand/vectors/mascot-sandwich.svg",
+    alt: "Sándwich Feliz Pulgar Arriba - Dencker Pan",
+    defaultAnim: "pulse",
+  },
+  pizza: {
+    src: "/img/brand/vectors/mascot-pizza.svg",
+    alt: "Pizza Skater con Gafas - Dencker Pan",
+    defaultAnim: "sway",
+  },
+  "don-dencker": {
+    src: "/img/brand/vectors/mascot-don-dencker.svg",
+    alt: "Don Dencker Fundador con Taza de Café - Dencker Pan",
+    defaultAnim: "idle",
+  },
+  personaje: {
+    src: "/img/brand/vectors/mascot-don-dencker.svg",
+    alt: "Don Dencker Fundador con Taza de Café - Dencker Pan",
+    defaultAnim: "idle",
+  },
+};
+
+const animationVariants: Record<string, Variants> = {
+  bounce: {
+    animate: {
+      y: [0, -10, 0],
+      rotate: [-3, 3, -3],
+      transition: {
+        duration: 2.8,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+    hover: {
+      scale: 1.1,
+      rotate: 8,
+      y: -14,
+      transition: { type: "spring", stiffness: 350, damping: 15 },
+    },
+  },
+  float: {
+    animate: {
+      y: [-6, 4, -6],
+      rotate: [-1.5, 1.5, -1.5],
+      scale: [1, 1.02, 1],
+      transition: {
+        duration: 3.6,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+    hover: {
+      scale: 1.08,
+      rotate: 4,
+      y: -8,
+      transition: { type: "spring", stiffness: 300, damping: 18 },
+    },
+  },
+  sway: {
+    animate: {
+      rotate: [-5, 5, -5],
+      x: [-3, 3, -3],
+      y: [-3, 0, -3],
+      transition: {
+        duration: 3.2,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+    hover: {
+      scale: 1.1,
+      rotate: -8,
+      transition: { type: "spring", stiffness: 320, damping: 16 },
+    },
+  },
+  pulse: {
+    animate: {
+      scale: [1, 1.035, 1],
+      y: [-4, 0, -4],
+      rotate: [-2, 2, -2],
+      transition: {
+        duration: 2.6,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+    hover: {
+      scale: 1.09,
+      rotate: 5,
+      transition: { type: "spring", stiffness: 340, damping: 15 },
+    },
+  },
+  wave: {
+    animate: {
+      rotate: [0, 8, -6, 8, -4, 0],
+      transition: {
+        duration: 2.4,
+        repeat: Infinity,
+        repeatDelay: 2,
+        ease: "easeInOut",
+      },
+    },
+    hover: {
+      scale: 1.1,
+      rotate: 12,
+      transition: { type: "spring", stiffness: 400, damping: 14 },
+    },
+  },
+  idle: {
+    animate: {
+      y: [-3, 1, -3],
+      scale: [1, 1.015, 1],
+      transition: {
+        duration: 4.2,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+    hover: {
+      scale: 1.05,
+      y: -6,
+      transition: { type: "spring", stiffness: 280, damping: 20 },
+    },
+  },
+  none: {
+    animate: {},
+    hover: { scale: 1.03 },
+  },
+};
+
+export const AnimatedMascot: React.FC<AnimatedMascotProps> = ({
+  mascot,
+  animation,
+  className = "w-32 h-32",
+  speechBubble,
+  speechBubblePosition = "top",
+  interactive = true,
+  onClick,
+  color,
+}) => {
+  const isLogo = mascot === "logo";
+  const mascotInfo = !isLogo ? mascotPaths[mascot] || mascotPaths.croissant : null;
+  const activeAnim = animation || (mascotInfo ? mascotInfo.defaultAnim : "float");
+  const selectedVariant = animationVariants[activeAnim] || animationVariants.float;
+
+  const handleClick = () => {
+    if (interactive) {
+      if (mascot === "croissant") soundManager.playPastryCrinkle();
+      else if (mascot === "taza-sol" || mascot === "coffee") soundManager.playCoffeeSteam();
+      else if (mascot === "sandwich") soundManager.playBreadCrunch();
+      else if (mascot === "pizza") soundManager.playPorcelainTink();
+      else soundManager.playClick();
+    }
+    if (onClick) onClick();
+  };
+
+  return (
+    <div className={`relative inline-flex flex-col items-center select-none ${className}`}>
+      {/* Globo de Diálogo de Cómic Opcional */}
+      {speechBubble && (
+        <motion.div
+          initial={{ opacity: 0, y: 8, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.35, ease: "easeOut" }}
+          className={`absolute z-30 pointer-events-none whitespace-nowrap shadow-xl px-3.5 py-1.5 rounded-2xl bg-[#FFFDF7] text-[#1E130C] border-2 border-[#D97706] text-xs font-black flex items-center gap-1.5 ${
+            speechBubblePosition === "top"
+              ? "-top-10 left-1/2 -translate-x-1/2 rotate-1"
+              : speechBubblePosition === "bottom"
+              ? "-bottom-10 left-1/2 -translate-x-1/2 -rotate-1"
+              : speechBubblePosition === "left"
+              ? "right-full mr-3 top-1/2 -translate-y-1/2 -rotate-2"
+              : "left-full ml-3 top-1/2 -translate-y-1/2 rotate-2"
+          }`}
+        >
+          <span>{speechBubble}</span>
+          <div
+            className={`absolute w-2.5 h-2.5 bg-[#FFFDF7] border-b-2 border-r-2 border-[#D97706] transform ${
+              speechBubblePosition === "top"
+                ? "top-full left-1/2 -translate-x-1/2 -translate-y-1.5 rotate-45"
+                : speechBubblePosition === "bottom"
+                ? "bottom-full left-1/2 -translate-x-1/2 translate-y-1.5 rotate-[225deg]"
+                : speechBubblePosition === "left"
+                ? "left-full top-1/2 -translate-y-1/2 -translate-x-1.5 -rotate-45"
+                : "right-full top-1/2 -translate-y-1/2 translate-x-1.5 rotate-[135deg]"
+            }`}
+          />
+        </motion.div>
+      )}
+
+      {/* Contenedor Animado de la Mascota */}
+      <motion.div
+        variants={selectedVariant}
+        animate="animate"
+        whileHover={interactive ? "hover" : undefined}
+        whileTap={interactive ? { scale: 0.93 } : undefined}
+        onClick={handleClick}
+        className={`w-full h-full flex items-center justify-center ${
+          interactive ? "cursor-pointer" : ""
+        }`}
+      >
+        {isLogo ? (
+          <DenckerLogo
+            className="w-full h-full drop-shadow-md"
+            color={color || "#A02314"}
+            animated={activeAnim !== "none"}
+            interactive={false}
+          />
+        ) : (
+          <img
+            src={mascotInfo?.src}
+            alt={mascotInfo?.alt}
+            className="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_16px_rgba(255,255,255,0.15)] transition-transform duration-300"
+            draggable={false}
+          />
+        )}
+      </motion.div>
+    </div>
+  );
+};
