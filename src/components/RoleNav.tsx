@@ -32,12 +32,12 @@ export default function RoleNav() {
   // ─────────────────────────────────────────────────────────────
   // REGLA DE PRODUCCIÓN:
   // RoleNav se muestra en la página web pública principal ("/")
-  // y en la Carta Oficial digital ("/menu-pdf").
+  // y en la Carta Oficial digital ("/menu-pdf") y Reservas ("/reservas").
   // En las pantallas de comensal sentado en mesa (/mesa/[numero])
-  // y en los terminales de personal (/admin, /caja, /mesero, /kds),
+  // y en los terminales de personal (/admin, /caja, /mesero, /kds, /pantalla),
   // RoleNav devuelve null para evitar fugas de navegación.
   // ─────────────────────────────────────────────────────────────
-  if (pathname !== "/" && pathname !== "/menu-pdf") {
+  if (pathname !== "/" && pathname !== "/menu-pdf" && pathname !== "/reservas") {
     return null;
   }
 
@@ -80,6 +80,13 @@ export default function RoleNav() {
               <Coffee size={15} className="text-amber-400 shrink-0" />
               Catálogo & Precios
             </a>
+            <Link
+              href="/reservas"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"
+            >
+              <Calendar size={15} className="text-amber-400 shrink-0" />
+              Reservar Mesa
+            </Link>
             <a
               href="/#catering"
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:text-amber-300 hover:bg-white/8 transition-all whitespace-nowrap"

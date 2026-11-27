@@ -17,6 +17,8 @@ import {
   X,
   Check,
   Store,
+  Clock,
+  Monitor,
 } from "lucide-react";
 import {
   StaffRole,
@@ -51,6 +53,8 @@ const ADMIN_STATIONS = [
   { id: "caja", href: "/caja", label: "Caja POS", icon: Receipt },
   { id: "mesero", href: "/mesero", label: "Sala Mesero", icon: UtensilsCrossed },
   { id: "kds", href: "/kds", label: "Cocina KDS", icon: ChefHat },
+  { id: "asistencia", href: "/asistencia", label: "Asistencia GPS", icon: Clock },
+  { id: "pantalla", href: "/pantalla", label: "Monitor TV", icon: Monitor },
 ];
 
 export default function StaffAuthGuard({

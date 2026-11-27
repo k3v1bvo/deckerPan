@@ -721,6 +721,16 @@ export default function HomePage() {
                   <span>Carta Oficial PDF (6 Págs)</span>
                 </Link>
 
+                {/* Botón: Reservas de Mesa */}
+                <Link
+                  href="/reservas"
+                  onClick={() => soundManager.playPastryCrinkle()}
+                  className="px-5 py-3.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-[#1E130C] border border-amber-600/30 font-bold text-xs flex items-center gap-2 transition shadow-xs active:scale-95 cursor-pointer"
+                >
+                  <Calendar size={16} className="text-[#991B24]" />
+                  <span>Reservar Mesa</span>
+                </Link>
+
                 <a
                   href={DENCKER_ASSETS.whatsapp}
                   target="_blank"
@@ -3903,15 +3913,19 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <button
-                    onClick={() => {
-                      soundManager.playTactileClick();
-                      setReservaModalOpen(true);
-                    }}
-                    className="hover:text-amber-300 transition text-left cursor-pointer"
-                  >
-                    • Reservar Mesa en Salón
-                  </button>
+                  <Link href="/reservas" className="hover:text-amber-300 transition">
+                    • Reservar Mesa en Salón o Terraza
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pantalla" className="hover:text-amber-300 transition">
+                    • Monitor de Turnos &amp; Sala TV
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/asistencia" className="hover:text-amber-300 transition">
+                    • Reloj Asistencia Biométrico GPS
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -3942,14 +3956,34 @@ export default function HomePage() {
               © 2026 Dencker Pan. Todos los derechos reservados. Cochabamba, Bolivia.
             </p>
 
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 text-stone-500 hover:text-amber-300 transition-colors py-1 px-2.5 rounded-lg hover:bg-white/5"
-              title="Terminal seguro de personal"
-            >
-              <Lock size={12} />
-              <span>Acceso al Personal Operativo</span>
-            </Link>
+            <div className="flex items-center gap-3 text-xs text-stone-400">
+              <Link
+                href="/reservas"
+                className="hover:text-amber-300 transition-colors py-1 px-2 rounded-lg hover:bg-white/5"
+              >
+                Reservas
+              </Link>
+              <Link
+                href="/pantalla"
+                className="hover:text-amber-300 transition-colors py-1 px-2 rounded-lg hover:bg-white/5"
+              >
+                Monitor TV
+              </Link>
+              <Link
+                href="/asistencia"
+                className="hover:text-amber-300 transition-colors py-1 px-2 rounded-lg hover:bg-white/5"
+              >
+                Asistencia GPS
+              </Link>
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 text-stone-300 hover:text-amber-300 transition-colors py-1 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 font-bold"
+                title="Terminal seguro de personal"
+              >
+                <Lock size={12} />
+                <span>Acceso Staff</span>
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
