@@ -465,18 +465,71 @@ export default function HomePage() {
     );
   };
 
+  // Función auxiliar de normalización para búsqueda insensible a tildes y mayúsculas
+  const normalizeSearch = (str: string) =>
+    str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+
   const productosFiltrados = useMemo(() => {
+    const termClean = normalizeSearch(busqueda);
+
     const filtrados = productosUnicos.filter((p) => {
-      const matchBusqueda =
-        !busqueda ||
-        p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-        (p.descripcion && p.descripcion.toLowerCase().includes(busqueda.toLowerCase()));
+      // 1. Si hay texto de búsqueda activo, búsqueda global inteligente y tolerante a variantes
+      if (termClean) {
+        const nom = normalizeSearch(p.nombre);
+        const desc = normalizeSearch(p.descripcion || "");
 
-      if (!matchBusqueda) return false;
+        // Coincidencia directa en nombre o descripción
+        if (nom.includes(termClean) || desc.includes(termClean)) return true;
 
-      // Si hay una búsqueda activa, buscar en todo el catálogo sin restricción de categoría previa
-      if (busqueda && busqueda.trim().length > 0) {
-        return true;
+        // Alias y sinónimos comunes de panadería y cafetería artesanal
+        if (
+          (termClean.includes("capuchino") || termClean.includes("cappuccino")) &&
+          (nom.includes("cappuccino") || nom.includes("capuchino") || nom.includes("cafe") || nom.includes("latte"))
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("espresso") || termClean.includes("expreso")) &&
+          (nom.includes("espresso") || nom.includes("expreso") || nom.includes("cafe"))
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("croissant") || termClean.includes("cruasan") || termClean.includes("medialuna")) &&
+          (nom.includes("croissant") || nom.includes("cruasan") || nom.includes("roll"))
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("sandwich") || termClean.includes("sanduche") || termClean.includes("emparedado")) &&
+          (nom.includes("sandwich") || nom.includes("sandwiches") || p.categoria_id === "c_sandwiches")
+        ) {
+          return true;
+        }
+        if (
+          termClean.includes("cafe") &&
+          (nom.includes("cafe") || p.categoria_id === "c_cafes" || p.categoria_id === "c_lattes")
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("cunap") || termClean.includes("cunape")) &&
+          (nom.includes("cunap") || nom.includes("cunape") || p.categoria_id === "c_saladas")
+        ) {
+          return true;
+        }
+        if (
+          termClean.includes("pizza") &&
+          (nom.includes("pizza") || p.categoria_id === "c_pizzas")
+        ) {
+          return true;
+        }
+
+        return false;
       }
 
       if (categoriaActiva === "bebidas") {
@@ -546,9 +599,11 @@ export default function HomePage() {
   }, [productosUnicos]);
 
   const remainingProducts = useMemo(() => {
-    const list = productosFiltrados.filter((p) => p.id !== starProduct?.id);
+    const list = busqueda
+      ? productosFiltrados
+      : productosFiltrados.filter((p) => p.id !== starProduct?.id);
     return list.slice(0, limiteVisible);
-  }, [productosFiltrados, starProduct, limiteVisible]);
+  }, [productosFiltrados, starProduct, limiteVisible, busqueda]);
 
   const abrirModalProducto = (p: Producto) => {
     soundManager.playPastryCrinkle();
@@ -693,15 +748,15 @@ export default function HomePage() {
             {/* Columna Derecha: Foto Real de la Panadería & Vitrina + Mascota y Sello Café 4 Llamas */}
             <div className="lg:col-span-5 relative">
               
-              {/* Mascota Croissant Saltarín Oficial Flotante con Diálogo */}
-              <div className="absolute -top-16 -right-2 sm:-right-6 z-30 flex flex-col items-end select-none pointer-events-auto drop-shadow-2xl">
+              {/* Mascota Croissant Saltarín Oficial Flotante con Diálogo (libre de colisión) */}
+              <div className="absolute -top-14 -right-1 sm:-right-4 z-30 flex flex-col items-end select-none pointer-events-auto drop-shadow-2xl">
                 <AnimatedMascot
                   mascot="croissant"
                   animation="bounce"
                   color="#1E130C"
                   speechBubble="¡Recién horneado a las 16:30!"
                   speechBubblePosition="left"
-                  className="w-36 h-36 sm:w-44 sm:h-44"
+                  className="w-40 h-40 sm:w-48 sm:h-48"
                 />
               </div>
 
@@ -713,12 +768,13 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-                {/* Sello Flotante Superior: espacio libre para no chocar con la mascota */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none pr-36 sm:pr-48">
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#1E130C] shadow-sm border border-[#D9CDBF] flex items-center gap-1.5">
+                {/* Sello Flotante Superior: agrupado a la izquierda sin colisionar con la mascota */}
+                <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2 z-10 pointer-events-none max-w-[calc(100%-150px)] sm:max-w-md">
+                  <span className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#1E130C] shadow-sm border border-[#D9CDBF] flex items-center gap-1.5">
                     <span>🥖</span> Horneado Diario a Mano
                   </span>
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-[#991B24]/90 backdrop-blur-md text-white border border-red-400/40">
+                  <span className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-[#991B24] text-white shadow-sm border border-red-400/40 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     Abierto 07:00 – 21:30
                   </span>
                 </div>
@@ -1767,14 +1823,20 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Fila 2: Buscador */}
+            {/* Fila 2: Buscador Inteligente con Búsqueda Global Instantánea */}
             <div className="relative">
               <Search size={18} className="absolute left-4 top-3.5 text-[#785E4F]" />
               <input
                 type="text"
-                placeholder="Buscar por especialidad (New York Roll, cauka, croissant, espresso, cuñapé)..."
+                placeholder="Buscar por especialidad (cappuccino, New York Roll, croissant, espresso, cuñapé)..."
                 value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setBusqueda(val);
+                  if (val.trim().length > 0 && categoriaActiva !== "todos") {
+                    setCategoriaActiva("todos");
+                  }
+                }}
                 className="w-full pl-11 pr-10 py-3.5 rounded-[22px] bg-white border-2 border-[#D5C7B5] shadow-xs text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#991B24] placeholder:text-[#A8988D] text-[#1E130C] font-medium transition"
               />
               {busqueda && (
@@ -1794,6 +1856,7 @@ export default function HomePage() {
                 Populares:
               </span>
               {[
+                { tag: "cappuccino", label: "#Cappuccino" },
                 { tag: "pistacho", label: "#PistachoSiciliano" },
                 { tag: "croissant", label: "#72CapasMantequilla" },
                 { tag: "cuñap", label: "#CuñapéCriollo" },
@@ -1823,19 +1886,19 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Fila 4: Pestañas de Categoría con Mascotas Auténticas (100% legibles, sin recortes) */}
+            {/* Fila 4: Pestañas de Categoría con Mascotas Auténticas en Vector (100% legibles, sin recortes en bordes) */}
             {(modoPresentacion === "categoria" || busqueda !== "") && (
-              <div className="w-full relative">
-                <div className="flex items-center gap-2 overflow-x-auto py-2 px-1 scrollbar-none justify-start lg:justify-center flex-nowrap lg:flex-wrap">
+              <div className="w-full relative px-1 sm:px-0">
+                <div className="flex items-center gap-2 overflow-x-auto py-2.5 px-3 sm:px-4 scrollbar-none justify-start lg:justify-center flex-nowrap lg:flex-wrap">
                   {[
                     { id: "todos", label: "Todos (114)", icon: UtensilsCrossed, sound: "tactile" },
-                    { id: "c_desayunos", label: "Desayunos", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
-                    { id: "c_cafes", label: "Cafés 4 Llamas", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "porcelain" },
-                    { id: "c_dulces", label: "Pastelería & Tortas", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
-                    { id: "c_saladas", label: "Masitas Saladas", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
-                    { id: "c_sandwiches", label: "Sándwiches Gourmet", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
-                    { id: "c_pizzas", label: "Pizzas al Horno", mascot: "/img/brand/mascot-pizza-official.png", sound: "bread" },
-                    { id: "c_jugos", label: "Bebidas & Frappés", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "tactile" },
+                    { id: "c_desayunos", label: "Desayunos", mascot: "croissant" as const, sound: "pastry" },
+                    { id: "c_cafes", label: "Cafés 4 Llamas", mascot: "taza-sol" as const, sound: "porcelain" },
+                    { id: "c_dulces", label: "Pastelería & Tortas", mascot: "croissant" as const, sound: "pastry" },
+                    { id: "c_saladas", label: "Masitas Saladas", mascot: "sandwich" as const, sound: "bread" },
+                    { id: "c_sandwiches", label: "Sándwiches Gourmet", mascot: "sandwich" as const, sound: "bread" },
+                    { id: "c_pizzas", label: "Pizzas al Horno", mascot: "pizza" as const, sound: "bread" },
+                    { id: "c_jugos", label: "Bebidas & Frappés", mascot: "taza-sol" as const, sound: "tactile" },
                     { id: "favoritos", label: "Más Vendidos ★", icon: Star, sound: "tactile" },
                   ].map((cat) => {
                     const Icon = cat.icon;
@@ -1858,7 +1921,15 @@ export default function HomePage() {
                         }`}
                       >
                         {cat.mascot ? (
-                          <img src={cat.mascot} alt={cat.label} className="w-5 h-5 object-contain shrink-0" />
+                          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                            <AnimatedMascot
+                              mascot={cat.mascot}
+                              animation="none"
+                              interactive={false}
+                              color={isSel ? "#FFFDF7" : "#1E130C"}
+                              className="w-full h-full"
+                            />
+                          </div>
                         ) : (
                           Icon && <Icon size={15} className={`shrink-0 ${isSel ? "text-amber-300" : "text-[#991B24]"}`} />
                         )}
@@ -2276,8 +2347,9 @@ export default function HomePage() {
               {/* Resumen de Resultados */}
               <div className="flex items-center justify-between border-b border-[#EAE2D5] pb-3">
                 <span className="text-xs font-bold text-[#785E4F]">
-                  Mostrando {remainingProducts.length} de {productosFiltrados.length} delicias
-                  {busqueda && ` para "${busqueda}"`}
+                  {busqueda
+                    ? `${productosFiltrados.length} ${productosFiltrados.length === 1 ? "delicia encontrada" : "delicias encontradas"} para "${busqueda}"`
+                    : `Mostrando ${remainingProducts.length} de ${productosFiltrados.length} delicias`}
                 </span>
                 <span className="text-xs text-[#991B24] font-semibold hidden sm:inline">
                   Fotos interactivas: Hover para ver corte interior

@@ -173,13 +173,64 @@ export default function MesaPage({ params }: PageProps) {
     };
   }, [pedidoId]);
 
+  const normalizeSearch = (str: string) =>
+    str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+
   const productosFiltrados = useCallback(() => {
+    const termClean = normalizeSearch(busqueda);
     let lista = productos;
+
+    if (termClean) {
+      // Búsqueda inteligente global que abarca todo el menú sin restricciones
+      return lista.filter((p) => {
+        const nom = normalizeSearch(p.nombre);
+        const desc = normalizeSearch(p.descripcion || "");
+        if (nom.includes(termClean) || desc.includes(termClean)) return true;
+
+        if (
+          (termClean.includes("capuchino") || termClean.includes("cappuccino")) &&
+          (nom.includes("cappuccino") || nom.includes("capuchino") || nom.includes("cafe") || nom.includes("latte"))
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("espresso") || termClean.includes("expreso")) &&
+          (nom.includes("espresso") || nom.includes("expreso") || nom.includes("cafe"))
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("croissant") || termClean.includes("cruasan") || termClean.includes("medialuna")) &&
+          (nom.includes("croissant") || nom.includes("cruasan") || nom.includes("roll"))
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("sandwich") || termClean.includes("sanduche")) &&
+          (nom.includes("sandwich") || nom.includes("sandwiches") || p.categoria_id === "c_sandwiches")
+        ) {
+          return true;
+        }
+        if (
+          (termClean.includes("cunap") || termClean.includes("cunape")) &&
+          (nom.includes("cunap") || nom.includes("cunape") || p.categoria_id === "c_saladas")
+        ) {
+          return true;
+        }
+        if (termClean.includes("cafe") && (nom.includes("cafe") || p.categoria_id === "c_cafes" || p.categoria_id === "c_lattes")) {
+          return true;
+        }
+        return false;
+      });
+    }
+
     if (categoriaActiva === "mas_vendidos") lista = lista.filter((p) => p.es_mas_vendido);
     else if (categoriaActiva !== "todos")
       lista = lista.filter((p) => p.categoria_id === categoriaActiva);
-    if (busqueda)
-      lista = lista.filter((p) => p.nombre.toLowerCase().includes(busqueda.toLowerCase()));
     return lista;
   }, [productos, categoriaActiva, busqueda]);
 
@@ -434,12 +485,8 @@ export default function MesaPage({ params }: PageProps) {
       <header className="sticky top-0 z-30 bg-[#1E130C] border-b-2 border-amber-500/30 text-white shadow-xl pt-safe">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
-              <img
-                src={DENCKER_ASSETS.logoLight}
-                alt="Don Dencker"
-                className="w-full h-full object-contain drop-shadow"
-              />
+            <div className="w-10 h-10 flex items-center justify-center shrink-0">
+              <DenckerLogo className="w-full h-full drop-shadow" color="#F59E0B" animated={true} />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -643,14 +690,20 @@ export default function MesaPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* ── Search Bar ── */}
+        {/* ── Search Bar Inteligente ── */}
         <div className="relative">
           <Search size={16} className="absolute left-3.5 top-3 text-stone-500" />
           <input
             type="text"
-            placeholder="Buscar en el menú artesanal (café, croissant, sándwich)..."
+            placeholder="Buscar en el menú artesanal (cappuccino, croissant, sándwich)..."
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setBusqueda(val);
+              if (val.trim().length > 0 && categoriaActiva !== "todos") {
+                setCategoriaActiva("todos");
+              }
+            }}
             className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-sm focus:outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-500/20 text-stone-950 font-medium placeholder:text-stone-500"
           />
         </div>
@@ -808,12 +861,31 @@ export default function MesaPage({ params }: PageProps) {
         </div>
 
         {productosFiltrados().length === 0 && (
-          <div className="py-20 text-center space-y-2">
-            <div className="text-4xl">🔍</div>
-            <p className="font-bold text-sm text-stone-700">
-              No encontramos resultados para tu búsqueda
+          <div className="py-12 px-4 text-center rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-sm max-w-sm mx-auto space-y-3 my-6">
+            <div className="w-24 h-24 mx-auto flex items-center justify-center">
+              <AnimatedMascot
+                mascot="sandwich"
+                animation="bounce"
+                color="#1E130C"
+                className="w-full h-full"
+              />
+            </div>
+            <h4 className="font-serif font-black text-sm text-[#1E130C]">
+              ¿No encuentras lo que buscas?
+            </h4>
+            <p className="text-xs text-[#785E4F] leading-relaxed">
+              Prueba buscando <span className="font-bold text-[#991B24]">cappuccino</span>, <span className="font-bold text-[#991B24]">croissant</span>, <span className="font-bold text-[#991B24]">cuñapé</span> o <span className="font-bold text-[#991B24]">pizza</span>.
             </p>
-            <p className="text-xs text-stone-500">Prueba con palabras como café, pan o tarta</p>
+            <button
+              onClick={() => {
+                soundManager.playTactileClick();
+                setBusqueda("");
+                setCategoriaActiva("todos");
+              }}
+              className="px-4 py-2 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs font-bold transition shadow-xs cursor-pointer"
+            >
+              Ver Todo el Menú ({productos.length} Delicias)
+            </button>
           </div>
         )}
       </div>

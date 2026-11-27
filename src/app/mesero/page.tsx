@@ -29,6 +29,7 @@ import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import FloorPlanMap from "@/components/FloorPlanMap";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
+import { DenckerLogo } from "@/components/brand";
 import { printElementById } from "@/lib/print";
 import { getStaffSession } from "@/lib/auth";
 
@@ -398,12 +399,8 @@ export default function MeseroPage() {
         <header className="bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 lg:px-8 py-3.5 shadow-xl">
           <div className="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
-                <img
-                  src={DENCKER_ASSETS.logoLight}
-                  alt="Don Dencker"
-                  className="w-full h-full object-contain drop-shadow"
-                />
+              <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                <DenckerLogo className="w-full h-full drop-shadow" color="#F59E0B" animated={true} />
               </div>
               <div>
                 <div className="flex items-center gap-2">

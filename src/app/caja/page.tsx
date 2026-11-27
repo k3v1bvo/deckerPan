@@ -27,6 +27,7 @@ import { Pedido, MetodoPago, BILLETES_BOLIVIANOS, FacturaEmitida } from "@/types
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
+import { DenckerLogo } from "@/components/brand";
 import { printElementById } from "@/lib/print";
 import { convertirNumeroALiteral } from "@/lib/siat-utils";
 
@@ -239,12 +240,8 @@ export default function CajaPage() {
       <header className="sticky top-0 z-40 bg-[#1E130C] text-white px-4 lg:px-8 py-3.5 shadow-2xl border-b-2 border-amber-500/30">
         <div className="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border-2 border-amber-500/40 flex items-center justify-center shrink-0 shadow-inner">
-              <img
-                src={DENCKER_ASSETS.logoLight}
-                alt="Don Dencker"
-                className="w-full h-full object-contain drop-shadow"
-              />
+            <div className="w-10 h-10 flex items-center justify-center shrink-0">
+              <DenckerLogo className="w-full h-full drop-shadow" color="#F59E0B" animated={true} />
             </div>
             <div>
               <div className="flex items-center gap-2">
