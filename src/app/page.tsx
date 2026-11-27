@@ -838,14 +838,13 @@ export default function HomePage() {
           <div className="bg-gradient-to-r from-[#991B24]/95 via-[#7F1D1D] to-[#1E130C] rounded-3xl p-6 sm:p-10 border-2 border-amber-500/30 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
             
             <div className="space-y-3.5 text-left max-w-2xl">
-              {/* Rótulo Oficial MENU DENCKER con Alta Legibilidad */}
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-2xl bg-[#1E130C] border-2 border-amber-400/60 shadow-lg mb-2">
-                <span className="font-serif font-black tracking-[0.2em] uppercase text-amber-300 text-sm sm:text-base">
-                  MENÚ DENCKER
-                </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#991B24] text-white font-black border border-amber-400/30">
-                  OFICIAL
-                </span>
+              {/* Logo Oficial Vectorizado del Menú Dencker (Color Claro Auténtico) */}
+              <div className="mb-4 max-w-[290px] sm:max-w-[360px]">
+                <img
+                  src="/img/brand/logo-menu-dencker-light.svg"
+                  alt="Menú Dencker Oficial"
+                  className="w-full h-auto object-contain filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+                />
               </div>
 
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-amber-400/30 text-amber-300 text-xs font-bold shadow-xs">
@@ -914,129 +913,285 @@ export default function HomePage() {
 
           </div>
 
-          {/* ── Banner de los 3 Emblemas Oficiales Dencker con Alto Contraste ── */}
-          <div className="w-full mt-6 pt-6 border-t border-white/15 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-            {/* Emblema 1 */}
-            <div className="flex items-center gap-3.5 bg-[#1E130C] p-4 rounded-3xl border-2 border-amber-500/40 shadow-xl hover:border-amber-400 transition group">
-              <div className="w-14 h-14 rounded-2xl bg-white p-2.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
-                <img
-                  src="/img/brand/logo-1-chef-hat.svg"
-                  alt="Sombrero Chef Dencker"
-                  className="w-full h-full object-contain filter drop-shadow-xs"
-                />
+          {/* ── SECCIÓN 1: LOS 3 PILARES DE AUTENTICIDAD & TRADICIÓN DENCKER ── */}
+          <div className="w-full mt-10 pt-8 border-t border-white/15">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+              <div>
+                <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-amber-400 font-black flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  Garantía &amp; Tradición Artesanal Dencker
+                </span>
+                <h3 className="font-serif text-xl sm:text-2xl font-black text-white mt-0.5">
+                  Los 3 Sellos que Definen Nuestro Obrador
+                </h3>
               </div>
-              <div className="text-left">
-                <h4 className="font-serif font-black text-xs text-amber-300 uppercase tracking-wider">Insignia Maestra</h4>
-                <p className="text-[11px] text-stone-200 font-medium">Sombrero Chef &amp; Bigote Dencker</p>
-              </div>
-            </div>
-
-            {/* Emblema 2 */}
-            <div className="flex items-center gap-3.5 bg-[#1E130C] p-4 rounded-3xl border-2 border-amber-500/40 shadow-xl hover:border-amber-400 transition group">
-              <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform overflow-hidden">
-                <img
-                  src="/img/brand/logo-2-dencker-coffee-vintage.png"
-                  alt="Boleto Vintage Dencker Coffee"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="text-left">
-                <h4 className="font-serif font-black text-xs text-amber-300 uppercase tracking-wider">Boleto Clásico</h4>
-                <p className="text-[11px] text-stone-200 font-medium">Dencker Coffee &amp; Panadería Vintage</p>
-              </div>
-            </div>
-
-            {/* Emblema 3 */}
-            <div className="flex items-center gap-3.5 bg-[#1E130C] p-4 rounded-3xl border-2 border-amber-500/40 shadow-xl hover:border-amber-400 transition group">
-              <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
-                <img
-                  src="/img/brand/logo-3-don-dencker-badge.png"
-                  alt="Don Dencker Sello"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="text-left">
-                <h4 className="font-serif font-black text-xs text-amber-300 uppercase tracking-wider">Sello de Tradición</h4>
-                <p className="text-[11px] text-stone-200 font-medium">Don Dencker con Taza Humeante</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Cenefa a Cuadros Bistró Oficial del PDF */}
-          <div className="w-full mt-6 py-1 flex items-center justify-center opacity-90">
-            <img
-              src="/img/brand/checkered-bistro-ribbon-official.png"
-              alt="Cenefa a Cuadros Dencker"
-              className="w-full max-w-4xl h-4 object-contain select-none"
-            />
-          </div>
-
-          {/* Galería de Mascotas Ilustradas Originales del Menú Físico (PDF) */}
-          <div className="w-full mt-4 pt-4 border-t border-white/10 flex flex-col items-center space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-amber-300">
-                Arte & Mascotas Ilustradas Originales de Don Dencker (Menú Oficial)
+              <span className="text-xs text-amber-200/70 font-sans hidden sm:block">
+                Elaboración diaria en Av. Salamanca, Cochabamba
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full">
-              {/* Mascota 1: Taza con Sol */}
-              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
-                <div className="w-16 h-16 flex items-center justify-center">
-                  <img
-                    src="/img/brand/mascot-coffee-sun-official.png"
-                    alt="Taza Sonriente con Sol"
-                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
-                  />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5">
+              {/* Sello 1: Masa Madre */}
+              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/70 rounded-3xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+                    <img
+                      src="/img/brand/logo-1-chef-hat.svg"
+                      alt="Sombrero Chef e Insignia Maestra"
+                      className="w-full h-full object-contain filter drop-shadow-xs"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                        100% Artesanal
+                      </span>
+                    </div>
+                    <h4 className="font-serif font-black text-sm text-amber-200 uppercase tracking-wide">
+                      Masa Madre Viva 24h
+                    </h4>
+                  </div>
                 </div>
-                <div>
-                  <h5 className="font-serif font-bold text-xs text-amber-200">Café Sonriente & Sol</h5>
-                  <p className="text-[10px] text-stone-300">Pág. 02 • Especialidad 4 Llamas</p>
+                <p className="text-xs text-stone-300 leading-relaxed mt-3 pt-3 border-t border-white/10 font-medium">
+                  Harinas puras seleccionadas, fermentación lenta en frío durante 24 horas y corteza dorada al horno sin químicos ni aditivos industriales.
+                </p>
+              </div>
+
+              {/* Sello 2: Café Caranavi */}
+              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/70 rounded-3xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform overflow-hidden">
+                    <img
+                      src="/img/brand/logo-2-dencker-coffee-vintage.png"
+                      alt="Boleto Vintage Café Dencker"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-600 text-stone-950 font-mono font-bold">
+                        Origen Caranavi
+                      </span>
+                    </div>
+                    <h4 className="font-serif font-black text-sm text-amber-200 uppercase tracking-wide">
+                      Café Especialidad 4 Llamas
+                    </h4>
+                  </div>
+                </div>
+                <p className="text-xs text-stone-300 leading-relaxed mt-3 pt-3 border-t border-white/10 font-medium">
+                  Microlotes de altura cultivados a 1.600 msnm, tostados artesanalmente en Cochabamba y molidos al instante para espressos y filtrados de autor.
+                </p>
+              </div>
+
+              {/* Sello 3: Tradición 1993 */}
+              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/70 rounded-3xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Sello Tradición Don Dencker"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-800 text-emerald-100 border border-emerald-400/30">
+                        Desde 1993
+                      </span>
+                    </div>
+                    <h4 className="font-serif font-black text-sm text-amber-200 uppercase tracking-wide">
+                      Tradición Familiar Don Dencker
+                    </h4>
+                  </div>
+                </div>
+                <p className="text-xs text-stone-300 leading-relaxed mt-3 pt-3 border-t border-white/10 font-medium">
+                  Más de 30 años honrando las recetas clásicas de la panadería europea fusionada con el calor de nuestra gente cochabambina.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Cenefa a Cuadros Bistró Oficial */}
+          <div className="w-full my-8 py-1 flex items-center justify-center opacity-85">
+            <img
+              src="/img/brand/checkered-bistro-ribbon-official.png"
+              alt="Cenefa a Cuadros Dencker"
+              className="w-full max-w-4xl h-3.5 object-contain select-none"
+            />
+          </div>
+
+          {/* ── SECCIÓN 2: LAS MASCOTAS EMBAJADORAS DE LA CARTA (NAVEGADORES INTERACTIVOS) ── */}
+          <div className="w-full flex flex-col items-center space-y-5">
+            <div className="text-center max-w-2xl space-y-1.5">
+              <span className="text-[11px] font-mono font-bold tracking-[0.2em] uppercase text-amber-400 flex items-center justify-center gap-2">
+                <span>✦</span> Ilustraciones Originales del Menú Físico <span>✦</span>
+              </span>
+              <h3 className="font-serif text-2xl sm:text-3xl font-black text-white">
+                Los 4 Embajadores de la Carta
+              </h3>
+              <p className="text-xs sm:text-sm text-amber-100/80 leading-relaxed font-sans">
+                En nuestra carta impresa, cada personaje ilustrado a mano guía a los comensales por una especialidad de la casa. Toca cualquiera para ir directo a su estación:
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+              {/* Mascota 1: Café Sonriente */}
+              <div
+                onClick={() => {
+                  soundManager.playCoffeeSteam();
+                  setCategoriaActiva("c_cafes");
+                  document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+                    <img
+                      src="/img/brand/mascot-coffee-sun-official.png"
+                      alt="Café Sonriente y Sol"
+                      className="w-full h-full object-contain filter drop-shadow-xs"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                      Capítulo I • Barismo
+                    </span>
+                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
+                      Don Café Sonriente
+                    </h5>
+                  </div>
+                </div>
+                <p className="text-xs text-stone-300 font-medium leading-relaxed">
+                  Custodia la extracción de granos Caranavi 4 Llamas, espressos dobles, flat whites y chocolates texturizados.
+                </p>
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                  <span className="flex items-center gap-1.5">
+                    <span>Ver Cafetería</span>
+                    <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
+                    Pág 02
+                  </span>
                 </div>
               </div>
 
               {/* Mascota 2: Croissant Saltarín */}
-              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
-                <div className="w-16 h-16 flex items-center justify-center">
-                  <img
-                    src="/img/brand/mascot-croissant-official.png"
-                    alt="Croissant Saltarín"
-                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
-                  />
+              <div
+                onClick={() => {
+                  soundManager.playPastryCrinkle();
+                  setCategoriaActiva("c_dulces");
+                  document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+                    <img
+                      src="/img/brand/mascot-croissant-official.png"
+                      alt="Croissant Saltarín"
+                      className="w-full h-full object-contain filter drop-shadow-xs"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                      Capítulo II • Hojaldres
+                    </span>
+                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
+                      Croissant Saltarín
+                    </h5>
+                  </div>
                 </div>
-                <div>
-                  <h5 className="font-serif font-bold text-xs text-amber-200">Croissant Saltarín</h5>
-                  <p className="text-[10px] text-stone-300">Pág. 04 • Hojaldre 100% Mantequilla</p>
+                <p className="text-xs text-stone-300 font-medium leading-relaxed">
+                  Embajador del hojaldre 100% mantequilla, medialunas doradas, New York rolls y tartaletas horneadas al alba.
+                </p>
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                  <span className="flex items-center gap-1.5">
+                    <span>Ver Repostería</span>
+                    <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
+                    Pág 04
+                  </span>
                 </div>
               </div>
 
-              {/* Mascota 3: Sándwich Pulgar Arriba */}
-              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
-                <div className="w-16 h-16 flex items-center justify-center">
-                  <img
-                    src="/img/brand/mascot-sandwich-official.png"
-                    alt="Sándwich Pulgar Arriba"
-                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
-                  />
+              {/* Mascota 3: Sándwich Feliz */}
+              <div
+                onClick={() => {
+                  soundManager.playBreadCrunch();
+                  setCategoriaActiva("c_sandwiches");
+                  document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+                    <img
+                      src="/img/brand/mascot-sandwich-official.png"
+                      alt="Sándwich Feliz"
+                      className="w-full h-full object-contain filter drop-shadow-xs"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                      Capítulo III • Sándwiches
+                    </span>
+                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
+                      Sándwich Feliz
+                    </h5>
+                  </div>
                 </div>
-                <div>
-                  <h5 className="font-serif font-bold text-xs text-amber-200">Sándwich Feliz</h5>
-                  <p className="text-[10px] text-stone-300">Pág. 05 • Pan de Masa Madre 24h</p>
+                <p className="text-xs text-stone-300 font-medium leading-relaxed">
+                  Guía de los lomitos gourmet, tostados triples, Croque Monsieur y ciabattas con panes de 24h de fermentación.
+                </p>
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                  <span className="flex items-center gap-1.5">
+                    <span>Ver Sándwiches</span>
+                    <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
+                    Pág 05
+                  </span>
                 </div>
               </div>
 
               {/* Mascota 4: Pizza Skater */}
-              <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex flex-col items-center text-center space-y-2 hover:bg-black/60 transition group shadow-sm">
-                <div className="w-16 h-16 flex items-center justify-center">
-                  <img
-                    src="/img/brand/mascot-pizza-official.png"
-                    alt="Pizza Skater"
-                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow"
-                  />
+              <div
+                onClick={() => {
+                  soundManager.playPorcelainTink();
+                  setCategoriaActiva("c_pizzas");
+                  document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+                    <img
+                      src="/img/brand/mascot-pizza-official.png"
+                      alt="Pizza Skater con Gafas"
+                      className="w-full h-full object-contain filter drop-shadow-xs"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                      Capítulo IV • Pizzas
+                    </span>
+                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
+                      Pizza Skater
+                    </h5>
+                  </div>
                 </div>
-                <div>
-                  <h5 className="font-serif font-bold text-xs text-amber-200">Pizza Skater con Gafas</h5>
-                  <p className="text-[10px] text-stone-300">Pág. 06 • Horno de Piedra Artesanal</p>
+                <p className="text-xs text-stone-300 font-medium leading-relaxed">
+                  Maestro de las masas fermentadas 48h, salsa pomodoro casera, queso gratinado y porciones individuales de 4, 6 y 8.
+                </p>
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                  <span className="flex items-center gap-1.5">
+                    <span>Ver Pizzas</span>
+                    <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
+                    Pág 06
+                  </span>
                 </div>
               </div>
             </div>

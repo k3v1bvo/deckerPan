@@ -43,15 +43,7 @@ export default function RoleNav() {
   return (
     <>
       {/* ── NAVBAR ── */}
-      <header className="sticky top-0 z-40 bg-[#160D08] backdrop-blur-2xl border-b border-amber-500/20 text-white shadow-xl print:hidden">
-        {/* Toldo Mini Auténtico Dencker */}
-        <div className="w-full shrink-0 overflow-hidden select-none">
-          <img
-            src="/img/brand/awning-marquee-official.png"
-            alt="Toldo Dencker"
-            className="w-full h-2.5 sm:h-3 object-cover shadow-xs"
-          />
-        </div>
+      <header className="sticky top-0 z-40 bg-[#160D08]/98 backdrop-blur-2xl border-b border-amber-500/25 text-white shadow-xl print:hidden">
         <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-3">
 
           {/* ── LOGO & BRAND IDENTITY RESPONSIVE (MÓVIL & ESCRITORIO) ── */}
