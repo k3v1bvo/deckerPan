@@ -844,10 +844,10 @@ export default function AdminPage() {
 
   return (
     <StaffAuthGuard requiredRole="admin" roleTitle="Administración General">
-      <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
+      <div className="w-full min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
       {/* ── Header Dencker Pan Administración ── */}
       <header className="bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 lg:px-8 py-3.5 shadow-xl">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+        <div className="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
@@ -898,7 +898,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
+      <div className="w-full max-w-[1720px] mx-auto px-4 lg:px-8 xl:px-10 py-6 space-y-6">
         {/* ── Segmented Control Tabs con Estilo Artesanal Responsive ── */}
         <div className="relative flex items-center p-1.5 rounded-2xl bg-white border-2 border-[#D5C7B5] w-full max-w-full overflow-x-auto scrollbar-none shadow-sm gap-1.5">
           {(
@@ -1244,7 +1244,7 @@ export default function AdminPage() {
 
             {/* VISTA 1: GRID DE TARJETAS */}
             {vistaProductosModo === "tarjetas" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4.5">
                 {productos
                   .filter((p) => {
                     const matchCat =
@@ -1277,7 +1277,7 @@ export default function AdminPage() {
                                   setGaleriaFotosAbierta(true);
                                 }}
                                 title="Click para cambiar foto desde las fotos reales del menú"
-                                className="relative group/img w-14 h-14 rounded-2xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border border-amber-200/60 dark:border-stone-700 shrink-0 text-2xl cursor-pointer hover:ring-2 hover:ring-amber-500 transition"
+                                className="relative group/img w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border-2 border-amber-300/60 dark:border-stone-700 shrink-0 text-3xl cursor-pointer hover:ring-2 hover:ring-amber-500 transition shadow-xs"
                               >
                                 {prod.imagen_url ? (
                                   <img

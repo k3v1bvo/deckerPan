@@ -428,18 +428,10 @@ export default function MesaPage({ params }: PageProps) {
   const itemEnCarrito = (id: string) => items.find((i) => i.producto.id === id);
 
   return (
-    <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
+    <div className="w-full min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
       {/* ── Header Flotante Dencker Pan ── */}
       <header className="sticky top-0 z-30 bg-[#1E130C] border-b-2 border-amber-500/30 text-white shadow-xl pt-safe">
-        {/* Toldo Mini Auténtico Dencker */}
-        <div className="w-full shrink-0 overflow-hidden select-none">
-          <img
-            src="/img/brand/awning-marquee-official.png"
-            alt="Toldo Dencker"
-            className="w-full h-2.5 sm:h-3.5 object-cover"
-          />
-        </div>
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5">
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
@@ -513,7 +505,7 @@ export default function MesaPage({ params }: PageProps) {
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto px-4 pt-4 space-y-4">
+      <div className="max-w-3xl mx-auto px-4 pt-4 space-y-4">
         {/* ── Live Order Tracker (Card Apple Pro con Alto Contraste) ── */}
         <AnimatePresence>
           {pedidoEstado && (

@@ -393,10 +393,10 @@ export default function MeseroPage() {
 
   return (
     <StaffAuthGuard requiredRole="mesero" roleTitle="Sala & Meseros">
-      <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
+      <div className="w-full min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
         {/* ── Header Dencker Pan Bistró ── */}
         <header className="bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 lg:px-8 py-3.5 shadow-xl">
-          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+          <div className="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
                 <img
@@ -490,7 +490,7 @@ export default function MeseroPage() {
           </div>
         </header>
 
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
+        <div className="w-full max-w-[1720px] mx-auto px-4 lg:px-8 xl:px-10 py-6 space-y-6">
           {/* ── Pedidos QR en Mesa Pendientes de Verificación ── */}
           {pedidosPendientesQR.length > 0 && (
             <motion.div

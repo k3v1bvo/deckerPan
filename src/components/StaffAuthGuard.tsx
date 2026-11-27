@@ -154,8 +154,20 @@ export default function StaffAuthGuard({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#120B07] flex items-center justify-center text-white">
-        <div className="w-8 h-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+      <div className="w-full min-h-screen bg-[#120B07] flex flex-col items-center justify-center text-white space-y-4 px-4 select-none">
+        <div className="w-16 h-16 rounded-2xl bg-white/10 p-2.5 border border-amber-500/30 flex items-center justify-center shadow-inner">
+          <img
+            src={DENCKER_ASSETS.logoLight}
+            alt="Dencker Pan"
+            className="w-full h-full object-contain drop-shadow"
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
+          <span className="text-xs font-mono tracking-wider uppercase text-amber-200/90 font-bold">
+            Verificando Credenciales Dencker Pan...
+          </span>
+        </div>
       </div>
     );
   }
@@ -168,20 +180,11 @@ export default function StaffAuthGuard({
     const esAdmin = session.user.role === "admin";
 
     return (
-      <div className="relative min-h-screen bg-[#FAF7F2] text-[#1E130C]">
-        {/* Toldo Mini Auténtico Dencker en el tope supremo */}
-        <div className="w-full shrink-0 overflow-hidden select-none sticky top-0 z-50 print:hidden">
-          <img
-            src="/img/brand/awning-marquee-official.png"
-            alt="Toldo Dencker"
-            className="w-full h-2.5 sm:h-3 object-cover shadow-xs"
-          />
-        </div>
-
+      <div className="w-full relative min-h-screen bg-[#FAF7F2] text-[#1E130C]">
         {/* Barra superior de Turno Activo */}
         <aside
           aria-label="Control de turno de personal"
-          className="sticky top-2.5 sm:top-3 z-40 bg-[#160D08]/98 backdrop-blur-xl border-b border-amber-500/20 px-3 sm:px-6 py-2.5 text-white text-xs flex flex-wrap items-center justify-between gap-3 shadow-lg print:hidden"
+          className="sticky top-0 z-40 bg-[#160D08]/98 backdrop-blur-xl border-b border-amber-500/25 px-3 sm:px-6 py-2.5 text-white text-xs flex flex-wrap items-center justify-between gap-3 shadow-lg print:hidden"
         >
           {/* Datos del Operador & Logo */}
           <div className="flex items-center gap-2.5 sm:gap-3">
@@ -270,16 +273,7 @@ export default function StaffAuthGuard({
   const RequiredIcon = ROLE_ICONS[requiredRole] || Lock;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#160D08] via-[#1E130C] to-[#160D08] text-white flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden select-none">
-      {/* Toldo Mini Auténtico Dencker en el borde superior */}
-      <div className="absolute top-0 left-0 right-0 w-full overflow-hidden select-none">
-        <img
-          src="/img/brand/awning-marquee-official.png"
-          alt="Toldo Dencker"
-          className="w-full h-3 sm:h-4 object-cover"
-        />
-      </div>
-
+    <div className="w-full min-h-screen bg-gradient-to-b from-[#160D08] via-[#1E130C] to-[#160D08] text-white flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden select-none">
       {/* Glows ambientales sutiles */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-600/10 blur-[140px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#991B24]/15 blur-[140px] pointer-events-none" />
@@ -400,8 +394,58 @@ export default function StaffAuthGuard({
           </motion.button>
         </div>
 
+        {/* Acceso Rápido para Demostración y Evaluación */}
+        <div className="pt-2 border-t border-white/10 space-y-2">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-amber-400/90 font-bold">
+            <span>Credenciales de Acceso:</span>
+            <span className="text-stone-400 font-sans normal-case">(Toca para autocompletar)</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playTactileClick();
+                setPin("2024");
+                setTimeout(() => validarPin("2024"), 100);
+              }}
+              className="p-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-200 font-semibold flex items-center justify-between transition cursor-pointer active:scale-95"
+            >
+              <span>Gerencia:</span>
+              <span className="font-mono font-bold text-amber-400">2024</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playTactileClick();
+                const defaultPin =
+                  requiredRole === "caja"
+                    ? "3333"
+                    : requiredRole === "mesero"
+                    ? "1111"
+                    : requiredRole === "cocina"
+                    ? "2222"
+                    : "2024";
+                setPin(defaultPin);
+                setTimeout(() => validarPin(defaultPin), 100);
+              }}
+              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-stone-200 font-semibold flex items-center justify-between transition cursor-pointer active:scale-95"
+            >
+              <span className="capitalize">{requiredRole}:</span>
+              <span className="font-mono font-bold text-amber-400">
+                {requiredRole === "caja"
+                  ? "3333"
+                  : requiredRole === "mesero"
+                  ? "1111"
+                  : requiredRole === "cocina"
+                  ? "2222"
+                  : "2024"}
+              </span>
+            </button>
+          </div>
+        </div>
+
         {/* Pie de Pantalla de Producción */}
-        <div className="pt-3 border-t border-white/10 space-y-3">
+        <div className="pt-2 border-t border-white/10 space-y-3">
           <div className="flex items-center justify-between text-xs text-stone-400 px-1">
             <Link
               href="/"

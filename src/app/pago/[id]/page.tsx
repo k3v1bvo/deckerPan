@@ -75,18 +75,9 @@ export default function PagoClientePage({ params, searchParams }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-20 font-sans">
-      {/* ── Toldo Mini Auténtico Dencker ── */}
-      <div className="w-full shrink-0 overflow-hidden select-none sticky top-0 z-40">
-        <img
-          src="/img/brand/awning-marquee-official.png"
-          alt="Toldo Dencker"
-          className="w-full h-2.5 sm:h-3 object-cover shadow-xs"
-        />
-      </div>
-
+    <div className="w-full min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-20 font-sans">
       {/* ── Header Dencker Pan ── */}
-      <header className="sticky top-2.5 sm:top-3 z-30 bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 py-3 shadow-xl">
+      <header className="sticky top-0 z-30 bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 py-3 shadow-xl">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <Link
             href={`/mesa/${pedido.mesa_numero}`}

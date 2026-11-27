@@ -115,10 +115,10 @@ export default function KDSPage() {
 
   return (
     <StaffAuthGuard requiredRole="cocina" roleTitle="Cocina & Barismo KDS">
-      <div className="min-h-screen bg-[#120B07] text-stone-100 pb-28 font-sans selection:bg-amber-500 selection:text-black">
+      <div className="w-full min-h-screen bg-[#120B07] text-stone-100 pb-28 font-sans selection:bg-amber-500 selection:text-black">
       {/* ── Header KDS Apple Pro High Contrast ── */}
       <header className="bg-[#1C110A] border-b border-amber-900/40 px-4 lg:px-8 py-3.5 shadow-2xl">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+        <div className="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
               <img
@@ -200,7 +200,7 @@ export default function KDSPage() {
       </header>
 
       {/* ── Operational Kitchen Analytics Bar ── */}
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6">
+      <div className="w-full max-w-[1720px] mx-auto px-4 lg:px-8 xl:px-10 pt-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="p-3.5 rounded-2xl bg-[#19120d] border border-amber-900/30 flex items-center justify-between">
             <div>
@@ -273,7 +273,7 @@ export default function KDSPage() {
       </div>
 
       {/* ── Main Orders Grid ── */}
-      <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
+      <main className="w-full max-w-[1720px] mx-auto px-4 lg:px-8 xl:px-10 py-6">
         {pedidosPendientes.length === 0 ? (
           <div className="py-28 text-center space-y-4">
             <motion.div

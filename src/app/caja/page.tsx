@@ -234,10 +234,10 @@ export default function CajaPage() {
 
   return (
     <StaffAuthGuard requiredRole="caja" roleTitle="Caja POS & Facturación">
-      <div className="min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-24 font-sans selection:bg-amber-200">
+      <div className="w-full min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-24 font-sans selection:bg-amber-200">
       {/* Header Caja */}
-      <header className="sticky top-0 z-40 bg-[#1E130C] text-white px-4 lg:px-6 py-3.5 shadow-2xl border-b-2 border-amber-500/30">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[#1E130C] text-white px-4 lg:px-8 py-3.5 shadow-2xl border-b-2 border-amber-500/30">
+        <div className="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-white/10 p-1 border-2 border-amber-500/40 flex items-center justify-center shrink-0 shadow-inner">
               <img
@@ -280,7 +280,7 @@ export default function CajaPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+      <div className="w-full max-w-[1720px] mx-auto px-4 lg:px-8 xl:px-10 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
         {/* Columna Izquierda: Cola de Mesas y Pedidos Pendientes */}
         <div className="lg:col-span-5 space-y-4">
           <div className="flex items-center justify-between">

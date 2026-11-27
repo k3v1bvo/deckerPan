@@ -237,18 +237,9 @@ export default function AsistenciaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#120B07] text-stone-100 flex flex-col justify-between selection:bg-amber-500 selection:text-stone-950 font-sans">
-      {/* Toldo Mini Auténtico Dencker */}
-      <div className="w-full shrink-0 overflow-hidden select-none sticky top-0 z-40">
-        <img
-          src="/img/brand/awning-marquee-official.png"
-          alt="Toldo Dencker"
-          className="w-full h-2.5 sm:h-3 object-cover shadow-xs"
-        />
-      </div>
-
+    <div className="w-full min-h-screen bg-[#120B07] text-stone-100 flex flex-col justify-between selection:bg-amber-500 selection:text-stone-950 font-sans">
       {/* ── HEADER DE NAVEGACIÓN ── */}
-      <header className="sticky top-2.5 sm:top-3 z-30 bg-[#160D08]/95 backdrop-blur-xl border-b border-amber-500/20 px-4 py-3 shadow-xl">
+      <header className="sticky top-0 z-30 bg-[#160D08]/95 backdrop-blur-xl border-b border-amber-500/20 px-4 py-3 shadow-xl">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link
             href="/"
