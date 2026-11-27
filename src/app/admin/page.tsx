@@ -843,7 +843,7 @@ export default function AdminPage() {
     : 0;
 
   return (
-    <StaffAuthGuard requiredRole="admin" roleTitle="Administración General">
+        <StaffAuthGuard requiredRole="admin" roleTitle="Administración General">
       <div className="w-full min-h-screen bg-[#F2ECE1] text-[#1E130C] pb-36 font-sans">
       {/* ── Header Dencker Pan Administración ── */}
       <header className="bg-[#1E130C] border-b-2 border-amber-500/30 text-white px-4 lg:px-8 py-3.5 shadow-xl">
@@ -899,348 +899,343 @@ export default function AdminPage() {
       </header>
 
       <div className="w-full max-w-[1720px] mx-auto px-4 lg:px-8 xl:px-10 py-6 space-y-6">
-        {/* ── Segmented Control Tabs con Estilo Artesanal Responsive ── */}
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-white border-2 border-[#D5C7B5] w-full max-w-full overflow-x-auto scrollbar-none shadow-sm gap-1.5">
-          {(
-            [
-              { id: "productos", label: "Catálogo & Precios", icon: UtensilsCrossed },
-              { id: "mesas", label: "Mesas & Plano", icon: Layers },
-              { id: "asistencias", label: "Asistencias GPS", icon: Clock },
-              { id: "siat", label: "Facturas SIAT", icon: Receipt },
-              { id: "personal", label: "Personal & PINs", icon: Users },
-              { id: "qr_mesas", label: "QRs Mesas", icon: QrCode },
-              { id: "reservas", label: "Reservas", icon: Calendar },
-              { id: "metricas", label: "Finanzas", icon: BarChart3 },
-              { id: "qr", label: "QR Cobro", icon: DollarSign },
-            ] as const
-          ).map((tab) => {
-            const Icon = tab.icon;
-            const isActive = tabActiva === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  soundManager.playClick();
-                  setTabActiva(tab.id);
-                }}
-                className={`relative shrink-0 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all z-10 cursor-pointer whitespace-nowrap ${
-                  isActive ? "text-white font-black" : "text-stone-800 hover:text-stone-950 hover:bg-[#FAF6EF]"
-                }`}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="adminTabHighlight"
-                    className="absolute inset-0 bg-[#991B24] rounded-xl shadow-md border-2 border-[#7F1D1D] -z-10"
-                    transition={{ type: "spring", damping: 30, stiffness: 450 }}
-                  />
-                )}
-                <Icon size={16} className={isActive ? "text-amber-300" : ""} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
 
-        {/* ── TAB 1: GESTIÓN DE MESAS & AFORO ── */}
-        {tabActiva === "mesas" && (
-          <div className="space-y-6">
-            {/* Plano Arquitectónico Interactivo (2 Pisos: Planta Baja & Terraza) */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
+          {/* ── Segmented Control Tabs con Estilo Artesanal Responsive ── */}
+          <div className="relative flex items-center p-1.5 rounded-2xl bg-white border-2 border-[#D5C7B5] w-full max-w-full overflow-x-auto scrollbar-none shadow-sm gap-1.5">
+            {(
+              [
+                { id: "productos", label: "Catálogo & Precios", icon: UtensilsCrossed },
+                { id: "mesas", label: "Mesas & Plano", icon: Layers },
+                { id: "asistencias", label: "Asistencias GPS", icon: Clock },
+                { id: "siat", label: "Facturas SIAT", icon: Receipt },
+                { id: "personal", label: "Personal & PINs", icon: Users },
+                { id: "qr_mesas", label: "QRs Mesas", icon: QrCode },
+                { id: "reservas", label: "Reservas", icon: Calendar },
+                { id: "metricas", label: "Finanzas", icon: BarChart3 },
+                { id: "qr", label: "QR Cobro", icon: DollarSign },
+              ] as const
+            ).map((tab) => {
+              const Icon = tab.icon;
+              const isActive = tabActiva === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    soundManager.playClick();
+                    setTabActiva(tab.id);
+                  }}
+                  className={`relative shrink-0 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all z-10 cursor-pointer whitespace-nowrap ${isActive ? "text-white font-black" : "text-stone-800 hover:text-stone-950 hover:bg-[#FAF6EF]"
+                    }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="adminTabHighlight"
+                      className="absolute inset-0 bg-[#991B24] rounded-xl shadow-md border-2 border-[#7F1D1D] -z-10"
+                      transition={{ type: "spring", damping: 30, stiffness: 450 }}
+                    />
+                  )}
+                  <Icon size={16} className={isActive ? "text-amber-300" : ""} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* ── TAB 1: GESTIÓN DE MESAS & AFORO ── */}
+          {tabActiva === "mesas" && (
+            <div className="space-y-6">
+              {/* Plano Arquitectónico Interactivo (2 Pisos: Planta Baja & Terraza) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <span>🗺️ Plano Dinámico de Mesas (Croquis Real Dencker Pan)</span>
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Arrastra mesas para moverlas, cambia formas (redondas/cuadradas), ajusta sillas y guarda los cambios en vivo.
+                    </p>
+                  </div>
+                </div>
+                <FloorPlanMap allowEditLayout={true} />
+              </div>
+
+              {/* Quick adjust total capacity dock */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-6">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <span>🗺️ Plano Dinámico de Mesas (Croquis Real Dencker Pan)</span>
+                    <Users size={18} className="text-amber-600" />
+                    Control de Aforo y Capacidad de Salón
                   </h3>
-                  <p className="text-xs text-stone-500">
-                    Arrastra mesas para moverlas, cambia formas (redondas/cuadradas), ajusta sillas y guarda los cambios en vivo.
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                    Capacidad actual: {metricasBI.aforoTotal} comensales sentados distribuidos en {mesas.length} mesas
                   </p>
                 </div>
-              </div>
-              <FloorPlanMap allowEditLayout={true} />
-            </div>
 
-            {/* Quick adjust total capacity dock */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-6">
-              <div>
-                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                  <Users size={18} className="text-amber-600" />
-                  Control de Aforo y Capacidad de Salón
-                </h3>
-                <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                  Capacidad actual: {metricasBI.aforoTotal} comensales sentados distribuidos en {mesas.length} mesas
-                </p>
-              </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 bg-stone-50 dark:bg-stone-800 p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700">
+                    <span className="text-xs font-bold text-stone-500 pl-2">Total Mesas:</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={cantidadMesasInput}
+                      onChange={(e) => setCantidadMesasInput(parseInt(e.target.value) || 1)}
+                      className="w-16 p-1.5 text-center font-bold text-sm bg-white dark:bg-stone-900 rounded-xl border border-stone-300 dark:border-stone-700"
+                    />
+                    <button
+                      onClick={handleAjustarCantidad}
+                      className="px-3.5 py-1.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs hover:bg-amber-950 transition active:scale-95"
+                    >
+                      Ajustar
+                    </button>
+                  </div>
 
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-stone-50 dark:bg-stone-800 p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700">
-                  <span className="text-xs font-bold text-stone-500 pl-2">Total Mesas:</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max="60"
-                    value={cantidadMesasInput}
-                    onChange={(e) => setCantidadMesasInput(parseInt(e.target.value) || 1)}
-                    className="w-16 p-1.5 text-center font-bold text-sm bg-white dark:bg-stone-900 rounded-xl border border-stone-300 dark:border-stone-700"
-                  />
                   <button
-                    onClick={handleAjustarCantidad}
-                    className="px-3.5 py-1.5 rounded-xl bg-amber-900 dark:bg-amber-600 text-white font-bold text-xs hover:bg-amber-950 transition active:scale-95"
+                    onClick={abrirModalNuevaMesa}
+                    className="px-4 py-2.5 rounded-2xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-md hover:bg-amber-950 transition flex items-center gap-2 active:scale-95"
                   >
-                    Ajustar
+                    <Plus size={16} /> Agregar Mesa Manual
                   </button>
                 </div>
-
-                <button
-                  onClick={abrirModalNuevaMesa}
-                  className="px-4 py-2.5 rounded-2xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-md hover:bg-amber-950 transition flex items-center gap-2 active:scale-95"
-                >
-                  <Plus size={16} /> Agregar Mesa Manual
-                </button>
               </div>
-            </div>
 
-            {/* Grid de Mesas */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {mesas.map((m) => {
-                const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Sala Principal";
+              {/* Grid de Mesas */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {mesas.map((m) => {
+                  const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Sala Principal";
 
-                return (
-                  <div
-                    key={m.id}
-                    className="p-4 sm:p-5 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between h-48 hover:border-amber-400 dark:hover:border-amber-600 transition group"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <span className="font-serif text-2xl font-black text-stone-900 dark:text-stone-100">
-                          Mesa {m.numero}
-                        </span>
-                        <p className="text-xs text-stone-500 dark:text-stone-400">{zonaNombre}</p>
-                      </div>
-                      <span
-                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${
-                          m.estado === "libre"
+                  return (
+                    <div
+                      key={m.id}
+                      className="p-4 sm:p-5 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between h-48 hover:border-amber-400 dark:hover:border-amber-600 transition group"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className="font-serif text-2xl font-black text-stone-900 dark:text-stone-100">
+                            Mesa {m.numero}
+                          </span>
+                          <p className="text-xs text-stone-500 dark:text-stone-400">{zonaNombre}</p>
+                        </div>
+                        <span
+                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${m.estado === "libre"
                             ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
                             : m.estado === "ocupada"
-                            ? "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
-                            : "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
-                        }`}
-                      >
-                        {m.estado}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1 text-xs text-stone-600 dark:text-stone-400">
-                      <div className="flex items-center gap-1.5 font-semibold">
-                        <Users size={14} className="text-amber-600" />
-                        <span>Capacidad: {m.capacidad} personas</span>
+                              ? "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+                              : "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
+                            }`}
+                        >
+                          {m.estado}
+                        </span>
                       </div>
-                      <div className="text-[11px] text-stone-400 capitalize">
-                        Geometría: {m.tipo}
+
+                      <div className="space-y-1 text-xs text-stone-600 dark:text-stone-400">
+                        <div className="flex items-center gap-1.5 font-semibold">
+                          <Users size={14} className="text-amber-600" />
+                          <span>Capacidad: {m.capacidad} personas</span>
+                        </div>
+                        <div className="text-[11px] text-stone-400 capitalize">
+                          Geometría: {m.tipo}
+                        </div>
+                      </div>
+
+                      {/* Acciones Mesa */}
+                      <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800">
+                        <button
+                          onClick={() => abrirModalEditarMesa(m)}
+                          className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs font-bold flex items-center gap-1.5"
+                        >
+                          <Edit2 size={13} /> Editar
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`¿Eliminar permanentemente la Mesa ${m.numero}?`)) {
+                              deleteMesa(m.id);
+                              soundManager.playSuccessTone();
+                            }
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs font-bold flex items-center gap-1.5"
+                        >
+                          <Trash2 size={13} /> Eliminar
+                        </button>
                       </div>
                     </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
-                    {/* Acciones Mesa */}
-                    <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800">
-                      <button
-                        onClick={() => abrirModalEditarMesa(m)}
-                        className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs font-bold flex items-center gap-1.5"
-                      >
-                        <Edit2 size={13} /> Editar
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (confirm(`¿Eliminar permanentemente la Mesa ${m.numero}?`)) {
-                            deleteMesa(m.id);
-                            soundManager.playSuccessTone();
-                          }
-                        }}
-                        className="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs font-bold flex items-center gap-1.5"
-                      >
-                        <Trash2 size={13} /> Eliminar
-                      </button>
-                    </div>
+          {/* ── TAB: GESTIÓN DE PRODUCTOS & PRECIOS (SINCRONIZACIÓN TOTAL) ── */}
+          {tabActiva === "productos" && (
+            <div className="space-y-6">
+              {/* Banner Central de Sincronización en Vivo */}
+              <div className="p-5 rounded-3xl bg-gradient-to-r from-[#991B24] via-[#7F1D1D] to-[#1E130C] text-white shadow-lg border border-red-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-amber-300">
+                      Sincronización en Tiempo Real Activa
+                    </span>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB: GESTIÓN DE PRODUCTOS & PRECIOS (SINCRONIZACIÓN TOTAL) ── */}
-        {tabActiva === "productos" && (
-          <div className="space-y-6">
-            {/* Banner Central de Sincronización en Vivo */}
-            <div className="p-5 rounded-3xl bg-gradient-to-r from-[#991B24] via-[#7F1D1D] to-[#1E130C] text-white shadow-lg border border-red-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-amber-300">
-                    Sincronización en Tiempo Real Activa
-                  </span>
+                  <h2 className="font-serif text-xl sm:text-2xl font-black tracking-tight text-white">
+                    Editor Central de Catálogo, Montos & Fotos
+                  </h2>
+                  <p className="text-xs text-amber-100/90 max-w-2xl leading-relaxed">
+                    Cualquier edición de <strong>precio, fotografía o nombre</strong> se refleja de inmediato en todo el sistema: en el <strong>Carrito de Compras</strong> (con recalculo instantáneo del total), en el <strong>Menú Carta PDF</strong>, en la <strong>Portada Web</strong> y en los <strong>POS de Caja y Mesas</strong>.
+                  </p>
                 </div>
-                <h2 className="font-serif text-xl sm:text-2xl font-black tracking-tight text-white">
-                  Editor Central de Catálogo, Montos & Fotos
-                </h2>
-                <p className="text-xs text-amber-100/90 max-w-2xl leading-relaxed">
-                  Cualquier edición de <strong>precio, fotografía o nombre</strong> se refleja de inmediato en todo el sistema: en el <strong>Carrito de Compras</strong> (con recalculo instantáneo del total), en el <strong>Menú Carta PDF</strong>, en la <strong>Portada Web</strong> y en los <strong>POS de Caja y Mesas</strong>.
-                </p>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <Link
+                    href="/menu-pdf"
+                    target="_blank"
+                    className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition flex items-center gap-1.5 active:scale-95"
+                  >
+                    <FileText size={14} className="text-amber-300" />
+                    <span>Ver Menú PDF</span>
+                  </Link>
+
+                  <button
+                    onClick={abrirModalNuevoProducto}
+                    className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-black shadow-md transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                  >
+                    <Plus size={15} />
+                    <span>Crear Producto</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
-                <Link
-                  href="/menu-pdf"
-                  target="_blank"
-                  className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition flex items-center gap-1.5 active:scale-95"
-                >
-                  <FileText size={14} className="text-amber-300" />
-                  <span>Ver Menú PDF</span>
-                </Link>
-
-                <button
-                  onClick={abrirModalNuevoProducto}
-                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-black shadow-md transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
-                >
-                  <Plus size={15} />
-                  <span>Crear Producto</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="p-4 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
-                <button
-                  onClick={() => setFiltroCategoria("todas")}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer transition ${
-                    filtroCategoria === "todas"
+              <div className="p-4 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+                  <button
+                    onClick={() => setFiltroCategoria("todas")}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer transition ${filtroCategoria === "todas"
                       ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
                       : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
-                  }`}
-                >
-                  Todas ({productos.length})
-                </button>
-                {categorias.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => setFiltroCategoria(c.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 cursor-pointer transition ${
-                      filtroCategoria === c.id
+                      }`}
+                  >
+                    Todas ({productos.length})
+                  </button>
+                  {categorias.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => setFiltroCategoria(c.id)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 cursor-pointer transition ${filtroCategoria === c.id
                         ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
                         : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
-                    }`}
-                  >
-                    <span>{c.emoji}</span>
-                    <span>{c.nombre}</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2.5">
-                <div className="relative">
-                  <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
-                  <input
-                    type="text"
-                    placeholder="Buscar producto o receta..."
-                    value={busquedaProducto}
-                    onChange={(e) => setBusquedaProducto(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500 w-44 sm:w-56"
-                  />
+                        }`}
+                    >
+                      <span>{c.emoji}</span>
+                      <span>{c.nombre}</span>
+                    </button>
+                  ))}
                 </div>
 
-                {/* Selector Vista Tarjetas vs Tabla */}
-                <div className="flex items-center p-1 bg-stone-100 dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      soundManager.playTactileClick();
-                      setVistaProductosModo("tarjetas");
-                    }}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                      vistaProductosModo === "tarjetas"
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                    <input
+                      type="text"
+                      placeholder="Buscar producto o receta..."
+                      value={busquedaProducto}
+                      onChange={(e) => setBusquedaProducto(e.target.value)}
+                      className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500 w-44 sm:w-56"
+                    />
+                  </div>
+
+                  {/* Selector Vista Tarjetas vs Tabla */}
+                  <div className="flex items-center p-1 bg-stone-100 dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playTactileClick();
+                        setVistaProductosModo("tarjetas");
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${vistaProductosModo === "tarjetas"
                         ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs"
                         : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
-                    }`}
-                    title="Vista Cuadrícula de Tarjetas"
+                        }`}
+                      title="Vista Cuadrícula de Tarjetas"
+                    >
+                      <Layers size={13} />
+                      <span className="hidden sm:inline">Tarjetas</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playTactileClick();
+                        setVistaProductosModo("tabla");
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${vistaProductosModo === "tabla"
+                        ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs"
+                        : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
+                        }`}
+                      title="Vista Planilla / Tabla de Precios Rápida"
+                    >
+                      <BarChart3 size={13} />
+                      <span className="hidden sm:inline">Planilla Precios</span>
+                    </button>
+                  </div>
+
+                  {/* Botón Ver PDF Oficial */}
+                  <button
+                    onClick={() => {
+                      soundManager.playClick();
+                      setModalPdfAbierto(true);
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 font-bold text-xs border border-amber-300/60 dark:border-amber-800 hover:bg-amber-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
+                    title="Ver las 6 páginas del Menú Dencker original"
                   >
-                    <Layers size={13} />
-                    <span className="hidden sm:inline">Tarjetas</span>
+                    <FileText size={15} className="text-amber-700 dark:text-amber-400" />
+                    <span className="hidden sm:inline">Menú Oficial PDF</span>
+                    <span className="sm:hidden">PDF</span>
                   </button>
+
+                  {/* Botón Galería de Fotos Reales */}
                   <button
-                    type="button"
                     onClick={() => {
-                      soundManager.playTactileClick();
-                      setVistaProductosModo("tabla");
+                      soundManager.playClick();
+                      setProductoParaGaleria(null);
+                      setGaleriaFotosAbierta(true);
                     }}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                      vistaProductosModo === "tabla"
-                        ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs"
-                        : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
-                    }`}
-                    title="Vista Planilla / Tabla de Precios Rápida"
+                    className="px-3.5 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs border border-stone-200 dark:border-stone-700 hover:bg-stone-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
+                    title="Explorar el banco de 169 fotos reales para asignar"
                   >
-                    <BarChart3 size={13} />
-                    <span className="hidden sm:inline">Planilla Precios</span>
+                    <ImageIcon size={15} className="text-amber-600" />
+                    <span>Fotos Reales ({REAL_PRODUCT_PHOTOS.length})</span>
+                  </button>
+
+                  {/* Botón Nuevo Producto */}
+                  <button
+                    onClick={abrirModalNuevoProducto}
+                    className="px-4 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-sm hover:bg-amber-950 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
+                  >
+                    <Plus size={15} />
+                    <span>Nuevo Producto</span>
                   </button>
                 </div>
-
-                {/* Botón Ver PDF Oficial */}
-                <button
-                  onClick={() => {
-                    soundManager.playClick();
-                    setModalPdfAbierto(true);
-                  }}
-                  className="px-3.5 py-2 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 font-bold text-xs border border-amber-300/60 dark:border-amber-800 hover:bg-amber-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
-                  title="Ver las 6 páginas del Menú Dencker original"
-                >
-                  <FileText size={15} className="text-amber-700 dark:text-amber-400" />
-                  <span className="hidden sm:inline">Menú Oficial PDF</span>
-                  <span className="sm:hidden">PDF</span>
-                </button>
-
-                {/* Botón Galería de Fotos Reales */}
-                <button
-                  onClick={() => {
-                    soundManager.playClick();
-                    setProductoParaGaleria(null);
-                    setGaleriaFotosAbierta(true);
-                  }}
-                  className="px-3.5 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs border border-stone-200 dark:border-stone-700 hover:bg-stone-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
-                  title="Explorar el banco de 169 fotos reales para asignar"
-                >
-                  <ImageIcon size={15} className="text-amber-600" />
-                  <span>Fotos Reales ({REAL_PRODUCT_PHOTOS.length})</span>
-                </button>
-
-                {/* Botón Nuevo Producto */}
-                <button
-                  onClick={abrirModalNuevoProducto}
-                  className="px-4 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs shadow-sm hover:bg-amber-950 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
-                >
-                  <Plus size={15} />
-                  <span>Nuevo Producto</span>
-                </button>
               </div>
-            </div>
 
-            {/* Hint informativo para el admin */}
-            <div className="flex items-center justify-between text-xs px-4 py-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-300">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-amber-600 shrink-0" />
-                <span>
-                  {vistaProductosModo === "tarjetas" ? (
-                    <>
-                      <strong>Tip de Edición Rápida:</strong> Haz click sobre la <strong>foto</strong> de cualquier producto para cambiarla por una foto real del menú, o haz click sobre su <strong>precio (Bs)</strong> para modificarlo al instante.
-                    </>
-                  ) : (
-                    <>
-                      <strong>Modo Planilla Rápida:</strong> Edita precios al instante haciendo click en el precio. Cambia fotos en 1 click desde la galería de fotos reales de Dencker Pan.
-                    </>
-                  )}
+              {/* Hint informativo para el admin */}
+              <div className="flex items-center justify-between text-xs px-4 py-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-300">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-amber-600 shrink-0" />
+                  <span>
+                    {vistaProductosModo === "tarjetas" ? (
+                      <>
+                        <strong>Tip de Edición Rápida:</strong> Haz click sobre la <strong>foto</strong> de cualquier producto para cambiarla por una foto real del menú, o haz click sobre su <strong>precio (Bs)</strong> para modificarlo al instante.
+                      </>
+                    ) : (
+                      <>
+                        <strong>Modo Planilla Rápida:</strong> Edita precios al instante haciendo click en el precio. Cambia fotos en 1 click desde la galería de fotos reales de Dencker Pan.
+                      </>
+                    )}
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono text-amber-700 dark:text-amber-400 font-semibold hidden md:inline">
+                  {productos.length} productos registrados
                 </span>
               </div>
-              <span className="text-[11px] font-mono text-amber-700 dark:text-amber-400 font-semibold hidden md:inline">
-                {productos.length} productos registrados
-              </span>
-            </div>
 
             {/* VISTA 1: GRID DE TARJETAS */}
             {vistaProductosModo === "tarjetas" ? (
@@ -1267,7 +1262,7 @@ export default function AdminPage() {
                       >
                         <div className="space-y-3">
                           <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
                               {/* Foto Interactiva con botón de cambio */}
                               <button
                                 type="button"
@@ -1277,7 +1272,7 @@ export default function AdminPage() {
                                   setGaleriaFotosAbierta(true);
                                 }}
                                 title="Click para cambiar foto desde las fotos reales del menú"
-                                className="relative group/img w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border-2 border-amber-300/60 dark:border-stone-700 shrink-0 text-3xl cursor-pointer hover:ring-2 hover:ring-amber-500 transition shadow-xs"
+                                className="relative group/img w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-amber-100 flex items-center justify-center overflow-hidden border-2 border-amber-400 shrink-0 text-3xl cursor-pointer hover:ring-2 hover:ring-amber-500 transition shadow-xs"
                               >
                                 {prod.imagen_url ? (
                                   <img
@@ -1294,4583 +1289,4557 @@ export default function AdminPage() {
                                 </div>
                               </button>
 
-                              <div>
-                                <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100 line-clamp-1 group-hover:text-amber-800 dark:group-hover:text-amber-400 transition">
+                              {/* Título & Estación del Producto con Alto Contraste */}
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-bold text-sm text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition">
                                   {prod.nombre}
                                 </h4>
-                                <span className="text-[11px] text-stone-400 capitalize flex items-center gap-1">
+                                <span className="text-[11px] text-stone-600 capitalize flex items-center gap-1 font-medium">
                                   Estación: {prod.estacion}
                                 </span>
                               </div>
                             </div>
 
                             {/* Editor de Precio Rápido Inline */}
-                            <div className="text-right">
-                              {editandoPrecioId === prod.id ? (
-                                <div className="flex items-center gap-1 justify-end">
-                                  <span className="text-xs font-bold text-stone-500">Bs</span>
-                                  <input
-                                    type="number"
-                                    step="0.5"
-                                    autoFocus
-                                    value={nuevoPrecioInput}
-                                    onChange={(e) => setNuevoPrecioInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
+                            <div className="text-right shrink-0">
+                                {editandoPrecioId === prod.id ? (
+                                  <div className="flex items-center gap-1 justify-end">
+                                    <span className="text-xs font-bold text-stone-500">Bs</span>
+                                    <input
+                                      type="number"
+                                      step="0.5"
+                                      autoFocus
+                                      value={nuevoPrecioInput}
+                                      onChange={(e) => setNuevoPrecioInput(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          const num = parseFloat(nuevoPrecioInput);
+                                          if (!isNaN(num) && num >= 0) {
+                                            updateProducto(prod.id, { precio: num });
+                                            soundManager.playSuccessTone();
+                                          }
+                                          setEditandoPrecioId(null);
+                                        } else if (e.key === "Escape") {
+                                          setEditandoPrecioId(null);
+                                        }
+                                      }}
+                                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold rounded-lg border-2 border-amber-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-right focus:outline-none"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
                                         const num = parseFloat(nuevoPrecioInput);
                                         if (!isNaN(num) && num >= 0) {
                                           updateProducto(prod.id, { precio: num });
                                           soundManager.playSuccessTone();
                                         }
                                         setEditandoPrecioId(null);
-                                      } else if (e.key === "Escape") {
-                                        setEditandoPrecioId(null);
-                                      }
-                                    }}
-                                    className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold rounded-lg border-2 border-amber-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-right focus:outline-none"
-                                  />
+                                      }}
+                                      className="p-1 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
+                                      title="Guardar precio"
+                                    >
+                                      <Check size={12} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditandoPrecioId(null)}
+                                      className="p-1 rounded-md bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 cursor-pointer"
+                                      title="Cancelar"
+                                    >
+                                      <X size={12} />
+                                    </button>
+                                  </div>
+                                ) : (
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      const num = parseFloat(nuevoPrecioInput);
-                                      if (!isNaN(num) && num >= 0) {
-                                        updateProducto(prod.id, { precio: num });
-                                        soundManager.playSuccessTone();
-                                      }
-                                      setEditandoPrecioId(null);
+                                      soundManager.playTactileClick();
+                                      setEditandoPrecioId(prod.id);
+                                      setNuevoPrecioInput(prod.precio.toString());
                                     }}
-                                    className="p-1 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
-                                    title="Guardar precio"
+                                    title="Click para editar precio rápido"
+                                    className="group/price text-right hover:bg-amber-50 dark:hover:bg-amber-950/40 p-1.5 rounded-xl transition cursor-pointer"
                                   >
-                                    <Check size={12} />
+                                    <span className="font-serif font-black text-base text-[#991B24] block font-mono group-hover/price:text-amber-800 flex items-center justify-end gap-1">
+                                      Bs {prod.precio.toFixed(2)}
+                                      <Edit2 size={11} className="opacity-0 group-hover/price:opacity-100 transition text-amber-700" />
+                                    </span>
+                                    <span className="text-[10px] text-emerald-700 font-black block">
+                                      Margen: {margen}%
+                                    </span>
                                   </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setEditandoPrecioId(null)}
-                                    className="p-1 rounded-md bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 cursor-pointer"
-                                    title="Cancelar"
-                                  >
-                                    <X size={12} />
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    soundManager.playTactileClick();
-                                    setEditandoPrecioId(prod.id);
-                                    setNuevoPrecioInput(prod.precio.toString());
-                                  }}
-                                  title="Click para editar precio rápido"
-                                  className="group/price text-right hover:bg-amber-50 dark:hover:bg-amber-950/40 p-1.5 rounded-xl transition cursor-pointer"
-                                >
-                                  <span className="font-serif font-black text-base text-amber-900 dark:text-amber-400 block font-mono group-hover/price:text-amber-600 flex items-center justify-end gap-1">
-                                    Bs {prod.precio.toFixed(2)}
-                                    <Edit2 size={11} className="opacity-0 group-hover/price:opacity-100 transition text-amber-600" />
-                                  </span>
-                                  <span className="text-[10px] text-emerald-600 font-bold block">
-                                    Margen: {margen}%
-                                  </span>
-                                </button>
-                              )}
-                            </div>
+                                )}
+                              </div>
                           </div>
 
                           {prod.descripcion && (
-                            <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">
+                            <p className="text-xs text-stone-700 font-medium line-clamp-2">
                               {prod.descripcion}
                             </p>
                           )}
 
-                          {/* Variantes de Tamaño si existen */}
-                          {prod.tamanios && prod.tamanios.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/30">
-                                🍕 {prod.tamanios.length} tamaños ({prod.tamanios.map((t) => `${t.nombre}: Bs ${t.precio}`).join(" • ")})
-                              </span>
-                            </div>
-                          )}
-
-                          {/* Chips de Personalización Preview */}
-                          {prod.chips_personalizacion && prod.chips_personalizacion.length > 0 && (
-                            <div className="flex flex-wrap gap-1 pt-0.5">
-                              {prod.chips_personalizacion.slice(0, 3).map((chip, i) => (
-                                <span
-                                  key={i}
-                                  className="text-[9px] px-1.5 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
-                                >
-                                  {chip}
+                            {/* Variantes de Tamaño si existen */}
+                            {prod.tamanios && prod.tamanios.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/30">
+                                  🍕 {prod.tamanios.length} tamaños ({prod.tamanios.map((t) => `${t.nombre}: Bs ${t.precio}`).join(" • ")})
                                 </span>
-                              ))}
-                              {prod.chips_personalizacion.length > 3 && (
-                                <span className="text-[9px] text-stone-400 font-semibold">
-                                  +{prod.chips_personalizacion.length - 3}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </div>
+                              </div>
+                            )}
 
-                        {/* Footer Producto */}
-                        <div className="pt-3 mt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
-                          <button
-                            onClick={() => toggleProductoDisponible(prod.id)}
-                            className={`text-[11px] font-bold px-3 py-1 rounded-full transition cursor-pointer ${
-                              prod.disponible
+                            {/* Chips de Personalización Preview */}
+                            {prod.chips_personalizacion && prod.chips_personalizacion.length > 0 && (
+                              <div className="flex flex-wrap gap-1 pt-0.5">
+                                {prod.chips_personalizacion.slice(0, 3).map((chip, i) => (
+                                  <span
+                                    key={i}
+                                    className="text-[9px] px-1.5 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
+                                  >
+                                    {chip}
+                                  </span>
+                                ))}
+                                {prod.chips_personalizacion.length > 3 && (
+                                  <span className="text-[9px] text-stone-400 font-semibold">
+                                    +{prod.chips_personalizacion.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Footer Producto */}
+                          <div className="pt-3 mt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
+                            <button
+                              onClick={() => toggleProductoDisponible(prod.id)}
+                              className={`text-[11px] font-bold px-3 py-1 rounded-full transition cursor-pointer ${prod.disponible
                                 ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
                                 : "bg-stone-100 text-stone-400 dark:bg-stone-800"
-                            }`}
-                          >
-                            {prod.disponible ? "Disponible ✓" : "Agotado"}
-                          </button>
-
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => abrirModalEditarProducto(prod)}
-                              className="p-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs cursor-pointer"
-                              title="Editar detalles completos"
+                                }`}
                             >
-                              <Edit2 size={13} />
+                              {prod.disponible ? "Disponible ✓" : "Agotado"}
+                            </button>
+
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => abrirModalEditarProducto(prod)}
+                                className="p-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 transition text-xs cursor-pointer"
+                                title="Editar detalles completos"
+                              >
+                                <Edit2 size={13} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`¿Eliminar ${prod.nombre}?`)) {
+                                    deleteProducto(prod.id);
+                                    soundManager.playSuccessTone();
+                                  }
+                                }}
+                                className="p-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs cursor-pointer"
+                                title="Eliminar producto"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              ) : (
+                /* VISTA 2: PLANILLA / TABLA RÁPIDA DE PRECIOS */
+                <div className="overflow-x-auto rounded-3xl border-2 border-[#D5C7B5] bg-white shadow-sm">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-[11px] font-black text-stone-900 uppercase tracking-wider">
+                      <tr>
+                        <th className="py-3.5 px-4 w-16">Foto</th>
+                        <th className="py-3.5 px-4">Producto & Receta</th>
+                        <th className="py-3.5 px-4">Categoría</th>
+                        <th className="py-3.5 px-4">Estación</th>
+                        <th className="py-3.5 px-4 text-right">Precio Venta</th>
+                        <th className="py-3.5 px-4 text-right">Costo</th>
+                        <th className="py-3.5 px-4 text-center">Margen</th>
+                        <th className="py-3.5 px-4 text-center">Disponibilidad</th>
+                        <th className="py-3.5 px-4 text-right">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800/80">
+                      {productos
+                        .filter((p) => {
+                          const matchCat =
+                            filtroCategoria === "todas" || p.categoria_id === filtroCategoria;
+                          const matchSearch = p.nombre
+                            .toLowerCase()
+                            .includes(busquedaProducto.toLowerCase()) ||
+                            (p.descripcion || "").toLowerCase().includes(busquedaProducto.toLowerCase());
+                          return matchCat && matchSearch;
+                        })
+                        .map((prod) => {
+                          const margen = prod.precio > 0
+                            ? Math.round(((prod.precio - prod.costo) / prod.precio) * 100)
+                            : 0;
+                          const cat = categorias.find((c) => c.id === prod.categoria_id);
+
+                          return (
+                            <tr key={prod.id} className="hover:bg-amber-500/5 transition">
+                              {/* Foto interactiva */}
+                              <td className="py-2.5 px-4">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    soundManager.playClick();
+                                    setProductoParaGaleria(prod);
+                                    setGaleriaFotosAbierta(true);
+                                  }}
+                                  title="Click para cambiar foto desde las 169 fotos reales"
+                                  className="relative group w-11 h-11 rounded-xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border border-stone-200 dark:border-stone-700 cursor-pointer hover:ring-2 hover:ring-amber-500 transition shrink-0"
+                                >
+                                  {prod.imagen_url ? (
+                                    <img
+                                      src={prod.imagen_url}
+                                      alt={prod.nombre}
+                                      className="w-full h-full object-cover group-hover:scale-110 transition"
+                                    />
+                                  ) : (
+                                    <span className="text-base">{cat?.emoji || "🥐"}</span>
+                                  )}
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                    <ImageIcon size={14} />
+                                  </div>
+                                </button>
+                              </td>
+
+                              {/* Nombre y descripción */}
+                              <td className="py-2.5 px-4 max-w-xs">
+                                <div className="font-bold text-stone-900 dark:text-stone-100 truncate">
+                                  {prod.nombre}
+                                </div>
+                                {prod.descripcion && (
+                                  <div className="text-[11px] text-stone-400 truncate max-w-xs">
+                                    {prod.descripcion}
+                                  </div>
+                                )}
+                              </td>
+
+                              {/* Categoría */}
+                              <td className="py-2.5 px-4 whitespace-nowrap">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-[11px]">
+                                  <span>{cat?.emoji}</span>
+                                  <span>{cat?.nombre}</span>
+                                </span>
+                              </td>
+
+                              {/* Estación */}
+                              <td className="py-2.5 px-4 whitespace-nowrap">
+                                <span className="capitalize text-stone-500 text-[11px] font-medium">
+                                  {prod.estacion}
+                                </span>
+                              </td>
+
+                              {/* Precio Venta Inline Editable */}
+                              <td className="py-2.5 px-4 text-right whitespace-nowrap">
+                                {editandoPrecioId === prod.id ? (
+                                  <div className="flex items-center justify-end gap-1">
+                                    <span className="text-[11px] font-bold text-stone-500">Bs</span>
+                                    <input
+                                      type="number"
+                                      step="0.5"
+                                      autoFocus
+                                      value={nuevoPrecioInput}
+                                      onChange={(e) => setNuevoPrecioInput(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          const num = parseFloat(nuevoPrecioInput);
+                                          if (!isNaN(num) && num >= 0) {
+                                            updateProducto(prod.id, { precio: num });
+                                            soundManager.playSuccessTone();
+                                          }
+                                          setEditandoPrecioId(null);
+                                        } else if (e.key === "Escape") {
+                                          setEditandoPrecioId(null);
+                                        }
+                                      }}
+                                      className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold rounded-lg border-2 border-amber-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-right focus:outline-none"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const num = parseFloat(nuevoPrecioInput);
+                                        if (!isNaN(num) && num >= 0) {
+                                          updateProducto(prod.id, { precio: num });
+                                          soundManager.playSuccessTone();
+                                        }
+                                        setEditandoPrecioId(null);
+                                      }}
+                                      className="p-1 rounded bg-emerald-600 text-white cursor-pointer"
+                                    >
+                                      <Check size={11} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditandoPrecioId(null)}
+                                      className="p-1 rounded bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 cursor-pointer"
+                                    >
+                                      <X size={11} />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      soundManager.playTactileClick();
+                                      setEditandoPrecioId(prod.id);
+                                      setNuevoPrecioInput(prod.precio.toString());
+                                    }}
+                                    className="group/p inline-flex items-center gap-1 font-mono font-black text-amber-900 dark:text-amber-400 hover:text-amber-600 px-2 py-1 rounded-lg hover:bg-amber-100/60 dark:hover:bg-amber-950/60 transition cursor-pointer"
+                                    title="Click para editar precio de venta"
+                                  >
+                                    <span>Bs {prod.precio.toFixed(2)}</span>
+                                    <Edit2 size={10} className="opacity-0 group-hover/p:opacity-100 transition text-amber-600" />
+                                  </button>
+                                )}
+                              </td>
+
+                              {/* Costo */}
+                              <td className="py-2.5 px-4 text-right font-mono text-stone-500 whitespace-nowrap">
+                                Bs {prod.costo.toFixed(2)}
+                              </td>
+
+                              {/* Margen */}
+                              <td className="py-2.5 px-4 text-center whitespace-nowrap">
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${margen >= 50
+                                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20"
+                                  : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-400/20"
+                                  }`}>
+                                  {margen}%
+                                </span>
+                              </td>
+
+                              {/* Disponibilidad */}
+                              <td className="py-2.5 px-4 text-center whitespace-nowrap">
+                                <button
+                                  onClick={() => toggleProductoDisponible(prod.id)}
+                                  className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full transition cursor-pointer ${prod.disponible
+                                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                    : "bg-stone-100 text-stone-400 dark:bg-stone-800"
+                                    }`}
+                                >
+                                  {prod.disponible ? "Disponible" : "Agotado"}
+                                </button>
+                              </td>
+
+                              {/* Acciones */}
+                              <td className="py-2.5 px-4 text-right whitespace-nowrap">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button
+                                    onClick={() => abrirModalEditarProducto(prod)}
+                                    className="p-1.5 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 transition cursor-pointer"
+                                    title="Editar producto completo"
+                                  >
+                                    <Edit2 size={12} />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      if (confirm(`¿Eliminar ${prod.nombre}?`)) {
+                                        deleteProducto(prod.id);
+                                        soundManager.playSuccessTone();
+                                      }
+                                    }}
+                                    className="p-1.5 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition cursor-pointer"
+                                    title="Eliminar producto"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── TAB: FACTURACIÓN ELECTRÓNICA SIAT / IMPUESTOS BOLIVIA ── */}
+          {tabActiva === "siat" && (
+            <div className="space-y-6">
+              {/* Header SIAT con diseño institucional */}
+              <div className="p-6 bg-gradient-to-r from-blue-950 via-slate-900 to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-6 border border-blue-900/40">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-mono text-blue-300 tracking-wider uppercase">
+                    <ShieldCheck size={16} className="text-blue-400" />
+                    <span>Servicio de Impuestos Nacionales (SIN) • Bolivia</span>
+                  </div>
+                  <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                    Facturación Computarizada & En Línea SIAT
+                    <span className={`text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full ${formSiat.activa
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
+                      : "bg-stone-700 text-stone-300"
+                      }`}>
+                      {formSiat.activa ? "SIAT Oficial Habilitado ✓" : "Solo Comprobante Interno"}
+                    </span>
+                  </h2>
+                  <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
+                    Configura aquí los parámetros fiscales obligatorios de Bolivia: numeración correlativa sin saltos, CUF en Base 16 (Módulo 11), montos en palabras y el enlace de la contadora para renovar la vigencia cada ciertos meses.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const actualizado = { ...formSiat, activa: !formSiat.activa };
+                      setFormSiat(actualizado);
+                      setFacturacionSiatConfig(actualizado);
+                      soundManager.playSuccessTone();
+                    }}
+                    className={`px-4 py-2.5 rounded-2xl font-bold text-xs shadow-md transition flex items-center gap-2 cursor-pointer ${formSiat.activa
+                      ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                      : "bg-white/10 hover:bg-white/20 text-stone-200"
+                      }`}
+                  >
+                    <Receipt size={16} />
+                    <span>{formSiat.activa ? "Facturación Activa ✓" : "Activar Emisión SIAT"}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* ── CARD: VINCULACIÓN AUTOMÁTICA CON ENLACE DE LA CONTADORA ── */}
+              <div className="p-6 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent rounded-3xl border-2 border-amber-500/30 dark:border-amber-500/20 shadow-md space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">
+                      <Sparkles size={16} />
+                      <span>Conexión Rápida Contable (Actualización Periódica)</span>
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
+                      Pega aquí el enlace o token que te pasa la contadora
+                    </h3>
+                    <p className="text-xs text-stone-600 dark:text-stone-400 max-w-2xl">
+                      Cada ciertos meses, cuando tu contadora renueve la dosificación o enlace de consulta de Impuestos, solo debes pegar aquí el link o token y hacer clic en <strong>"Vincular Enlace"</strong>. El sistema extraerá automáticamente el NIT, CUFD y configurará los QRs legales sin pasos técnicos complicados.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <input
+                    type="text"
+                    value={linkContadoraInput}
+                    onChange={(e) => setLinkContadoraInput(e.target.value)}
+                    placeholder="Ej: https://siat.impuestos.gob.bo/consulta/QR?nit=389201024 o token de la contadora..."
+                    className="flex-1 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 font-mono text-xs shadow-xs focus:ring-2 focus:ring-amber-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!linkContadoraInput.trim()) return;
+                      const parsed = parsearLinkContadora(linkContadoraInput);
+                      const updated = { ...formSiat, ...parsed };
+                      setFormSiat(updated);
+                      setFacturacionSiatConfig(updated);
+                      soundManager.playSuccessTone();
+                      setSiatGuardadoExitoso(true);
+                      setTimeout(() => setSiatGuardadoExitoso(false), 3000);
+                    }}
+                    className="px-5 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
+                  >
+                    <Check size={16} />
+                    <span>Vincular Enlace de la Contadora</span>
+                  </button>
+                </div>
+
+                {formSiat.linkContadora && (
+                  <div className="text-[11px] text-amber-800 dark:text-amber-300/90 font-mono flex items-center gap-2 bg-amber-100/60 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-800">
+                    <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+                    <span className="truncate">Enlace activo de la contadora: <strong>{formSiat.linkContadora}</strong></span>
+                  </div>
+                )}
+              </div>
+
+              {/* Formulario de Configuración SIAT */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-6">
+                <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-4">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <KeyRound size={18} className="text-amber-600" />
+                      Parámetros Tributarios de Casa Matriz
+                    </h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      Datos fiscales de Dencker Pan para los comprobantes electrónicos
+                    </p>
+                  </div>
+
+                  {siatGuardadoExitoso && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800"
+                    >
+                      <CheckCircle2 size={15} />
+                      <span>Configuración SIAT guardada ✓</span>
+                    </motion.div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                  {/* NIT Emisor */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      NIT Emisor *
+                    </label>
+                    <input
+                      type="text"
+                      value={formSiat.nitEmisor}
+                      onChange={(e) => setFormSiat({ ...formSiat, nitEmisor: e.target.value })}
+                      placeholder="389201024"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
+                    />
+                  </div>
+
+                  {/* Razón Social */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Razón Social Registrada *
+                    </label>
+                    <input
+                      type="text"
+                      value={formSiat.razonSocialEmisor}
+                      onChange={(e) => setFormSiat({ ...formSiat, razonSocialEmisor: e.target.value })}
+                      placeholder="DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
+                    />
+                  </div>
+
+                  {/* Siguiente Número de Factura (Correlativo) */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Siguiente Nº de Factura (Correlativo SIN) *
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={formSiat.siguienteNumeroFactura || 1}
+                      onChange={(e) => setFormSiat({ ...formSiat, siguienteNumeroFactura: parseInt(e.target.value) || 1 })}
+                      className="w-full p-2.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50/40 dark:bg-stone-800 text-amber-950 dark:text-amber-300 font-mono font-bold text-sm"
+                    />
+                    <span className="text-[10px] text-stone-500 dark:text-stone-400">Control estricto consecutivo</span>
+                  </div>
+
+                  {/* Modalidad de Facturación */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Modalidad SIAT *
+                    </label>
+                    <select
+                      value={formSiat.modalidad}
+                      onChange={(e) => setFormSiat({ ...formSiat, modalidad: e.target.value as any })}
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
+                    >
+                      <option value="computarizada_linea">Computarizada en Línea (Token/CUFD)</option>
+                      <option value="electronica_linea">Electrónica en Línea (Firma Digital)</option>
+                      <option value="recibo_oficial">Recibo Oficial Tributario</option>
+                    </select>
+                  </div>
+
+                  {/* Punto de Venta */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Código Punto de Venta (0 = Casa Matriz)
+                    </label>
+                    <input
+                      type="number"
+                      value={formSiat.codigoPuntoVenta}
+                      onChange={(e) => setFormSiat({ ...formSiat, codigoPuntoVenta: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
+                    />
+                  </div>
+
+                  {/* Fecha Límite de Emisión */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Fecha Límite de Emisión (Vigencia) *
+                    </label>
+                    <input
+                      type="text"
+                      value={formSiat.fechaLimiteEmision || "2027-04-30"}
+                      onChange={(e) => setFormSiat({ ...formSiat, fechaLimiteEmision: e.target.value })}
+                      placeholder="YYYY-MM-DD o DD/MM/YYYY"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
+                    />
+                    <span className="text-[10px] text-stone-500">Tope fijado por la contadora</span>
+                  </div>
+
+                  {/* Número de Autorización / Dosificación */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Nº Autorización / Dosificación
+                    </label>
+                    <input
+                      type="text"
+                      value={formSiat.autorizacionDosificacion || "48A9C102BF"}
+                      onChange={(e) => setFormSiat({ ...formSiat, autorizacionDosificacion: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
+                    />
+                  </div>
+
+                  {/* Código CUFD */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="font-bold text-stone-700 dark:text-stone-300">
+                        CUFD (Vigente Diario)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nuevoCufd = "B" + Math.random().toString(36).substring(2, 10).toUpperCase() + Date.now().toString(36).toUpperCase();
+                          setFormSiat({ ...formSiat, cufd: nuevoCufd });
+                          soundManager.playTactileClick();
+                        }}
+                        className="text-[10px] text-amber-600 hover:underline cursor-pointer"
+                      >
+                        Renovar código
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={formSiat.cufd}
+                      onChange={(e) => setFormSiat({ ...formSiat, cufd: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
+                    />
+                  </div>
+
+                  {/* URL Consulta / Validación QR */}
+                  <div>
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Enlace Oficial de Consulta QR Tributario
+                    </label>
+                    <input
+                      type="url"
+                      value={formSiat.linkImpuestos}
+                      onChange={(e) => setFormSiat({ ...formSiat, linkImpuestos: e.target.value })}
+                      placeholder="https://siat.impuestos.gob.bo/consulta/QR"
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
+                    />
+                  </div>
+
+                  {/* Actividad Económica SIN */}
+                  <div className="md:col-span-2">
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Actividad Económica Principal (SIN)
+                    </label>
+                    <input
+                      type="text"
+                      value={formSiat.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
+                      onChange={(e) => setFormSiat({ ...formSiat, actividadEconomica: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
+                    />
+                  </div>
+
+                  {/* Leyenda Obligatoria Ley 453 */}
+                  <div className="md:col-span-3">
+                    <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Leyenda Ley N° 453 de Protección al Consumidor
+                    </label>
+                    <input
+                      type="text"
+                      value={formSiat.leyendaLey453 || "Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad."}
+                      onChange={(e) => setFormSiat({ ...formSiat, leyendaLey453: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-stone-200 dark:border-stone-800">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFacturacionSiatConfig(formSiat);
+                      soundManager.playSuccessTone();
+                      setSiatGuardadoExitoso(true);
+                      setTimeout(() => setSiatGuardadoExitoso(false), 3000);
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-blue-900 dark:bg-blue-600 hover:bg-blue-950 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
+                  >
+                    <Save size={16} />
+                    <span>Guardar Parámetros SIAT</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Listado de Facturas Emitidas */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <Receipt size={18} className="text-blue-600" />
+                      Historial de Facturas Emitidas ({facturasEmitidas.length})
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Registro de comprobantes fiscales emitidos con validación CUF en Base 16
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <div className="relative">
+                      <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                      <input
+                        type="text"
+                        placeholder="Buscar por Nº, Cliente o NIT..."
+                        value={busquedaFactura}
+                        onChange={(e) => setBusquedaFactura(e.target.value)}
+                        className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-52 sm:w-60"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (facturasEmitidas.length === 0) {
+                          alert("No hay facturas emitidas todavía para exportar.");
+                          return;
+                        }
+                        const csv = exportarLibroVentasCsv(facturasEmitidas, facturacionSiatConfig);
+                        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `Libro_Ventas_IVA_DenckerPan_${new Date().toISOString().slice(0, 10)}.csv`;
+                        a.click();
+                        soundManager.playSuccessTone();
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs"
+                    >
+                      <Download size={14} />
+                      <span>Libro de Ventas IVA (Para Contadora CSV)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {facturasEmitidas.length === 0 ? (
+                  <div className="py-12 text-center space-y-3 bg-stone-50 dark:bg-stone-800/40 rounded-2xl border border-dashed border-stone-200 dark:border-stone-700">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+                      <Receipt size={24} />
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-sm text-stone-800 dark:text-stone-200">
+                        No hay facturas emitidas todavía
+                      </h4>
+                      <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
+                        Cuando el cajero cobre un pedido en Caja POS con la opción "Factura SIAT", se generará automáticamente el CUF correlativo y el código QR de validación tributaria con el logo oficial.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-stone-900 font-black uppercase tracking-wider text-[10px]">
+                          <th className="py-2.5 px-3">Nº Factura</th>
+                          <th className="py-2.5 px-3">Fecha & Hora</th>
+                          <th className="py-2.5 px-3">Cliente / Razón Social</th>
+                          <th className="py-2.5 px-3">NIT / CI</th>
+                          <th className="py-2.5 px-3">Total (Bs)</th>
+                          <th className="py-2.5 px-3">CUF</th>
+                          <th className="py-2.5 px-3 text-right">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                        {facturasEmitidas
+                          .filter((f) => {
+                            const query = busquedaFactura.toLowerCase();
+                            return (
+                              f.numeroFactura.toString().includes(query) ||
+                              f.clienteNombre.toLowerCase().includes(query) ||
+                              f.clienteNitCi.toLowerCase().includes(query)
+                            );
+                          })
+                          .map((f) => (
+                            <tr key={f.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/50">
+                              <td className="py-3 px-3 font-mono font-bold text-blue-900 dark:text-blue-400">
+                                #{f.numeroFactura}
+                              </td>
+                              <td className="py-3 px-3 text-stone-500">
+                                {new Date(f.fechaEmision).toLocaleString("es-BO")}
+                              </td>
+                              <td className="py-3 px-3 font-semibold text-stone-800 dark:text-stone-200">
+                                {f.clienteNombre}
+                              </td>
+                              <td className="py-3 px-3 font-mono text-stone-600 dark:text-stone-400">
+                                {f.clienteNitCi}
+                              </td>
+                              <td className="py-3 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                                Bs {f.montoTotal.toFixed(2)}
+                              </td>
+                              <td className="py-3 px-3 font-mono text-[10px] text-stone-400 truncate max-w-xs">
+                                {f.cuf}
+                              </td>
+                              <td className="py-3 px-3 text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setFacturaSeleccionadaModal(f)}
+                                    className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 dark:text-amber-400 hover:underline cursor-pointer"
+                                  >
+                                    <Eye size={12} />
+                                    <span>Ver Ticket</span>
+                                  </button>
+                                  <a
+                                    href={f.urlQrVerificacion}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 underline"
+                                  >
+                                    <span>SIAT QR</span>
+                                    <ExternalLink size={12} />
+                                  </a>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Modal de Vista Previa de Factura Fiscal Oficial con Logo Vectorizado ── */}
+              <AnimatePresence>
+                {facturaSeleccionadaModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden p-6 space-y-4"
+                    >
+                      <div id="factura-siat-termica" className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
+                        {/* Logo Oficial Vectorizado */}
+                        <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
+                          <img
+                            src="/img/brand/logo-3-don-dencker-badge.png"
+                            alt="Dencker Pan"
+                            className="h-12 w-auto object-contain mx-auto mb-1"
+                          />
+                          <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
+                            {facturacionSiatConfig.razonSocialEmisor}
+                          </h4>
+                          <p className="text-[10px] font-bold text-stone-700">CASA MATRIZ: 0</p>
+                          <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba - Bolivia</p>
+                          <p className="text-[10px] text-stone-900 font-bold mt-1">NIT: {facturacionSiatConfig.nitEmisor}</p>
+                          <p className="text-[8px] text-stone-500 italic max-w-[240px] mx-auto leading-tight">
+                            {facturacionSiatConfig.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
+                          </p>
+
+                          <div className="pt-2 text-[10px] text-stone-800 space-y-0.5 border-t border-dashed border-stone-300 mt-2 w-full">
+                            <p className="font-black text-sm text-stone-950 tracking-wide">
+                              FACTURA N°: {facturaSeleccionadaModal.numeroFactura}
+                            </p>
+                            <p className="text-[9px] font-bold text-stone-700">
+                              CÓD. AUTORIZACIÓN: {facturacionSiatConfig.autorizacionDosificacion || "48A9C102BF"}
+                            </p>
+                            <div className="pt-1">
+                              <span className="text-[8px] font-bold text-stone-500 block">CUF:</span>
+                              <p className="break-all text-[8px] font-mono text-stone-600 leading-tight bg-stone-50 p-1 rounded border border-stone-200">
+                                {facturaSeleccionadaModal.cuf}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-dashed border-stone-300 pt-2 text-[11px] space-y-0.5">
+                          <div className="flex justify-between">
+                            <span className="text-stone-500">Fecha y Hora:</span>
+                            <span>{new Date(facturaSeleccionadaModal.fechaEmision).toLocaleString("es-BO")}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-stone-500">NIT / CI:</span>
+                            <span className="font-bold font-mono">{facturaSeleccionadaModal.clienteNitCi}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-stone-500">Señor(es):</span>
+                            <span className="font-bold uppercase truncate max-w-[170px]">{facturaSeleccionadaModal.clienteNombre}</span>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-dashed border-stone-300 pt-2 space-y-1 font-bold">
+                          <div className="flex justify-between text-sm text-stone-950">
+                            <span>TOTAL A PAGAR:</span>
+                            <span className="font-mono text-base">Bs {facturaSeleccionadaModal.montoTotal.toFixed(2)}</span>
+                          </div>
+                          <div className="text-[10px] text-stone-700 bg-stone-100/80 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
+                            {facturaSeleccionadaModal.montoLiteral || convertirNumeroALiteral(facturaSeleccionadaModal.montoTotal)}
+                          </div>
+                        </div>
+
+                        <div className="border-t border-dashed border-stone-300 pt-2 flex flex-col items-center justify-center space-y-1 text-center">
+                          <div className="p-2 bg-white rounded-lg border border-stone-300 shadow-2xs">
+                            <QRCodeSVG
+                              value={facturaSeleccionadaModal.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
+                              size={92}
+                              level="M"
+                            />
+                          </div>
+                          <p className="text-[8px] text-stone-500 font-mono">Código de Control Tributario / QR SIAT</p>
+                        </div>
+
+                        <div className="text-center pt-2 text-[9px] text-stone-600 space-y-1 leading-tight border-t border-dashed border-stone-300">
+                          <p className="font-bold text-stone-900">
+                            "ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE ACUERDO A LEY"
+                          </p>
+                          <p className="text-[8px] text-stone-500 italic">
+                            {facturaSeleccionadaModal.leyendaLey453 || facturacionSiatConfig.leyendaLey453}
+                          </p>
+                          <p className="text-[9px] font-bold text-stone-800">
+                            Fecha Límite de Emisión: {facturaSeleccionadaModal.fechaLimiteEmision || facturacionSiatConfig.fechaLimiteEmision}
+                          </p>
+                          <div className="flex items-center justify-center gap-2 pt-2 pb-1">
+                            <img
+                              src="/img/brand/logo-3-don-dencker-badge.png"
+                              alt="Sello Oficial Don Dencker"
+                              className="w-9 h-9 object-contain shrink-0"
+                            />
+                            <div className="text-left leading-tight">
+                              <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
+                              <p className="text-[8px] text-stone-500 font-mono">Tradición & Calidad Dencker</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-2">
+                        <button
+                          onClick={() => {
+                            soundManager.playTactileClick();
+                            printElementById("factura-siat-termica", {
+                              pageType: "thermal",
+                              title: `Factura_SIAT_${facturaSeleccionadaModal.numeroFactura}`,
+                            });
+                          }}
+                          className="py-2.5 rounded-xl bg-amber-900 text-white font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-amber-950 transition cursor-pointer"
+                        >
+                          <Printer size={14} /> Imprimir Factura
+                        </button>
+                        <button
+                          onClick={() => setFacturaSeleccionadaModal(null)}
+                          className="py-2.5 rounded-xl bg-stone-100 text-stone-700 font-semibold text-xs hover:bg-stone-200 transition cursor-pointer"
+                        >
+                          Cerrar
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* ── TAB 3: CATERING & RESERVAS ── */}
+          {tabActiva === "reservas" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <Calendar size={18} className="text-amber-600" />
+                  Catering & Eventos Programados ({reservas.length})
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {reservas.map((res) => (
+                  <div
+                    key={res.id}
+                    className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-serif text-xl font-bold text-amber-950 dark:text-amber-200">
+                          {res.nombre_cliente}
+                        </h4>
+                        <p className="text-xs text-stone-500 dark:text-stone-400">
+                          {res.telefono} • {res.email}
+                        </p>
+                      </div>
+                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 capitalize font-mono">
+                        {res.estado}
+                      </span>
+                    </div>
+
+                    <div className="p-4 bg-stone-50 dark:bg-stone-800/60 rounded-2xl text-xs space-y-1.5 text-stone-700 dark:text-stone-300">
+                      <p>
+                        <strong>Tipo de Evento:</strong> {res.tipo_evento || "Catering Especial"}
+                      </p>
+                      <p>
+                        <strong>Fecha:</strong> {new Date(res.fecha_evento).toLocaleDateString("es-BO")}
+                      </p>
+                      <p>
+                        <strong>Comensales:</strong> {res.numero_personas} personas
+                      </p>
+                      {res.descripcion && (
+                        <p className="italic text-stone-500 pt-1">"{res.descripcion}"</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <span className="font-bold text-amber-900 dark:text-amber-300 font-mono text-sm">
+                        Total: Bs {res.monto_total || 0}
+                      </span>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => updateReservaEstado(res.id, "confirmada")}
+                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition"
+                        >
+                          Confirmar
+                        </button>
+                        <button
+                          onClick={() => updateReservaEstado(res.id, "produccion")}
+                          className="px-3 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white font-bold text-xs transition"
+                        >
+                          En Producción
+                        </button>
+                        <button
+                          onClick={() => updateReservaEstado(res.id, "completada")}
+                          className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition"
+                        >
+                          Completar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── TAB: GESTIÓN DE PERSONAL & CÓDIGOS DE ACCESO (PIN) ── */}
+          {tabActiva === "personal" && (
+            <div className="space-y-6">
+              {/* Header limpio y profesional */}
+              <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
+                <div className="space-y-1">
+                  <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                    <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                      <Users size={26} />
+                    </div>
+                    <span>Equipo & Colaboradores</span>
+                  </h2>
+                  <p className="text-stone-400 text-xs sm:text-sm">
+                    Control de personal, asignación de estaciones y claves PIN de acceso táctil.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleAbrirModalStaff()}
+                    className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer"
+                  >
+                    <Plus size={20} />
+                    <span>Nuevo Colaborador</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 4 Tarjetas de Estadísticas de Personal */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  {
+                    label: "Total Personal",
+                    count: (usuariosStaff || []).length,
+                    icon: Users,
+                    color: "text-stone-900 dark:text-stone-100",
+                    bg: "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300",
+                  },
+                  {
+                    label: "Meseros (Sala)",
+                    count: (usuariosStaff || []).filter((u) => u.role === "mesero").length,
+                    icon: UtensilsCrossed,
+                    color: "text-amber-600 dark:text-amber-400",
+                    bg: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+                  },
+                  {
+                    label: "Cocina & Baristas",
+                    count: (usuariosStaff || []).filter((u) => u.role === "cocina").length,
+                    icon: ChefHat,
+                    color: "text-blue-600 dark:text-blue-400",
+                    bg: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+                  },
+                  {
+                    label: "Caja POS & Admin",
+                    count: (usuariosStaff || []).filter((u) => u.role === "caja" || u.role === "admin").length,
+                    icon: Receipt,
+                    color: "text-emerald-600 dark:text-emerald-400",
+                    bg: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+                  },
+                ].map((st, idx) => {
+                  const Icon = st.icon;
+                  return (
+                    <div
+                      key={idx}
+                      className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs flex items-center gap-4"
+                    >
+                      <div className={`w-12 h-12 rounded-2xl ${st.bg} flex items-center justify-center shrink-0`}>
+                        <Icon size={24} />
+                      </div>
+                      <div>
+                        <span className="text-xs text-stone-500 dark:text-stone-400 block font-semibold">
+                          {st.label}
+                        </span>
+                        <span className={`text-2xl font-black font-mono ${st.color}`}>
+                          {st.count}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Filtros por Rol y Buscador */}
+              <div className="p-4 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+                  {[
+                    { id: "todos", label: "Todo el Personal" },
+                    { id: "mesero", label: "Meseros" },
+                    { id: "cocina", label: "Cocina / KDS" },
+                    { id: "caja", label: "Caja POS" },
+                    { id: "admin", label: "Administradores" },
+                  ].map((r) => (
+                    <button
+                      key={r.id}
+                      onClick={() => setFiltroRoleStaff(r.id as any)}
+                      className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${filtroRoleStaff === r.id
+                        ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700"
+                        }`}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="relative">
+                  <Search size={18} className="absolute left-3.5 top-3 text-stone-400" />
+                  <input
+                    type="text"
+                    placeholder="Buscar colaborador..."
+                    value={busquedaStaff}
+                    onChange={(e) => setBusquedaStaff(e.target.value)}
+                    className="pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-64 sm:w-72"
+                  />
+                </div>
+              </div>
+
+              {/* Grid de Cuentas de Personal */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {(usuariosStaff || [])
+                  .filter((u) => {
+                    const matchRole = filtroRoleStaff === "todos" || u.role === filtroRoleStaff;
+                    const matchSearch =
+                      u.nombre.toLowerCase().includes(busquedaStaff.toLowerCase()) ||
+                      u.cargo.toLowerCase().includes(busquedaStaff.toLowerCase());
+                    return matchRole && matchSearch;
+                  })
+                  .map((user) => {
+                    const isVisible = !!pinsVisibles[user.id];
+                    const roleConfig = {
+                      admin: {
+                        label: "Administración",
+                        icon: ShieldCheck,
+                        badge: "bg-stone-900 text-amber-300 border-amber-500/40",
+                        station: "Acceso Total / Gerencia",
+                      },
+                      mesero: {
+                        label: "Sala & Mesero",
+                        icon: UtensilsCrossed,
+                        badge: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
+                        station: "Terminal de Sala & Mesas",
+                      },
+                      cocina: {
+                        label: "Cocina & Barismo",
+                        icon: ChefHat,
+                        badge: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30",
+                        station: "Pantalla KDS & Horno",
+                      },
+                      caja: {
+                        label: "Caja POS",
+                        icon: Receipt,
+                        badge: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
+                        station: "Cobros & Arqueo POS",
+                      },
+                    }[user.role];
+
+                    const RoleIcon = roleConfig.icon;
+
+                    return (
+                      <div
+                        key={user.id}
+                        className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-amber-400 dark:hover:border-amber-600 transition"
+                      >
+                        {/* Cabecera Tarjeta: Avatar + Rol + Estado */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3.5">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex items-center justify-center font-black text-base shrink-0">
+                              {user.nombre.slice(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                              <h4 className="font-serif font-bold text-base text-stone-900 dark:text-stone-100 leading-tight">
+                                {user.nombre}
+                              </h4>
+                              <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                                {user.cargo}
+                              </p>
+                            </div>
+                          </div>
+
+                          <span
+                            className={`text-xs font-bold px-2.5 py-1 rounded-full border ${user.activo
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-400/30"
+                              : "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border-red-400/30"
+                              }`}
+                          >
+                            {user.activo ? "Activo" : "Inactivo"}
+                          </span>
+                        </div>
+
+                        {/* Estación y Permiso */}
+                        <div className="space-y-1.5 text-xs">
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-bold border ${roleConfig.badge}`}>
+                              <RoleIcon size={16} />
+                              <span>{roleConfig.label}</span>
+                            </span>
+                          </div>
+                          <p className="text-xs text-stone-500 dark:text-stone-400">
+                            Estación: <span className="font-semibold text-stone-800 dark:text-stone-200">{roleConfig.station}</span>
+                          </p>
+                        </div>
+
+                        {/* Bloque de Código PIN */}
+                        <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                              PIN de Acceso Táctil:
+                            </span>
+                            <span className="font-mono text-base font-black text-amber-950 dark:text-amber-200 tracking-widest">
+                              {isVisible ? user.pin : "••••"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => handleTogglePinVisible(user.id)}
+                              className="p-2 rounded-xl text-stone-500 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200 dark:hover:bg-stone-700 transition cursor-pointer"
+                              title={isVisible ? "Ocultar PIN" : "Ver PIN"}
+                            >
+                              {isVisible ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                             <button
-                              onClick={() => {
-                                if (confirm(`¿Eliminar ${prod.nombre}?`)) {
-                                  deleteProducto(prod.id);
-                                  soundManager.playSuccessTone();
-                                }
-                              }}
-                              className="p-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition text-xs cursor-pointer"
-                              title="Eliminar producto"
+                              onClick={() => handleRegenerarPinRapido(user)}
+                              className="p-2 rounded-xl text-stone-500 hover:text-amber-600 hover:bg-amber-100/60 dark:hover:bg-stone-700 transition cursor-pointer"
+                              title="Regenerar PIN aleatorio"
                             >
-                              <Trash2 size={13} />
+                              <KeyRound size={18} />
                             </button>
                           </div>
+                        </div>
+
+                        {/* Botones de Acción */}
+                        <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800">
+                          <button
+                            onClick={() => handleAbrirModalStaff(user)}
+                            className="px-4 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer active:scale-95"
+                          >
+                            <Edit2 size={16} />
+                            <span>Editar</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleEliminarStaff(user)}
+                            className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/60 transition text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer active:scale-95"
+                          >
+                            <Trash2 size={16} />
+                            <span>Eliminar</span>
+                          </button>
                         </div>
                       </div>
                     );
                   })}
               </div>
-            ) : (
-              /* VISTA 2: PLANILLA / TABLA RÁPIDA DE PRECIOS */
-              <div className="overflow-x-auto rounded-3xl border-2 border-[#D5C7B5] bg-white shadow-sm">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-[11px] font-black text-stone-900 uppercase tracking-wider">
-                    <tr>
-                      <th className="py-3.5 px-4 w-16">Foto</th>
-                      <th className="py-3.5 px-4">Producto & Receta</th>
-                      <th className="py-3.5 px-4">Categoría</th>
-                      <th className="py-3.5 px-4">Estación</th>
-                      <th className="py-3.5 px-4 text-right">Precio Venta</th>
-                      <th className="py-3.5 px-4 text-right">Costo</th>
-                      <th className="py-3.5 px-4 text-center">Margen</th>
-                      <th className="py-3.5 px-4 text-center">Disponibilidad</th>
-                      <th className="py-3.5 px-4 text-right">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100 dark:divide-stone-800/80">
-                    {productos
-                      .filter((p) => {
-                        const matchCat =
-                          filtroCategoria === "todas" || p.categoria_id === filtroCategoria;
-                        const matchSearch = p.nombre
-                          .toLowerCase()
-                          .includes(busquedaProducto.toLowerCase()) ||
-                          (p.descripcion || "").toLowerCase().includes(busquedaProducto.toLowerCase());
-                        return matchCat && matchSearch;
-                      })
-                      .map((prod) => {
-                        const margen = prod.precio > 0
-                          ? Math.round(((prod.precio - prod.costo) / prod.precio) * 100)
-                          : 0;
-                        const cat = categorias.find((c) => c.id === prod.categoria_id);
+            </div>
+          )}
+
+          {/* ── TAB: CONTROL DE ASISTENCIA & GEOCERCA GPS ── */}
+          {tabActiva === "asistencias" && (
+            <div className="space-y-6">
+              {/* Header Asistencias & Accesos Rápidos */}
+              <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
+                <div className="space-y-1">
+                  <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                    <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                      <Clock size={26} />
+                    </div>
+                    <span>Control de Asistencias & Geocerca GPS</span>
+                  </h2>
+                  <p className="text-stone-400 text-xs max-w-xl">
+                    Monitoreo de entradas y salidas del personal con validación satelital por radio de metros, turnos de panadería/barismo y control de puntualidad.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/asistencia"
+                    target="_blank"
+                    className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold text-xs shadow-lg shadow-emerald-950/40 flex items-center gap-2 transition active:scale-95 cursor-pointer"
+                  >
+                    <MapPin size={16} />
+                    <span>Terminal de Marcado Móvil (/asistencia) ↗</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* KPIs de Asistencia en Tiempo Real */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                  <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                    <Users size={14} className="text-emerald-500" />
+                    Personal en Turno Ahora
+                  </span>
+                  <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <span>{personalEnTurno.length}</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  </div>
+                  <span className="text-[11px] text-stone-400">
+                    De {usuariosStaff.filter((u) => u.activo).length} colaboradores activos
+                  </span>
+                </div>
+
+                <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                  <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                    <CheckCircle2 size={14} className="text-blue-500" />
+                    Puntualidad Hoy
+                  </span>
+                  <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100">
+                    {puntualidadPorcentaje}%
+                  </div>
+                  <span className="text-[11px] text-stone-400">
+                    {aTiempoCount} llegadas a tiempo de {entradasHoy.length}
+                  </span>
+                </div>
+
+                <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                  <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                    <AlertTriangle size={14} className="text-amber-500" />
+                    Tardanzas Hoy
+                  </span>
+                  <div className="text-3xl font-serif font-black text-amber-500">
+                    {tardanzasCount}
+                  </div>
+                  <span className="text-[11px] text-stone-400">
+                    Tolerancia: {geocercaConfig.tolerancia_minutos} min
+                  </span>
+                </div>
+
+                <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
+                  <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                    <Compass size={14} className="text-purple-500" />
+                    Radio Geocerca Activa
+                  </span>
+                  <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100">
+                    {geocercaConfig.radio_metros}m
+                  </div>
+                  <span className="text-[11px] text-stone-400 truncate block">
+                    {geocercaConfig.bloquear_fuera_de_radio ? "Bloqueo fuera de radio activo" : "Alerta informativa"}
+                  </span>
+                </div>
+              </div>
+
+              {/* SECCIÓN 1: PERSONAL EN TURNO EN VIVO */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <Users size={18} className="text-emerald-500" />
+                    <span>Personal Actualmente en Turno ({personalEnTurno.length})</span>
+                  </h3>
+                  <span className="text-xs text-stone-400">
+                    Fecha: {fechaHoyStr}
+                  </span>
+                </div>
+
+                {personalEnTurno.length === 0 ? (
+                  <div className="p-8 text-center bg-stone-50 dark:bg-stone-950/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-800 text-stone-400 text-xs">
+                    No hay personal con turno activo en este momento.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {personalEnTurno.map(({ reg, personal }) => (
+                      <div
+                        key={personal.id}
+                        className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800 flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-11 h-11 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-sm flex items-center justify-center shrink-0 border border-emerald-500/30">
+                            {personal.nombre
+                              .split(" ")
+                              .map((n) => n[0])
+                              .slice(0, 2)
+                              .join("")}
+                          </div>
+                          <div className="min-w-0">
+                            <span className="font-bold text-sm text-stone-900 dark:text-stone-100 truncate block">
+                              {personal.nombre}
+                            </span>
+                            <span className="text-xs text-stone-500 dark:text-stone-400 truncate block">
+                              {personal.cargo || personal.role}
+                            </span>
+                            <div className="mt-1 flex items-center gap-2 text-[11px] text-stone-400 font-mono">
+                              <span>Entrada: <strong>{reg.hora}</strong></span>
+                              <span>&bull;</span>
+                              <span className="text-emerald-500 font-semibold">a {reg.distancia_metros}m</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            if (confirm(`¿Marcar salida de turno para ${personal.nombre}?`)) {
+                              addRegistroAsistencia({
+                                personal_id: personal.id,
+                                personal_nombre: personal.nombre,
+                                cargo: personal.cargo || personal.role,
+                                tipo: "salida",
+                                fecha: fechaHoyStr,
+                                hora: new Date().toLocaleTimeString("es-BO", { hour12: false }),
+                                distancia_metros: 0,
+                                dentro_del_radio: true,
+                                estado_puntualidad: "salida_puntual",
+                                observaciones: "Salida marcada desde el Panel Admin",
+                              });
+                              soundManager.playSuccessTone();
+                            }
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 text-xs font-bold transition shrink-0 cursor-pointer"
+                          title="Marcar salida manual"
+                        >
+                          Marcar Salida
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* SECCIÓN 2: CONFIGURACIÓN DE LA GEOCERCA GPS */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <Compass size={18} className="text-amber-500" />
+                      <span>Configuración de Geocerca GPS & Perímetro</span>
+                    </h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      Define las coordenadas del local y el radio de metros en el que se permite el marcado del personal.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={capturarUbicacionActual}
+                      disabled={gpsCalibrando}
+                      className="px-4 py-2 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 border border-amber-500/30 font-bold text-xs flex items-center gap-2 transition active:scale-95 cursor-pointer disabled:opacity-50"
+                    >
+                      <MapPin size={15} className={gpsCalibrando ? "animate-spin" : ""} />
+                      <span>{gpsCalibrando ? "Capturando..." : "📍 Usar Mi Ubicación Actual"}</span>
+                    </button>
+
+                    <button
+                      onClick={guardarGeocerca}
+                      className="px-5 py-2 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs shadow-lg shadow-amber-500/20 flex items-center gap-2 transition active:scale-95 cursor-pointer"
+                    >
+                      <Save size={15} />
+                      <span>{guardadoGeocercaExitoso ? "¡Guardado!" : "Guardar Cambios"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Nombre del Local
+                    </label>
+                    <input
+                      type="text"
+                      value={formGeocerca.local_nombre}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, local_nombre: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Dirección
+                    </label>
+                    <input
+                      type="text"
+                      value={formGeocerca.direccion}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, direccion: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Radio Permitido (Metros)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min={10}
+                        max={500}
+                        step={5}
+                        value={formGeocerca.radio_metros}
+                        onChange={(e) => setFormGeocerca({ ...formGeocerca, radio_metros: Number(e.target.value) })}
+                        className="w-24 px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono font-bold"
+                      />
+                      <div className="flex items-center gap-1">
+                        {[30, 60, 100].map((rad) => (
+                          <button
+                            key={rad}
+                            type="button"
+                            onClick={() => setFormGeocerca({ ...formGeocerca, radio_metros: rad })}
+                            className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold border transition ${formGeocerca.radio_metros === rad
+                              ? "bg-amber-500 text-stone-950 border-amber-400"
+                              : "bg-stone-100 dark:bg-stone-950 text-stone-400 border-stone-300 dark:border-stone-800"
+                              }`}
+                          >
+                            {rad}m
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Latitud GPS
+                    </label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={formGeocerca.latitud}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, latitud: Number(e.target.value) })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Longitud GPS
+                    </label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={formGeocerca.longitud}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, longitud: Number(e.target.value) })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Tolerancia de Tardanza (minutos)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={60}
+                      value={formGeocerca.tolerancia_minutos}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, tolerancia_minutos: Number(e.target.value) })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Hora Inicio Turno Mañana
+                    </label>
+                    <input
+                      type="time"
+                      value={formGeocerca.hora_inicio_turno_manana}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, hora_inicio_turno_manana: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                      Hora Inicio Turno Tarde
+                    </label>
+                    <input
+                      type="time"
+                      value={formGeocerca.hora_inicio_turno_tarde}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, hora_inicio_turno_tarde: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 pt-4 sm:pt-6">
+                    <input
+                      type="checkbox"
+                      id="chkBloquearFuera"
+                      checked={formGeocerca.bloquear_fuera_de_radio}
+                      onChange={(e) => setFormGeocerca({ ...formGeocerca, bloquear_fuera_de_radio: e.target.checked })}
+                      className="w-5 h-5 rounded text-amber-500 focus:ring-amber-400 cursor-pointer"
+                    />
+                    <label htmlFor="chkBloquearFuera" className="text-xs font-bold text-stone-800 dark:text-stone-200 cursor-pointer">
+                      Bloquear Marcado Fuera del Radio Permitido
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECCIÓN 3: TABLA DE HISTORIAL Y AUDITORÍA DE ASISTENCIA */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <FileText size={18} className="text-amber-500" />
+                      <span>Auditoría de Marcados ({asistenciasFiltradas.length})</span>
+                    </h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      Historial de entradas, refrigerios y salidas con coordenadas geográficas y evaluación de puntualidad.
+                    </p>
+                  </div>
+
+                  {/* Filtros Rápidos */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      value={filtroAsistenciaFecha}
+                      onChange={(e) => setFiltroAsistenciaFecha(e.target.value as any)}
+                      className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                    >
+                      <option value="hoy">Solo Hoy ({fechaHoyStr})</option>
+                      <option value="todos">Todo el Historial</option>
+                    </select>
+
+                    <select
+                      value={filtroAsistenciaPersonal}
+                      onChange={(e) => setFiltroAsistenciaPersonal(e.target.value)}
+                      className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                    >
+                      <option value="todos">Todos los Empleados</option>
+                      {usuariosStaff.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {u.nombre}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={filtroAsistenciaTipo}
+                      onChange={(e) => setFiltroAsistenciaTipo(e.target.value)}
+                      className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
+                    >
+                      <option value="todos">Todos los Tipos</option>
+                      <option value="entrada">Entradas</option>
+                      <option value="salida">Salidas</option>
+                      <option value="almuerzo_inicio">Inicio Refrigerio</option>
+                      <option value="almuerzo_fin">Fin Refrigerio</option>
+                    </select>
+                  </div>
+                </div>
+
+                {asistenciasFiltradas.length === 0 ? (
+                  <div className="p-8 text-center bg-stone-50 dark:bg-stone-950/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-800 text-stone-400 text-xs">
+                    No se encontraron marcados con los filtros seleccionados.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-stone-900 font-black uppercase font-mono text-[10px]">
+                          <th className="py-2.5 px-3">Colaborador</th>
+                          <th className="py-2.5 px-3">Tipo</th>
+                          <th className="py-2.5 px-3">Fecha & Hora</th>
+                          <th className="py-2.5 px-3">Distancia al Local</th>
+                          <th className="py-2.5 px-3">Puntualidad</th>
+                          <th className="py-2.5 px-3">GPS / Mapa</th>
+                          <th className="py-2.5 px-3">Observaciones</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100 dark:divide-stone-800/60">
+                        {asistenciasFiltradas.map((reg) => (
+                          <tr key={reg.id} className="hover:bg-stone-50 dark:hover:bg-stone-950/40 transition">
+                            <td className="py-3 px-3">
+                              <div className="font-bold text-stone-900 dark:text-stone-100">
+                                {reg.personal_nombre}
+                              </div>
+                              <div className="text-[11px] text-stone-400">
+                                {reg.cargo}
+                              </div>
+                            </td>
+
+                            <td className="py-3 px-3">
+                              <span
+                                className={`px-2.5 py-1 rounded-full font-bold uppercase text-[10px] whitespace-nowrap ${reg.tipo === "entrada"
+                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                                  : reg.tipo === "salida"
+                                    ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                                    : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                                  }`}
+                              >
+                                {reg.tipo.replace("_", " ")}
+                              </span>
+                            </td>
+
+                            <td className="py-3 px-3">
+                              <div className="font-mono font-bold text-stone-900 dark:text-stone-100">
+                                {reg.hora}
+                              </div>
+                              <div className="text-[10px] text-stone-400">
+                                {reg.fecha}
+                              </div>
+                            </td>
+
+                            <td className="py-3 px-3">
+                              <div className="flex items-center gap-1.5 font-mono">
+                                <span
+                                  className={`w-2 h-2 rounded-full ${reg.dentro_del_radio ? "bg-emerald-500" : "bg-rose-500"
+                                    }`}
+                                />
+                                <span className="font-bold">
+                                  {reg.distancia_metros} metros
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-stone-400">
+                                {reg.dentro_del_radio ? "Dentro del radio" : "Fuera de perímetro"}
+                              </div>
+                            </td>
+
+                            <td className="py-3 px-3">
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${reg.estado_puntualidad === "a_tiempo" || reg.estado_puntualidad === "salida_puntual"
+                                  ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"
+                                  : "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300"
+                                  }`}
+                              >
+                                {reg.estado_puntualidad === "a_tiempo"
+                                  ? "A Tiempo"
+                                  : reg.estado_puntualidad === "tardanza"
+                                    ? "Tardanza"
+                                    : "Completado"}
+                              </span>
+                            </td>
+
+                            <td className="py-3 px-3">
+                              {reg.latitud && reg.longitud ? (
+                                <a
+                                  href={`https://www.google.com/maps?q=${reg.latitud},${reg.longitud}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
+                                >
+                                  <ExternalLink size={12} />
+                                  <span>Ver en Mapa</span>
+                                </a>
+                              ) : (
+                                <span className="text-stone-400">Sin GPS</span>
+                              )}
+                            </td>
+
+                            <td className="py-3 px-3 text-stone-500 dark:text-stone-400 max-w-xs truncate">
+                              {reg.observaciones || "—"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── TAB 4: MÉTRICAS FINANCIERAS & CONTROL DE COBROS POR TURNO ── */}
+          {tabActiva === "metricas" && (
+            <div className="space-y-6">
+              {/* Cabecera Financiera y Selector de Períodos */}
+              <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
+                <div className="space-y-1">
+                  <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                    <div className="p-2 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      <TrendingUp size={26} />
+                    </div>
+                    <span>Finanzas & Control de Ingresos</span>
+                  </h2>
+                  <p className="text-stone-400 text-xs sm:text-sm">
+                    Ventas totales, métodos de cobro en Bolivianos (BOB) y recaudación por turno.
+                  </p>
+                </div>
+
+                {/* Selector de Períodos y Botón de Imprimir */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="p-1 rounded-2xl bg-black/50 border border-white/10 flex items-center gap-1.5">
+                    {[
+                      { id: "hoy", label: "Hoy" },
+                      { id: "semana", label: "Esta Semana" },
+                      { id: "mes", label: "Este Mes" },
+                      { id: "todos", label: "Histórico" },
+                    ].map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => {
+                          soundManager.playClick();
+                          setFiltroPeriodo(p.id as any);
+                        }}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${filtroPeriodo === p.id
+                          ? "bg-amber-600 text-white shadow-sm"
+                          : "text-stone-300 hover:text-white hover:bg-white/10"
+                          }`}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      printElementById("reporte-financiero-admin-print", {
+                        pageType: "letter",
+                        title: `Reporte_Financiero_Dencker_${filtroPeriodo}`,
+                      });
+                    }}
+                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs sm:text-sm font-bold border border-white/10 transition flex items-center gap-2 active:scale-95 cursor-pointer"
+                  >
+                    <Printer size={16} />
+                    <span>Imprimir Reporte</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 4 Bento Cards Ejecutivas */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Card 1: Ventas Totales */}
+                <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <DollarSign size={16} className="text-amber-600" />
+                      Ventas del Período
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-mono">
+                      +{statsFinancieras.margenBrutoPct}% Margen
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-serif text-3xl font-black text-amber-950 dark:text-amber-200 font-mono">
+                      Bs {statsFinancieras.totalVentas.toLocaleString("es-BO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1.5 text-xs text-stone-500 dark:text-stone-400">
+                      <span className="flex items-center gap-1">
+                        <Banknote size={12} className="text-emerald-600" />
+                        Bs {statsFinancieras.totalEfectivo.toFixed(2)} Efec.
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <QrCode size={12} className="text-purple-600" />
+                        Bs {statsFinancieras.totalQr.toFixed(2)} QR
+                      </span>
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
+                    <span>Proyección Mensual:</span>
+                    <span className="font-mono font-bold text-stone-900 dark:text-stone-100">
+                      Bs {statsFinancieras.proyeccionMensual.toLocaleString("es-BO")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card 2: Margen & Utilidad Neta */}
+                <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <TrendingUp size={14} className="text-emerald-600" />
+                      Ganancia Neta Estimada
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                      Café & Pan
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-serif text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                      Bs {statsFinancieras.gananciaNeta.toLocaleString("es-BO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                      Costo estimado de insumos: <span className="font-mono font-semibold">Bs {statsFinancieras.costoInsumos.toFixed(2)}</span>
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500">
+                    Calculado sobre café Yungas y harinas artesanas
+                  </div>
+                </div>
+
+                {/* Card 3: Ticket Promedio y Volumen */}
+                <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <Receipt size={14} className="text-blue-600" />
+                      Ticket Promedio
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">
+                      {statsFinancieras.totalTransacciones} Tickets
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-serif text-3xl font-black text-stone-900 dark:text-stone-100 font-mono">
+                      Bs {statsFinancieras.ticketPromedio.toFixed(2)}
+                    </p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                      Gasto promedio por comensal servido
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
+                    <span>Ritmo diario estimado:</span>
+                    <span className="font-mono font-bold text-stone-900 dark:text-stone-100">
+                      Bs {statsFinancieras.promedioDiario.toFixed(2)}/día
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card 4: Caja Registradora & Turno Actual */}
+                <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <Clock size={14} className="text-amber-600" />
+                      Caja en Turno
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 capitalize">
+                      {sesionCaja?.estado || "Abierta"}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif text-2xl font-black text-stone-900 dark:text-stone-100 capitalize">
+                        Turno {sesionCaja?.turno || "Tarde"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                      Cajero: <span className="font-semibold text-stone-800 dark:text-stone-200">{sesionCaja?.cajero || "Cajero Principal"}</span>
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
+                    <span>Efectivo en gaveta:</span>
+                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                      Bs {sesionCaja?.efectivo_esperado?.toFixed(2) || "448.00"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── SECCIÓN CRÍTICA: INGRESOS POR TURNOS (SHIFT INTELLIGENCE) ── */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <Clock size={20} className="text-amber-600" />
+                      Ingresos Desglosados por Turno de Atención
+                    </h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      Comparativa de recaudación entre la horneada de la mañana (07:00 - 14:00), la merienda de la tarde (14:00 - 19:30) y el cierre nocturno (19:30 - Cierre).
+                    </p>
+                  </div>
+
+                  {/* Barra de Distribución Porcentual */}
+                  <div className="flex items-center gap-4 text-xs font-bold">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-amber-500" />
+                      <span className="text-stone-600 dark:text-stone-300">Mañana ({statsFinancieras.turnos.manana.pct}%)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-emerald-600" />
+                      <span className="text-stone-600 dark:text-stone-300">Tarde ({statsFinancieras.turnos.tarde.pct}%)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-indigo-600" />
+                      <span className="text-stone-600 dark:text-stone-300">Noche ({statsFinancieras.turnos.noche.pct}%)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Barra Visual de Contribución */}
+                <div className="h-3 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden flex shadow-inner">
+                  <div
+                    style={{ width: `${statsFinancieras.turnos.manana.pct}%` }}
+                    className="bg-amber-500 transition-all duration-700"
+                    title={`Mañana: ${statsFinancieras.turnos.manana.pct}%`}
+                  />
+                  <div
+                    style={{ width: `${statsFinancieras.turnos.tarde.pct}%` }}
+                    className="bg-emerald-600 transition-all duration-700"
+                    title={`Tarde: ${statsFinancieras.turnos.tarde.pct}%`}
+                  />
+                  <div
+                    style={{ width: `${statsFinancieras.turnos.noche.pct}%` }}
+                    className="bg-indigo-600 transition-all duration-700"
+                    title={`Noche: ${statsFinancieras.turnos.noche.pct}%`}
+                  />
+                </div>
+
+                {/* 3 Tarjetas de Turno */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {/* Turno Mañana */}
+                  <div className="p-5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 rounded-xl bg-amber-500 text-white shadow-xs">
+                          <Sun size={18} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100">
+                            Turno Mañana
+                          </h4>
+                          <span className="text-[11px] text-amber-900 dark:text-amber-300 font-mono">
+                            07:00 – 14:00
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-amber-900 dark:text-amber-400 font-mono bg-white dark:bg-stone-900 px-2 py-0.5 rounded-lg border border-amber-200 dark:border-stone-800">
+                        {statsFinancieras.turnos.manana.pct}% Ventas
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                      Desayunos, café pasado de Caranavi y primera tanda caliente de marraquetas (07:30).
+                    </p>
+
+                    <div className="space-y-1.5 pt-2 border-t border-amber-200/60 dark:border-amber-900/40">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-stone-500">Recaudación:</span>
+                        <span className="font-serif text-lg font-black text-stone-900 dark:text-stone-100 font-mono">
+                          Bs {statsFinancieras.turnos.manana.total.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>Comandas Cobradas:</span>
+                        <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
+                          {statsFinancieras.turnos.manana.tickets} pedidos
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>Ticket Promedio:</span>
+                        <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
+                          Bs {statsFinancieras.turnos.manana.ticketPromedio.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1">
+                        <span>Efectivo: Bs {statsFinancieras.turnos.manana.efectivo.toFixed(2)}</span>
+                        <span>QR: Bs {statsFinancieras.turnos.manana.qr.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Turno Tarde */}
+                  <div className="p-5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 rounded-xl bg-emerald-600 text-white shadow-xs">
+                          <Sunset size={18} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100">
+                            Turno Tarde
+                          </h4>
+                          <span className="text-[11px] text-emerald-900 dark:text-emerald-300 font-mono">
+                            14:00 – 19:30
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-emerald-900 dark:text-emerald-400 font-mono bg-white dark:bg-stone-900 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-stone-800">
+                        {statsFinancieras.turnos.tarde.pct}% Ventas
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                      Té de la tarde, New York rolls, croissants, porciones de torta y tanda caliente de las 16:30.
+                    </p>
+
+                    <div className="space-y-1.5 pt-2 border-t border-emerald-200/60 dark:border-emerald-900/40">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-stone-500">Recaudación:</span>
+                        <span className="font-serif text-lg font-black text-stone-900 dark:text-stone-100 font-mono">
+                          Bs {statsFinancieras.turnos.tarde.total.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>Comandas Cobradas:</span>
+                        <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
+                          {statsFinancieras.turnos.tarde.tickets} pedidos
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>Ticket Promedio:</span>
+                        <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
+                          Bs {statsFinancieras.turnos.tarde.ticketPromedio.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1">
+                        <span>Efectivo: Bs {statsFinancieras.turnos.tarde.efectivo.toFixed(2)}</span>
+                        <span>QR: Bs {statsFinancieras.turnos.tarde.qr.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Turno Noche */}
+                  <div className="p-5 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-xs">
+                          <Moon size={18} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100">
+                            Turno Noche / Cierre
+                          </h4>
+                          <span className="text-[11px] text-indigo-900 dark:text-indigo-300 font-mono">
+                            19:30 – Cierre
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-indigo-900 dark:text-indigo-400 font-mono bg-white dark:bg-stone-900 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-stone-800">
+                        {statsFinancieras.turnos.noche.pct}% Ventas
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                      Cenas ligeras, pizzas artesanales, infusiones calientes y arqueo final de caja registradora.
+                    </p>
+
+                    <div className="space-y-1.5 pt-2 border-t border-indigo-200/60 dark:border-indigo-900/40">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-stone-500">Recaudación:</span>
+                        <span className="font-serif text-lg font-black text-stone-900 dark:text-stone-100 font-mono">
+                          Bs {statsFinancieras.turnos.noche.total.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>Comandas Cobradas:</span>
+                        <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
+                          {statsFinancieras.turnos.noche.tickets} pedidos
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>Ticket Promedio:</span>
+                        <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
+                          Bs {statsFinancieras.turnos.noche.ticketPromedio.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1">
+                        <span>Efectivo: Bs {statsFinancieras.turnos.noche.efectivo.toFixed(2)}</span>
+                        <span>QR: Bs {statsFinancieras.turnos.noche.qr.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── REGISTRO DETALLADO DE PAGOS: ¿QUIÉN PAGÓ? ¿CUÁNTO PAGÓ? ¿CUÁNDO PAGÓ? ── */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <Receipt size={20} className="text-amber-600" />
+                      Historial de Cobros y Transacciones Realizadas
+                    </h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      Mostrando {statsFinancieras.transaccionesFiltradas.length} transacciones verificadas con cliente, mesa, método y comprobante.
+                    </p>
+                  </div>
+
+                  {/* Filtros rápidos de tabla */}
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Búsqueda por texto */}
+                    <div className="relative">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                      <input
+                        type="text"
+                        placeholder="Buscar cliente, mesa o ID..."
+                        value={busquedaTransaccion}
+                        onChange={(e) => setBusquedaTransaccion(e.target.value)}
+                        className="pl-8 pr-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-xs w-56 text-stone-900 dark:text-stone-100"
+                      />
+                    </div>
+
+                    {/* Filtro Turno */}
+                    <select
+                      value={filtroTurno}
+                      onChange={(e) => setFiltroTurno(e.target.value as any)}
+                      className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-xs font-semibold text-stone-800 dark:text-stone-200"
+                    >
+                      <option value="todos">Todos los Turnos</option>
+                      <option value="manana">🌅 Mañana</option>
+                      <option value="tarde">🥐 Tarde</option>
+                      <option value="noche">🌙 Noche</option>
+                    </select>
+
+                    {/* Filtro Método */}
+                    <select
+                      value={filtroMetodoPago}
+                      onChange={(e) => setFiltroMetodoPago(e.target.value as any)}
+                      className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-xs font-semibold text-stone-800 dark:text-stone-200"
+                    >
+                      <option value="todos">Todos los Métodos</option>
+                      <option value="efectivo">💵 Efectivo BOB</option>
+                      <option value="qr">📱 QR Simple Interoperable</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Tabla de Transacciones */}
+                <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-[#FAF6EF] text-stone-900 uppercase tracking-wider font-black border-b-2 border-[#D8C7B2] text-[11px]">
+                        <th className="py-3 px-4">ID Transacción</th>
+                        <th className="py-3 px-4">Fecha & Hora</th>
+                        <th className="py-3 px-4">Cliente / Mesa</th>
+                        <th className="py-3 px-4">Turno</th>
+                        <th className="py-3 px-4">Modalidad</th>
+                        <th className="py-3 px-4">Cajero</th>
+                        <th className="py-3 px-4">Método</th>
+                        <th className="py-3 px-4 text-right">Monto Cobrado</th>
+                        <th className="py-3 px-4 text-center">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                      {statsFinancieras.transaccionesFiltradas.length === 0 ? (
+                        <tr>
+                          <td colSpan={9} className="py-8 text-center text-stone-400">
+                            No se encontraron transacciones con los filtros seleccionados.
+                          </td>
+                        </tr>
+                      ) : (
+                        statsFinancieras.transaccionesFiltradas.map((p) => {
+                          const esQr = p.metodo === "qr";
+                          const fecha = new Date(p.created_at);
+                          const horaStr = fecha.toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" });
+                          const fechaStr = fecha.toLocaleDateString("es-BO", { day: "2-digit", month: "short" });
+
+                          return (
+                            <tr
+                              key={p.id}
+                              className="hover:bg-amber-50/40 dark:hover:bg-stone-800/50 transition-colors"
+                            >
+                              <td className="py-3 px-4 font-mono font-bold text-stone-800 dark:text-stone-200">
+                                {p.id}
+                              </td>
+                              <td className="py-3 px-4 whitespace-nowrap text-stone-600 dark:text-stone-300">
+                                <span className="font-semibold text-stone-900 dark:text-stone-100">{horaStr}</span>
+                                <span className="text-[10px] text-stone-400 block">{fechaStr}</span>
+                              </td>
+                              <td className="py-3 px-4">
+                                <div className="font-bold text-stone-900 dark:text-stone-100">
+                                  {p.cliente_nombre || (p.mesa_numero ? `Mesa ${p.mesa_numero}` : "Cliente Mostrador")}
+                                </div>
+                                {p.mesa_numero && (
+                                  <span className="text-[10px] text-amber-800 dark:text-amber-400 font-semibold">
+                                    Salón Principal
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-3 px-4">
+                                <span
+                                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize ${p.turno === "manana"
+                                    ? "bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300"
+                                    : p.turno === "tarde"
+                                      ? "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300"
+                                      : "bg-indigo-100 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-300"
+                                    }`}
+                                >
+                                  {p.turno === "manana" && <Sun size={10} />}
+                                  {p.turno === "tarde" && <Sunset size={10} />}
+                                  {p.turno === "noche" && <Moon size={10} />}
+                                  {p.turno || "Tarde"}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 capitalize text-stone-600 dark:text-stone-300">
+                                <span className="px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-[11px] font-medium">
+                                  {p.modalidad || (p.mesa_numero ? "Mesa" : "Retiro")}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-stone-600 dark:text-stone-400 text-xs">
+                                {p.cajero || "Cajero Principal"}
+                              </td>
+                              <td className="py-3 px-4">
+                                <span
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${esQr
+                                    ? "bg-purple-100 text-purple-900 dark:bg-purple-950/60 dark:text-purple-300"
+                                    : "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300"
+                                    }`}
+                                >
+                                  {esQr ? <QrCode size={12} /> : <Banknote size={12} />}
+                                  {esQr ? "QR Simple" : "Efectivo"}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-right">
+                                <span className="font-mono font-black text-sm text-amber-950 dark:text-amber-300">
+                                  Bs {p.monto.toFixed(2)}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-center">
+                                <button
+                                  onClick={() => {
+                                    soundManager.playClick();
+                                    setReciboModalPago(p);
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 text-stone-700 dark:text-stone-300 hover:text-amber-900 text-xs font-bold transition flex items-center gap-1 mx-auto"
+                                  title="Ver comprobante"
+                                >
+                                  <Eye size={12} />
+                                  <span>Recibo</span>
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* ── HISTORIAL DE AUDITORÍA DE ARQUEOS DE CAJA POR TURNO ── */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                      <ShieldCheck size={20} className="text-emerald-600" />
+                      Auditoría de Cierres de Caja & Cuadres de Gaveta
+                    </h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      Historial de apertura, efectivo esperado, arqueo ciego y diferencia registrada por cajero en cada turno.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto rounded-2xl border border-stone-200 dark:border-stone-800">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-stone-50 dark:bg-stone-800/80 text-stone-500 uppercase tracking-wider font-semibold border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                        <th className="py-3 px-4">Sesión ID</th>
+                        <th className="py-3 px-4">Turno</th>
+                        <th className="py-3 px-4">Cajero</th>
+                        <th className="py-3 px-4 text-right">Fondo Inicial</th>
+                        <th className="py-3 px-4 text-right">Ventas Totales</th>
+                        <th className="py-3 px-4 text-right">Efectivo Esperado</th>
+                        <th className="py-3 px-4 text-right">Efectivo Contado</th>
+                        <th className="py-3 px-4 text-center">Diferencia</th>
+                        <th className="py-3 px-4">Notas de Auditoría</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                      {(historialSesiones && historialSesiones.length > 0 ? historialSesiones : []).map((s) => {
+                        const diferencia = s.diferencia ?? 0;
+                        const esCuadreExacto = Math.abs(diferencia) < 0.01;
 
                         return (
-                          <tr key={prod.id} className="hover:bg-amber-500/5 transition">
-                            {/* Foto interactiva */}
-                            <td className="py-2.5 px-4">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  soundManager.playClick();
-                                  setProductoParaGaleria(prod);
-                                  setGaleriaFotosAbierta(true);
-                                }}
-                                title="Click para cambiar foto desde las 169 fotos reales"
-                                className="relative group w-11 h-11 rounded-xl bg-amber-100 dark:bg-stone-800 flex items-center justify-center overflow-hidden border border-stone-200 dark:border-stone-700 cursor-pointer hover:ring-2 hover:ring-amber-500 transition shrink-0"
+                          <tr key={s.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/50">
+                            <td className="py-3 px-4 font-mono font-bold text-stone-700 dark:text-stone-300">
+                              {s.id}
+                            </td>
+                            <td className="py-3 px-4 capitalize font-semibold">
+                              {s.turno}
+                            </td>
+                            <td className="py-3 px-4 text-stone-600 dark:text-stone-400">
+                              {s.cajero}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono">
+                              Bs {s.efectivo_inicial.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono font-bold text-amber-950 dark:text-amber-300">
+                              Bs {s.total_ventas.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono">
+                              Bs {s.efectivo_esperado.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono font-bold">
+                              Bs {s.efectivo_contado?.toFixed(2) || s.efectivo_esperado.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <span
+                                className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono ${esCuadreExacto
+                                  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                  : diferencia > 0
+                                    ? "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
+                                    : "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300"
+                                  }`}
                               >
-                                {prod.imagen_url ? (
-                                  <img
-                                    src={prod.imagen_url}
-                                    alt={prod.nombre}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition"
-                                  />
-                                ) : (
-                                  <span className="text-base">{cat?.emoji || "🥐"}</span>
-                                )}
-                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                                  <ImageIcon size={14} />
-                                </div>
-                              </button>
-                            </td>
-
-                            {/* Nombre y descripción */}
-                            <td className="py-2.5 px-4 max-w-xs">
-                              <div className="font-bold text-stone-900 dark:text-stone-100 truncate">
-                                {prod.nombre}
-                              </div>
-                              {prod.descripcion && (
-                                <div className="text-[11px] text-stone-400 truncate max-w-xs">
-                                  {prod.descripcion}
-                                </div>
-                              )}
-                            </td>
-
-                            {/* Categoría */}
-                            <td className="py-2.5 px-4 whitespace-nowrap">
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-[11px]">
-                                <span>{cat?.emoji}</span>
-                                <span>{cat?.nombre}</span>
+                                {esCuadreExacto ? "Cuadre Exacto (Bs 0.00)" : `Bs ${diferencia.toFixed(2)}`}
                               </span>
                             </td>
-
-                            {/* Estación */}
-                            <td className="py-2.5 px-4 whitespace-nowrap">
-                              <span className="capitalize text-stone-500 text-[11px] font-medium">
-                                {prod.estacion}
-                              </span>
-                            </td>
-
-                            {/* Precio Venta Inline Editable */}
-                            <td className="py-2.5 px-4 text-right whitespace-nowrap">
-                              {editandoPrecioId === prod.id ? (
-                                <div className="flex items-center justify-end gap-1">
-                                  <span className="text-[11px] font-bold text-stone-500">Bs</span>
-                                  <input
-                                    type="number"
-                                    step="0.5"
-                                    autoFocus
-                                    value={nuevoPrecioInput}
-                                    onChange={(e) => setNuevoPrecioInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
-                                        const num = parseFloat(nuevoPrecioInput);
-                                        if (!isNaN(num) && num >= 0) {
-                                          updateProducto(prod.id, { precio: num });
-                                          soundManager.playSuccessTone();
-                                        }
-                                        setEditandoPrecioId(null);
-                                      } else if (e.key === "Escape") {
-                                        setEditandoPrecioId(null);
-                                      }
-                                    }}
-                                    className="w-16 px-1.5 py-0.5 text-xs font-mono font-bold rounded-lg border-2 border-amber-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-right focus:outline-none"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const num = parseFloat(nuevoPrecioInput);
-                                      if (!isNaN(num) && num >= 0) {
-                                        updateProducto(prod.id, { precio: num });
-                                        soundManager.playSuccessTone();
-                                      }
-                                      setEditandoPrecioId(null);
-                                    }}
-                                    className="p-1 rounded bg-emerald-600 text-white cursor-pointer"
-                                  >
-                                    <Check size={11} />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setEditandoPrecioId(null)}
-                                    className="p-1 rounded bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 cursor-pointer"
-                                  >
-                                    <X size={11} />
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    soundManager.playTactileClick();
-                                    setEditandoPrecioId(prod.id);
-                                    setNuevoPrecioInput(prod.precio.toString());
-                                  }}
-                                  className="group/p inline-flex items-center gap-1 font-mono font-black text-amber-900 dark:text-amber-400 hover:text-amber-600 px-2 py-1 rounded-lg hover:bg-amber-100/60 dark:hover:bg-amber-950/60 transition cursor-pointer"
-                                  title="Click para editar precio de venta"
-                                >
-                                  <span>Bs {prod.precio.toFixed(2)}</span>
-                                  <Edit2 size={10} className="opacity-0 group-hover/p:opacity-100 transition text-amber-600" />
-                                </button>
-                              )}
-                            </td>
-
-                            {/* Costo */}
-                            <td className="py-2.5 px-4 text-right font-mono text-stone-500 whitespace-nowrap">
-                              Bs {prod.costo.toFixed(2)}
-                            </td>
-
-                            {/* Margen */}
-                            <td className="py-2.5 px-4 text-center whitespace-nowrap">
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                margen >= 50
-                                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20"
-                                  : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-400/20"
-                              }`}>
-                                {margen}%
-                              </span>
-                            </td>
-
-                            {/* Disponibilidad */}
-                            <td className="py-2.5 px-4 text-center whitespace-nowrap">
-                              <button
-                                onClick={() => toggleProductoDisponible(prod.id)}
-                                className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full transition cursor-pointer ${
-                                  prod.disponible
-                                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                                    : "bg-stone-100 text-stone-400 dark:bg-stone-800"
-                                }`}
-                              >
-                                {prod.disponible ? "Disponible" : "Agotado"}
-                              </button>
-                            </td>
-
-                            {/* Acciones */}
-                            <td className="py-2.5 px-4 text-right whitespace-nowrap">
-                              <div className="flex items-center justify-end gap-1.5">
-                                <button
-                                  onClick={() => abrirModalEditarProducto(prod)}
-                                  className="p-1.5 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 transition cursor-pointer"
-                                  title="Editar producto completo"
-                                >
-                                  <Edit2 size={12} />
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    if (confirm(`¿Eliminar ${prod.nombre}?`)) {
-                                      deleteProducto(prod.id);
-                                      soundManager.playSuccessTone();
-                                    }
-                                  }}
-                                  className="p-1.5 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 transition cursor-pointer"
-                                  title="Eliminar producto"
-                                >
-                                  <Trash2 size={12} />
-                                </button>
-                              </div>
+                            <td className="py-3 px-4 text-stone-500 text-[11px] italic max-w-xs truncate">
+                              {s.notas || "Sin incidencias reportadas"}
                             </td>
                           </tr>
                         );
                       })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── TAB: FACTURACIÓN ELECTRÓNICA SIAT / IMPUESTOS BOLIVIA ── */}
-        {tabActiva === "siat" && (
-          <div className="space-y-6">
-            {/* Header SIAT con diseño institucional */}
-            <div className="p-6 bg-gradient-to-r from-blue-950 via-slate-900 to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-6 border border-blue-900/40">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs font-mono text-blue-300 tracking-wider uppercase">
-                  <ShieldCheck size={16} className="text-blue-400" />
-                  <span>Servicio de Impuestos Nacionales (SIN) • Bolivia</span>
-                </div>
-                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-                  Facturación Computarizada & En Línea SIAT
-                  <span className={`text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full ${
-                    formSiat.activa
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
-                      : "bg-stone-700 text-stone-300"
-                  }`}>
-                    {formSiat.activa ? "SIAT Oficial Habilitado ✓" : "Solo Comprobante Interno"}
-                  </span>
-                </h2>
-                <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
-                  Configura aquí los parámetros fiscales obligatorios de Bolivia: numeración correlativa sin saltos, CUF en Base 16 (Módulo 11), montos en palabras y el enlace de la contadora para renovar la vigencia cada ciertos meses.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const actualizado = { ...formSiat, activa: !formSiat.activa };
-                    setFormSiat(actualizado);
-                    setFacturacionSiatConfig(actualizado);
-                    soundManager.playSuccessTone();
-                  }}
-                  className={`px-4 py-2.5 rounded-2xl font-bold text-xs shadow-md transition flex items-center gap-2 cursor-pointer ${
-                    formSiat.activa
-                      ? "bg-emerald-600 hover:bg-emerald-500 text-white"
-                      : "bg-white/10 hover:bg-white/20 text-stone-200"
-                  }`}
-                >
-                  <Receipt size={16} />
-                  <span>{formSiat.activa ? "Facturación Activa ✓" : "Activar Emisión SIAT"}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* ── CARD: VINCULACIÓN AUTOMÁTICA CON ENLACE DE LA CONTADORA ── */}
-            <div className="p-6 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent rounded-3xl border-2 border-amber-500/30 dark:border-amber-500/20 shadow-md space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">
-                    <Sparkles size={16} />
-                    <span>Conexión Rápida Contable (Actualización Periódica)</span>
-                  </div>
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100">
-                    Pega aquí el enlace o token que te pasa la contadora
-                  </h3>
-                  <p className="text-xs text-stone-600 dark:text-stone-400 max-w-2xl">
-                    Cada ciertos meses, cuando tu contadora renueve la dosificación o enlace de consulta de Impuestos, solo debes pegar aquí el link o token y hacer clic en <strong>"Vincular Enlace"</strong>. El sistema extraerá automáticamente el NIT, CUFD y configurará los QRs legales sin pasos técnicos complicados.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <input
-                  type="text"
-                  value={linkContadoraInput}
-                  onChange={(e) => setLinkContadoraInput(e.target.value)}
-                  placeholder="Ej: https://siat.impuestos.gob.bo/consulta/QR?nit=389201024 o token de la contadora..."
-                  className="flex-1 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 font-mono text-xs shadow-xs focus:ring-2 focus:ring-amber-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!linkContadoraInput.trim()) return;
-                    const parsed = parsearLinkContadora(linkContadoraInput);
-                    const updated = { ...formSiat, ...parsed };
-                    setFormSiat(updated);
-                    setFacturacionSiatConfig(updated);
-                    soundManager.playSuccessTone();
-                    setSiatGuardadoExitoso(true);
-                    setTimeout(() => setSiatGuardadoExitoso(false), 3000);
-                  }}
-                  className="px-5 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
-                >
-                  <Check size={16} />
-                  <span>Vincular Enlace de la Contadora</span>
-                </button>
-              </div>
-
-              {formSiat.linkContadora && (
-                <div className="text-[11px] text-amber-800 dark:text-amber-300/90 font-mono flex items-center gap-2 bg-amber-100/60 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-800">
-                  <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
-                  <span className="truncate">Enlace activo de la contadora: <strong>{formSiat.linkContadora}</strong></span>
-                </div>
-              )}
-            </div>
-
-            {/* Formulario de Configuración SIAT */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-6">
-              <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-4">
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <KeyRound size={18} className="text-amber-600" />
-                    Parámetros Tributarios de Casa Matriz
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Datos fiscales de Dencker Pan para los comprobantes electrónicos
-                  </p>
-                </div>
-
-                {siatGuardadoExitoso && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800"
-                  >
-                    <CheckCircle2 size={15} />
-                    <span>Configuración SIAT guardada ✓</span>
-                  </motion.div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-                {/* NIT Emisor */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    NIT Emisor *
-                  </label>
-                  <input
-                    type="text"
-                    value={formSiat.nitEmisor}
-                    onChange={(e) => setFormSiat({ ...formSiat, nitEmisor: e.target.value })}
-                    placeholder="389201024"
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
-                  />
-                </div>
-
-                {/* Razón Social */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Razón Social Registrada *
-                  </label>
-                  <input
-                    type="text"
-                    value={formSiat.razonSocialEmisor}
-                    onChange={(e) => setFormSiat({ ...formSiat, razonSocialEmisor: e.target.value })}
-                    placeholder="DENCKER PAN CAFETERÍA & PANADERÍA S.R.L."
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
-                  />
-                </div>
-
-                {/* Siguiente Número de Factura (Correlativo) */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Siguiente Nº de Factura (Correlativo SIN) *
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formSiat.siguienteNumeroFactura || 1}
-                    onChange={(e) => setFormSiat({ ...formSiat, siguienteNumeroFactura: parseInt(e.target.value) || 1 })}
-                    className="w-full p-2.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50/40 dark:bg-stone-800 text-amber-950 dark:text-amber-300 font-mono font-bold text-sm"
-                  />
-                  <span className="text-[10px] text-stone-500 dark:text-stone-400">Control estricto consecutivo</span>
-                </div>
-
-                {/* Modalidad de Facturación */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Modalidad SIAT *
-                  </label>
-                  <select
-                    value={formSiat.modalidad}
-                    onChange={(e) => setFormSiat({ ...formSiat, modalidad: e.target.value as any })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
-                  >
-                    <option value="computarizada_linea">Computarizada en Línea (Token/CUFD)</option>
-                    <option value="electronica_linea">Electrónica en Línea (Firma Digital)</option>
-                    <option value="recibo_oficial">Recibo Oficial Tributario</option>
-                  </select>
-                </div>
-
-                {/* Punto de Venta */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Código Punto de Venta (0 = Casa Matriz)
-                  </label>
-                  <input
-                    type="number"
-                    value={formSiat.codigoPuntoVenta}
-                    onChange={(e) => setFormSiat({ ...formSiat, codigoPuntoVenta: parseInt(e.target.value) || 0 })}
-                    placeholder="0"
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
-                  />
-                </div>
-
-                {/* Fecha Límite de Emisión */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Fecha Límite de Emisión (Vigencia) *
-                  </label>
-                  <input
-                    type="text"
-                    value={formSiat.fechaLimiteEmision || "2027-04-30"}
-                    onChange={(e) => setFormSiat({ ...formSiat, fechaLimiteEmision: e.target.value })}
-                    placeholder="YYYY-MM-DD o DD/MM/YYYY"
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
-                  />
-                  <span className="text-[10px] text-stone-500">Tope fijado por la contadora</span>
-                </div>
-
-                {/* Número de Autorización / Dosificación */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Nº Autorización / Dosificación
-                  </label>
-                  <input
-                    type="text"
-                    value={formSiat.autorizacionDosificacion || "48A9C102BF"}
-                    onChange={(e) => setFormSiat({ ...formSiat, autorizacionDosificacion: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
-                  />
-                </div>
-
-                {/* Código CUFD */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="font-bold text-stone-700 dark:text-stone-300">
-                      CUFD (Vigente Diario)
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const nuevoCufd = "B" + Math.random().toString(36).substring(2, 10).toUpperCase() + Date.now().toString(36).toUpperCase();
-                        setFormSiat({ ...formSiat, cufd: nuevoCufd });
-                        soundManager.playTactileClick();
-                      }}
-                      className="text-[10px] text-amber-600 hover:underline cursor-pointer"
-                    >
-                      Renovar código
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    value={formSiat.cufd}
-                    onChange={(e) => setFormSiat({ ...formSiat, cufd: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-semibold"
-                  />
-                </div>
-
-                {/* URL Consulta / Validación QR */}
-                <div>
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Enlace Oficial de Consulta QR Tributario
-                  </label>
-                  <input
-                    type="url"
-                    value={formSiat.linkImpuestos}
-                    onChange={(e) => setFormSiat({ ...formSiat, linkImpuestos: e.target.value })}
-                    placeholder="https://siat.impuestos.gob.bo/consulta/QR"
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
-                  />
-                </div>
-
-                {/* Actividad Económica SIN */}
-                <div className="md:col-span-2">
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Actividad Económica Principal (SIN)
-                  </label>
-                  <input
-                    type="text"
-                    value={formSiat.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
-                    onChange={(e) => setFormSiat({ ...formSiat, actividadEconomica: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold"
-                  />
-                </div>
-
-                {/* Leyenda Obligatoria Ley 453 */}
-                <div className="md:col-span-3">
-                  <label className="font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    Leyenda Ley N° 453 de Protección al Consumidor
-                  </label>
-                  <input
-                    type="text"
-                    value={formSiat.leyendaLey453 || "Ley N° 453: Los servicios deben prestarse en condiciones de inocuidad y calidad."}
-                    onChange={(e) => setFormSiat({ ...formSiat, leyendaLey453: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-stone-200 dark:border-stone-800">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFacturacionSiatConfig(formSiat);
-                    soundManager.playSuccessTone();
-                    setSiatGuardadoExitoso(true);
-                    setTimeout(() => setSiatGuardadoExitoso(false), 3000);
-                  }}
-                  className="px-6 py-2.5 rounded-xl bg-blue-900 dark:bg-blue-600 hover:bg-blue-950 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
-                >
-                  <Save size={16} />
-                  <span>Guardar Parámetros SIAT</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Listado de Facturas Emitidas */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <Receipt size={18} className="text-blue-600" />
-                    Historial de Facturas Emitidas ({facturasEmitidas.length})
-                  </h3>
-                  <p className="text-xs text-stone-500">
-                    Registro de comprobantes fiscales emitidos con validación CUF en Base 16
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
-                    <input
-                      type="text"
-                      placeholder="Buscar por Nº, Cliente o NIT..."
-                      value={busquedaFactura}
-                      onChange={(e) => setBusquedaFactura(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-52 sm:w-60"
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (facturasEmitidas.length === 0) {
-                        alert("No hay facturas emitidas todavía para exportar.");
-                        return;
-                      }
-                      const csv = exportarLibroVentasCsv(facturasEmitidas, facturacionSiatConfig);
-                      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = `Libro_Ventas_IVA_DenckerPan_${new Date().toISOString().slice(0, 10)}.csv`;
-                      a.click();
-                      soundManager.playSuccessTone();
-                    }}
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs"
-                  >
-                    <Download size={14} />
-                    <span>Libro de Ventas IVA (Para Contadora CSV)</span>
-                  </button>
-                </div>
-              </div>
-
-              {facturasEmitidas.length === 0 ? (
-                <div className="py-12 text-center space-y-3 bg-stone-50 dark:bg-stone-800/40 rounded-2xl border border-dashed border-stone-200 dark:border-stone-700">
-                  <div className="w-12 h-12 mx-auto rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
-                    <Receipt size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-serif font-bold text-sm text-stone-800 dark:text-stone-200">
-                      No hay facturas emitidas todavía
-                    </h4>
-                    <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
-                      Cuando el cajero cobre un pedido en Caja POS con la opción "Factura SIAT", se generará automáticamente el CUF correlativo y el código QR de validación tributaria con el logo oficial.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-stone-900 font-black uppercase tracking-wider text-[10px]">
-                        <th className="py-2.5 px-3">Nº Factura</th>
-                        <th className="py-2.5 px-3">Fecha & Hora</th>
-                        <th className="py-2.5 px-3">Cliente / Razón Social</th>
-                        <th className="py-2.5 px-3">NIT / CI</th>
-                        <th className="py-2.5 px-3">Total (Bs)</th>
-                        <th className="py-2.5 px-3">CUF</th>
-                        <th className="py-2.5 px-3 text-right">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
-                      {facturasEmitidas
-                        .filter((f) => {
-                          const query = busquedaFactura.toLowerCase();
-                          return (
-                            f.numeroFactura.toString().includes(query) ||
-                            f.clienteNombre.toLowerCase().includes(query) ||
-                            f.clienteNitCi.toLowerCase().includes(query)
-                          );
-                        })
-                        .map((f) => (
-                          <tr key={f.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/50">
-                            <td className="py-3 px-3 font-mono font-bold text-blue-900 dark:text-blue-400">
-                              #{f.numeroFactura}
-                            </td>
-                            <td className="py-3 px-3 text-stone-500">
-                              {new Date(f.fechaEmision).toLocaleString("es-BO")}
-                            </td>
-                            <td className="py-3 px-3 font-semibold text-stone-800 dark:text-stone-200">
-                              {f.clienteNombre}
-                            </td>
-                            <td className="py-3 px-3 font-mono text-stone-600 dark:text-stone-400">
-                              {f.clienteNitCi}
-                            </td>
-                            <td className="py-3 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                              Bs {f.montoTotal.toFixed(2)}
-                            </td>
-                            <td className="py-3 px-3 font-mono text-[10px] text-stone-400 truncate max-w-xs">
-                              {f.cuf}
-                            </td>
-                            <td className="py-3 px-3 text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => setFacturaSeleccionadaModal(f)}
-                                  className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 dark:text-amber-400 hover:underline cursor-pointer"
-                                >
-                                  <Eye size={12} />
-                                  <span>Ver Ticket</span>
-                                </button>
-                                <a
-                                  href={f.urlQrVerificacion}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 underline"
-                                >
-                                  <span>SIAT QR</span>
-                                  <ExternalLink size={12} />
-                                </a>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
                     </tbody>
                   </table>
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* ── Modal de Vista Previa de Factura Fiscal Oficial con Logo Vectorizado ── */}
-            <AnimatePresence>
-              {facturaSeleccionadaModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden p-6 space-y-4"
-                  >
-                    <div id="factura-siat-termica" className="ticket-termico font-mono text-xs space-y-3 text-stone-900 border-b border-dashed border-stone-300 pb-4">
-                      {/* Logo Oficial Vectorizado */}
-                      <div className="text-center flex flex-col items-center justify-center pt-1 pb-1">
-                        <img
-                          src="/img/brand/logo-3-don-dencker-badge.png"
-                          alt="Dencker Pan"
-                          className="h-12 w-auto object-contain mx-auto mb-1"
+              {/* Top 5 Productos con barras de progreso */}
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
+                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <Sparkles size={18} className="text-amber-600" />
+                  Top 5 Productos Estrella y Contribución de Ganancia
+                </h3>
+                <div className="space-y-3">
+                  {[
+                    { nombre: "Café Pasado Yungas (Caranavi)", ventas: 64, total: "Bs 768.00", pct: 95, margen: "72%" },
+                    { nombre: "Croissant Mantequilla Francés", ventas: 52, total: "Bs 936.00", pct: 82, margen: "68%" },
+                    { nombre: "Cappuccino Artesanal Doble", ventas: 41, total: "Bs 902.00", pct: 70, margen: "70%" },
+                    { nombre: "Cuñapé Caliente al Horno", ventas: 38, total: "Bs 304.00", pct: 60, margen: "64%" },
+                    { nombre: "Marraqueta con Queso Criollo", ventas: 29, total: "Bs 406.00", pct: 45, margen: "65%" },
+                  ].map((item, idx) => (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span className="text-stone-900 dark:text-stone-100">
+                          {idx + 1}. {item.nombre}
+                        </span>
+                        <div className="flex items-center gap-2 font-mono">
+                          <span className="text-emerald-600 text-[11px]">Margen: {item.margen}</span>
+                          <span className="text-amber-900 dark:text-amber-400">
+                            {item.total} ({item.ventas} u.)
+                          </span>
+                        </div>
+                      </div>
+                      <div className="h-2 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${item.pct}%` }}
+                          transition={{ duration: 1, delay: idx * 0.1 }}
+                          className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-500"
                         />
-                        <h4 className="font-bold text-sm font-serif text-stone-950 uppercase tracking-tight">
-                          {facturacionSiatConfig.razonSocialEmisor}
-                        </h4>
-                        <p className="text-[10px] font-bold text-stone-700">CASA MATRIZ: 0</p>
-                        <p className="text-[9px] text-stone-600">Av. Daniel Salamanca, Cochabamba - Bolivia</p>
-                        <p className="text-[10px] text-stone-900 font-bold mt-1">NIT: {facturacionSiatConfig.nitEmisor}</p>
-                        <p className="text-[8px] text-stone-500 italic max-w-[240px] mx-auto leading-tight">
-                          {facturacionSiatConfig.actividadEconomica || "SERVICIOS DE PREPARACIÓN DE BEBIDAS Y ALIMENTOS"}
-                        </p>
-
-                        <div className="pt-2 text-[10px] text-stone-800 space-y-0.5 border-t border-dashed border-stone-300 mt-2 w-full">
-                          <p className="font-black text-sm text-stone-950 tracking-wide">
-                            FACTURA N°: {facturaSeleccionadaModal.numeroFactura}
-                          </p>
-                          <p className="text-[9px] font-bold text-stone-700">
-                            CÓD. AUTORIZACIÓN: {facturacionSiatConfig.autorizacionDosificacion || "48A9C102BF"}
-                          </p>
-                          <div className="pt-1">
-                            <span className="text-[8px] font-bold text-stone-500 block">CUF:</span>
-                            <p className="break-all text-[8px] font-mono text-stone-600 leading-tight bg-stone-50 p-1 rounded border border-stone-200">
-                              {facturaSeleccionadaModal.cuf}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="border-t border-dashed border-stone-300 pt-2 text-[11px] space-y-0.5">
-                        <div className="flex justify-between">
-                          <span className="text-stone-500">Fecha y Hora:</span>
-                          <span>{new Date(facturaSeleccionadaModal.fechaEmision).toLocaleString("es-BO")}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-stone-500">NIT / CI:</span>
-                          <span className="font-bold font-mono">{facturaSeleccionadaModal.clienteNitCi}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-stone-500">Señor(es):</span>
-                          <span className="font-bold uppercase truncate max-w-[170px]">{facturaSeleccionadaModal.clienteNombre}</span>
-                        </div>
-                      </div>
-
-                      <div className="border-t border-dashed border-stone-300 pt-2 space-y-1 font-bold">
-                        <div className="flex justify-between text-sm text-stone-950">
-                          <span>TOTAL A PAGAR:</span>
-                          <span className="font-mono text-base">Bs {facturaSeleccionadaModal.montoTotal.toFixed(2)}</span>
-                        </div>
-                        <div className="text-[10px] text-stone-700 bg-stone-100/80 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
-                          {facturaSeleccionadaModal.montoLiteral || convertirNumeroALiteral(facturaSeleccionadaModal.montoTotal)}
-                        </div>
-                      </div>
-
-                      <div className="border-t border-dashed border-stone-300 pt-2 flex flex-col items-center justify-center space-y-1 text-center">
-                        <div className="p-2 bg-white rounded-lg border border-stone-300 shadow-2xs">
-                          <QRCodeSVG
-                            value={facturaSeleccionadaModal.urlQrVerificacion || facturacionSiatConfig.linkImpuestos || "https://siat.impuestos.gob.bo"}
-                            size={92}
-                            level="M"
-                          />
-                        </div>
-                        <p className="text-[8px] text-stone-500 font-mono">Código de Control Tributario / QR SIAT</p>
-                      </div>
-
-                      <div className="text-center pt-2 text-[9px] text-stone-600 space-y-1 leading-tight border-t border-dashed border-stone-300">
-                        <p className="font-bold text-stone-900">
-                          "ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS, EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE ACUERDO A LEY"
-                        </p>
-                        <p className="text-[8px] text-stone-500 italic">
-                          {facturaSeleccionadaModal.leyendaLey453 || facturacionSiatConfig.leyendaLey453}
-                        </p>
-                        <p className="text-[9px] font-bold text-stone-800">
-                          Fecha Límite de Emisión: {facturaSeleccionadaModal.fechaLimiteEmision || facturacionSiatConfig.fechaLimiteEmision}
-                        </p>
-                        <div className="flex items-center justify-center gap-2 pt-2 pb-1">
-                          <img
-                            src="/img/brand/logo-3-don-dencker-badge.png"
-                            alt="Sello Oficial Don Dencker"
-                            className="w-9 h-9 object-contain shrink-0"
-                          />
-                          <div className="text-left leading-tight">
-                            <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
-                            <p className="text-[8px] text-stone-500 font-mono">Tradición & Calidad Dencker</p>
-                          </div>
-                        </div>
                       </div>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2 pt-2">
-                      <button
-                        onClick={() => {
-                          soundManager.playTactileClick();
-                          printElementById("factura-siat-termica", {
-                            pageType: "thermal",
-                            title: `Factura_SIAT_${facturaSeleccionadaModal.numeroFactura}`,
-                          });
-                        }}
-                        className="py-2.5 rounded-xl bg-amber-900 text-white font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-amber-950 transition cursor-pointer"
-                      >
-                        <Printer size={14} /> Imprimir Factura
-                      </button>
-                      <button
-                        onClick={() => setFacturaSeleccionadaModal(null)}
-                        className="py-2.5 rounded-xl bg-stone-100 text-stone-700 font-semibold text-xs hover:bg-stone-200 transition cursor-pointer"
-                      >
-                        Cerrar
-                      </button>
-                    </div>
-                  </motion.div>
+                  ))}
                 </div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
+              </div>
 
-        {/* ── TAB 3: CATERING & RESERVAS ── */}
-        {tabActiva === "reservas" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                <Calendar size={18} className="text-amber-600" />
-                Catering & Eventos Programados ({reservas.length})
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {reservas.map((res) => (
-                <div
-                  key={res.id}
-                  className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4"
-                >
-                  <div className="flex items-start justify-between">
+              {/* ── Reporte Financiero Imprimible (A4 / Letter Formato Ejecutivo) ── */}
+              <div id="reporte-financiero-admin-print" className="hidden">
+                <div className="report-header">
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Dencker Pan"
+                      style={{ height: "52px", width: "auto" }}
+                    />
                     <div>
-                      <h4 className="font-serif text-xl font-bold text-amber-950 dark:text-amber-200">
-                        {res.nombre_cliente}
-                      </h4>
-                      <p className="text-xs text-stone-500 dark:text-stone-400">
-                        {res.telefono} • {res.email}
+                      <h2 style={{ margin: "0", fontSize: "17px", fontWeight: "bold" }}>
+                        DENCKER PAN CAFETERÍA & PANADERÍA
+                      </h2>
+                      <p style={{ margin: "0", fontSize: "10px", color: "#555" }}>
+                        Av. Daniel Salamanca, Cochabamba, Bolivia &bull; NIT: 1028391024 &bull; Tel: +591 76911000
+                      </p>
+                      <p style={{ margin: "0", fontSize: "9px", color: "#777" }}>
+                        Masa Madre Viva &bull; Granos 4 Llamas de Caranavi (1700 msnm)
                       </p>
                     </div>
-                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 capitalize font-mono">
-                      {res.estado}
-                    </span>
                   </div>
-
-                  <div className="p-4 bg-stone-50 dark:bg-stone-800/60 rounded-2xl text-xs space-y-1.5 text-stone-700 dark:text-stone-300">
-                    <p>
-                      <strong>Tipo de Evento:</strong> {res.tipo_evento || "Catering Especial"}
+                  <div style={{ textAlign: "right", fontSize: "10px" }}>
+                    <p style={{ margin: "0", fontWeight: "bold", fontSize: "13px", color: "#991B24" }}>
+                      REPORTE FINANCIERO Y AUDITORÍA
                     </p>
-                    <p>
-                      <strong>Fecha:</strong> {new Date(res.fecha_evento).toLocaleDateString("es-BO")}
+                    <p style={{ margin: "2px 0 0 0" }}>
+                      Período: <strong>{filtroPeriodo.toUpperCase()}</strong> &bull; Turno: <strong>{filtroTurno.toUpperCase()}</strong>
                     </p>
-                    <p>
-                      <strong>Comensales:</strong> {res.numero_personas} personas
+                    <p style={{ margin: "2px 0 0 0" }}>
+                      Emisión: {new Date().toLocaleString("es-BO")}
                     </p>
-                    {res.descripcion && (
-                      <p className="italic text-stone-500 pt-1">"{res.descripcion}"</p>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="font-bold text-amber-900 dark:text-amber-300 font-mono text-sm">
-                      Total: Bs {res.monto_total || 0}
-                    </span>
-
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => updateReservaEstado(res.id, "confirmada")}
-                        className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition"
-                      >
-                        Confirmar
-                      </button>
-                      <button
-                        onClick={() => updateReservaEstado(res.id, "produccion")}
-                        className="px-3 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white font-bold text-xs transition"
-                      >
-                        En Producción
-                      </button>
-                      <button
-                        onClick={() => updateReservaEstado(res.id, "completada")}
-                        className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition"
-                      >
-                        Completar
-                      </button>
-                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* ── TAB: GESTIÓN DE PERSONAL & CÓDIGOS DE ACCESO (PIN) ── */}
-        {tabActiva === "personal" && (
-          <div className="space-y-6">
-            {/* Header limpio y profesional */}
-            <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
-              <div className="space-y-1">
-                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-                  <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                    <Users size={26} />
+                {/* Bento Grid Resumen */}
+                <div className="bento-grid">
+                  <div className="bento-item">
+                    <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ventas del Período</span>
+                    <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0" }}>
+                      Bs {statsFinancieras.totalVentas.toFixed(2)}
+                    </p>
+                    <span style={{ fontSize: "9px", color: "#16a34a" }}>
+                      Margen Bruto: +{statsFinancieras.margenBrutoPct}%
+                    </span>
                   </div>
-                  <span>Equipo & Colaboradores</span>
-                </h2>
-                <p className="text-stone-400 text-xs sm:text-sm">
-                  Control de personal, asignación de estaciones y claves PIN de acceso táctil.
-                </p>
-              </div>
+                  <div className="bento-item">
+                    <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ganancia Neta Estimada</span>
+                    <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0", color: "#16a34a" }}>
+                      Bs {statsFinancieras.gananciaNeta.toFixed(2)}
+                    </p>
+                    <span style={{ fontSize: "9px", color: "#666" }}>
+                      Costo Insumos: Bs {statsFinancieras.costoInsumos.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="bento-item">
+                    <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ticket Promedio</span>
+                    <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0" }}>
+                      Bs {statsFinancieras.ticketPromedio.toFixed(2)}
+                    </p>
+                    <span style={{ fontSize: "9px", color: "#2563eb" }}>
+                      {statsFinancieras.totalTransacciones} Transacciones
+                    </span>
+                  </div>
+                  <div className="bento-item">
+                    <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Cobros por Método</span>
+                    <p style={{ fontSize: "11px", fontWeight: "bold", margin: "2px 0" }}>
+                      Efectivo: Bs {statsFinancieras.totalEfectivo.toFixed(2)}
+                    </p>
+                    <p style={{ fontSize: "11px", fontWeight: "bold", margin: "0" }}>
+                      QR Simple: Bs {statsFinancieras.totalQr.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => handleAbrirModalStaff()}
-                  className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer"
-                >
-                  <Plus size={20} />
-                  <span>Nuevo Colaborador</span>
-                </button>
+                {/* Detalle de transacciones */}
+                <h4 style={{ fontSize: "11.5px", fontWeight: "bold", margin: "14px 0 4px 0", borderBottom: "1.5px solid #222", paddingBottom: "3px" }}>
+                  DETALLE DE TRANSACCIONES AUDITADAS ({statsFinancieras.transaccionesFiltradas.length} operaciones)
+                </h4>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>N° Transacción</th>
+                      <th>Fecha y Hora</th>
+                      <th>Cliente / Mesa</th>
+                      <th>Turno</th>
+                      <th>Método</th>
+                      <th style={{ textAlign: "right" }}>Total BOB</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {statsFinancieras.transaccionesFiltradas.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} style={{ textAlign: "center", color: "#777", fontStyle: "italic", padding: "12px" }}>
+                          No se registraron transacciones en el período seleccionado.
+                        </td>
+                      </tr>
+                    ) : (
+                      statsFinancieras.transaccionesFiltradas.map((t, i) => (
+                        <tr key={i}>
+                          <td style={{ fontFamily: "monospace", fontSize: "10px" }}>{t.id}</td>
+                          <td>{new Date(t.created_at).toLocaleString("es-BO")}</td>
+                          <td>{t.cliente_nombre || (t.mesa_numero ? `Mesa ${t.mesa_numero}` : "Mostrador")}</td>
+                          <td style={{ textTransform: "capitalize" }}>{t.turno || "Tarde"}</td>
+                          <td style={{ textTransform: "uppercase", fontWeight: "bold" }}>{t.metodo}</td>
+                          <td style={{ textAlign: "right", fontWeight: "bold", fontFamily: "monospace" }}>
+                            Bs {t.monto.toFixed(2)}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+
+                {/* Firmas de Control */}
+                <div className="signatures-box">
+                  <div>
+                    <div className="sig-line"></div>
+                    <p>Responsable de Finanzas / Cajero(a)</p>
+                  </div>
+                  <div>
+                    <div className="sig-line"></div>
+                    <p>Gerencia General &bull; Dencker Pan</p>
+                  </div>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* 4 Tarjetas de Estadísticas de Personal */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {[
-                {
-                  label: "Total Personal",
-                  count: (usuariosStaff || []).length,
-                  icon: Users,
-                  color: "text-stone-900 dark:text-stone-100",
-                  bg: "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300",
-                },
-                {
-                  label: "Meseros (Sala)",
-                  count: (usuariosStaff || []).filter((u) => u.role === "mesero").length,
-                  icon: UtensilsCrossed,
-                  color: "text-amber-600 dark:text-amber-400",
-                  bg: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-                },
-                {
-                  label: "Cocina & Baristas",
-                  count: (usuariosStaff || []).filter((u) => u.role === "cocina").length,
-                  icon: ChefHat,
-                  color: "text-blue-600 dark:text-blue-400",
-                  bg: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
-                },
-                {
-                  label: "Caja POS & Admin",
-                  count: (usuariosStaff || []).filter((u) => u.role === "caja" || u.role === "admin").length,
-                  icon: Receipt,
-                  color: "text-emerald-600 dark:text-emerald-400",
-                  bg: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-                },
-              ].map((st, idx) => {
-                const Icon = st.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs flex items-center gap-4"
+          {/* ── 5. TAB QR BANCARIO SIMPLE (SUBIDO POR ADMIN) ── */}
+          {tabActiva === "qr" && (
+            <div className="space-y-6">
+              <div className="p-6 bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-amber-500/30">
+                <div className="space-y-1">
+                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono uppercase font-bold border border-amber-400/30">
+                    QR Simple • Interoperable ASFI
+                  </span>
+                  <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <QrCode size={24} className="text-amber-400" />
+                    QR Bancario de la Cafetería
+                  </h2>
+                  <p className="text-stone-300 text-xs max-w-xl">
+                    Sube aquí la captura o foto del QR generado desde la aplicación de tu banco (BCP, BNB, Banco Unión, Mercantil Santa Cruz). Se reflejará automáticamente en la pantalla de cobro de Caja POS y en el móvil de los clientes al pagar.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href="/caja"
+                    target="_blank"
+                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-amber-200 text-xs font-bold border border-white/10 transition flex items-center gap-1.5"
                   >
-                    <div className={`w-12 h-12 rounded-2xl ${st.bg} flex items-center justify-center shrink-0`}>
-                      <Icon size={24} />
+                    <ExternalLink size={14} />
+                    <span>Probar en Caja POS</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Columna Izquierda: Vista Previa Real del QR */}
+                <div className="lg:col-span-5 bg-white dark:bg-stone-900 rounded-3xl p-6 border border-stone-200 dark:border-stone-800 shadow-sm flex flex-col items-center justify-center text-center space-y-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                    Vista Previa en Vivo (Lo que ve el cliente)
+                  </span>
+
+                  <div className="p-4 bg-white rounded-3xl border-2 border-dashed border-amber-300 shadow-md inline-block max-w-[280px] w-full">
+                    <div className="aspect-square w-full rounded-2xl overflow-hidden bg-stone-50 flex items-center justify-center relative">
+                      <img
+                        src={formQr.url || "/img/logo/logo.png"}
+                        alt="QR Bancario Dencker Pan"
+                        className="w-full h-full object-contain p-2"
+                      />
                     </div>
+                    <div className="pt-2 text-center">
+                      <p className="font-bold text-xs text-stone-900 font-serif">
+                        {formQr.banco || "QR Simple Interoperable"}
+                      </p>
+                      <p className="text-[11px] text-stone-500">
+                        Titular: <span className="font-semibold text-stone-800">{formQr.titular}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-3.5 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                    <CheckCircle2 size={14} />
+                    <span>QR Verificado & Sincronizado en Red</span>
+                  </div>
+                </div>
+
+                {/* Columna Derecha: Formulario de Carga y Configuración */}
+                <div className="lg:col-span-7 bg-white dark:bg-stone-900 rounded-3xl p-6 border border-stone-200 dark:border-stone-800 shadow-sm space-y-5">
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <Upload size={18} className="text-amber-700" />
+                    Actualizar Imagen del QR Bancario
+                  </h3>
+
+                  {/* Subir archivo desde dispositivo */}
+                  <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-bold text-xs text-amber-950 dark:text-amber-200">
+                          Cargar archivo de imagen (PNG / JPG)
+                        </p>
+                        <p className="text-[11px] text-amber-800/80 dark:text-amber-300/70">
+                          Captura de pantalla de tu app de BCP, BNB, Banco Unión o similar.
+                        </p>
+                      </div>
+                    </div>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={qrFileInputRef}
+                      onChange={handleSubirQr}
+                      className="hidden"
+                    />
+
+                    <button
+                      type="button"
+                      disabled={subiendoQr}
+                      onClick={() => qrFileInputRef.current?.click()}
+                      className="w-full py-3 rounded-xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+                    >
+                      <Upload size={15} />
+                      <span>{subiendoQr ? "Procesando Imagen..." : "Seleccionar Imagen del QR desde mi dispositivo"}</span>
+                    </button>
+                  </div>
+
+                  {/* O pegar URL directa */}
+                  <div className="space-y-3 text-xs">
                     <div>
-                      <span className="text-xs text-stone-500 dark:text-stone-400 block font-semibold">
-                        {st.label}
-                      </span>
-                      <span className={`text-2xl font-black font-mono ${st.color}`}>
-                        {st.count}
-                      </span>
+                      <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                        O pega la URL directa de la imagen del QR
+                      </label>
+                      <input
+                        type="url"
+                        value={formQr.url}
+                        onChange={(e) => setFormQr({ ...formQr, url: e.target.value })}
+                        placeholder="https://i.ibb.co/..."
+                        className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                          Banco o Entidad Financiera
+                        </label>
+                        <input
+                          type="text"
+                          value={formQr.banco}
+                          onChange={(e) => setFormQr({ ...formQr, banco: e.target.value })}
+                          placeholder="ej. BCP Simple / Banco Unión"
+                          className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                          Titular de la Cuenta
+                        </label>
+                        <input
+                          type="text"
+                          value={formQr.titular}
+                          onChange={(e) => setFormQr({ ...formQr, titular: e.target.value })}
+                          placeholder="ej. Dencker Pan S.R.L."
+                          className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                        />
+                      </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
 
-            {/* Filtros por Rol y Buscador */}
-            <div className="p-4 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
-                {[
-                  { id: "todos", label: "Todo el Personal" },
-                  { id: "mesero", label: "Meseros" },
-                  { id: "cocina", label: "Cocina / KDS" },
-                  { id: "caja", label: "Caja POS" },
-                  { id: "admin", label: "Administradores" },
-                ].map((r) => (
-                  <button
-                    key={r.id}
-                    onClick={() => setFiltroRoleStaff(r.id as any)}
-                    className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${
-                      filtroRoleStaff === r.id
-                        ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
-                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700"
-                    }`}
+                  {/* Botón Guardar */}
+                  <div className="pt-2 flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={guardarQr}
+                      className="px-6 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md transition active:scale-95 flex items-center gap-2"
+                    >
+                      <Save size={16} />
+                      <span>Guardar y Publicar QR Oficial</span>
+                    </button>
+
+                    {guardadoQrExitoso && (
+                      <motion.span
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="text-xs font-bold text-emerald-700 flex items-center gap-1"
+                      >
+                        <CheckCircle2 size={16} />
+                        ¡QR Guardado y sincronizado en Caja y Mesas!
+                      </motion.span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── TAB: QRS DINÁMICOS POR MESA (IMPRIMIBLES) ── */}
+          {tabActiva === "qr_mesas" && (
+            <div className="space-y-6">
+              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <QrCode size={20} className="text-amber-600" />
+                    Tarjetas QR Autoservicio por Mesa
+                  </h3>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    Cada código QR enlaza al comensal con su número de mesa exacto para enviar la orden directo al mesero y cocina.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/menu-pdf"
+                    target="_blank"
+                    className="px-4 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center gap-2 border border-stone-200 dark:border-stone-700"
                   >
-                    {r.label}
+                    <FileText size={15} className="text-[#527953]" />
+                    <span>Ver Menú PDF</span>
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      soundManager.playTactileClick();
+                      printElementById("qrs-mesas-imprimibles", {
+                        pageType: "carpas",
+                        title: "Carpas_QR_Mesas_DenckerPan",
+                      });
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white text-xs font-bold shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer"
+                  >
+                    <Printer size={15} />
+                    <span>Imprimir Todos los QRs</span>
                   </button>
-                ))}
+                </div>
               </div>
 
-              <div className="relative">
-                <Search size={18} className="absolute left-3.5 top-3 text-stone-400" />
-                <input
-                  type="text"
-                  placeholder="Buscar colaborador..."
-                  value={busquedaStaff}
-                  onChange={(e) => setBusquedaStaff(e.target.value)}
-                  className="pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-64 sm:w-72"
-                />
+              {/* Ajuste de Host / URL Base */}
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-stone-900/60 border border-amber-200/80 dark:border-amber-900/40 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <LinkIcon size={16} className="text-amber-700 dark:text-amber-400" />
+                  <span className="font-bold text-amber-950 dark:text-amber-200">
+                    Dominio / IP Base para escanear en red local o celular:
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 flex-1 max-w-md">
+                  <input
+                    type="text"
+                    value={baseUrlMesas}
+                    onChange={(e) => setBaseUrlMesas(e.target.value)}
+                    placeholder="http://192.168.1.5:3000 o https://tu-dominio.com"
+                    className="w-full p-2 rounded-xl bg-white dark:bg-stone-800 border border-amber-300 dark:border-stone-700 font-mono text-xs"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Grid de Cuentas de Personal */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {(usuariosStaff || [])
-                .filter((u) => {
-                  const matchRole = filtroRoleStaff === "todos" || u.role === filtroRoleStaff;
-                  const matchSearch =
-                    u.nombre.toLowerCase().includes(busquedaStaff.toLowerCase()) ||
-                    u.cargo.toLowerCase().includes(busquedaStaff.toLowerCase());
-                  return matchRole && matchSearch;
-                })
-                .map((user) => {
-                  const isVisible = !!pinsVisibles[user.id];
-                  const roleConfig = {
-                    admin: {
-                      label: "Administración",
-                      icon: ShieldCheck,
-                      badge: "bg-stone-900 text-amber-300 border-amber-500/40",
-                      station: "Acceso Total / Gerencia",
-                    },
-                    mesero: {
-                      label: "Sala & Mesero",
-                      icon: UtensilsCrossed,
-                      badge: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
-                      station: "Terminal de Sala & Mesas",
-                    },
-                    cocina: {
-                      label: "Cocina & Barismo",
-                      icon: ChefHat,
-                      badge: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30",
-                      station: "Pantalla KDS & Horno",
-                    },
-                    caja: {
-                      label: "Caja POS",
-                      icon: Receipt,
-                      badge: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
-                      station: "Cobros & Arqueo POS",
-                    },
-                  }[user.role];
-
-                  const RoleIcon = roleConfig.icon;
+              {/* Grilla de Tarjetas Imprimibles */}
+              <div id="qrs-mesas-imprimibles" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 print:grid-cols-2 print:gap-8">
+                {mesas.map((m) => {
+                  const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Salón";
+                  const mesaUrl = `${baseUrlMesas || "https://tienda.denckerpan.com"}/mesa/${m.numero}`;
 
                   return (
                     <div
-                      key={user.id}
-                      className="p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-amber-400 dark:hover:border-amber-600 transition"
+                      key={m.id}
+                      id={`carpa-mesa-${m.numero}`}
+                      className="p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-200/80 dark:border-amber-900/40 shadow-sm flex flex-col items-center text-center justify-between space-y-4 break-inside-avoid print:border-2 print:border-stone-800 print:p-6 print:rounded-2xl"
                     >
-                      {/* Cabecera Tarjeta: Avatar + Rol + Estado */}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3.5">
-                          <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex items-center justify-center font-black text-base shrink-0">
-                            {user.nombre.slice(0, 2).toUpperCase()}
-                          </div>
-                          <div>
-                            <h4 className="font-serif font-bold text-base text-stone-900 dark:text-stone-100 leading-tight">
-                              {user.nombre}
-                            </h4>
-                            <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                              {user.cargo}
-                            </p>
-                          </div>
-                        </div>
+                      {/* Toldo Bistro Decorativo Superior */}
+                      <div className="w-full h-3 rounded-t-lg overflow-hidden flex border-b border-amber-900/30">
+                        {[...Array(12)].map((_, i) => (
+                          <div
+                            key={i}
+                            className={`flex-1 h-full ${i % 2 === 0 ? "bg-[#991B24]" : "bg-[#FAF6EF]"}`}
+                          />
+                        ))}
+                      </div>
 
-                        <span
-                          className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
-                            user.activo
-                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-400/30"
-                              : "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border-red-400/30"
-                          }`}
-                        >
-                          {user.activo ? "Activo" : "Inactivo"}
+                      {/* Cara 1: Marca & Mesa */}
+                      <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100">
+                        <img
+                          src="/img/brand/logo-3-don-dencker-badge.png"
+                          alt="Logo Don Dencker"
+                          className="w-10 h-10 object-contain"
+                        />
+                        <div className="text-left leading-tight">
+                          <span className="font-serif font-black text-sm tracking-wider uppercase block">
+                            Dencker Pan
+                          </span>
+                          <span className="text-[9px] text-amber-900 font-sans font-semibold">
+                            Masa Madre Viva &bull; Café 4 Llamas
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="font-serif text-3xl font-black text-amber-950 dark:text-amber-300">
+                          MESA {m.numero}
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#527953] bg-[#EBF3EA] px-2.5 py-0.5 rounded-full inline-block">
+                          {zonaNombre} &bull; {m.capacidad} Personas
                         </span>
                       </div>
 
-                      {/* Estación y Permiso */}
-                      <div className="space-y-1.5 text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-bold border ${roleConfig.badge}`}>
-                            <RoleIcon size={16} />
-                            <span>{roleConfig.label}</span>
-                          </span>
-                        </div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400">
-                          Estación: <span className="font-semibold text-stone-800 dark:text-stone-200">{roleConfig.station}</span>
+                      {/* QR Code SVG Vectorial Nítido */}
+                      <div className="p-3 bg-white rounded-2xl border-2 border-stone-300 shadow-inner flex items-center justify-center">
+                        <QRCodeSVG
+                          value={mesaUrl}
+                          size={135}
+                          level="M"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <p className="text-[11px] font-bold text-stone-800 dark:text-stone-200 leading-tight">
+                          Escanea para ver la carta y pedir desde tu mesa
+                        </p>
+                        <p className="text-[9px] font-mono text-stone-500 bg-stone-100 dark:bg-stone-800 py-1 px-2 rounded border border-stone-200 dark:border-stone-700">
+                          WiFi: <strong>Dencker-Clientes</strong> &bull; Clave: <strong>masamadre2024</strong>
                         </p>
                       </div>
 
-                      {/* Bloque de Código PIN */}
-                      <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 flex items-center justify-between">
-                        <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
-                            PIN de Acceso Táctil:
-                          </span>
-                          <span className="font-mono text-base font-black text-amber-950 dark:text-amber-200 tracking-widest">
-                            {isVisible ? user.pin : "••••"}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => handleTogglePinVisible(user.id)}
-                            className="p-2 rounded-xl text-stone-500 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200 dark:hover:bg-stone-700 transition cursor-pointer"
-                            title={isVisible ? "Ocultar PIN" : "Ver PIN"}
-                          >
-                            {isVisible ? <EyeOff size={18} /> : <Eye size={18} />}
-                          </button>
-                          <button
-                            onClick={() => handleRegenerarPinRapido(user)}
-                            className="p-2 rounded-xl text-stone-500 hover:text-amber-600 hover:bg-amber-100/60 dark:hover:bg-stone-700 transition cursor-pointer"
-                            title="Regenerar PIN aleatorio"
-                          >
-                            <KeyRound size={18} />
-                          </button>
-                        </div>
+                      {/* Guía de Pliegue para Carpa de Mesa Plegable (Visible en Impresión) */}
+                      <div className="w-full cut-line my-2 pt-2 border-t border-dashed border-stone-400 print:block hidden text-center">
+                        <span className="text-[8px] font-mono uppercase text-stone-500 font-bold bg-white px-2">
+                          ✂ Pliegue de Soporte para Mesa ✂
+                        </span>
                       </div>
 
-                      {/* Botones de Acción */}
-                      <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800">
-                        <button
-                          onClick={() => handleAbrirModalStaff(user)}
-                          className="px-4 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer active:scale-95"
-                        >
-                          <Edit2 size={16} />
-                          <span>Editar</span>
-                        </button>
+                      {/* Pie de Marca */}
+                      <div className="text-[8px] text-stone-400 font-mono text-center">
+                        Tandas Calientes: 07:30 y 16:30 &bull; Cochabamba
+                      </div>
 
+                      <div className="w-full pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-center gap-2 print:hidden">
                         <button
-                          onClick={() => handleEliminarStaff(user)}
-                          className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/60 transition text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer active:scale-95"
+                          type="button"
+                          onClick={() => {
+                            soundManager.playTactileClick();
+                            printElementById(`carpa-mesa-${m.numero}`, {
+                              pageType: "carpas",
+                              title: `Carpa_QR_Mesa_${m.numero}`,
+                            });
+                          }}
+                          className="py-1.5 px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition"
+                          title="Imprimir carpa individual"
                         >
-                          <Trash2 size={16} />
-                          <span>Eliminar</span>
+                          <Printer size={13} /> Imprimir Carpa
+                        </button>
+                        <Link
+                          href={`/mesa/${m.numero}`}
+                          target="_blank"
+                          className="flex-1 py-1.5 px-2 rounded-xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white text-[11px] font-bold text-center transition"
+                        >
+                          Abrir Mesa
+                        </Link>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(mesaUrl);
+                            soundManager.playSuccessTone();
+                            alert(`¡Enlace copiado de Mesa ${m.numero}!`);
+                          }}
+                          className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-100 cursor-pointer"
+                          title="Copiar enlace"
+                        >
+                          <Copy size={14} />
                         </button>
                       </div>
                     </div>
                   );
                 })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* ── TAB: CONTROL DE ASISTENCIA & GEOCERCA GPS ── */}
-        {tabActiva === "asistencias" && (
-          <div className="space-y-6">
-            {/* Header Asistencias & Accesos Rápidos */}
-            <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
-              <div className="space-y-1">
-                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-                  <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                    <Clock size={26} />
+        {/* ── Modal Mesa ── */}
+        <AnimatePresence>
+          {modalMesaAbierto && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-4 border-2 border-[#D5C7B5]"
+              >
+                <div className="flex items-center justify-between pb-3 border-b-2 border-[#EAE0D2]">
+                  <h3 className="font-serif text-lg font-black text-stone-950">
+                    {mesaAEditar ? `Editar Mesa ${mesaAEditar.numero}` : "Agregar Nueva Mesa"}
+                  </h3>
+                  <button
+                    onClick={() => setModalMesaAbierto(false)}
+                    className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer transition"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Número de Mesa
+                    </label>
+                    <input
+                      type="number"
+                      value={formMesa.numero}
+                      onChange={(e) =>
+                        setFormMesa({ ...formMesa, numero: parseInt(e.target.value) || 1 })
+                      }
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
+                    />
                   </div>
-                  <span>Control de Asistencias & Geocerca GPS</span>
-                </h2>
-                <p className="text-stone-400 text-xs max-w-xl">
-                  Monitoreo de entradas y salidas del personal con validación satelital por radio de metros, turnos de panadería/barismo y control de puntualidad.
-                </p>
-              </div>
 
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/asistencia"
-                  target="_blank"
-                  className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold text-xs shadow-lg shadow-emerald-950/40 flex items-center gap-2 transition active:scale-95 cursor-pointer"
-                >
-                  <MapPin size={16} />
-                  <span>Terminal de Marcado Móvil (/asistencia) ↗</span>
-                </Link>
-              </div>
-            </div>
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Capacidad (Personas)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={formMesa.capacidad}
+                      onChange={(e) =>
+                        setFormMesa({ ...formMesa, capacidad: parseInt(e.target.value) || 1 })
+                      }
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
+                    />
+                  </div>
 
-            {/* KPIs de Asistencia en Tiempo Real */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
-                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
-                  <Users size={14} className="text-emerald-500" />
-                  Personal en Turno Ahora
-                </span>
-                <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                  <span>{personalEnTurno.length}</span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                </div>
-                <span className="text-[11px] text-stone-400">
-                  De {usuariosStaff.filter((u) => u.activo).length} colaboradores activos
-                </span>
-              </div>
-
-              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
-                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
-                  <CheckCircle2 size={14} className="text-blue-500" />
-                  Puntualidad Hoy
-                </span>
-                <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100">
-                  {puntualidadPorcentaje}%
-                </div>
-                <span className="text-[11px] text-stone-400">
-                  {aTiempoCount} llegadas a tiempo de {entradasHoy.length}
-                </span>
-              </div>
-
-              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
-                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
-                  <AlertTriangle size={14} className="text-amber-500" />
-                  Tardanzas Hoy
-                </span>
-                <div className="text-3xl font-serif font-black text-amber-500">
-                  {tardanzasCount}
-                </div>
-                <span className="text-[11px] text-stone-400">
-                  Tolerancia: {geocercaConfig.tolerancia_minutos} min
-                </span>
-              </div>
-
-              <div className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-1">
-                <span className="text-xs font-semibold text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
-                  <Compass size={14} className="text-purple-500" />
-                  Radio Geocerca Activa
-                </span>
-                <div className="text-3xl font-serif font-black text-stone-900 dark:text-stone-100">
-                  {geocercaConfig.radio_metros}m
-                </div>
-                <span className="text-[11px] text-stone-400 truncate block">
-                  {geocercaConfig.bloquear_fuera_de_radio ? "Bloqueo fuera de radio activo" : "Alerta informativa"}
-                </span>
-              </div>
-            </div>
-
-            {/* SECCIÓN 1: PERSONAL EN TURNO EN VIVO */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                  <Users size={18} className="text-emerald-500" />
-                  <span>Personal Actualmente en Turno ({personalEnTurno.length})</span>
-                </h3>
-                <span className="text-xs text-stone-400">
-                  Fecha: {fechaHoyStr}
-                </span>
-              </div>
-
-              {personalEnTurno.length === 0 ? (
-                <div className="p-8 text-center bg-stone-50 dark:bg-stone-950/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-800 text-stone-400 text-xs">
-                  No hay personal con turno activo en este momento.
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {personalEnTurno.map(({ reg, personal }) => (
-                    <div
-                      key={personal.id}
-                      className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800 flex items-center justify-between gap-3"
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Forma de la Mesa
+                    </label>
+                    <select
+                      value={formMesa.tipo}
+                      onChange={(e) =>
+                        setFormMesa({ ...formMesa, tipo: e.target.value as TipoMesa })
+                      }
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-11 h-11 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-sm flex items-center justify-center shrink-0 border border-emerald-500/30">
-                          {personal.nombre
-                            .split(" ")
-                            .map((n) => n[0])
-                            .slice(0, 2)
-                            .join("")}
+                      <option value="cuadrada">Cuadrada</option>
+                      <option value="redonda">Redonda</option>
+                      <option value="rectangular">Rectangular</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Zona Asignada
+                    </label>
+                    <select
+                      value={formMesa.zona_id}
+                      onChange={(e) => setFormMesa({ ...formMesa, zona_id: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
+                    >
+                      {zonas.map((z) => (
+                        <option key={z.id} value={z.id}>
+                          {z.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  <button
+                    onClick={guardarMesa}
+                    className="py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold text-xs shadow-md border border-amber-400/30 transition cursor-pointer"
+                  >
+                    Guardar Mesa
+                  </button>
+                  <button
+                    onClick={() => setModalMesaAbierto(false)}
+                    className="py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs hover:bg-[#FAF6EF] transition cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Modal Producto Mejorado (Organizado en 4 Pestañas + Gestor de Fotos HD + Tamaños) ── */}
+        <AnimatePresence>
+          {modalProductoAbierto && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border-2 border-[#D5C7B5] overflow-hidden text-stone-900"
+              >
+                {/* Encabezado del Modal */}
+                <div className="p-4 sm:p-5 border-b-2 border-[#D5C7B5] flex items-center justify-between gap-3 bg-[#FAF6EF] shrink-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border-2 border-amber-500/30 flex items-center justify-center text-xl shrink-0 overflow-hidden">
+                      {formProducto.imagen_url ? (
+                        <img src={formProducto.imagen_url} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        categorias.find((c) => c.id === formProducto.categoria_id)?.emoji || "🥐"
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-serif text-base sm:text-lg font-black text-stone-950 truncate">
+                        {productoAEditar ? `Editar: ${productoAEditar.nombre}` : "Nuevo Producto en Catálogo"}
+                      </h3>
+                      <p className="text-[11px] text-stone-600 font-bold truncate">
+                        {categorias.find((c) => c.id === formProducto.categoria_id)?.nombre || "General"} • Estación {formProducto.estacion}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setModalProductoAbierto(false)}
+                    className="p-2 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-200 transition cursor-pointer shrink-0"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Selector de Pestañas Organizadas */}
+                <div className="px-4 pt-2 bg-[#FAF6EF] border-b-2 border-[#D5C7B5] flex items-center gap-1 overflow-x-auto scrollbar-none shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => { soundManager.playTactileClick(); setTabProductoModal("general"); }}
+                    className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${tabProductoModal === "general"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
+                      }`}
+                  >
+                    <UtensilsCrossed size={14} />
+                    <span>1. General</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { soundManager.playTactileClick(); setTabProductoModal("precios"); }}
+                    className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${tabProductoModal === "precios"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
+                      }`}
+                  >
+                    <DollarSign size={14} />
+                    <span>2. Precios y Tamaños</span>
+                    {formProducto.tiene_tamanios && (
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-900 font-mono font-bold">
+                        {formProducto.tamanios.length}p
+                      </span>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { soundManager.playTactileClick(); setTabProductoModal("imagen"); }}
+                    className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${tabProductoModal === "imagen"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
+                      }`}
+                  >
+                    <ImageIcon size={14} />
+                    <span>3. Foto & Portada</span>
+                    {formProducto.imagen_url && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { soundManager.playTactileClick(); setTabProductoModal("personalizacion"); }}
+                    className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${tabProductoModal === "personalizacion"
+                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
+                      }`}
+                  >
+                    <Sparkles size={14} />
+                    <span>4. Personalización</span>
+                    {formProducto.chips_list.length > 0 && (
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-900 font-mono font-bold">
+                        {formProducto.chips_list.length}
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                {/* Mensajes de Alerta y Notificaciones */}
+                {errorImgBB && (
+                  <div className="mx-4 mt-3 p-2.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
+                    <AlertTriangle size={15} className="shrink-0" />
+                    <span>{errorImgBB}</span>
+                  </div>
+                )}
+                {nubeExito && (
+                  <div className="mx-4 mt-3 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2">
+                    <CheckCircle2 size={15} className="shrink-0" />
+                    <span>{nubeExito}</span>
+                  </div>
+                )}
+
+                {/* Cuerpo de la Pestaña Activa */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-xs">
+                  {/* ══════════════ PESTAÑA 1: GENERAL & COCINA ══════════════ */}
+                  {tabProductoModal === "general" && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                          Nombre Comercial del Producto *
+                        </label>
+                        <input
+                          type="text"
+                          value={formProducto.nombre}
+                          onChange={(e) =>
+                            setFormProducto({ ...formProducto, nombre: e.target.value })
+                          }
+                          placeholder="Ej. Pizza Margarita, Latte con Almendras, Croissant de Mantequilla..."
+                          className="w-full p-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                            Categoría en Carta
+                          </label>
+                          <select
+                            value={formProducto.categoria_id}
+                            onChange={(e) =>
+                              setFormProducto({ ...formProducto, categoria_id: e.target.value })
+                            }
+                            className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium"
+                          >
+                            {categorias.map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.emoji} {c.nombre}
+                              </option>
+                            ))}
+                          </select>
                         </div>
-                        <div className="min-w-0">
-                          <span className="font-bold text-sm text-stone-900 dark:text-stone-100 truncate block">
-                            {personal.nombre}
-                          </span>
-                          <span className="text-xs text-stone-500 dark:text-stone-400 truncate block">
-                            {personal.cargo || personal.role}
-                          </span>
-                          <div className="mt-1 flex items-center gap-2 text-[11px] text-stone-400 font-mono">
-                            <span>Entrada: <strong>{reg.hora}</strong></span>
-                            <span>&bull;</span>
-                            <span className="text-emerald-500 font-semibold">a {reg.distancia_metros}m</span>
+
+                        <div>
+                          <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                            Estación de Preparación / KDS
+                          </label>
+                          <select
+                            value={formProducto.estacion}
+                            onChange={(e) =>
+                              setFormProducto({ ...formProducto, estacion: e.target.value as Estacion })
+                            }
+                            className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium"
+                          >
+                            <option value="cafeteria">☕ Cafetería & Barismo (Bebidas)</option>
+                            <option value="vitrina">🥐 Vitrina & Panadería (Despacho)</option>
+                            <option value="cocina">🍳 Cocina Caliente (Pizzas & Platos)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                          Descripción Gastronómica para el Cliente
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={formProducto.descripcion}
+                          onChange={(e) =>
+                            setFormProducto({ ...formProducto, descripcion: e.target.value })
+                          }
+                          placeholder="Ingredientes auténticos, notas de cata, horneado o detalles de preparación..."
+                          className="w-full p-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        {/* Switch Disponible */}
+                        <label className="flex items-center gap-3 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formProducto.disponible}
+                            onChange={(e) =>
+                              setFormProducto({ ...formProducto, disponible: e.target.checked })
+                            }
+                            className="w-4 h-4 accent-amber-700 rounded cursor-pointer"
+                          />
+                          <div>
+                            <span className="font-bold text-stone-900 dark:text-stone-100 block">
+                              ¿Disponible en Carta?
+                            </span>
+                            <span className="text-[10px] text-stone-500">
+                              {formProducto.disponible ? "Visible para pedidos en mesa y mozo" : "Pausado temporalmente por stock"}
+                            </span>
+                          </div>
+                        </label>
+
+                        {/* Switch Más Vendido */}
+                        <label className="flex items-center gap-3 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formProducto.es_mas_vendido}
+                            onChange={(e) =>
+                              setFormProducto({ ...formProducto, es_mas_vendido: e.target.checked })
+                            }
+                            className="w-4 h-4 accent-amber-700 rounded cursor-pointer"
+                          />
+                          <div>
+                            <span className="font-bold text-stone-900 dark:text-stone-100 block flex items-center gap-1">
+                              ⭐ Producto Estrella
+                            </span>
+                            <span className="text-[10px] text-stone-500">
+                              Destacado en el menú digital con badge oficial
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ══════════════ PESTAÑA 2: PRECIOS Y TAMAÑOS ══════════════ */}
+                  {tabProductoModal === "precios" && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                            Precio de Venta Base (Bs) *
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3.5 top-3 text-stone-400 font-bold">Bs</span>
+                            <input
+                              type="number"
+                              step="0.5"
+                              value={formProducto.precio}
+                              onChange={(e) =>
+                                setFormProducto({ ...formProducto, precio: parseFloat(e.target.value) || 0 })
+                              }
+                              className="w-full pl-10 pr-3 py-2.5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
+                            Costo de Elaboración (Bs)
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3.5 top-3 text-stone-400 font-bold">Bs</span>
+                            <input
+                              type="number"
+                              step="0.5"
+                              value={formProducto.costo}
+                              onChange={(e) =>
+                                setFormProducto({ ...formProducto, costo: parseFloat(e.target.value) || 0 })
+                              }
+                              className="w-full pl-10 pr-3 py-2.5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                            />
                           </div>
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => {
-                          if (confirm(`¿Marcar salida de turno para ${personal.nombre}?`)) {
-                            addRegistroAsistencia({
-                              personal_id: personal.id,
-                              personal_nombre: personal.nombre,
-                              cargo: personal.cargo || personal.role,
-                              tipo: "salida",
-                              fecha: fechaHoyStr,
-                              hora: new Date().toLocaleTimeString("es-BO", { hour12: false }),
-                              distancia_metros: 0,
-                              dentro_del_radio: true,
-                              estado_puntualidad: "salida_puntual",
-                              observaciones: "Salida marcada desde el Panel Admin",
-                            });
-                            soundManager.playSuccessTone();
-                          }
-                        }}
-                        className="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 text-xs font-bold transition shrink-0 cursor-pointer"
-                        title="Marcar salida manual"
-                      >
-                        Marcar Salida
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* SECCIÓN 2: CONFIGURACIÓN DE LA GEOCERCA GPS */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="space-y-0.5">
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <Compass size={18} className="text-amber-500" />
-                    <span>Configuración de Geocerca GPS & Perímetro</span>
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Define las coordenadas del local y el radio de metros en el que se permite el marcado del personal.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={capturarUbicacionActual}
-                    disabled={gpsCalibrando}
-                    className="px-4 py-2 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 border border-amber-500/30 font-bold text-xs flex items-center gap-2 transition active:scale-95 cursor-pointer disabled:opacity-50"
-                  >
-                    <MapPin size={15} className={gpsCalibrando ? "animate-spin" : ""} />
-                    <span>{gpsCalibrando ? "Capturando..." : "📍 Usar Mi Ubicación Actual"}</span>
-                  </button>
-
-                  <button
-                    onClick={guardarGeocerca}
-                    className="px-5 py-2 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs shadow-lg shadow-amber-500/20 flex items-center gap-2 transition active:scale-95 cursor-pointer"
-                  >
-                    <Save size={15} />
-                    <span>{guardadoGeocercaExitoso ? "¡Guardado!" : "Guardar Cambios"}</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Nombre del Local
-                  </label>
-                  <input
-                    type="text"
-                    value={formGeocerca.local_nombre}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, local_nombre: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Dirección
-                  </label>
-                  <input
-                    type="text"
-                    value={formGeocerca.direccion}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, direccion: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Radio Permitido (Metros)
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min={10}
-                      max={500}
-                      step={5}
-                      value={formGeocerca.radio_metros}
-                      onChange={(e) => setFormGeocerca({ ...formGeocerca, radio_metros: Number(e.target.value) })}
-                      className="w-24 px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono font-bold"
-                    />
-                    <div className="flex items-center gap-1">
-                      {[30, 60, 100].map((rad) => (
-                        <button
-                          key={rad}
-                          type="button"
-                          onClick={() => setFormGeocerca({ ...formGeocerca, radio_metros: rad })}
-                          className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold border transition ${
-                            formGeocerca.radio_metros === rad
-                              ? "bg-amber-500 text-stone-950 border-amber-400"
-                              : "bg-stone-100 dark:bg-stone-950 text-stone-400 border-stone-300 dark:border-stone-800"
-                          }`}
-                        >
-                          {rad}m
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Latitud GPS
-                  </label>
-                  <input
-                    type="number"
-                    step="0.000001"
-                    value={formGeocerca.latitud}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, latitud: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Longitud GPS
-                  </label>
-                  <input
-                    type="number"
-                    step="0.000001"
-                    value={formGeocerca.longitud}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, longitud: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Tolerancia de Tardanza (minutos)
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    max={60}
-                    value={formGeocerca.tolerancia_minutos}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, tolerancia_minutos: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono font-bold"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Hora Inicio Turno Mañana
-                  </label>
-                  <input
-                    type="time"
-                    value={formGeocerca.hora_inicio_turno_manana}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, hora_inicio_turno_manana: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-1">
-                    Hora Inicio Turno Tarde
-                  </label>
-                  <input
-                    type="time"
-                    value={formGeocerca.hora_inicio_turno_tarde}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, hora_inicio_turno_tarde: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-mono"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 pt-4 sm:pt-6">
-                  <input
-                    type="checkbox"
-                    id="chkBloquearFuera"
-                    checked={formGeocerca.bloquear_fuera_de_radio}
-                    onChange={(e) => setFormGeocerca({ ...formGeocerca, bloquear_fuera_de_radio: e.target.checked })}
-                    className="w-5 h-5 rounded text-amber-500 focus:ring-amber-400 cursor-pointer"
-                  />
-                  <label htmlFor="chkBloquearFuera" className="text-xs font-bold text-stone-800 dark:text-stone-200 cursor-pointer">
-                    Bloquear Marcado Fuera del Radio Permitido
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* SECCIÓN 3: TABLA DE HISTORIAL Y AUDITORÍA DE ASISTENCIA */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <FileText size={18} className="text-amber-500" />
-                    <span>Auditoría de Marcados ({asistenciasFiltradas.length})</span>
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Historial de entradas, refrigerios y salidas con coordenadas geográficas y evaluación de puntualidad.
-                  </p>
-                </div>
-
-                {/* Filtros Rápidos */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <select
-                    value={filtroAsistenciaFecha}
-                    onChange={(e) => setFiltroAsistenciaFecha(e.target.value as any)}
-                    className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
-                  >
-                    <option value="hoy">Solo Hoy ({fechaHoyStr})</option>
-                    <option value="todos">Todo el Historial</option>
-                  </select>
-
-                  <select
-                    value={filtroAsistenciaPersonal}
-                    onChange={(e) => setFiltroAsistenciaPersonal(e.target.value)}
-                    className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
-                  >
-                    <option value="todos">Todos los Empleados</option>
-                    {usuariosStaff.map((u) => (
-                      <option key={u.id} value={u.id}>
-                        {u.nombre}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={filtroAsistenciaTipo}
-                    onChange={(e) => setFiltroAsistenciaTipo(e.target.value)}
-                    className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-xs font-semibold"
-                  >
-                    <option value="todos">Todos los Tipos</option>
-                    <option value="entrada">Entradas</option>
-                    <option value="salida">Salidas</option>
-                    <option value="almuerzo_inicio">Inicio Refrigerio</option>
-                    <option value="almuerzo_fin">Fin Refrigerio</option>
-                  </select>
-                </div>
-              </div>
-
-              {asistenciasFiltradas.length === 0 ? (
-                <div className="p-8 text-center bg-stone-50 dark:bg-stone-950/40 rounded-2xl border border-dashed border-stone-300 dark:border-stone-800 text-stone-400 text-xs">
-                  No se encontraron marcados con los filtros seleccionados.
-                </div>
-              ) : (
-                <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="bg-[#FAF6EF] border-b-2 border-[#D8C7B2] text-stone-900 font-black uppercase font-mono text-[10px]">
-                        <th className="py-2.5 px-3">Colaborador</th>
-                        <th className="py-2.5 px-3">Tipo</th>
-                        <th className="py-2.5 px-3">Fecha & Hora</th>
-                        <th className="py-2.5 px-3">Distancia al Local</th>
-                        <th className="py-2.5 px-3">Puntualidad</th>
-                        <th className="py-2.5 px-3">GPS / Mapa</th>
-                        <th className="py-2.5 px-3">Observaciones</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800/60">
-                      {asistenciasFiltradas.map((reg) => (
-                        <tr key={reg.id} className="hover:bg-stone-50 dark:hover:bg-stone-950/40 transition">
-                          <td className="py-3 px-3">
-                            <div className="font-bold text-stone-900 dark:text-stone-100">
-                              {reg.personal_nombre}
-                            </div>
-                            <div className="text-[11px] text-stone-400">
-                              {reg.cargo}
-                            </div>
-                          </td>
-
-                          <td className="py-3 px-3">
-                            <span
-                              className={`px-2.5 py-1 rounded-full font-bold uppercase text-[10px] whitespace-nowrap ${
-                                reg.tipo === "entrada"
-                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                                  : reg.tipo === "salida"
-                                  ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
-                                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
-                              }`}
-                            >
-                              {reg.tipo.replace("_", " ")}
-                            </span>
-                          </td>
-
-                          <td className="py-3 px-3">
-                            <div className="font-mono font-bold text-stone-900 dark:text-stone-100">
-                              {reg.hora}
-                            </div>
-                            <div className="text-[10px] text-stone-400">
-                              {reg.fecha}
-                            </div>
-                          </td>
-
-                          <td className="py-3 px-3">
-                            <div className="flex items-center gap-1.5 font-mono">
-                              <span
-                                className={`w-2 h-2 rounded-full ${
-                                  reg.dentro_del_radio ? "bg-emerald-500" : "bg-rose-500"
-                                }`}
-                              />
-                              <span className="font-bold">
-                                {reg.distancia_metros} metros
-                              </span>
-                            </div>
-                            <div className="text-[10px] text-stone-400">
-                              {reg.dentro_del_radio ? "Dentro del radio" : "Fuera de perímetro"}
-                            </div>
-                          </td>
-
-                          <td className="py-3 px-3">
-                            <span
-                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${
-                                reg.estado_puntualidad === "a_tiempo" || reg.estado_puntualidad === "salida_puntual"
-                                  ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"
-                                  : "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300"
-                              }`}
-                            >
-                              {reg.estado_puntualidad === "a_tiempo"
-                                ? "A Tiempo"
-                                : reg.estado_puntualidad === "tardanza"
-                                ? "Tardanza"
-                                : "Completado"}
-                            </span>
-                          </td>
-
-                          <td className="py-3 px-3">
-                            {reg.latitud && reg.longitud ? (
-                              <a
-                                href={`https://www.google.com/maps?q=${reg.latitud},${reg.longitud}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
-                              >
-                                <ExternalLink size={12} />
-                                <span>Ver en Mapa</span>
-                              </a>
-                            ) : (
-                              <span className="text-stone-400">Sin GPS</span>
-                            )}
-                          </td>
-
-                          <td className="py-3 px-3 text-stone-500 dark:text-stone-400 max-w-xs truncate">
-                            {reg.observaciones || "—"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB 4: MÉTRICAS FINANCIERAS & CONTROL DE COBROS POR TURNO ── */}
-        {tabActiva === "metricas" && (
-          <div className="space-y-6">
-            {/* Cabecera Financiera y Selector de Períodos */}
-            <div className="p-6 bg-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-stone-800">
-              <div className="space-y-1">
-                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-                  <div className="p-2 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    <TrendingUp size={26} />
-                  </div>
-                  <span>Finanzas & Control de Ingresos</span>
-                </h2>
-                <p className="text-stone-400 text-xs sm:text-sm">
-                  Ventas totales, métodos de cobro en Bolivianos (BOB) y recaudación por turno.
-                </p>
-              </div>
-
-              {/* Selector de Períodos y Botón de Imprimir */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="p-1 rounded-2xl bg-black/50 border border-white/10 flex items-center gap-1.5">
-                  {[
-                    { id: "hoy", label: "Hoy" },
-                    { id: "semana", label: "Esta Semana" },
-                    { id: "mes", label: "Este Mes" },
-                    { id: "todos", label: "Histórico" },
-                  ].map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => {
-                        soundManager.playClick();
-                        setFiltroPeriodo(p.id as any);
-                      }}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                        filtroPeriodo === p.id
-                          ? "bg-amber-600 text-white shadow-sm"
-                          : "text-stone-300 hover:text-white hover:bg-white/10"
-                      }`}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => {
-                    soundManager.playTactileClick();
-                    printElementById("reporte-financiero-admin-print", {
-                      pageType: "letter",
-                      title: `Reporte_Financiero_Dencker_${filtroPeriodo}`,
-                    });
-                  }}
-                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs sm:text-sm font-bold border border-white/10 transition flex items-center gap-2 active:scale-95 cursor-pointer"
-                >
-                  <Printer size={16} />
-                  <span>Imprimir Reporte</span>
-                </button>
-              </div>
-            </div>
-
-            {/* 4 Bento Cards Ejecutivas */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Card 1: Ventas Totales */}
-              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <DollarSign size={16} className="text-amber-600" />
-                    Ventas del Período
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-mono">
-                    +{statsFinancieras.margenBrutoPct}% Margen
-                  </span>
-                </div>
-                <div>
-                  <p className="font-serif text-3xl font-black text-amber-950 dark:text-amber-200 font-mono">
-                    Bs {statsFinancieras.totalVentas.toLocaleString("es-BO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1.5 text-xs text-stone-500 dark:text-stone-400">
-                    <span className="flex items-center gap-1">
-                      <Banknote size={12} className="text-emerald-600" />
-                      Bs {statsFinancieras.totalEfectivo.toFixed(2)} Efec.
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <QrCode size={12} className="text-purple-600" />
-                      Bs {statsFinancieras.totalQr.toFixed(2)} QR
-                    </span>
-                  </div>
-                </div>
-                <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
-                  <span>Proyección Mensual:</span>
-                  <span className="font-mono font-bold text-stone-900 dark:text-stone-100">
-                    Bs {statsFinancieras.proyeccionMensual.toLocaleString("es-BO")}
-                  </span>
-                </div>
-              </div>
-
-              {/* Card 2: Margen & Utilidad Neta */}
-              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <TrendingUp size={14} className="text-emerald-600" />
-                    Ganancia Neta Estimada
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
-                    Café & Pan
-                  </span>
-                </div>
-                <div>
-                  <p className="font-serif text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
-                    Bs {statsFinancieras.gananciaNeta.toLocaleString("es-BO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                    Costo estimado de insumos: <span className="font-mono font-semibold">Bs {statsFinancieras.costoInsumos.toFixed(2)}</span>
-                  </p>
-                </div>
-                <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500">
-                  Calculado sobre café Yungas y harinas artesanas
-                </div>
-              </div>
-
-              {/* Card 3: Ticket Promedio y Volumen */}
-              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Receipt size={14} className="text-blue-600" />
-                    Ticket Promedio
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">
-                    {statsFinancieras.totalTransacciones} Tickets
-                  </span>
-                </div>
-                <div>
-                  <p className="font-serif text-3xl font-black text-stone-900 dark:text-stone-100 font-mono">
-                    Bs {statsFinancieras.ticketPromedio.toFixed(2)}
-                  </p>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                    Gasto promedio por comensal servido
-                  </p>
-                </div>
-                <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
-                  <span>Ritmo diario estimado:</span>
-                  <span className="font-mono font-bold text-stone-900 dark:text-stone-100">
-                    Bs {statsFinancieras.promedioDiario.toFixed(2)}/día
-                  </span>
-                </div>
-              </div>
-
-              {/* Card 4: Caja Registradora & Turno Actual */}
-              <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-col justify-between space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Clock size={14} className="text-amber-600" />
-                    Caja en Turno
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 capitalize">
-                    {sesionCaja?.estado || "Abierta"}
-                  </span>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-serif text-2xl font-black text-stone-900 dark:text-stone-100 capitalize">
-                      Turno {sesionCaja?.turno || "Tarde"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                    Cajero: <span className="font-semibold text-stone-800 dark:text-stone-200">{sesionCaja?.cajero || "Cajero Principal"}</span>
-                  </p>
-                </div>
-                <div className="pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
-                  <span>Efectivo en gaveta:</span>
-                  <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                    Bs {sesionCaja?.efectivo_esperado?.toFixed(2) || "448.00"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* ── SECCIÓN CRÍTICA: INGRESOS POR TURNOS (SHIFT INTELLIGENCE) ── */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <Clock size={20} className="text-amber-600" />
-                    Ingresos Desglosados por Turno de Atención
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Comparativa de recaudación entre la horneada de la mañana (07:00 - 14:00), la merienda de la tarde (14:00 - 19:30) y el cierre nocturno (19:30 - Cierre).
-                  </p>
-                </div>
-
-                {/* Barra de Distribución Porcentual */}
-                <div className="flex items-center gap-4 text-xs font-bold">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-amber-500" />
-                    <span className="text-stone-600 dark:text-stone-300">Mañana ({statsFinancieras.turnos.manana.pct}%)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-emerald-600" />
-                    <span className="text-stone-600 dark:text-stone-300">Tarde ({statsFinancieras.turnos.tarde.pct}%)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-indigo-600" />
-                    <span className="text-stone-600 dark:text-stone-300">Noche ({statsFinancieras.turnos.noche.pct}%)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Barra Visual de Contribución */}
-              <div className="h-3 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden flex shadow-inner">
-                <div
-                  style={{ width: `${statsFinancieras.turnos.manana.pct}%` }}
-                  className="bg-amber-500 transition-all duration-700"
-                  title={`Mañana: ${statsFinancieras.turnos.manana.pct}%`}
-                />
-                <div
-                  style={{ width: `${statsFinancieras.turnos.tarde.pct}%` }}
-                  className="bg-emerald-600 transition-all duration-700"
-                  title={`Tarde: ${statsFinancieras.turnos.tarde.pct}%`}
-                />
-                <div
-                  style={{ width: `${statsFinancieras.turnos.noche.pct}%` }}
-                  className="bg-indigo-600 transition-all duration-700"
-                  title={`Noche: ${statsFinancieras.turnos.noche.pct}%`}
-                />
-              </div>
-
-              {/* 3 Tarjetas de Turno */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {/* Turno Mañana */}
-                <div className="p-5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-amber-500 text-white shadow-xs">
-                        <Sun size={18} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100">
-                          Turno Mañana
-                        </h4>
-                        <span className="text-[11px] text-amber-900 dark:text-amber-300 font-mono">
-                          07:00 – 14:00
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-amber-900 dark:text-amber-400 font-mono bg-white dark:bg-stone-900 px-2 py-0.5 rounded-lg border border-amber-200 dark:border-stone-800">
-                      {statsFinancieras.turnos.manana.pct}% Ventas
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                    Desayunos, café pasado de Caranavi y primera tanda caliente de marraquetas (07:30).
-                  </p>
-
-                  <div className="space-y-1.5 pt-2 border-t border-amber-200/60 dark:border-amber-900/40">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-stone-500">Recaudación:</span>
-                      <span className="font-serif text-lg font-black text-stone-900 dark:text-stone-100 font-mono">
-                        Bs {statsFinancieras.turnos.manana.total.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span>Comandas Cobradas:</span>
-                      <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
-                        {statsFinancieras.turnos.manana.tickets} pedidos
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span>Ticket Promedio:</span>
-                      <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
-                        Bs {statsFinancieras.turnos.manana.ticketPromedio.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1">
-                      <span>Efectivo: Bs {statsFinancieras.turnos.manana.efectivo.toFixed(2)}</span>
-                      <span>QR: Bs {statsFinancieras.turnos.manana.qr.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Turno Tarde */}
-                <div className="p-5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-emerald-600 text-white shadow-xs">
-                        <Sunset size={18} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100">
-                          Turno Tarde
-                        </h4>
-                        <span className="text-[11px] text-emerald-900 dark:text-emerald-300 font-mono">
-                          14:00 – 19:30
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-emerald-900 dark:text-emerald-400 font-mono bg-white dark:bg-stone-900 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-stone-800">
-                      {statsFinancieras.turnos.tarde.pct}% Ventas
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                    Té de la tarde, New York rolls, croissants, porciones de torta y tanda caliente de las 16:30.
-                  </p>
-
-                  <div className="space-y-1.5 pt-2 border-t border-emerald-200/60 dark:border-emerald-900/40">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-stone-500">Recaudación:</span>
-                      <span className="font-serif text-lg font-black text-stone-900 dark:text-stone-100 font-mono">
-                        Bs {statsFinancieras.turnos.tarde.total.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span>Comandas Cobradas:</span>
-                      <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
-                        {statsFinancieras.turnos.tarde.tickets} pedidos
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span>Ticket Promedio:</span>
-                      <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
-                        Bs {statsFinancieras.turnos.tarde.ticketPromedio.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1">
-                      <span>Efectivo: Bs {statsFinancieras.turnos.tarde.efectivo.toFixed(2)}</span>
-                      <span>QR: Bs {statsFinancieras.turnos.tarde.qr.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Turno Noche */}
-                <div className="p-5 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-xs">
-                        <Moon size={18} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm text-stone-900 dark:text-stone-100">
-                          Turno Noche / Cierre
-                        </h4>
-                        <span className="text-[11px] text-indigo-900 dark:text-indigo-300 font-mono">
-                          19:30 – Cierre
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-indigo-900 dark:text-indigo-400 font-mono bg-white dark:bg-stone-900 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-stone-800">
-                      {statsFinancieras.turnos.noche.pct}% Ventas
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                    Cenas ligeras, pizzas artesanales, infusiones calientes y arqueo final de caja registradora.
-                  </p>
-
-                  <div className="space-y-1.5 pt-2 border-t border-indigo-200/60 dark:border-indigo-900/40">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-stone-500">Recaudación:</span>
-                      <span className="font-serif text-lg font-black text-stone-900 dark:text-stone-100 font-mono">
-                        Bs {statsFinancieras.turnos.noche.total.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span>Comandas Cobradas:</span>
-                      <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
-                        {statsFinancieras.turnos.noche.tickets} pedidos
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span>Ticket Promedio:</span>
-                      <span className="font-semibold text-stone-800 dark:text-stone-200 font-mono">
-                        Bs {statsFinancieras.turnos.noche.ticketPromedio.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1">
-                      <span>Efectivo: Bs {statsFinancieras.turnos.noche.efectivo.toFixed(2)}</span>
-                      <span>QR: Bs {statsFinancieras.turnos.noche.qr.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ── REGISTRO DETALLADO DE PAGOS: ¿QUIÉN PAGÓ? ¿CUÁNTO PAGÓ? ¿CUÁNDO PAGÓ? ── */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="space-y-0.5">
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <Receipt size={20} className="text-amber-600" />
-                    Historial de Cobros y Transacciones Realizadas
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Mostrando {statsFinancieras.transaccionesFiltradas.length} transacciones verificadas con cliente, mesa, método y comprobante.
-                  </p>
-                </div>
-
-                {/* Filtros rápidos de tabla */}
-                <div className="flex flex-wrap items-center gap-2.5">
-                  {/* Búsqueda por texto */}
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                    <input
-                      type="text"
-                      placeholder="Buscar cliente, mesa o ID..."
-                      value={busquedaTransaccion}
-                      onChange={(e) => setBusquedaTransaccion(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-xs w-56 text-stone-900 dark:text-stone-100"
-                    />
-                  </div>
-
-                  {/* Filtro Turno */}
-                  <select
-                    value={filtroTurno}
-                    onChange={(e) => setFiltroTurno(e.target.value as any)}
-                    className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-xs font-semibold text-stone-800 dark:text-stone-200"
-                  >
-                    <option value="todos">Todos los Turnos</option>
-                    <option value="manana">🌅 Mañana</option>
-                    <option value="tarde">🥐 Tarde</option>
-                    <option value="noche">🌙 Noche</option>
-                  </select>
-
-                  {/* Filtro Método */}
-                  <select
-                    value={filtroMetodoPago}
-                    onChange={(e) => setFiltroMetodoPago(e.target.value as any)}
-                    className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-xs font-semibold text-stone-800 dark:text-stone-200"
-                  >
-                    <option value="todos">Todos los Métodos</option>
-                    <option value="efectivo">💵 Efectivo BOB</option>
-                    <option value="qr">📱 QR Simple Interoperable</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Tabla de Transacciones */}
-              <div className="overflow-x-auto rounded-2xl border-2 border-[#D5C7B5] bg-white shadow-xs">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-[#FAF6EF] text-stone-900 uppercase tracking-wider font-black border-b-2 border-[#D8C7B2] text-[11px]">
-                      <th className="py-3 px-4">ID Transacción</th>
-                      <th className="py-3 px-4">Fecha & Hora</th>
-                      <th className="py-3 px-4">Cliente / Mesa</th>
-                      <th className="py-3 px-4">Turno</th>
-                      <th className="py-3 px-4">Modalidad</th>
-                      <th className="py-3 px-4">Cajero</th>
-                      <th className="py-3 px-4">Método</th>
-                      <th className="py-3 px-4 text-right">Monto Cobrado</th>
-                      <th className="py-3 px-4 text-center">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
-                    {statsFinancieras.transaccionesFiltradas.length === 0 ? (
-                      <tr>
-                        <td colSpan={9} className="py-8 text-center text-stone-400">
-                          No se encontraron transacciones con los filtros seleccionados.
-                        </td>
-                      </tr>
-                    ) : (
-                      statsFinancieras.transaccionesFiltradas.map((p) => {
-                        const esQr = p.metodo === "qr";
-                        const fecha = new Date(p.created_at);
-                        const horaStr = fecha.toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" });
-                        const fechaStr = fecha.toLocaleDateString("es-BO", { day: "2-digit", month: "short" });
-
-                        return (
-                          <tr
-                            key={p.id}
-                            className="hover:bg-amber-50/40 dark:hover:bg-stone-800/50 transition-colors"
-                          >
-                            <td className="py-3 px-4 font-mono font-bold text-stone-800 dark:text-stone-200">
-                              {p.id}
-                            </td>
-                            <td className="py-3 px-4 whitespace-nowrap text-stone-600 dark:text-stone-300">
-                              <span className="font-semibold text-stone-900 dark:text-stone-100">{horaStr}</span>
-                              <span className="text-[10px] text-stone-400 block">{fechaStr}</span>
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="font-bold text-stone-900 dark:text-stone-100">
-                                {p.cliente_nombre || (p.mesa_numero ? `Mesa ${p.mesa_numero}` : "Cliente Mostrador")}
-                              </div>
-                              {p.mesa_numero && (
-                                <span className="text-[10px] text-amber-800 dark:text-amber-400 font-semibold">
-                                  Salón Principal
-                                </span>
-                              )}
-                            </td>
-                            <td className="py-3 px-4">
-                              <span
-                                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize ${
-                                  p.turno === "manana"
-                                    ? "bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300"
-                                    : p.turno === "tarde"
-                                    ? "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300"
-                                    : "bg-indigo-100 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-300"
-                                }`}
-                              >
-                                {p.turno === "manana" && <Sun size={10} />}
-                                {p.turno === "tarde" && <Sunset size={10} />}
-                                {p.turno === "noche" && <Moon size={10} />}
-                                {p.turno || "Tarde"}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 capitalize text-stone-600 dark:text-stone-300">
-                              <span className="px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-[11px] font-medium">
-                                {p.modalidad || (p.mesa_numero ? "Mesa" : "Retiro")}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-stone-600 dark:text-stone-400 text-xs">
-                              {p.cajero || "Cajero Principal"}
-                            </td>
-                            <td className="py-3 px-4">
-                              <span
-                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                                  esQr
-                                    ? "bg-purple-100 text-purple-900 dark:bg-purple-950/60 dark:text-purple-300"
-                                    : "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300"
-                                }`}
-                              >
-                                {esQr ? <QrCode size={12} /> : <Banknote size={12} />}
-                                {esQr ? "QR Simple" : "Efectivo"}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-right">
-                              <span className="font-mono font-black text-sm text-amber-950 dark:text-amber-300">
-                                Bs {p.monto.toFixed(2)}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-center">
-                              <button
-                                onClick={() => {
-                                  soundManager.playClick();
-                                  setReciboModalPago(p);
-                                }}
-                                className="px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 text-stone-700 dark:text-stone-300 hover:text-amber-900 text-xs font-bold transition flex items-center gap-1 mx-auto"
-                                title="Ver comprobante"
-                              >
-                                <Eye size={12} />
-                                <span>Recibo</span>
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* ── HISTORIAL DE AUDITORÍA DE ARQUEOS DE CAJA POR TURNO ── */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-emerald-600" />
-                    Auditoría de Cierres de Caja & Cuadres de Gaveta
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Historial de apertura, efectivo esperado, arqueo ciego y diferencia registrada por cajero en cada turno.
-                  </p>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto rounded-2xl border border-stone-200 dark:border-stone-800">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-stone-50 dark:bg-stone-800/80 text-stone-500 uppercase tracking-wider font-semibold border-b border-stone-200 dark:border-stone-800 text-[11px]">
-                      <th className="py-3 px-4">Sesión ID</th>
-                      <th className="py-3 px-4">Turno</th>
-                      <th className="py-3 px-4">Cajero</th>
-                      <th className="py-3 px-4 text-right">Fondo Inicial</th>
-                      <th className="py-3 px-4 text-right">Ventas Totales</th>
-                      <th className="py-3 px-4 text-right">Efectivo Esperado</th>
-                      <th className="py-3 px-4 text-right">Efectivo Contado</th>
-                      <th className="py-3 px-4 text-center">Diferencia</th>
-                      <th className="py-3 px-4">Notas de Auditoría</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
-                    {(historialSesiones && historialSesiones.length > 0 ? historialSesiones : []).map((s) => {
-                      const diferencia = s.diferencia ?? 0;
-                      const esCuadreExacto = Math.abs(diferencia) < 0.01;
-
-                      return (
-                        <tr key={s.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/50">
-                          <td className="py-3 px-4 font-mono font-bold text-stone-700 dark:text-stone-300">
-                            {s.id}
-                          </td>
-                          <td className="py-3 px-4 capitalize font-semibold">
-                            {s.turno}
-                          </td>
-                          <td className="py-3 px-4 text-stone-600 dark:text-stone-400">
-                            {s.cajero}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono">
-                            Bs {s.efectivo_inicial.toFixed(2)}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono font-bold text-amber-950 dark:text-amber-300">
-                            Bs {s.total_ventas.toFixed(2)}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono">
-                            Bs {s.efectivo_esperado.toFixed(2)}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono font-bold">
-                            Bs {s.efectivo_contado?.toFixed(2) || s.efectivo_esperado.toFixed(2)}
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            <span
-                              className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono ${
-                                esCuadreExacto
-                                  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                                  : diferencia > 0
-                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
-                                  : "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300"
-                              }`}
-                            >
-                              {esCuadreExacto ? "Cuadre Exacto (Bs 0.00)" : `Bs ${diferencia.toFixed(2)}`}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-stone-500 text-[11px] italic max-w-xs truncate">
-                            {s.notas || "Sin incidencias reportadas"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Top 5 Productos con barras de progreso */}
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
-              <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                <Sparkles size={18} className="text-amber-600" />
-                Top 5 Productos Estrella y Contribución de Ganancia
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { nombre: "Café Pasado Yungas (Caranavi)", ventas: 64, total: "Bs 768.00", pct: 95, margen: "72%" },
-                  { nombre: "Croissant Mantequilla Francés", ventas: 52, total: "Bs 936.00", pct: 82, margen: "68%" },
-                  { nombre: "Cappuccino Artesanal Doble", ventas: 41, total: "Bs 902.00", pct: 70, margen: "70%" },
-                  { nombre: "Cuñapé Caliente al Horno", ventas: 38, total: "Bs 304.00", pct: 60, margen: "64%" },
-                  { nombre: "Marraqueta con Queso Criollo", ventas: 29, total: "Bs 406.00", pct: 45, margen: "65%" },
-                ].map((item, idx) => (
-                  <div key={idx} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-stone-900 dark:text-stone-100">
-                        {idx + 1}. {item.nombre}
-                      </span>
-                      <div className="flex items-center gap-2 font-mono">
-                        <span className="text-emerald-600 text-[11px]">Margen: {item.margen}</span>
-                        <span className="text-amber-900 dark:text-amber-400">
-                          {item.total} ({item.ventas} u.)
-                        </span>
-                      </div>
-                    </div>
-                    <div className="h-2 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${item.pct}%` }}
-                        transition={{ duration: 1, delay: idx * 0.1 }}
-                        className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-500"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── Reporte Financiero Imprimible (A4 / Letter Formato Ejecutivo) ── */}
-            <div id="reporte-financiero-admin-print" className="hidden">
-              <div className="report-header">
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <img
-                    src="/img/brand/logo-3-don-dencker-badge.png"
-                    alt="Dencker Pan"
-                    style={{ height: "52px", width: "auto" }}
-                  />
-                  <div>
-                    <h2 style={{ margin: "0", fontSize: "17px", fontWeight: "bold" }}>
-                      DENCKER PAN CAFETERÍA & PANADERÍA
-                    </h2>
-                    <p style={{ margin: "0", fontSize: "10px", color: "#555" }}>
-                      Av. Daniel Salamanca, Cochabamba, Bolivia &bull; NIT: 1028391024 &bull; Tel: +591 76911000
-                    </p>
-                    <p style={{ margin: "0", fontSize: "9px", color: "#777" }}>
-                      Masa Madre Viva &bull; Granos 4 Llamas de Caranavi (1700 msnm)
-                    </p>
-                  </div>
-                </div>
-                <div style={{ textAlign: "right", fontSize: "10px" }}>
-                  <p style={{ margin: "0", fontWeight: "bold", fontSize: "13px", color: "#991B24" }}>
-                    REPORTE FINANCIERO Y AUDITORÍA
-                  </p>
-                  <p style={{ margin: "2px 0 0 0" }}>
-                    Período: <strong>{filtroPeriodo.toUpperCase()}</strong> &bull; Turno: <strong>{filtroTurno.toUpperCase()}</strong>
-                  </p>
-                  <p style={{ margin: "2px 0 0 0" }}>
-                    Emisión: {new Date().toLocaleString("es-BO")}
-                  </p>
-                </div>
-              </div>
-
-              {/* Bento Grid Resumen */}
-              <div className="bento-grid">
-                <div className="bento-item">
-                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ventas del Período</span>
-                  <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0" }}>
-                    Bs {statsFinancieras.totalVentas.toFixed(2)}
-                  </p>
-                  <span style={{ fontSize: "9px", color: "#16a34a" }}>
-                    Margen Bruto: +{statsFinancieras.margenBrutoPct}%
-                  </span>
-                </div>
-                <div className="bento-item">
-                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ganancia Neta Estimada</span>
-                  <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0", color: "#16a34a" }}>
-                    Bs {statsFinancieras.gananciaNeta.toFixed(2)}
-                  </p>
-                  <span style={{ fontSize: "9px", color: "#666" }}>
-                    Costo Insumos: Bs {statsFinancieras.costoInsumos.toFixed(2)}
-                  </span>
-                </div>
-                <div className="bento-item">
-                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Ticket Promedio</span>
-                  <p style={{ fontSize: "16px", fontWeight: "bold", margin: "2px 0" }}>
-                    Bs {statsFinancieras.ticketPromedio.toFixed(2)}
-                  </p>
-                  <span style={{ fontSize: "9px", color: "#2563eb" }}>
-                    {statsFinancieras.totalTransacciones} Transacciones
-                  </span>
-                </div>
-                <div className="bento-item">
-                  <span style={{ fontSize: "9px", color: "#666", textTransform: "uppercase" }}>Cobros por Método</span>
-                  <p style={{ fontSize: "11px", fontWeight: "bold", margin: "2px 0" }}>
-                    Efectivo: Bs {statsFinancieras.totalEfectivo.toFixed(2)}
-                  </p>
-                  <p style={{ fontSize: "11px", fontWeight: "bold", margin: "0" }}>
-                    QR Simple: Bs {statsFinancieras.totalQr.toFixed(2)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Detalle de transacciones */}
-              <h4 style={{ fontSize: "11.5px", fontWeight: "bold", margin: "14px 0 4px 0", borderBottom: "1.5px solid #222", paddingBottom: "3px" }}>
-                DETALLE DE TRANSACCIONES AUDITADAS ({statsFinancieras.transaccionesFiltradas.length} operaciones)
-              </h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th>N° Transacción</th>
-                    <th>Fecha y Hora</th>
-                    <th>Cliente / Mesa</th>
-                    <th>Turno</th>
-                    <th>Método</th>
-                    <th style={{ textAlign: "right" }}>Total BOB</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {statsFinancieras.transaccionesFiltradas.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} style={{ textAlign: "center", color: "#777", fontStyle: "italic", padding: "12px" }}>
-                        No se registraron transacciones en el período seleccionado.
-                      </td>
-                    </tr>
-                  ) : (
-                    statsFinancieras.transaccionesFiltradas.map((t, i) => (
-                      <tr key={i}>
-                        <td style={{ fontFamily: "monospace", fontSize: "10px" }}>{t.id}</td>
-                        <td>{new Date(t.created_at).toLocaleString("es-BO")}</td>
-                        <td>{t.cliente_nombre || (t.mesa_numero ? `Mesa ${t.mesa_numero}` : "Mostrador")}</td>
-                        <td style={{ textTransform: "capitalize" }}>{t.turno || "Tarde"}</td>
-                        <td style={{ textTransform: "uppercase", fontWeight: "bold" }}>{t.metodo}</td>
-                        <td style={{ textAlign: "right", fontWeight: "bold", fontFamily: "monospace" }}>
-                          Bs {t.monto.toFixed(2)}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-
-              {/* Firmas de Control */}
-              <div className="signatures-box">
-                <div>
-                  <div className="sig-line"></div>
-                  <p>Responsable de Finanzas / Cajero(a)</p>
-                </div>
-                <div>
-                  <div className="sig-line"></div>
-                  <p>Gerencia General &bull; Dencker Pan</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── 5. TAB QR BANCARIO SIMPLE (SUBIDO POR ADMIN) ── */}
-        {tabActiva === "qr" && (
-          <div className="space-y-6">
-            <div className="p-6 bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 rounded-3xl text-white shadow-xl flex flex-wrap items-center justify-between gap-4 border border-amber-500/30">
-              <div className="space-y-1">
-                <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono uppercase font-bold border border-amber-400/30">
-                  QR Simple • Interoperable ASFI
-                </span>
-                <h2 className="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                  <QrCode size={24} className="text-amber-400" />
-                  QR Bancario de la Cafetería
-                </h2>
-                <p className="text-stone-300 text-xs max-w-xl">
-                  Sube aquí la captura o foto del QR generado desde la aplicación de tu banco (BCP, BNB, Banco Unión, Mercantil Santa Cruz). Se reflejará automáticamente en la pantalla de cobro de Caja POS y en el móvil de los clientes al pagar.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <a
-                  href="/caja"
-                  target="_blank"
-                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-amber-200 text-xs font-bold border border-white/10 transition flex items-center gap-1.5"
-                >
-                  <ExternalLink size={14} />
-                  <span>Probar en Caja POS</span>
-                </a>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Columna Izquierda: Vista Previa Real del QR */}
-              <div className="lg:col-span-5 bg-white dark:bg-stone-900 rounded-3xl p-6 border border-stone-200 dark:border-stone-800 shadow-sm flex flex-col items-center justify-center text-center space-y-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                  Vista Previa en Vivo (Lo que ve el cliente)
-                </span>
-
-                <div className="p-4 bg-white rounded-3xl border-2 border-dashed border-amber-300 shadow-md inline-block max-w-[280px] w-full">
-                  <div className="aspect-square w-full rounded-2xl overflow-hidden bg-stone-50 flex items-center justify-center relative">
-                    <img
-                      src={formQr.url || "/img/logo/logo.png"}
-                      alt="QR Bancario Dencker Pan"
-                      className="w-full h-full object-contain p-2"
-                    />
-                  </div>
-                  <div className="pt-2 text-center">
-                    <p className="font-bold text-xs text-stone-900 font-serif">
-                      {formQr.banco || "QR Simple Interoperable"}
-                    </p>
-                    <p className="text-[11px] text-stone-500">
-                      Titular: <span className="font-semibold text-stone-800">{formQr.titular}</span>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-3.5 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                  <CheckCircle2 size={14} />
-                  <span>QR Verificado & Sincronizado en Red</span>
-                </div>
-              </div>
-
-              {/* Columna Derecha: Formulario de Carga y Configuración */}
-              <div className="lg:col-span-7 bg-white dark:bg-stone-900 rounded-3xl p-6 border border-stone-200 dark:border-stone-800 shadow-sm space-y-5">
-                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                  <Upload size={18} className="text-amber-700" />
-                  Actualizar Imagen del QR Bancario
-                </h3>
-
-                {/* Subir archivo desde dispositivo */}
-                <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-bold text-xs text-amber-950 dark:text-amber-200">
-                        Cargar archivo de imagen (PNG / JPG)
-                      </p>
-                      <p className="text-[11px] text-amber-800/80 dark:text-amber-300/70">
-                        Captura de pantalla de tu app de BCP, BNB, Banco Unión o similar.
-                      </p>
-                    </div>
-                  </div>
-
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={qrFileInputRef}
-                    onChange={handleSubirQr}
-                    className="hidden"
-                  />
-
-                  <button
-                    type="button"
-                    disabled={subiendoQr}
-                    onClick={() => qrFileInputRef.current?.click()}
-                    className="w-full py-3 rounded-xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
-                  >
-                    <Upload size={15} />
-                    <span>{subiendoQr ? "Procesando Imagen..." : "Seleccionar Imagen del QR desde mi dispositivo"}</span>
-                  </button>
-                </div>
-
-                {/* O pegar URL directa */}
-                <div className="space-y-3 text-xs">
-                  <div>
-                    <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                      O pega la URL directa de la imagen del QR
-                    </label>
-                    <input
-                      type="url"
-                      value={formQr.url}
-                      onChange={(e) => setFormQr({ ...formQr, url: e.target.value })}
-                      placeholder="https://i.ibb.co/..."
-                      className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                        Banco o Entidad Financiera
-                      </label>
-                      <input
-                        type="text"
-                        value={formQr.banco}
-                        onChange={(e) => setFormQr({ ...formQr, banco: e.target.value })}
-                        placeholder="ej. BCP Simple / Banco Unión"
-                        className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="font-bold text-stone-600 dark:text-stone-300 block mb-1">
-                        Titular de la Cuenta
-                      </label>
-                      <input
-                        type="text"
-                        value={formQr.titular}
-                        onChange={(e) => setFormQr({ ...formQr, titular: e.target.value })}
-                        placeholder="ej. Dencker Pan S.R.L."
-                        className="w-full p-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Botón Guardar */}
-                <div className="pt-2 flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={guardarQr}
-                    className="px-6 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md transition active:scale-95 flex items-center gap-2"
-                  >
-                    <Save size={16} />
-                    <span>Guardar y Publicar QR Oficial</span>
-                  </button>
-
-                  {guardadoQrExitoso && (
-                    <motion.span
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="text-xs font-bold text-emerald-700 flex items-center gap-1"
-                    >
-                      <CheckCircle2 size={16} />
-                      ¡QR Guardado y sincronizado en Caja y Mesas!
-                    </motion.span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB: QRS DINÁMICOS POR MESA (IMPRIMIBLES) ── */}
-        {tabActiva === "qr_mesas" && (
-          <div className="space-y-6">
-            <div className="p-6 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                  <QrCode size={20} className="text-amber-600" />
-                  Tarjetas QR Autoservicio por Mesa
-                </h3>
-                <p className="text-xs text-stone-500 dark:text-stone-400">
-                  Cada código QR enlaza al comensal con su número de mesa exacto para enviar la orden directo al mesero y cocina.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <Link
-                  href="/menu-pdf"
-                  target="_blank"
-                  className="px-4 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center gap-2 border border-stone-200 dark:border-stone-700"
-                >
-                  <FileText size={15} className="text-[#527953]" />
-                  <span>Ver Menú PDF</span>
-                </Link>
-
-                <button
-                  onClick={() => {
-                    soundManager.playTactileClick();
-                    printElementById("qrs-mesas-imprimibles", {
-                      pageType: "carpas",
-                      title: "Carpas_QR_Mesas_DenckerPan",
-                    });
-                  }}
-                  className="px-5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white text-xs font-bold shadow-md transition flex items-center gap-2 active:scale-95 cursor-pointer"
-                >
-                  <Printer size={15} />
-                  <span>Imprimir Todos los QRs</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Ajuste de Host / URL Base */}
-            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-stone-900/60 border border-amber-200/80 dark:border-amber-900/40 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2">
-                <LinkIcon size={16} className="text-amber-700 dark:text-amber-400" />
-                <span className="font-bold text-amber-950 dark:text-amber-200">
-                  Dominio / IP Base para escanear en red local o celular:
-                </span>
-              </div>
-              <div className="flex items-center gap-2 flex-1 max-w-md">
-                <input
-                  type="text"
-                  value={baseUrlMesas}
-                  onChange={(e) => setBaseUrlMesas(e.target.value)}
-                  placeholder="http://192.168.1.5:3000 o https://tu-dominio.com"
-                  className="w-full p-2 rounded-xl bg-white dark:bg-stone-800 border border-amber-300 dark:border-stone-700 font-mono text-xs"
-                />
-              </div>
-            </div>
-
-            {/* Grilla de Tarjetas Imprimibles */}
-            <div id="qrs-mesas-imprimibles" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 print:grid-cols-2 print:gap-8">
-              {mesas.map((m) => {
-                const zonaNombre = zonas.find((z) => z.id === m.zona_id)?.nombre || "Salón";
-                const mesaUrl = `${baseUrlMesas || "https://tienda.denckerpan.com"}/mesa/${m.numero}`;
-
-                return (
-                  <div
-                    key={m.id}
-                    id={`carpa-mesa-${m.numero}`}
-                    className="p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-200/80 dark:border-amber-900/40 shadow-sm flex flex-col items-center text-center justify-between space-y-4 break-inside-avoid print:border-2 print:border-stone-800 print:p-6 print:rounded-2xl"
-                  >
-                    {/* Toldo Bistro Decorativo Superior */}
-                    <div className="w-full h-3 rounded-t-lg overflow-hidden flex border-b border-amber-900/30">
-                      {[...Array(12)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={`flex-1 h-full ${i % 2 === 0 ? "bg-[#991B24]" : "bg-[#FAF6EF]"}`}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Cara 1: Marca & Mesa */}
-                    <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100">
-                      <img
-                        src="/img/brand/logo-3-don-dencker-badge.png"
-                        alt="Logo Don Dencker"
-                        className="w-10 h-10 object-contain"
-                      />
-                      <div className="text-left leading-tight">
-                        <span className="font-serif font-black text-sm tracking-wider uppercase block">
-                          Dencker Pan
-                        </span>
-                        <span className="text-[9px] text-amber-900 font-sans font-semibold">
-                          Masa Madre Viva &bull; Café 4 Llamas
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="font-serif text-3xl font-black text-amber-950 dark:text-amber-300">
-                        MESA {m.numero}
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#527953] bg-[#EBF3EA] px-2.5 py-0.5 rounded-full inline-block">
-                        {zonaNombre} &bull; {m.capacidad} Personas
-                      </span>
-                    </div>
-
-                    {/* QR Code SVG Vectorial Nítido */}
-                    <div className="p-3 bg-white rounded-2xl border-2 border-stone-300 shadow-inner flex items-center justify-center">
-                      <QRCodeSVG
-                        value={mesaUrl}
-                        size={135}
-                        level="M"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <p className="text-[11px] font-bold text-stone-800 dark:text-stone-200 leading-tight">
-                        Escanea para ver la carta y pedir desde tu mesa
-                      </p>
-                      <p className="text-[9px] font-mono text-stone-500 bg-stone-100 dark:bg-stone-800 py-1 px-2 rounded border border-stone-200 dark:border-stone-700">
-                        WiFi: <strong>Dencker-Clientes</strong> &bull; Clave: <strong>masamadre2024</strong>
-                      </p>
-                    </div>
-
-                    {/* Guía de Pliegue para Carpa de Mesa Plegable (Visible en Impresión) */}
-                    <div className="w-full cut-line my-2 pt-2 border-t border-dashed border-stone-400 print:block hidden text-center">
-                      <span className="text-[8px] font-mono uppercase text-stone-500 font-bold bg-white px-2">
-                        ✂ Pliegue de Soporte para Mesa ✂
-                      </span>
-                    </div>
-
-                    {/* Pie de Marca */}
-                    <div className="text-[8px] text-stone-400 font-mono text-center">
-                      Tandas Calientes: 07:30 y 16:30 &bull; Cochabamba
-                    </div>
-
-                    <div className="w-full pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-center gap-2 print:hidden">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          soundManager.playTactileClick();
-                          printElementById(`carpa-mesa-${m.numero}`, {
-                            pageType: "carpas",
-                            title: `Carpa_QR_Mesa_${m.numero}`,
-                          });
-                        }}
-                        className="py-1.5 px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition"
-                        title="Imprimir carpa individual"
-                      >
-                        <Printer size={13} /> Imprimir Carpa
-                      </button>
-                      <Link
-                        href={`/mesa/${m.numero}`}
-                        target="_blank"
-                        className="flex-1 py-1.5 px-2 rounded-xl bg-amber-900 dark:bg-amber-700 hover:bg-amber-950 text-white text-[11px] font-bold text-center transition"
-                      >
-                        Abrir Mesa
-                      </Link>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(mesaUrl);
-                          soundManager.playSuccessTone();
-                          alert(`¡Enlace copiado de Mesa ${m.numero}!`);
-                        }}
-                        className="p-1.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-100 cursor-pointer"
-                        title="Copiar enlace"
-                      >
-                        <Copy size={14} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ── Modal Mesa ── */}
-      <AnimatePresence>
-        {modalMesaAbierto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-4 border-2 border-[#D5C7B5]"
-            >
-              <div className="flex items-center justify-between pb-3 border-b-2 border-[#EAE0D2]">
-                <h3 className="font-serif text-lg font-black text-stone-950">
-                  {mesaAEditar ? `Editar Mesa ${mesaAEditar.numero}` : "Agregar Nueva Mesa"}
-                </h3>
-                <button
-                  onClick={() => setModalMesaAbierto(false)}
-                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer transition"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <div className="space-y-3 text-xs">
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Número de Mesa
-                  </label>
-                  <input
-                    type="number"
-                    value={formMesa.numero}
-                    onChange={(e) =>
-                      setFormMesa({ ...formMesa, numero: parseInt(e.target.value) || 1 })
-                    }
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Capacidad (Personas)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="20"
-                    value={formMesa.capacidad}
-                    onChange={(e) =>
-                      setFormMesa({ ...formMesa, capacidad: parseInt(e.target.value) || 1 })
-                    }
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Forma de la Mesa
-                  </label>
-                  <select
-                    value={formMesa.tipo}
-                    onChange={(e) =>
-                      setFormMesa({ ...formMesa, tipo: e.target.value as TipoMesa })
-                    }
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  >
-                    <option value="cuadrada">Cuadrada</option>
-                    <option value="redonda">Redonda</option>
-                    <option value="rectangular">Rectangular</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Zona Asignada
-                  </label>
-                  <select
-                    value={formMesa.zona_id}
-                    onChange={(e) => setFormMesa({ ...formMesa, zona_id: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  >
-                    {zonas.map((z) => (
-                      <option key={z.id} value={z.id}>
-                        {z.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <button
-                  onClick={guardarMesa}
-                  className="py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-bold text-xs shadow-md border border-amber-400/30 transition cursor-pointer"
-                >
-                  Guardar Mesa
-                </button>
-                <button
-                  onClick={() => setModalMesaAbierto(false)}
-                  className="py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs hover:bg-[#FAF6EF] transition cursor-pointer"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Modal Producto Mejorado (Organizado en 4 Pestañas + Gestor de Fotos HD + Tamaños) ── */}
-      <AnimatePresence>
-        {modalProductoAbierto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border-2 border-[#D5C7B5] overflow-hidden text-stone-900"
-            >
-              {/* Encabezado del Modal */}
-              <div className="p-4 sm:p-5 border-b-2 border-[#D5C7B5] flex items-center justify-between gap-3 bg-[#FAF6EF] shrink-0">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border-2 border-amber-500/30 flex items-center justify-center text-xl shrink-0 overflow-hidden">
-                    {formProducto.imagen_url ? (
-                      <img src={formProducto.imagen_url} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      categorias.find((c) => c.id === formProducto.categoria_id)?.emoji || "🥐"
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-serif text-base sm:text-lg font-black text-stone-950 truncate">
-                      {productoAEditar ? `Editar: ${productoAEditar.nombre}` : "Nuevo Producto en Catálogo"}
-                    </h3>
-                    <p className="text-[11px] text-stone-600 font-bold truncate">
-                      {categorias.find((c) => c.id === formProducto.categoria_id)?.nombre || "General"} • Estación {formProducto.estacion}
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setModalProductoAbierto(false)}
-                  className="p-2 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-200 transition cursor-pointer shrink-0"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* Selector de Pestañas Organizadas */}
-              <div className="px-4 pt-2 bg-[#FAF6EF] border-b-2 border-[#D5C7B5] flex items-center gap-1 overflow-x-auto scrollbar-none shrink-0">
-                <button
-                  type="button"
-                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("general"); }}
-                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
-                    tabProductoModal === "general"
-                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
-                      : "border-transparent text-stone-600 hover:text-stone-900"
-                  }`}
-                >
-                  <UtensilsCrossed size={14} />
-                  <span>1. General</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("precios"); }}
-                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
-                    tabProductoModal === "precios"
-                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
-                      : "border-transparent text-stone-600 hover:text-stone-900"
-                  }`}
-                >
-                  <DollarSign size={14} />
-                  <span>2. Precios y Tamaños</span>
-                  {formProducto.tiene_tamanios && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-900 font-mono font-bold">
-                      {formProducto.tamanios.length}p
-                    </span>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("imagen"); }}
-                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
-                    tabProductoModal === "imagen"
-                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
-                      : "border-transparent text-stone-600 hover:text-stone-900"
-                  }`}
-                >
-                  <ImageIcon size={14} />
-                  <span>3. Foto & Portada</span>
-                  {formProducto.imagen_url && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { soundManager.playTactileClick(); setTabProductoModal("personalizacion"); }}
-                  className={`px-3.5 py-2 rounded-t-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-b-2 ${
-                    tabProductoModal === "personalizacion"
-                      ? "border-[#991B24] text-[#991B24] bg-white shadow-2xs font-black"
-                      : "border-transparent text-stone-600 hover:text-stone-900"
-                  }`}
-                >
-                  <Sparkles size={14} />
-                  <span>4. Personalización</span>
-                  {formProducto.chips_list.length > 0 && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-900 font-mono font-bold">
-                      {formProducto.chips_list.length}
-                    </span>
-                  )}
-                </button>
-              </div>
-
-              {/* Mensajes de Alerta y Notificaciones */}
-              {errorImgBB && (
-                <div className="mx-4 mt-3 p-2.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
-                  <AlertTriangle size={15} className="shrink-0" />
-                  <span>{errorImgBB}</span>
-                </div>
-              )}
-              {nubeExito && (
-                <div className="mx-4 mt-3 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2">
-                  <CheckCircle2 size={15} className="shrink-0" />
-                  <span>{nubeExito}</span>
-                </div>
-              )}
-
-              {/* Cuerpo de la Pestaña Activa */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-xs">
-                {/* ══════════════ PESTAÑA 1: GENERAL & COCINA ══════════════ */}
-                {tabProductoModal === "general" && (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
-                        Nombre Comercial del Producto *
-                      </label>
-                      <input
-                        type="text"
-                        value={formProducto.nombre}
-                        onChange={(e) =>
-                          setFormProducto({ ...formProducto, nombre: e.target.value })
-                        }
-                        placeholder="Ej. Pizza Margarita, Latte con Almendras, Croissant de Mantequilla..."
-                        className="w-full p-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
-                          Categoría en Carta
-                        </label>
-                        <select
-                          value={formProducto.categoria_id}
-                          onChange={(e) =>
-                            setFormProducto({ ...formProducto, categoria_id: e.target.value })
-                          }
-                          className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium"
-                        >
-                          {categorias.map((c) => (
-                            <option key={c.id} value={c.id}>
-                              {c.emoji} {c.nombre}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
-                          Estación de Preparación / KDS
-                        </label>
-                        <select
-                          value={formProducto.estacion}
-                          onChange={(e) =>
-                            setFormProducto({ ...formProducto, estacion: e.target.value as Estacion })
-                          }
-                          className="w-full p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium"
-                        >
-                          <option value="cafeteria">☕ Cafetería & Barismo (Bebidas)</option>
-                          <option value="vitrina">🥐 Vitrina & Panadería (Despacho)</option>
-                          <option value="cocina">🍳 Cocina Caliente (Pizzas & Platos)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
-                        Descripción Gastronómica para el Cliente
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={formProducto.descripcion}
-                        onChange={(e) =>
-                          setFormProducto({ ...formProducto, descripcion: e.target.value })
-                        }
-                        placeholder="Ingredientes auténticos, notas de cata, horneado o detalles de preparación..."
-                        className="w-full p-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                      {/* Switch Disponible */}
-                      <label className="flex items-center gap-3 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={formProducto.disponible}
-                          onChange={(e) =>
-                            setFormProducto({ ...formProducto, disponible: e.target.checked })
-                          }
-                          className="w-4 h-4 accent-amber-700 rounded cursor-pointer"
-                        />
+                      {/* Tarjeta de Rentabilidad y Margen Comercial */}
+                      <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-3">
                         <div>
-                          <span className="font-bold text-stone-900 dark:text-stone-100 block">
-                            ¿Disponible en Carta?
+                          <span className="font-bold text-stone-800 dark:text-stone-200 block">
+                            Margen Bruto de Ganancia:
                           </span>
-                          <span className="text-[10px] text-stone-500">
-                            {formProducto.disponible ? "Visible para pedidos en mesa y mozo" : "Pausado temporalmente por stock"}
-                          </span>
-                        </div>
-                      </label>
-
-                      {/* Switch Más Vendido */}
-                      <label className="flex items-center gap-3 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={formProducto.es_mas_vendido}
-                          onChange={(e) =>
-                            setFormProducto({ ...formProducto, es_mas_vendido: e.target.checked })
-                          }
-                          className="w-4 h-4 accent-amber-700 rounded cursor-pointer"
-                        />
-                        <div>
-                          <span className="font-bold text-stone-900 dark:text-stone-100 block flex items-center gap-1">
-                            ⭐ Producto Estrella
-                          </span>
-                          <span className="text-[10px] text-stone-500">
-                            Destacado en el menú digital con badge oficial
+                          <span className="text-[11px] text-stone-500">
+                            Ganancia líquida estimada: <strong>Bs {(formProducto.precio - formProducto.costo).toFixed(2)}</strong> por unidad
                           </span>
                         </div>
-                      </label>
-                    </div>
-                  </div>
-                )}
-
-                {/* ══════════════ PESTAÑA 2: PRECIOS Y TAMAÑOS ══════════════ */}
-                {tabProductoModal === "precios" && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
-                          Precio de Venta Base (Bs) *
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3.5 top-3 text-stone-400 font-bold">Bs</span>
-                          <input
-                            type="number"
-                            step="0.5"
-                            value={formProducto.precio}
-                            onChange={(e) =>
-                              setFormProducto({ ...formProducto, precio: parseFloat(e.target.value) || 0 })
-                            }
-                            className="w-full pl-10 pr-3 py-2.5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="font-bold text-stone-700 dark:text-stone-200 block mb-1">
-                          Costo de Elaboración (Bs)
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3.5 top-3 text-stone-400 font-bold">Bs</span>
-                          <input
-                            type="number"
-                            step="0.5"
-                            value={formProducto.costo}
-                            onChange={(e) =>
-                              setFormProducto({ ...formProducto, costo: parseFloat(e.target.value) || 0 })
-                            }
-                            className="w-full pl-10 pr-3 py-2.5 rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Tarjeta de Rentabilidad y Margen Comercial */}
-                    <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-3">
-                      <div>
-                        <span className="font-bold text-stone-800 dark:text-stone-200 block">
-                          Margen Bruto de Ganancia:
-                        </span>
-                        <span className="text-[11px] text-stone-500">
-                          Ganancia líquida estimada: <strong>Bs {(formProducto.precio - formProducto.costo).toFixed(2)}</strong> por unidad
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className={`font-mono text-lg font-black ${
-                          margenBrutoPct >= 50
+                        <div className="text-right">
+                          <span className={`font-mono text-lg font-black ${margenBrutoPct >= 50
                             ? "text-emerald-700 dark:text-emerald-400"
                             : margenBrutoPct >= 30
-                            ? "text-amber-700 dark:text-amber-400"
-                            : "text-rose-700 dark:text-rose-400"
-                        }`}>
-                          {margenBrutoPct}%
-                        </span>
-                        <span className="text-[10px] text-stone-400 block">
-                          {margenBrutoPct >= 50 ? "✓ Margen Óptimo" : margenBrutoPct >= 30 ? "⚠ Margen Normal" : "✕ Margen Bajo"}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* ── SECCIÓN DE VARIANTES POR TAMAÑOS / PORCIONES ── */}
-                    <div className="pt-2 border-t border-stone-200 dark:border-stone-800 space-y-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <div>
-                          <h4 className="font-bold text-stone-900 dark:text-stone-100 text-xs flex items-center gap-1.5">
-                            <Layers size={14} className="text-amber-600" />
-                            Variantes por Tamaño o Porciones (Ej: Pizzas 4, 6 y 8 porc)
-                          </h4>
-                          <p className="text-[11px] text-stone-500">
-                            Permite al cliente elegir el tamaño y recalcula el precio automáticamente
-                          </p>
+                              ? "text-amber-700 dark:text-amber-400"
+                              : "text-rose-700 dark:text-rose-400"
+                            }`}>
+                            {margenBrutoPct}%
+                          </span>
+                          <span className="text-[10px] text-stone-400 block">
+                            {margenBrutoPct >= 50 ? "✓ Margen Óptimo" : margenBrutoPct >= 30 ? "⚠ Margen Normal" : "✕ Margen Bajo"}
+                          </span>
                         </div>
+                      </div>
 
-                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                          <input
-                            type="checkbox"
-                            checked={formProducto.tiene_tamanios}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              setFormProducto((prev) => ({
-                                ...prev,
-                                tiene_tamanios: checked,
-                                tamanios: checked && prev.tamanios.length === 0
-                                  ? [
+                      {/* ── SECCIÓN DE VARIANTES POR TAMAÑOS / PORCIONES ── */}
+                      <div className="pt-2 border-t border-stone-200 dark:border-stone-800 space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div>
+                            <h4 className="font-bold text-stone-900 dark:text-stone-100 text-xs flex items-center gap-1.5">
+                              <Layers size={14} className="text-amber-600" />
+                              Variantes por Tamaño o Porciones (Ej: Pizzas 4, 6 y 8 porc)
+                            </h4>
+                            <p className="text-[11px] text-stone-500">
+                              Permite al cliente elegir el tamaño y recalcula el precio automáticamente
+                            </p>
+                          </div>
+
+                          <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={formProducto.tiene_tamanios}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
+                                setFormProducto((prev) => ({
+                                  ...prev,
+                                  tiene_tamanios: checked,
+                                  tamanios: checked && prev.tamanios.length === 0
+                                    ? [
                                       { nombre: "4 porc", precio: prev.precio || 35 },
                                       { nombre: "6 porc", precio: Math.round((prev.precio || 35) * 1.4) },
                                       { nombre: "8 porc", precio: Math.round((prev.precio || 35) * 1.9) },
                                     ]
-                                  : prev.tamanios,
-                              }));
-                            }}
-                            className="sr-only peer"
-                          />
-                          <div className="w-10 h-5 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-700"></div>
-                        </label>
-                      </div>
+                                    : prev.tamanios,
+                                }));
+                              }}
+                              className="sr-only peer"
+                            />
+                            <div className="w-10 h-5 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-700"></div>
+                          </label>
+                        </div>
 
-                      {formProducto.tiene_tamanios && (
-                        <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-3">
-                          {/* Presets Rápidos */}
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-[10px] text-stone-400 font-bold uppercase mr-1">Plantillas:</span>
-                            <button
-                              type="button"
-                              onClick={() => aplicarPresetTamanios("pizzas")}
-                              className="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-900 dark:text-amber-300 font-bold text-[11px] hover:bg-amber-500/25 transition cursor-pointer"
-                            >
-                              🍕 Pizza (4, 6 y 8 porc)
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => aplicarPresetTamanios("cafe")}
-                              className="px-2.5 py-1 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-[11px] hover:bg-stone-300 transition cursor-pointer"
-                            >
-                              ☕ Café (Simple / Doble)
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => aplicarPresetTamanios("pasteleria")}
-                              className="px-2.5 py-1 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-[11px] hover:bg-stone-300 transition cursor-pointer"
-                            >
-                              🍰 Individual / Entera
-                            </button>
-                          </div>
+                        {formProducto.tiene_tamanios && (
+                          <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-3">
+                            {/* Presets Rápidos */}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] text-stone-400 font-bold uppercase mr-1">Plantillas:</span>
+                              <button
+                                type="button"
+                                onClick={() => aplicarPresetTamanios("pizzas")}
+                                className="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-900 dark:text-amber-300 font-bold text-[11px] hover:bg-amber-500/25 transition cursor-pointer"
+                              >
+                                🍕 Pizza (4, 6 y 8 porc)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => aplicarPresetTamanios("cafe")}
+                                className="px-2.5 py-1 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-[11px] hover:bg-stone-300 transition cursor-pointer"
+                              >
+                                ☕ Café (Simple / Doble)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => aplicarPresetTamanios("pasteleria")}
+                                className="px-2.5 py-1 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-[11px] hover:bg-stone-300 transition cursor-pointer"
+                              >
+                                🍰 Individual / Entera
+                              </button>
+                            </div>
 
-                          {/* Filas de Tamaños */}
-                          <div className="space-y-2">
-                            {formProducto.tamanios.map((tam, idx) => (
-                              <div key={idx} className="flex items-center gap-2">
-                                <input
-                                  type="text"
-                                  placeholder="Nombre de tamaño (ej. 4 porc)"
-                                  value={tam.nombre}
-                                  onChange={(e) => {
-                                    const updated = [...formProducto.tamanios];
-                                    updated[idx].nombre = e.target.value;
-                                    setFormProducto({ ...formProducto, tamanios: updated });
-                                  }}
-                                  className="flex-1 p-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-semibold"
-                                />
-                                <div className="relative w-28">
-                                  <span className="absolute left-2.5 top-2 text-stone-400 font-bold text-xs">Bs</span>
+                            {/* Filas de Tamaños */}
+                            <div className="space-y-2">
+                              {formProducto.tamanios.map((tam, idx) => (
+                                <div key={idx} className="flex items-center gap-2">
                                   <input
-                                    type="number"
-                                    step="0.5"
-                                    placeholder="Precio"
-                                    value={tam.precio}
+                                    type="text"
+                                    placeholder="Nombre de tamaño (ej. 4 porc)"
+                                    value={tam.nombre}
                                     onChange={(e) => {
                                       const updated = [...formProducto.tamanios];
-                                      updated[idx].precio = parseFloat(e.target.value) || 0;
+                                      updated[idx].nombre = e.target.value;
                                       setFormProducto({ ...formProducto, tamanios: updated });
                                     }}
-                                    className="w-full pl-8 pr-2 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-mono font-bold"
+                                    className="flex-1 p-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-semibold"
                                   />
+                                  <div className="relative w-28">
+                                    <span className="absolute left-2.5 top-2 text-stone-400 font-bold text-xs">Bs</span>
+                                    <input
+                                      type="number"
+                                      step="0.5"
+                                      placeholder="Precio"
+                                      value={tam.precio}
+                                      onChange={(e) => {
+                                        const updated = [...formProducto.tamanios];
+                                        updated[idx].precio = parseFloat(e.target.value) || 0;
+                                        setFormProducto({ ...formProducto, tamanios: updated });
+                                      }}
+                                      className="w-full pl-8 pr-2 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-mono font-bold"
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      soundManager.playClick();
+                                      const updated = formProducto.tamanios.filter((_, i) => i !== idx);
+                                      setFormProducto({ ...formProducto, tamanios: updated });
+                                    }}
+                                    className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
+                                    title="Eliminar tamaño"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
                                 </div>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    soundManager.playClick();
-                                    const updated = formProducto.tamanios.filter((_, i) => i !== idx);
-                                    setFormProducto({ ...formProducto, tamanios: updated });
-                                  }}
-                                  className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
-                                  title="Eliminar tamaño"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
+                              ))}
+                            </div>
 
-                          <button
-                            type="button"
-                            onClick={() => {
-                              soundManager.playClick();
-                              setFormProducto((prev) => ({
-                                ...prev,
-                                tamanios: [...prev.tamanios, { nombre: `Tamaño ${prev.tamanios.length + 1}`, precio: prev.precio || 30 }],
-                              }));
-                            }}
-                            className="px-3 py-1.5 rounded-xl border border-dashed border-stone-300 dark:border-stone-700 hover:border-amber-600 text-stone-600 dark:text-stone-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
-                          >
-                            <Plus size={13} />
-                            <span>Agregar Otra Porción / Tamaño</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* ══════════════ PESTAÑA 3: FOTO & PORTADA HD ══════════════ */}
-                {tabProductoModal === "imagen" && (
-                  <div className="space-y-4">
-                    {/* Visualizador Hero Preview de la Foto Actual */}
-                    <div className="p-4 rounded-3xl bg-stone-50 dark:bg-stone-800/40 border border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row items-center gap-4">
-                      <div className="relative w-36 h-36 rounded-2xl overflow-hidden border-2 border-amber-500/40 bg-stone-200 dark:bg-stone-800 shadow-md shrink-0 flex items-center justify-center">
-                        {formProducto.imagen_url ? (
-                          <img
-                            src={formProducto.imagen_url}
-                            alt="Preview de producto"
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="text-center p-3 text-stone-400">
-                            <ImageIcon size={32} className="mx-auto mb-1 opacity-50" />
-                            <span className="text-[10px] font-bold block">Sin Foto Asignada</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex-1 space-y-2 text-center sm:text-left min-w-0">
-                        <div className="flex items-center justify-center sm:justify-start gap-2">
-                          <span className="font-bold text-sm text-stone-900 dark:text-stone-100 truncate">
-                            {formProducto.imagen_url ? "Imagen Vinculada ✓" : "Elige una foto para tu producto"}
-                          </span>
-                          {formProducto.imagen_url && (
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                              Activa
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-[11px] text-stone-500 dark:text-stone-400">
-                          {formProducto.imagen_url
-                            ? "Esta imagen se mostrará en alta definición en la carta digital QR de las mesas y en el catálogo del mozo."
-                            : "Puedes arrastrar una foto desde tu dispositivo o seleccionar una foto real del menú de Dencker Pan abajo."}
-                        </p>
-
-                        {formProducto.imagen_url && (
-                          <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
                             <button
                               type="button"
                               onClick={() => {
                                 soundManager.playClick();
-                                setFormProducto((prev) => ({ ...prev, imagen_url: "" }));
-                                setNubeExito("Foto removida. Se usará el ícono de categoría.");
+                                setFormProducto((prev) => ({
+                                  ...prev,
+                                  tamanios: [...prev.tamanios, { nombre: `Tamaño ${prev.tamanios.length + 1}`, precio: prev.precio || 30 }],
+                                }));
                               }}
-                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl border border-dashed border-stone-300 dark:border-stone-700 hover:border-amber-600 text-stone-600 dark:text-stone-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
                             >
-                              <Trash2 size={12} />
-                              <span>Quitar Foto</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => fileInputRef.current?.click()}
-                              className="px-3 py-1.5 rounded-xl bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
-                            >
-                              <Upload size={12} />
-                              <span>Cambiar por otra</span>
+                              <Plus size={13} />
+                              <span>Agregar Otra Porción / Tamaño</span>
                             </button>
                           </div>
                         )}
                       </div>
                     </div>
+                  )}
 
-                    {/* Zona Drag & Drop de Subida desde PC / Celular */}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={fileInputRef}
-                      onChange={handleSubirImagenImgBB}
-                      className="hidden"
-                    />
+                  {/* ══════════════ PESTAÑA 3: FOTO & PORTADA HD ══════════════ */}
+                  {tabProductoModal === "imagen" && (
+                    <div className="space-y-4">
+                      {/* Visualizador Hero Preview de la Foto Actual */}
+                      <div className="p-4 rounded-3xl bg-stone-50 dark:bg-stone-800/40 border border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row items-center gap-4">
+                        <div className="relative w-36 h-36 rounded-2xl overflow-hidden border-2 border-amber-500/40 bg-stone-200 dark:bg-stone-800 shadow-md shrink-0 flex items-center justify-center">
+                          {formProducto.imagen_url ? (
+                            <img
+                              src={formProducto.imagen_url}
+                              alt="Preview de producto"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="text-center p-3 text-stone-400">
+                              <ImageIcon size={32} className="mx-auto mb-1 opacity-50" />
+                              <span className="text-[10px] font-bold block">Sin Foto Asignada</span>
+                            </div>
+                          )}
+                        </div>
 
-                    <div
-                      onDragOver={(e) => { e.preventDefault(); setIsDraggingImage(true); }}
-                      onDragLeave={() => setIsDraggingImage(false)}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        setIsDraggingImage(false);
-                        const file = e.dataTransfer.files?.[0];
-                        if (file) procesarArchivoImagen(file);
-                      }}
-                      onClick={() => fileInputRef.current?.click()}
-                      className={`p-6 rounded-3xl border-2 border-dashed text-center transition cursor-pointer flex flex-col items-center justify-center space-y-2 ${
-                        isDraggingImage
+                        <div className="flex-1 space-y-2 text-center sm:text-left min-w-0">
+                          <div className="flex items-center justify-center sm:justify-start gap-2">
+                            <span className="font-bold text-sm text-stone-900 dark:text-stone-100 truncate">
+                              {formProducto.imagen_url ? "Imagen Vinculada ✓" : "Elige una foto para tu producto"}
+                            </span>
+                            {formProducto.imagen_url && (
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                                Activa
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                            {formProducto.imagen_url
+                              ? "Esta imagen se mostrará en alta definición en la carta digital QR de las mesas y en el catálogo del mozo."
+                              : "Puedes arrastrar una foto desde tu dispositivo o seleccionar una foto real del menú de Dencker Pan abajo."}
+                          </p>
+
+                          {formProducto.imagen_url && (
+                            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  soundManager.playClick();
+                                  setFormProducto((prev) => ({ ...prev, imagen_url: "" }));
+                                  setNubeExito("Foto removida. Se usará el ícono de categoría.");
+                                }}
+                                className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                              >
+                                <Trash2 size={12} />
+                                <span>Quitar Foto</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="px-3 py-1.5 rounded-xl bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-800 dark:text-stone-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                              >
+                                <Upload size={12} />
+                                <span>Cambiar por otra</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Zona Drag & Drop de Subida desde PC / Celular */}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={handleSubirImagenImgBB}
+                        className="hidden"
+                      />
+
+                      <div
+                        onDragOver={(e) => { e.preventDefault(); setIsDraggingImage(true); }}
+                        onDragLeave={() => setIsDraggingImage(false)}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setIsDraggingImage(false);
+                          const file = e.dataTransfer.files?.[0];
+                          if (file) procesarArchivoImagen(file);
+                        }}
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`p-6 rounded-3xl border-2 border-dashed text-center transition cursor-pointer flex flex-col items-center justify-center space-y-2 ${isDraggingImage
                           ? "border-amber-600 bg-amber-500/10 scale-[1.01]"
                           : "border-stone-300 dark:border-stone-700 hover:border-amber-500 hover:bg-amber-50/40 dark:hover:bg-amber-950/20"
-                      }`}
-                    >
-                      <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center">
-                        <Upload size={22} className={subiendoImgBB ? "animate-bounce" : ""} />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-xs text-stone-900 dark:text-stone-100 block">
-                          {subiendoImgBB ? "Procesando y cargando imagen..." : "Haz clic para subir desde tu PC o celular, o arrastra la foto aquí"}
-                        </span>
-                        <span className="text-[10px] text-stone-400 block">
-                          Soporta fotos JPG, PNG, WEBP de cualquier resolución (Previsualización instantánea garantizada)
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Selector Rápido de Fotos Reales Recomendadas del Local */}
-                    <div className="space-y-2 pt-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
-                          <Sparkles size={14} className="text-amber-600" />
-                          Fotos reales recomendadas de Dencker Pan (1 toque para asignar):
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            soundManager.playClick();
-                            setProductoParaGaleria(productoAEditar);
-                            setGaleriaFotosAbierta(true);
-                          }}
-                          className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
-                        >
-                          <span>Explorar las {REAL_PRODUCT_PHOTOS.length} fotos</span>
-                          <ExternalLink size={12} />
-                        </button>
+                          }`}
+                      >
+                        <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+                          <Upload size={22} className={subiendoImgBB ? "animate-bounce" : ""} />
+                        </div>
+                        <div className="space-y-0.5">
+                          <span className="font-bold text-xs text-stone-900 dark:text-stone-100 block">
+                            {subiendoImgBB ? "Procesando y cargando imagen..." : "Haz clic para subir desde tu PC o celular, o arrastra la foto aquí"}
+                          </span>
+                          <span className="text-[10px] text-stone-400 block">
+                            Soporta fotos JPG, PNG, WEBP de cualquier resolución (Previsualización instantánea garantizada)
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Rejilla de fotos rápidas */}
-                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                        {REAL_PRODUCT_PHOTOS
-                          .filter((foto) => {
-                            // Mostrar primero fotos según categoría
-                            if (formProducto.categoria_id === "c_pizzas") return foto.includes("pizza") || foto.includes("/img/products/");
-                            if (formProducto.categoria_id === "c_sandwiches") return foto.includes("sandwich") || foto.includes("croque") || foto.includes("lomito");
-                            if (formProducto.categoria_id === "c_cafes" || formProducto.categoria_id === "c_lattes") return foto.includes("coffee") || foto.includes("4llamas") || foto.includes("catuai");
-                            return foto.includes("/img/products/") || foto.includes("/img/brand/");
-                          })
-                          .slice(0, 12)
-                          .map((foto, idx) => (
-                            <button
-                              key={idx}
-                              type="button"
-                              onClick={() => {
-                                soundManager.playSuccessTone();
-                                setFormProducto((prev) => ({ ...prev, imagen_url: foto }));
-                                setNubeExito("Foto real asignada al instante ✓");
-                              }}
-                              className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition group hover:scale-105 cursor-pointer ${
-                                formProducto.imagen_url === foto
+                      {/* Selector Rápido de Fotos Reales Recomendadas del Local */}
+                      <div className="space-y-2 pt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+                            <Sparkles size={14} className="text-amber-600" />
+                            Fotos reales recomendadas de Dencker Pan (1 toque para asignar):
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              soundManager.playClick();
+                              setProductoParaGaleria(productoAEditar);
+                              setGaleriaFotosAbierta(true);
+                            }}
+                            className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>Explorar las {REAL_PRODUCT_PHOTOS.length} fotos</span>
+                            <ExternalLink size={12} />
+                          </button>
+                        </div>
+
+                        {/* Rejilla de fotos rápidas */}
+                        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                          {REAL_PRODUCT_PHOTOS
+                            .filter((foto) => {
+                              // Mostrar primero fotos según categoría
+                              if (formProducto.categoria_id === "c_pizzas") return foto.includes("pizza") || foto.includes("/img/products/");
+                              if (formProducto.categoria_id === "c_sandwiches") return foto.includes("sandwich") || foto.includes("croque") || foto.includes("lomito");
+                              if (formProducto.categoria_id === "c_cafes" || formProducto.categoria_id === "c_lattes") return foto.includes("coffee") || foto.includes("4llamas") || foto.includes("catuai");
+                              return foto.includes("/img/products/") || foto.includes("/img/brand/");
+                            })
+                            .slice(0, 12)
+                            .map((foto, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => {
+                                  soundManager.playSuccessTone();
+                                  setFormProducto((prev) => ({ ...prev, imagen_url: foto }));
+                                  setNubeExito("Foto real asignada al instante ✓");
+                                }}
+                                className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition group hover:scale-105 cursor-pointer ${formProducto.imagen_url === foto
                                   ? "border-amber-600 ring-2 ring-amber-500"
                                   : "border-stone-200 dark:border-stone-700 hover:border-amber-500"
-                              }`}
-                              title="Click para asignar esta foto"
-                            >
-                              <img src={foto} alt={`Foto real ${idx}`} className="w-full h-full object-cover" />
-                              {formProducto.imagen_url === foto && (
-                                <div className="absolute inset-0 bg-amber-900/60 flex items-center justify-center text-white">
-                                  <Check size={16} />
-                                </div>
-                              )}
-                            </button>
-                          ))}
+                                  }`}
+                                title="Click para asignar esta foto"
+                              >
+                                <img src={foto} alt={`Foto real ${idx}`} className="w-full h-full object-cover" />
+                                {formProducto.imagen_url === foto && (
+                                  <div className="absolute inset-0 bg-amber-900/60 flex items-center justify-center text-white">
+                                    <Check size={16} />
+                                  </div>
+                                )}
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+
+                      {/* Enlace URL directo / Nube avanzada */}
+                      <div className="pt-2 border-t border-stone-200 dark:border-stone-800 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            placeholder="o pega aquí cualquier enlace URL web de la foto..."
+                            value={formProducto.imagen_url}
+                            onChange={(e) =>
+                              setFormProducto({ ...formProducto, imagen_url: e.target.value })
+                            }
+                            className="flex-1 p-2.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              soundManager.playClick();
+                              setProductoParaGaleria(productoAEditar);
+                              setGaleriaFotosAbierta(true);
+                            }}
+                            className="px-3.5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                          >
+                            <ImageIcon size={14} />
+                            <span>Galería Completa</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
+                  )}
 
-                    {/* Enlace URL directo / Nube avanzada */}
-                    <div className="pt-2 border-t border-stone-200 dark:border-stone-800 space-y-2">
+                  {/* ══════════════ PESTAÑA 4: PERSONALIZACIÓN & CHIPS ══════════════ */}
+                  {tabProductoModal === "personalizacion" && (
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-bold text-stone-900 dark:text-stone-100 text-xs mb-1">
+                          Chips de Preparación y Notas Frecuentes
+                        </h4>
+                        <p className="text-[11px] text-stone-500">
+                          Opciones de preparación rápida que el cliente o el mozo pueden seleccionar con 1 toque al pedir este producto.
+                        </p>
+                      </div>
+
+                      {/* Chips Activos */}
+                      <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-2">
+                        <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
+                          Chips Activos para este Producto ({formProducto.chips_list.length}):
+                        </span>
+
+                        {formProducto.chips_list.length > 0 ? (
+                          <div className="flex flex-wrap gap-1.5">
+                            {formProducto.chips_list.map((chip, idx) => (
+                              <span
+                                key={idx}
+                                className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/35 font-bold text-xs flex items-center gap-1.5"
+                              >
+                                <span>{chip}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => removerChip(idx)}
+                                  className="p-0.5 rounded-full hover:bg-amber-600/30 text-amber-700 dark:text-amber-400 cursor-pointer"
+                                  title="Eliminar chip"
+                                >
+                                  <X size={12} />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-stone-400 text-xs italic">
+                            No hay chips configurados. El cliente pedirá este producto en su presentación estándar.
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Input para agregar nuevo chip */}
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
-                          placeholder="o pega aquí cualquier enlace URL web de la foto..."
-                          value={formProducto.imagen_url}
-                          onChange={(e) =>
-                            setFormProducto({ ...formProducto, imagen_url: e.target.value })
-                          }
-                          className="flex-1 p-2.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100"
+                          placeholder="Escribe una opción de personalización (ej. Sin cebolla, Extra queso)..."
+                          value={nuevoChipInput}
+                          onChange={(e) => setNuevoChipInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              agregarChip(nuevoChipInput);
+                            }
+                          }}
+                          className="flex-1 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-semibold"
                         />
                         <button
                           type="button"
-                          onClick={() => {
-                            soundManager.playClick();
-                            setProductoParaGaleria(productoAEditar);
-                            setGaleriaFotosAbierta(true);
-                          }}
-                          className="px-3.5 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                          onClick={() => agregarChip(nuevoChipInput)}
+                          className="px-4 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1 cursor-pointer whitespace-nowrap"
                         >
-                          <ImageIcon size={14} />
-                          <span>Galería Completa</span>
+                          <Plus size={14} />
+                          <span>Agregar</span>
                         </button>
                       </div>
-                    </div>
-                  </div>
-                )}
 
-                {/* ══════════════ PESTAÑA 4: PERSONALIZACIÓN & CHIPS ══════════════ */}
-                {tabProductoModal === "personalizacion" && (
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-bold text-stone-900 dark:text-stone-100 text-xs mb-1">
-                        Chips de Preparación y Notas Frecuentes
-                      </h4>
-                      <p className="text-[11px] text-stone-500">
-                        Opciones de preparación rápida que el cliente o el mozo pueden seleccionar con 1 toque al pedir este producto.
-                      </p>
-                    </div>
+                      {/* Sugerencias Rápidas de 1 Clic */}
+                      <div className="space-y-2 pt-2">
+                        <span className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block">
+                          Sugerencias Populares (Haz clic para agregar al instante):
+                        </span>
 
-                    {/* Chips Activos */}
-                    <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-2">
-                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
-                        Chips Activos para este Producto ({formProducto.chips_list.length}):
-                      </span>
-
-                      {formProducto.chips_list.length > 0 ? (
-                        <div className="flex flex-wrap gap-1.5">
-                          {formProducto.chips_list.map((chip, idx) => (
-                            <span
-                              key={idx}
-                              className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/35 font-bold text-xs flex items-center gap-1.5"
-                            >
-                              <span>{chip}</span>
+                        <div className="space-y-1.5">
+                          <div className="flex flex-wrap gap-1.5">
+                            {[
+                              "Sin azúcar",
+                              "Con Stevia",
+                              "Leche deslactosada",
+                              "Leche de almendras",
+                              "Bien caliente",
+                              "Tibio",
+                              "Con hielo",
+                            ].map((sug, i) => (
                               <button
+                                key={i}
                                 type="button"
-                                onClick={() => removerChip(idx)}
-                                className="p-0.5 rounded-full hover:bg-amber-600/30 text-amber-700 dark:text-amber-400 cursor-pointer"
-                                title="Eliminar chip"
+                                onClick={() => agregarChip(sug)}
+                                className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 dark:bg-stone-800 dark:hover:bg-amber-900/40 dark:text-stone-300 dark:hover:text-amber-200 border border-stone-200 dark:border-stone-700 text-[11px] font-medium transition cursor-pointer"
                               >
-                                <X size={12} />
+                                + {sug}
                               </button>
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-stone-400 text-xs italic">
-                          No hay chips configurados. El cliente pedirá este producto en su presentación estándar.
-                        </p>
-                      )}
-                    </div>
+                            ))}
+                          </div>
 
-                    {/* Input para agregar nuevo chip */}
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        placeholder="Escribe una opción de personalización (ej. Sin cebolla, Extra queso)..."
-                        value={nuevoChipInput}
-                        onChange={(e) => setNuevoChipInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            agregarChip(nuevoChipInput);
-                          }
-                        }}
-                        className="flex-1 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs font-semibold"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => agregarChip(nuevoChipInput)}
-                        className="px-4 py-2.5 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold text-xs hover:bg-amber-950 transition flex items-center gap-1 cursor-pointer whitespace-nowrap"
-                      >
-                        <Plus size={14} />
-                        <span>Agregar</span>
-                      </button>
-                    </div>
-
-                    {/* Sugerencias Rápidas de 1 Clic */}
-                    <div className="space-y-2 pt-2">
-                      <span className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block">
-                        Sugerencias Populares (Haz clic para agregar al instante):
-                      </span>
-
-                      <div className="space-y-1.5">
-                        <div className="flex flex-wrap gap-1.5">
-                          {[
-                            "Sin azúcar",
-                            "Con Stevia",
-                            "Leche deslactosada",
-                            "Leche de almendras",
-                            "Bien caliente",
-                            "Tibio",
-                            "Con hielo",
-                          ].map((sug, i) => (
-                            <button
-                              key={i}
-                              type="button"
-                              onClick={() => agregarChip(sug)}
-                              className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 dark:bg-stone-800 dark:hover:bg-amber-900/40 dark:text-stone-300 dark:hover:text-amber-200 border border-stone-200 dark:border-stone-700 text-[11px] font-medium transition cursor-pointer"
-                            >
-                              + {sug}
-                            </button>
-                          ))}
-                        </div>
-
-                        <div className="flex flex-wrap gap-1.5">
-                          {[
-                            "Calentar en horno",
-                            "Extra queso",
-                            "Sin cebolla",
-                            "Orégano extra",
-                            "Para llevar",
-                            "Cubiertos descartables",
-                          ].map((sug, i) => (
-                            <button
-                              key={i}
-                              type="button"
-                              onClick={() => agregarChip(sug)}
-                              className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 dark:bg-stone-800 dark:hover:bg-amber-900/40 dark:text-stone-300 dark:hover:text-amber-200 border border-stone-200 dark:border-stone-700 text-[11px] font-medium transition cursor-pointer"
-                            >
-                              + {sug}
-                            </button>
-                          ))}
+                          <div className="flex flex-wrap gap-1.5">
+                            {[
+                              "Calentar en horno",
+                              "Extra queso",
+                              "Sin cebolla",
+                              "Orégano extra",
+                              "Para llevar",
+                              "Cubiertos descartables",
+                            ].map((sug, i) => (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => agregarChip(sug)}
+                                className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 dark:bg-stone-800 dark:hover:bg-amber-900/40 dark:text-stone-300 dark:hover:text-amber-200 border border-stone-200 dark:border-stone-700 text-[11px] font-medium transition cursor-pointer"
+                              >
+                                + {sug}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Footer con Acciones Principales */}
-              <div className="p-4 border-t-2 border-[#D5C7B5] bg-[#FAF6EF] flex items-center justify-between gap-3 shrink-0">
-                <div className="text-[11px] text-stone-600 font-bold hidden sm:block">
-                  Pestaña activa: <strong className="capitalize text-stone-950">{tabProductoModal}</strong> • Todos los cambios se guardan localmente y en la nube
+                  )}
                 </div>
 
-                <div className="flex items-center gap-2 ml-auto w-full sm:w-auto">
-                  <button
-                    type="button"
-                    onClick={() => setModalProductoAbierto(false)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs hover:bg-[#FAF6EF] transition cursor-pointer"
-                  >
-                    Cancelar
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={guardarProducto}
-                    className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs transition flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer border border-amber-400/30"
-                  >
-                    <Check size={15} />
-                    <span>Guardar Producto</span>
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Modal Comprobante / Recibo Digital Detallado ── */}
-      <AnimatePresence>
-        {reciboModalPago && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100"
-            >
-              <div id="recibo-pago-historial-print" className="ticket-termico space-y-3 p-3 bg-white text-stone-900 rounded-2xl font-mono text-xs">
-                {/* Encabezado Ticket Térmico con Logo Oficial */}
-                <div className="text-center pb-2 border-b border-dashed border-stone-300">
-                  <div className="flex items-center justify-between pb-1 no-print">
-                    <span className="text-[10px] text-stone-400 font-sans">Historial de Pagos</span>
-                    <button
-                      onClick={() => setReciboModalPago(null)}
-                      className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                  <img
-                    src="/img/brand/logo-3-don-dencker-badge.png"
-                    alt="Dencker Pan"
-                    className="h-14 w-auto mx-auto mb-1.5 object-contain"
-                  />
-                  <h3 className="font-serif font-black text-base tracking-wide text-stone-950">
-                    DENCKER PAN
-                  </h3>
-                  <p className="text-[10px] font-bold text-amber-900">
-                    Masa Madre Viva &bull; Café 4 Llamas de Altura
-                  </p>
-                  <p className="text-[9px] text-stone-600">
-                    Av. Daniel Salamanca, Cochabamba &bull; Tel: +591 76911000
-                  </p>
-                  <div className="mt-2 text-xs font-black bg-stone-100 text-stone-900 py-1 px-3 rounded-full border border-stone-300 inline-block font-sans uppercase tracking-wider">
-                    COMPROBANTE DE COBRO
-                  </div>
-                </div>
-
-                {/* Metadata del Cobro */}
-                <div className="space-y-1 text-xs border-b border-dashed border-stone-300 pb-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-stone-500">Nº Comprobante:</span>
-                    <span className="font-bold text-stone-950">{reciboModalPago.id}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-stone-500">Fecha y Hora:</span>
-                    <span className="font-semibold text-stone-800">
-                      {new Date(reciboModalPago.created_at).toLocaleString("es-BO")}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-stone-500">Turno:</span>
-                    <span className="font-bold uppercase text-amber-900">
-                      {reciboModalPago.turno || "Tarde"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-stone-500">Cajero(a):</span>
-                    <span className="font-semibold text-stone-800">
-                      {reciboModalPago.cajero || "Caja Principal"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-stone-500">Cliente:</span>
-                    <span className="font-bold text-stone-950 truncate max-w-[170px]">
-                      {reciboModalPago.cliente_nombre || "Cliente Mostrador"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-stone-500">Ubicación:</span>
-                    <span className="font-semibold text-stone-800">
-                      {reciboModalPago.mesa_numero ? `Mesa ${reciboModalPago.mesa_numero}` : "Venta Mostrador"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Monto y Método */}
-                <div className="space-y-1.5 py-1 font-bold border-b border-dashed border-stone-300">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-stone-900">TOTAL PAGADO:</span>
-                    <span className="font-serif text-base text-emerald-800 font-mono font-black">
-                      Bs {reciboModalPago.monto.toFixed(2)}
-                    </span>
+                {/* Footer con Acciones Principales */}
+                <div className="p-4 border-t-2 border-[#D5C7B5] bg-[#FAF6EF] flex items-center justify-between gap-3 shrink-0">
+                  <div className="text-[11px] text-stone-600 font-bold hidden sm:block">
+                    Pestaña activa: <strong className="capitalize text-stone-950">{tabProductoModal}</strong> • Todos los cambios se guardan localmente y en la nube
                   </div>
 
-                  <div className="text-[10px] text-stone-700 bg-stone-100/90 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
-                    {convertirNumeroALiteral(reciboModalPago.monto)}
-                  </div>
-
-                  <div className="p-2 rounded-lg bg-stone-50 border border-stone-200 space-y-1 text-[11px] font-normal">
-                    <div className="flex items-center justify-between font-bold">
-                      <span className="text-stone-600">Método de Pago:</span>
-                      <span className="text-stone-950 uppercase">
-                        {reciboModalPago.metodo === "qr" ? "QR Simple BNB/BCP (ASFI)" : "Efectivo BOB"}
-                      </span>
-                    </div>
-                    {reciboModalPago.metodo === "efectivo" && (
-                      <div className="flex items-center justify-between text-[10.5px] text-stone-600">
-                        <span>Recibido: Bs {(reciboModalPago.monto_recibido || reciboModalPago.monto).toFixed(2)}</span>
-                        <span>Vuelto: Bs {(reciboModalPago.cambio || 0).toFixed(2)}</span>
-                      </div>
-                    )}
-                    {reciboModalPago.metodo === "qr" && (
-                      <div className="text-[10px] text-purple-800 font-semibold">
-                        Liquidación Inmediata Interoperable ASFI ✓
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Cupón Marketing Retention */}
-                <div className="coupon-box border border-dashed border-stone-800 p-2 my-1 text-center rounded bg-stone-50">
-                  <p className="font-bold text-[10px] text-stone-900 tracking-wide uppercase">
-                    ☕ ¡CAFÉ DE CORTESÍA EN TU PRÓXIMA VISITA!
-                  </p>
-                  <p className="text-[8px] text-stone-600 leading-tight mt-0.5 font-sans">
-                    Sube una foto de tu pedido a Instagram o TikTok etiquetando a <strong>@denckerpan</strong> y muéstrala a tu barista.
-                  </p>
-                  <div className="mt-1 pt-1 border-t border-dashed border-stone-300 flex justify-between text-[8px] text-stone-500 font-mono">
-                    <span>WiFi: Dencker-Clientes</span>
-                    <span>Clave: masamadre2024</span>
-                  </div>
-                </div>
-
-                {/* Código QR de validación */}
-                <div className="py-1 flex flex-col items-center justify-center space-y-1">
-                  <div className="p-2 bg-white rounded-xl border border-stone-200 shadow-inner">
-                    <QRCodeSVG
-                      value={`https://decker-pan.vercel.app/comprobante/${reciboModalPago.id}`}
-                      size={88}
-                    />
-                  </div>
-                  <span className="text-[8px] text-stone-400 font-mono">Código de Verificación Digital</span>
-                </div>
-
-                {/* Sello Don Dencker */}
-                <div className="flex items-center justify-center gap-2 pt-2 border-t border-dashed border-stone-300">
-                  <img
-                    src="/img/brand/logo-3-don-dencker-badge.png"
-                    alt="Sello Oficial Don Dencker"
-                    className="w-8 h-8 object-contain shrink-0"
-                  />
-                  <div className="text-left leading-tight">
-                    <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
-                    <p className="text-[8px] text-stone-500 font-mono">Tradición &amp; Calidad Dencker</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Botones de Acción */}
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
-                <button
-                  onClick={() => {
-                    soundManager.playTactileClick();
-                    printElementById("recibo-pago-historial-print", {
-                      title: `Recibo_${reciboModalPago.id}`,
-                      pageType: "thermal",
-                    });
-                  }}
-                  className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
-                >
-                  <Printer size={14} />
-                  <span>Imprimir 80mm</span>
-                </button>
-                <button
-                  onClick={() => setReciboModalPago(null)}
-                  className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition text-center cursor-pointer"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
-        {/* ── Modal Crear / Editar Colaborador ── */}
-        {modalStaffAbierto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-4 border-2 border-[#D5C7B5]"
-            >
-              <div className="flex items-center justify-between pb-3 border-b-2 border-[#EAE0D2]">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-[#991B24]/10 text-[#991B24] border border-[#991B24]/20">
-                    <Users size={18} />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-lg font-black text-stone-950">
-                      {usuarioStaffAEditar ? "Editar Colaborador" : "Nuevo Colaborador"}
-                    </h3>
-                    <p className="text-[11px] text-stone-500">
-                      Asigna estación y PIN de seguridad de 4 dígitos
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setModalStaffAbierto(false)}
-                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer transition"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <form onSubmit={handleGuardarStaff} className="space-y-3.5 text-xs">
-                {/* Nombre Completo */}
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Nombre Completo *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. Camila Rojas"
-                    value={formStaff.nombre}
-                    onChange={(e) => setFormStaff({ ...formStaff, nombre: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  />
-                </div>
-
-                {/* Rol / Estación */}
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Estación Operativa & Rol *
-                  </label>
-                  <select
-                    value={formStaff.role}
-                    onChange={(e) => {
-                      const newRole = e.target.value as StaffRole;
-                      const defaultCargos: Record<StaffRole, string> = {
-                        mesero: "Mesero de Salón & Terraza",
-                        cocina: "Jefe de Cocina & Barismo",
-                        caja: "Cajero de Turno & POS",
-                        admin: "Administrador General",
-                      };
-                      setFormStaff({
-                        ...formStaff,
-                        role: newRole,
-                        cargo: formStaff.cargo === "" || Object.values(defaultCargos).includes(formStaff.cargo)
-                          ? defaultCargos[newRole]
-                          : formStaff.cargo,
-                      });
-                    }}
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  >
-                    <option value="mesero">🍽️ Sala & Mesero (Mesas, Croquis y Comandas)</option>
-                    <option value="cocina">👨‍🍳 Cocina & Barismo KDS (Despacho de Tickets)</option>
-                    <option value="caja">💳 Caja POS & Facturación (Cobros Efectivo/QR)</option>
-                    <option value="admin">👑 Administración SaaS (Control Total y Métricas)</option>
-                  </select>
-                </div>
-
-                {/* Cargo descriptivo */}
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Cargo / Puesto de Trabajo
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Mesero Salón Turno Mañana"
-                    value={formStaff.cargo}
-                    onChange={(e) => setFormStaff({ ...formStaff, cargo: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  />
-                </div>
-
-                {/* PIN de 4 dígitos */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="font-black text-stone-900">
-                      Código PIN Táctil (4 Dígitos) *
-                    </label>
+                  <div className="flex items-center gap-2 ml-auto w-full sm:w-auto">
                     <button
                       type="button"
-                      onClick={handleGenerarPinAleatorio}
-                      className="text-xs text-[#991B24] hover:underline flex items-center gap-1.5 font-bold cursor-pointer"
+                      onClick={() => setModalProductoAbierto(false)}
+                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs hover:bg-[#FAF6EF] transition cursor-pointer"
                     >
-                      <KeyRound size={15} />
-                      <span>Generar al azar</span>
+                      Cancelar
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={guardarProducto}
+                      className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs transition flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer border border-amber-400/30"
+                    >
+                      <Check size={15} />
+                      <span>Guardar Producto</span>
                     </button>
                   </div>
-                  <input
-                    type="text"
-                    maxLength={4}
-                    required
-                    pattern="\d{4}"
-                    placeholder="4 dígitos, ej. 5832"
-                    value={formStaff.pin}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, "").slice(0, 4);
-                      setFormStaff({ ...formStaff, pin: val });
-                    }}
-                    className="w-full p-3 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-mono text-xl font-black tracking-widest text-center focus:outline-none focus:border-amber-700"
-                  />
-                  <span className="text-[11px] text-stone-500 mt-1 block">
-                    Este PIN lo digitará el colaborador en la pantalla táctil de su estación.
-                  </span>
                 </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
-                {/* Teléfono / WhatsApp */}
-                <div>
-                  <label className="font-black text-stone-900 block mb-1">
-                    Teléfono / WhatsApp (Opcional)
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="+591 76911000"
-                    value={formStaff.telefono}
-                    onChange={(e) => setFormStaff({ ...formStaff, telefono: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
-                  />
-                </div>
-
-                {/* Estado Activo */}
-                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF6EF] border-2 border-[#D5C7B5]">
-                  <div>
-                    <span className="font-black text-stone-950 block text-xs sm:text-sm">
-                      Estado de la Cuenta
-                    </span>
-                    <span className="text-xs text-stone-500">
-                      {formStaff.activo ? "Permite iniciar sesión en estación" : "Acceso bloqueado"}
-                    </span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={formStaff.activo}
-                    onChange={(e) => setFormStaff({ ...formStaff, activo: e.target.checked })}
-                    className="w-5 h-5 rounded text-[#991B24] accent-[#991B24] focus:ring-[#991B24] cursor-pointer"
-                  />
-                </div>
-
-                {/* Botón Guardar */}
-                <div className="pt-4 border-t-2 border-[#EAE0D2] flex items-center justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setModalStaffAbierto(false)}
-                    className="px-4 py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs sm:text-sm hover:bg-[#FAF6EF] cursor-pointer transition"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs sm:text-sm shadow-md border border-amber-400/30 transition flex items-center gap-2 cursor-pointer active:scale-95"
-                  >
-                    <Save size={16} />
-                    <span>Guardar Colaborador</span>
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Modal Visualizador del Menú Oficial PDF (6 Páginas) ── */}
-      <AnimatePresence>
-        {modalPdfAbierto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-5xl bg-stone-900 text-stone-100 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-800 overflow-hidden"
-            >
-              {/* Header Modal */}
-              <div className="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between gap-4 bg-stone-950/80">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
-                    <FileText size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
-                      Menú Original Dencker Pan
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                        Documento Oficial
-                      </span>
+        {/* ── Modal Comprobante / Recibo Digital Detallado ── */}
+        <AnimatePresence>
+          {reciboModalPago && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-3xl shadow-2xl p-6 space-y-4 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100"
+              >
+                <div id="recibo-pago-historial-print" className="ticket-termico space-y-3 p-3 bg-white text-stone-900 rounded-2xl font-mono text-xs">
+                  {/* Encabezado Ticket Térmico con Logo Oficial */}
+                  <div className="text-center pb-2 border-b border-dashed border-stone-300">
+                    <div className="flex items-center justify-between pb-1 no-print">
+                      <span className="text-[10px] text-stone-400 font-sans">Historial de Pagos</span>
+                      <button
+                        onClick={() => setReciboModalPago(null)}
+                        className="p-1 rounded-full text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Dencker Pan"
+                      className="h-14 w-auto mx-auto mb-1.5 object-contain"
+                    />
+                    <h3 className="font-serif font-black text-base tracking-wide text-stone-950">
+                      DENCKER PAN
                     </h3>
-                    <p className="text-xs text-stone-400">
-                      Página {paginaPdfActiva + 1} de {MENU_PDF_PAGES.length}: {MENU_PDF_PAGES[paginaPdfActiva]?.title}
+                    <p className="text-[10px] font-bold text-amber-900">
+                      Masa Madre Viva &bull; Café 4 Llamas de Altura
                     </p>
+                    <p className="text-[9px] text-stone-600">
+                      Av. Daniel Salamanca, Cochabamba &bull; Tel: +591 76911000
+                    </p>
+                    <div className="mt-2 text-xs font-black bg-stone-100 text-stone-900 py-1 px-3 rounded-full border border-stone-300 inline-block font-sans uppercase tracking-wider">
+                      COMPROBANTE DE COBRO
+                    </div>
+                  </div>
+
+                  {/* Metadata del Cobro */}
+                  <div className="space-y-1 text-xs border-b border-dashed border-stone-300 pb-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">Nº Comprobante:</span>
+                      <span className="font-bold text-stone-950">{reciboModalPago.id}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">Fecha y Hora:</span>
+                      <span className="font-semibold text-stone-800">
+                        {new Date(reciboModalPago.created_at).toLocaleString("es-BO")}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">Turno:</span>
+                      <span className="font-bold uppercase text-amber-900">
+                        {reciboModalPago.turno || "Tarde"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">Cajero(a):</span>
+                      <span className="font-semibold text-stone-800">
+                        {reciboModalPago.cajero || "Caja Principal"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">Cliente:</span>
+                      <span className="font-bold text-stone-950 truncate max-w-[170px]">
+                        {reciboModalPago.cliente_nombre || "Cliente Mostrador"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">Ubicación:</span>
+                      <span className="font-semibold text-stone-800">
+                        {reciboModalPago.mesa_numero ? `Mesa ${reciboModalPago.mesa_numero}` : "Venta Mostrador"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Monto y Método */}
+                  <div className="space-y-1.5 py-1 font-bold border-b border-dashed border-stone-300">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-stone-900">TOTAL PAGADO:</span>
+                      <span className="font-serif text-base text-emerald-800 font-mono font-black">
+                        Bs {reciboModalPago.monto.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="text-[10px] text-stone-700 bg-stone-100/90 p-1.5 rounded border border-stone-200 font-sans font-medium text-center">
+                      {convertirNumeroALiteral(reciboModalPago.monto)}
+                    </div>
+
+                    <div className="p-2 rounded-lg bg-stone-50 border border-stone-200 space-y-1 text-[11px] font-normal">
+                      <div className="flex items-center justify-between font-bold">
+                        <span className="text-stone-600">Método de Pago:</span>
+                        <span className="text-stone-950 uppercase">
+                          {reciboModalPago.metodo === "qr" ? "QR Simple BNB/BCP (ASFI)" : "Efectivo BOB"}
+                        </span>
+                      </div>
+                      {reciboModalPago.metodo === "efectivo" && (
+                        <div className="flex items-center justify-between text-[10.5px] text-stone-600">
+                          <span>Recibido: Bs {(reciboModalPago.monto_recibido || reciboModalPago.monto).toFixed(2)}</span>
+                          <span>Vuelto: Bs {(reciboModalPago.cambio || 0).toFixed(2)}</span>
+                        </div>
+                      )}
+                      {reciboModalPago.metodo === "qr" && (
+                        <div className="text-[10px] text-purple-800 font-semibold">
+                          Liquidación Inmediata Interoperable ASFI ✓
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Cupón Marketing Retention */}
+                  <div className="coupon-box border border-dashed border-stone-800 p-2 my-1 text-center rounded bg-stone-50">
+                    <p className="font-bold text-[10px] text-stone-900 tracking-wide uppercase">
+                      ☕ ¡CAFÉ DE CORTESÍA EN TU PRÓXIMA VISITA!
+                    </p>
+                    <p className="text-[8px] text-stone-600 leading-tight mt-0.5 font-sans">
+                      Sube una foto de tu pedido a Instagram o TikTok etiquetando a <strong>@denckerpan</strong> y muéstrala a tu barista.
+                    </p>
+                    <div className="mt-1 pt-1 border-t border-dashed border-stone-300 flex justify-between text-[8px] text-stone-500 font-mono">
+                      <span>WiFi: Dencker-Clientes</span>
+                      <span>Clave: masamadre2024</span>
+                    </div>
+                  </div>
+
+                  {/* Código QR de validación */}
+                  <div className="py-1 flex flex-col items-center justify-center space-y-1">
+                    <div className="p-2 bg-white rounded-xl border border-stone-200 shadow-inner">
+                      <QRCodeSVG
+                        value={`https://decker-pan.vercel.app/comprobante/${reciboModalPago.id}`}
+                        size={88}
+                      />
+                    </div>
+                    <span className="text-[8px] text-stone-400 font-mono">Código de Verificación Digital</span>
+                  </div>
+
+                  {/* Sello Don Dencker */}
+                  <div className="flex items-center justify-center gap-2 pt-2 border-t border-dashed border-stone-300">
+                    <img
+                      src="/img/brand/logo-3-don-dencker-badge.png"
+                      alt="Sello Oficial Don Dencker"
+                      className="w-8 h-8 object-contain shrink-0"
+                    />
+                    <div className="text-left leading-tight">
+                      <p className="text-[9px] font-serif font-black text-stone-900 tracking-wider">SELLO DE AUTENTICIDAD</p>
+                      <p className="text-[8px] text-stone-500 font-mono">Tradición &amp; Calidad Dencker</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Link
-                    href="/menu-pdf"
-                    target="_blank"
-                    className="px-3 py-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition"
-                  >
-                    <ExternalLink size={14} />
-                    <span className="hidden sm:inline">Página Completa</span>
-                  </Link>
+                {/* Botones de Acción */}
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
                   <button
-                    onClick={() => setModalPdfAbierto(false)}
-                    className="p-2 rounded-full text-stone-400 hover:text-white hover:bg-stone-800 transition cursor-pointer"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Selector de Páginas Tabs */}
-              <div className="p-2 bg-stone-950/60 border-b border-stone-800 flex items-center gap-2 overflow-x-auto text-xs">
-                {MENU_PDF_PAGES.map((pag, idx) => (
-                  <button
-                    key={pag.page}
                     onClick={() => {
                       soundManager.playTactileClick();
-                      setPaginaPdfActiva(idx);
+                      printElementById("recibo-pago-historial-print", {
+                        title: `Recibo_${reciboModalPago.id}`,
+                        pageType: "thermal",
+                      });
                     }}
-                    className={`px-3 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
-                      paginaPdfActiva === idx
+                    className="py-2.5 rounded-xl bg-amber-900 dark:bg-amber-600 hover:bg-amber-950 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                  >
+                    <Printer size={14} />
+                    <span>Imprimir 80mm</span>
+                  </button>
+                  <button
+                    onClick={() => setReciboModalPago(null)}
+                    className="py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-semibold text-xs hover:bg-stone-200 transition text-center cursor-pointer"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {/* ── Modal Crear / Editar Colaborador ── */}
+          {modalStaffAbierto && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-4 border-2 border-[#D5C7B5]"
+              >
+                <div className="flex items-center justify-between pb-3 border-b-2 border-[#EAE0D2]">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-[#991B24]/10 text-[#991B24] border border-[#991B24]/20">
+                      <Users size={18} />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-black text-stone-950">
+                        {usuarioStaffAEditar ? "Editar Colaborador" : "Nuevo Colaborador"}
+                      </h3>
+                      <p className="text-[11px] text-stone-500">
+                        Asigna estación y PIN de seguridad de 4 dígitos
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setModalStaffAbierto(false)}
+                    className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer transition"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleGuardarStaff} className="space-y-3.5 text-xs">
+                  {/* Nombre Completo */}
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Nombre Completo *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ej. Camila Rojas"
+                      value={formStaff.nombre}
+                      onChange={(e) => setFormStaff({ ...formStaff, nombre: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
+                    />
+                  </div>
+
+                  {/* Rol / Estación */}
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Estación Operativa & Rol *
+                    </label>
+                    <select
+                      value={formStaff.role}
+                      onChange={(e) => {
+                        const newRole = e.target.value as StaffRole;
+                        const defaultCargos: Record<StaffRole, string> = {
+                          mesero: "Mesero de Salón & Terraza",
+                          cocina: "Jefe de Cocina & Barismo",
+                          caja: "Cajero de Turno & POS",
+                          admin: "Administrador General",
+                        };
+                        setFormStaff({
+                          ...formStaff,
+                          role: newRole,
+                          cargo: formStaff.cargo === "" || Object.values(defaultCargos).includes(formStaff.cargo)
+                            ? defaultCargos[newRole]
+                            : formStaff.cargo,
+                        });
+                      }}
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
+                    >
+                      <option value="mesero">🍽️ Sala & Mesero (Mesas, Croquis y Comandas)</option>
+                      <option value="cocina">👨‍🍳 Cocina & Barismo KDS (Despacho de Tickets)</option>
+                      <option value="caja">💳 Caja POS & Facturación (Cobros Efectivo/QR)</option>
+                      <option value="admin">👑 Administración SaaS (Control Total y Métricas)</option>
+                    </select>
+                  </div>
+
+                  {/* Cargo descriptivo */}
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Cargo / Puesto de Trabajo
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Mesero Salón Turno Mañana"
+                      value={formStaff.cargo}
+                      onChange={(e) => setFormStaff({ ...formStaff, cargo: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
+                    />
+                  </div>
+
+                  {/* PIN de 4 dígitos */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="font-black text-stone-900">
+                        Código PIN Táctil (4 Dígitos) *
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleGenerarPinAleatorio}
+                        className="text-xs text-[#991B24] hover:underline flex items-center gap-1.5 font-bold cursor-pointer"
+                      >
+                        <KeyRound size={15} />
+                        <span>Generar al azar</span>
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      maxLength={4}
+                      required
+                      pattern="\d{4}"
+                      placeholder="4 dígitos, ej. 5832"
+                      value={formStaff.pin}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                        setFormStaff({ ...formStaff, pin: val });
+                      }}
+                      className="w-full p-3 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-mono text-xl font-black tracking-widest text-center focus:outline-none focus:border-amber-700"
+                    />
+                    <span className="text-[11px] text-stone-500 mt-1 block">
+                      Este PIN lo digitará el colaborador en la pantalla táctil de su estación.
+                    </span>
+                  </div>
+
+                  {/* Teléfono / WhatsApp */}
+                  <div>
+                    <label className="font-black text-stone-900 block mb-1">
+                      Teléfono / WhatsApp (Opcional)
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="+591 76911000"
+                      value={formStaff.telefono}
+                      onChange={(e) => setFormStaff({ ...formStaff, telefono: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border-2 border-[#D5C7B5] bg-[#FAF6EF] focus:bg-white text-stone-950 font-bold focus:outline-none focus:border-amber-700"
+                    />
+                  </div>
+
+                  {/* Estado Activo */}
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF6EF] border-2 border-[#D5C7B5]">
+                    <div>
+                      <span className="font-black text-stone-950 block text-xs sm:text-sm">
+                        Estado de la Cuenta
+                      </span>
+                      <span className="text-xs text-stone-500">
+                        {formStaff.activo ? "Permite iniciar sesión en estación" : "Acceso bloqueado"}
+                      </span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={formStaff.activo}
+                      onChange={(e) => setFormStaff({ ...formStaff, activo: e.target.checked })}
+                      className="w-5 h-5 rounded text-[#991B24] accent-[#991B24] focus:ring-[#991B24] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Botón Guardar */}
+                  <div className="pt-4 border-t-2 border-[#EAE0D2] flex items-center justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setModalStaffAbierto(false)}
+                      className="px-4 py-2.5 rounded-xl bg-white border-2 border-[#D5C7B5] text-stone-800 font-bold text-xs sm:text-sm hover:bg-[#FAF6EF] cursor-pointer transition"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-6 py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white font-black text-xs sm:text-sm shadow-md border border-amber-400/30 transition flex items-center gap-2 cursor-pointer active:scale-95"
+                    >
+                      <Save size={16} />
+                      <span>Guardar Colaborador</span>
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Modal Visualizador del Menú Oficial PDF (6 Páginas) ── */}
+        <AnimatePresence>
+          {modalPdfAbierto && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full max-w-5xl bg-stone-900 text-stone-100 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-800 overflow-hidden"
+              >
+                {/* Header Modal */}
+                <div className="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between gap-4 bg-stone-950/80">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                        Menú Original Dencker Pan
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                          Documento Oficial
+                        </span>
+                      </h3>
+                      <p className="text-xs text-stone-400">
+                        Página {paginaPdfActiva + 1} de {MENU_PDF_PAGES.length}: {MENU_PDF_PAGES[paginaPdfActiva]?.title}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/menu-pdf"
+                      target="_blank"
+                      className="px-3 py-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition"
+                    >
+                      <ExternalLink size={14} />
+                      <span className="hidden sm:inline">Página Completa</span>
+                    </Link>
+                    <button
+                      onClick={() => setModalPdfAbierto(false)}
+                      className="p-2 rounded-full text-stone-400 hover:text-white hover:bg-stone-800 transition cursor-pointer"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Selector de Páginas Tabs */}
+                <div className="p-2 bg-stone-950/60 border-b border-stone-800 flex items-center gap-2 overflow-x-auto text-xs">
+                  {MENU_PDF_PAGES.map((pag, idx) => (
+                    <button
+                      key={pag.page}
+                      onClick={() => {
+                        soundManager.playTactileClick();
+                        setPaginaPdfActiva(idx);
+                      }}
+                      className={`px-3 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${paginaPdfActiva === idx
                         ? "bg-amber-500 text-stone-950 shadow-md font-extrabold"
                         : "bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-800"
-                    }`}
-                  >
-                    <span className="w-5 h-5 rounded-full bg-black/20 flex items-center justify-center text-[10px]">
-                      {pag.page}
-                    </span>
-                    <span>{pag.title}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Visualizador de la Página con Zoom/Scroll */}
-              <div className="flex-1 overflow-auto p-4 sm:p-6 bg-stone-950 flex items-center justify-center">
-                <div className="max-w-3xl w-full rounded-2xl overflow-hidden shadow-2xl border border-stone-800 bg-black">
-                  <img
-                    src={MENU_PDF_PAGES[paginaPdfActiva]?.url}
-                    alt={MENU_PDF_PAGES[paginaPdfActiva]?.title}
-                    className="w-full h-auto object-contain"
-                  />
+                        }`}
+                    >
+                      <span className="w-5 h-5 rounded-full bg-black/20 flex items-center justify-center text-[10px]">
+                        {pag.page}
+                      </span>
+                      <span>{pag.title}</span>
+                    </button>
+                  ))}
                 </div>
-              </div>
 
-              {/* Footer con Descripción y Navegación */}
-              <div className="p-4 border-t border-stone-800 bg-stone-950/80 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="text-stone-400 italic">
-                    Menú oficial de cafetería & panadería artesanal Dencker Pan — Página {MENU_PDF_PAGES[paginaPdfActiva]?.page}
+                {/* Visualizador de la Página con Zoom/Scroll */}
+                <div className="flex-1 overflow-auto p-4 sm:p-6 bg-stone-950 flex items-center justify-center">
+                  <div className="max-w-3xl w-full rounded-2xl overflow-hidden shadow-2xl border border-stone-800 bg-black">
+                    <img
+                      src={MENU_PDF_PAGES[paginaPdfActiva]?.url}
+                      alt={MENU_PDF_PAGES[paginaPdfActiva]?.title}
+                      className="w-full h-auto object-contain"
+                    />
+                  </div>
+                </div>
+
+                {/* Footer con Descripción y Navegación */}
+                <div className="p-4 border-t border-stone-800 bg-stone-950/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="text-stone-400 italic">
+                      Menú oficial de cafetería & panadería artesanal Dencker Pan — Página {MENU_PDF_PAGES[paginaPdfActiva]?.page}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playClick();
+                        const pageToCategory: Record<number, string> = {
+                          1: "todas",
+                          2: "c_desayunos",
+                          3: "c_chocolates_tes",
+                          4: "c_pasteleria",
+                          5: "c_sandwiches",
+                          6: "c_pizzas",
+                        };
+                        const catTarget = pageToCategory[MENU_PDF_PAGES[paginaPdfActiva]?.page] || "todas";
+                        setFiltroCategoria(catTarget);
+                        setTabActiva("productos");
+                        setModalPdfAbierto(false);
+                      }}
+                      className="ml-2 px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 font-bold border border-amber-500/30 transition flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <UtensilsCrossed size={12} />
+                      <span>Ver Productos de esta Página en Administrador</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      disabled={paginaPdfActiva === 0}
+                      onClick={() => setPaginaPdfActiva((p) => Math.max(0, p - 1))}
+                      className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 disabled:opacity-40 text-stone-300 font-bold cursor-pointer"
+                    >
+                      ← Anterior
+                    </button>
+                    <button
+                      disabled={paginaPdfActiva === MENU_PDF_PAGES.length - 1}
+                      onClick={() => setPaginaPdfActiva((p) => Math.min(MENU_PDF_PAGES.length - 1, p + 1))}
+                      className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 disabled:opacity-40 text-stone-300 font-bold cursor-pointer"
+                    >
+                      Siguiente →
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Modal Galería de Fotos Reales de Panadería (169 Imágenes) ── */}
+        <AnimatePresence>
+          {galeriaFotosAbierta && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full max-w-6xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-200 dark:border-stone-800 overflow-hidden text-stone-900 dark:text-stone-100"
+              >
+                {/* Header Galería */}
+                <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4 bg-stone-50 dark:bg-stone-950/80">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/30">
+                      <ImageIcon size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                        Galería de Fotos Reales del Local
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30">
+                          {REAL_PRODUCT_PHOTOS.length} Fotos Reales
+                        </span>
+                      </h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-400">
+                        {productoParaGaleria
+                          ? `Asignando foto para: "${productoParaGaleria.nombre}" — Haz click en una foto para seleccionarla al instante.`
+                          : "Explora o haz click en cualquier foto para asignarla a cualquier producto del menú o copiar su enlace."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                      <input
+                        type="text"
+                        placeholder="Buscar por archivo..."
+                        value={busquedaFoto}
+                        onChange={(e) => setBusquedaFoto(e.target.value)}
+                        className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-44 sm:w-56"
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        setGaleriaFotosAbierta(false);
+                        setProductoParaGaleria(null);
+                        setFotoSeleccionadaGaleria(null);
+                      }}
+                      className="p-2 rounded-full text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800 transition cursor-pointer"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Barra de Filtros de Fotos */}
+                <div className="px-4 py-2 bg-stone-100/70 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center gap-2 overflow-x-auto text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setFiltroTipoFoto("todas")}
+                    className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${filtroTipoFoto === "todas"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white"
+                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
+                      }`}
+                  >
+                    Todas ({REAL_PRODUCT_PHOTOS.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFiltroTipoFoto("productos")}
+                    className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${filtroTipoFoto === "productos"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white"
+                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
+                      }`}
+                  >
+                    Platos & Masas Reales ({REAL_PRODUCT_PHOTOS.filter((u) => u.includes("/img/products/")).length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFiltroTipoFoto("marca")}
+                    className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${filtroTipoFoto === "marca"
+                      ? "bg-amber-900 dark:bg-amber-700 text-white"
+                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
+                      }`}
+                  >
+                    Marca & Don Dencker ({REAL_PRODUCT_PHOTOS.filter((u) => u.includes("/img/brand/")).length})
+                  </button>
+                </div>
+
+                {/* Grid Scrollable de Fotos */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-stone-100 dark:bg-stone-950">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {REAL_PRODUCT_PHOTOS
+                      .filter((fotoUrl) => {
+                        const matchBusqueda = fotoUrl.toLowerCase().includes(busquedaFoto.toLowerCase());
+                        if (!matchBusqueda) return false;
+                        if (filtroTipoFoto === "productos") return fotoUrl.includes("/img/products/");
+                        if (filtroTipoFoto === "marca") return fotoUrl.includes("/img/brand/");
+                        return true;
+                      })
+                      .map((fotoUrl, idx) => {
+                        const fileName = fotoUrl.split("/").pop() || fotoUrl;
+                        const prodUsando = productos.find((p) => p.imagen_url === fotoUrl);
+                        const esSeleccionada = fotoSeleccionadaGaleria === fotoUrl;
+
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              if (productoParaGaleria) {
+                                soundManager.playSuccessTone();
+                                updateProducto(productoParaGaleria.id, { imagen_url: fotoUrl });
+                                setFormProducto((prev) => ({ ...prev, imagen_url: fotoUrl }));
+                                setGaleriaFotosAbierta(false);
+                                setProductoParaGaleria(null);
+                              } else if (modalProductoAbierto) {
+                                soundManager.playSuccessTone();
+                                setFormProducto((prev) => ({ ...prev, imagen_url: fotoUrl }));
+                                setGaleriaFotosAbierta(false);
+                              } else {
+                                soundManager.playTactileClick();
+                                setFotoSeleccionadaGaleria(fotoUrl);
+                                if (prodUsando) {
+                                  setProductoDestinoFotoId(prodUsando.id);
+                                }
+                              }
+                            }}
+                            className={`group relative flex flex-col bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border shadow-xs transition text-left cursor-pointer ${esSeleccionada
+                              ? "ring-3 ring-amber-500 border-amber-500"
+                              : "border-stone-200 dark:border-stone-800 hover:border-amber-500 dark:hover:border-amber-500"
+                              }`}
+                          >
+                            <div className="relative aspect-square w-full overflow-hidden bg-stone-200 dark:bg-stone-800">
+                              <img
+                                src={fotoUrl}
+                                alt={fileName}
+                                loading="lazy"
+                                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                              />
+                              <div className="absolute inset-0 bg-amber-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-2 text-center">
+                                <CheckCircle2 size={24} className="text-amber-300 mb-1" />
+                                <span className="text-[11px] font-bold">
+                                  {productoParaGaleria ? "Asignar Ahora" : "Seleccionar"}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="p-2 space-y-0.5">
+                              <span className="text-[10px] font-mono text-stone-500 dark:text-stone-400 truncate block">
+                                {fileName}
+                              </span>
+                              {prodUsando ? (
+                                <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 truncate block">
+                                  ✓ {prodUsando.nombre}
+                                </span>
+                              ) : (
+                                <span className="text-[9px] text-stone-400 dark:text-stone-500 truncate block">
+                                  Disponible
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                  </div>
+                </div>
+
+                {/* Panel de Asignación si se seleccionó una foto sin producto previo */}
+                {fotoSeleccionadaGaleria && !productoParaGaleria && (
+                  <div className="p-3.5 bg-amber-500/10 border-t border-amber-500/20 flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <img
+                        src={fotoSeleccionadaGaleria}
+                        alt="Seleccionada"
+                        className="w-10 h-10 rounded-xl object-cover border border-amber-400"
+                      />
+                      <div>
+                        <span className="font-bold text-amber-950 dark:text-amber-200 block">
+                          Foto: {fotoSeleccionadaGaleria.split("/").pop()}
+                        </span>
+                        <span className="text-[11px] text-stone-500 dark:text-stone-400">
+                          {productos.find((p) => p.imagen_url === fotoSeleccionadaGaleria)
+                            ? `Asignada a: ${productos.find((p) => p.imagen_url === fotoSeleccionadaGaleria)?.nombre}`
+                            : "Foto sin asignar a ningún producto"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={productoDestinoFotoId}
+                        onChange={(e) => setProductoDestinoFotoId(e.target.value)}
+                        className="p-2 text-xs rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 max-w-xs focus:outline-none"
+                      >
+                        <option value="">-- Asignar esta foto a un producto --</option>
+                        {productos.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.nombre} (Bs {p.precio.toFixed(2)})
+                          </option>
+                        ))}
+                      </select>
+
+                      <button
+                        type="button"
+                        disabled={!productoDestinoFotoId && !modalProductoAbierto}
+                        onClick={() => {
+                          if (productoDestinoFotoId) {
+                            updateProducto(productoDestinoFotoId, { imagen_url: fotoSeleccionadaGaleria });
+                            soundManager.playSuccessTone();
+                            setFotoSeleccionadaGaleria(null);
+                            setProductoDestinoFotoId("");
+                          } else if (modalProductoAbierto && fotoSeleccionadaGaleria) {
+                            setFormProducto((prev) => ({ ...prev, imagen_url: fotoSeleccionadaGaleria }));
+                            soundManager.playSuccessTone();
+                            setGaleriaFotosAbierta(false);
+                            setFotoSeleccionadaGaleria(null);
+                          }
+                        }}
+                        className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold hover:bg-amber-950 disabled:opacity-40 transition cursor-pointer"
+                      >
+                        ✓ Asignar Foto
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(fotoSeleccionadaGaleria);
+                          soundManager.playTactileClick();
+                        }}
+                        className="p-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-300 transition cursor-pointer"
+                        title="Copiar ruta"
+                      >
+                        <Copy size={14} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setFotoSeleccionadaGaleria(null)}
+                        className="p-2 rounded-xl text-stone-400 hover:text-stone-700 cursor-pointer"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Footer con acción de cierre */}
+                <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/80 flex items-center justify-between text-xs">
+                  <span className="text-stone-500">
+                    Mostrando {REAL_PRODUCT_PHOTOS.length} imágenes auténticas de Dencker Pan
                   </span>
                   <button
                     type="button"
-                    onClick={() => {
-                      soundManager.playClick();
-                      const pageToCategory: Record<number, string> = {
-                        1: "todas",
-                        2: "c_desayunos",
-                        3: "c_chocolates_tes",
-                        4: "c_pasteleria",
-                        5: "c_sandwiches",
-                        6: "c_pizzas",
-                      };
-                      const catTarget = pageToCategory[MENU_PDF_PAGES[paginaPdfActiva]?.page] || "todas";
-                      setFiltroCategoria(catTarget);
-                      setTabActiva("productos");
-                      setModalPdfAbierto(false);
-                    }}
-                    className="ml-2 px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 font-bold border border-amber-500/30 transition flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <UtensilsCrossed size={12} />
-                    <span>Ver Productos de esta Página en Administrador</span>
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    disabled={paginaPdfActiva === 0}
-                    onClick={() => setPaginaPdfActiva((p) => Math.max(0, p - 1))}
-                    className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 disabled:opacity-40 text-stone-300 font-bold cursor-pointer"
-                  >
-                    ← Anterior
-                  </button>
-                  <button
-                    disabled={paginaPdfActiva === MENU_PDF_PAGES.length - 1}
-                    onClick={() => setPaginaPdfActiva((p) => Math.min(MENU_PDF_PAGES.length - 1, p + 1))}
-                    className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 disabled:opacity-40 text-stone-300 font-bold cursor-pointer"
-                  >
-                    Siguiente →
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Modal Galería de Fotos Reales de Panadería (169 Imágenes) ── */}
-      <AnimatePresence>
-        {galeriaFotosAbierta && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-6xl bg-white dark:bg-stone-900 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] border border-stone-200 dark:border-stone-800 overflow-hidden text-stone-900 dark:text-stone-100"
-            >
-              {/* Header Galería */}
-              <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4 bg-stone-50 dark:bg-stone-950/80">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/30">
-                    <ImageIcon size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                      Galería de Fotos Reales del Local
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30">
-                        {REAL_PRODUCT_PHOTOS.length} Fotos Reales
-                      </span>
-                    </h3>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">
-                      {productoParaGaleria
-                        ? `Asignando foto para: "${productoParaGaleria.nombre}" — Haz click en una foto para seleccionarla al instante.`
-                        : "Explora o haz click en cualquier foto para asignarla a cualquier producto del menú o copiar su enlace."}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
-                    <input
-                      type="text"
-                      placeholder="Buscar por archivo..."
-                      value={busquedaFoto}
-                      onChange={(e) => setBusquedaFoto(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none w-44 sm:w-56"
-                    />
-                  </div>
-                  <button
                     onClick={() => {
                       setGaleriaFotosAbierta(false);
                       setProductoParaGaleria(null);
                       setFotoSeleccionadaGaleria(null);
                     }}
-                    className="p-2 rounded-full text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800 transition cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold hover:bg-stone-300 cursor-pointer"
                   >
-                    <X size={20} />
+                    Cerrar Galería
                   </button>
                 </div>
-              </div>
-
-              {/* Barra de Filtros de Fotos */}
-              <div className="px-4 py-2 bg-stone-100/70 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center gap-2 overflow-x-auto text-xs">
-                <button
-                  type="button"
-                  onClick={() => setFiltroTipoFoto("todas")}
-                  className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
-                    filtroTipoFoto === "todas"
-                      ? "bg-amber-900 dark:bg-amber-700 text-white"
-                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
-                  }`}
-                >
-                  Todas ({REAL_PRODUCT_PHOTOS.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFiltroTipoFoto("productos")}
-                  className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
-                    filtroTipoFoto === "productos"
-                      ? "bg-amber-900 dark:bg-amber-700 text-white"
-                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
-                  }`}
-                >
-                  Platos & Masas Reales ({REAL_PRODUCT_PHOTOS.filter((u) => u.includes("/img/products/")).length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFiltroTipoFoto("marca")}
-                  className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
-                    filtroTipoFoto === "marca"
-                      ? "bg-amber-900 dark:bg-amber-700 text-white"
-                      : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-300"
-                  }`}
-                >
-                  Marca & Don Dencker ({REAL_PRODUCT_PHOTOS.filter((u) => u.includes("/img/brand/")).length})
-                </button>
-              </div>
-
-              {/* Grid Scrollable de Fotos */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-stone-100 dark:bg-stone-950">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                  {REAL_PRODUCT_PHOTOS
-                    .filter((fotoUrl) => {
-                      const matchBusqueda = fotoUrl.toLowerCase().includes(busquedaFoto.toLowerCase());
-                      if (!matchBusqueda) return false;
-                      if (filtroTipoFoto === "productos") return fotoUrl.includes("/img/products/");
-                      if (filtroTipoFoto === "marca") return fotoUrl.includes("/img/brand/");
-                      return true;
-                    })
-                    .map((fotoUrl, idx) => {
-                      const fileName = fotoUrl.split("/").pop() || fotoUrl;
-                      const prodUsando = productos.find((p) => p.imagen_url === fotoUrl);
-                      const esSeleccionada = fotoSeleccionadaGaleria === fotoUrl;
-
-                      return (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => {
-                            if (productoParaGaleria) {
-                              soundManager.playSuccessTone();
-                              updateProducto(productoParaGaleria.id, { imagen_url: fotoUrl });
-                              setFormProducto((prev) => ({ ...prev, imagen_url: fotoUrl }));
-                              setGaleriaFotosAbierta(false);
-                              setProductoParaGaleria(null);
-                            } else if (modalProductoAbierto) {
-                              soundManager.playSuccessTone();
-                              setFormProducto((prev) => ({ ...prev, imagen_url: fotoUrl }));
-                              setGaleriaFotosAbierta(false);
-                            } else {
-                              soundManager.playTactileClick();
-                              setFotoSeleccionadaGaleria(fotoUrl);
-                              if (prodUsando) {
-                                setProductoDestinoFotoId(prodUsando.id);
-                              }
-                            }
-                          }}
-                          className={`group relative flex flex-col bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border shadow-xs transition text-left cursor-pointer ${
-                            esSeleccionada
-                              ? "ring-3 ring-amber-500 border-amber-500"
-                              : "border-stone-200 dark:border-stone-800 hover:border-amber-500 dark:hover:border-amber-500"
-                          }`}
-                        >
-                          <div className="relative aspect-square w-full overflow-hidden bg-stone-200 dark:bg-stone-800">
-                            <img
-                              src={fotoUrl}
-                              alt={fileName}
-                              loading="lazy"
-                              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                            />
-                            <div className="absolute inset-0 bg-amber-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-2 text-center">
-                              <CheckCircle2 size={24} className="text-amber-300 mb-1" />
-                              <span className="text-[11px] font-bold">
-                                {productoParaGaleria ? "Asignar Ahora" : "Seleccionar"}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="p-2 space-y-0.5">
-                            <span className="text-[10px] font-mono text-stone-500 dark:text-stone-400 truncate block">
-                              {fileName}
-                            </span>
-                            {prodUsando ? (
-                              <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 truncate block">
-                                ✓ {prodUsando.nombre}
-                              </span>
-                            ) : (
-                              <span className="text-[9px] text-stone-400 dark:text-stone-500 truncate block">
-                                Disponible
-                              </span>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                </div>
-              </div>
-
-              {/* Panel de Asignación si se seleccionó una foto sin producto previo */}
-              {fotoSeleccionadaGaleria && !productoParaGaleria && (
-                <div className="p-3.5 bg-amber-500/10 border-t border-amber-500/20 flex flex-wrap items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src={fotoSeleccionadaGaleria}
-                      alt="Seleccionada"
-                      className="w-10 h-10 rounded-xl object-cover border border-amber-400"
-                    />
-                    <div>
-                      <span className="font-bold text-amber-950 dark:text-amber-200 block">
-                        Foto: {fotoSeleccionadaGaleria.split("/").pop()}
-                      </span>
-                      <span className="text-[11px] text-stone-500 dark:text-stone-400">
-                        {productos.find((p) => p.imagen_url === fotoSeleccionadaGaleria)
-                          ? `Asignada a: ${productos.find((p) => p.imagen_url === fotoSeleccionadaGaleria)?.nombre}`
-                          : "Foto sin asignar a ningún producto"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={productoDestinoFotoId}
-                      onChange={(e) => setProductoDestinoFotoId(e.target.value)}
-                      className="p-2 text-xs rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 max-w-xs focus:outline-none"
-                    >
-                      <option value="">-- Asignar esta foto a un producto --</option>
-                      {productos.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.nombre} (Bs {p.precio.toFixed(2)})
-                        </option>
-                      ))}
-                    </select>
-
-                    <button
-                      type="button"
-                      disabled={!productoDestinoFotoId && !modalProductoAbierto}
-                      onClick={() => {
-                        if (productoDestinoFotoId) {
-                          updateProducto(productoDestinoFotoId, { imagen_url: fotoSeleccionadaGaleria });
-                          soundManager.playSuccessTone();
-                          setFotoSeleccionadaGaleria(null);
-                          setProductoDestinoFotoId("");
-                        } else if (modalProductoAbierto && fotoSeleccionadaGaleria) {
-                          setFormProducto((prev) => ({ ...prev, imagen_url: fotoSeleccionadaGaleria }));
-                          soundManager.playSuccessTone();
-                          setGaleriaFotosAbierta(false);
-                          setFotoSeleccionadaGaleria(null);
-                        }
-                      }}
-                      className="px-3.5 py-2 rounded-xl bg-amber-900 dark:bg-amber-700 text-white font-bold hover:bg-amber-950 disabled:opacity-40 transition cursor-pointer"
-                    >
-                      ✓ Asignar Foto
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(fotoSeleccionadaGaleria);
-                        soundManager.playTactileClick();
-                      }}
-                      className="p-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-300 transition cursor-pointer"
-                      title="Copiar ruta"
-                    >
-                      <Copy size={14} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setFotoSeleccionadaGaleria(null)}
-                      className="p-2 rounded-xl text-stone-400 hover:text-stone-700 cursor-pointer"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Footer con acción de cierre */}
-              <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/80 flex items-center justify-between text-xs">
-                <span className="text-stone-500">
-                  Mostrando {REAL_PRODUCT_PHOTOS.length} imágenes auténticas de Dencker Pan
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGaleriaFotosAbierta(false);
-                    setProductoParaGaleria(null);
-                    setFotoSeleccionadaGaleria(null);
-                  }}
-                  className="px-4 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold hover:bg-stone-300 cursor-pointer"
-                >
-                  Cerrar Galería
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </StaffAuthGuard>
   );

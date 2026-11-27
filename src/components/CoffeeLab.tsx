@@ -518,13 +518,27 @@ export default function CoffeeLab() {
           <div className="lg:col-span-5 sticky top-8 flex justify-center">
             <div className="w-full max-w-md rounded-3xl bg-gradient-to-b from-[#241710] to-[#140D08] border-2 border-[#D49B54]/50 p-6 sm:p-7 shadow-2xl space-y-6 relative overflow-hidden">
               
-              {/* Badge Superior */}
+              {/* Badge Superior con Don Café Sonriente Barista */}
               <div className="flex items-center justify-between text-xs border-b border-white/10 pb-3">
-                <span className="text-[#E6AE68] font-mono font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles size={13} />
-                  <span>Anatomía Visual de la Taza</span>
-                </span>
-                <span className="text-stone-300 font-mono text-xs font-bold">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 shrink-0 relative">
+                    <img
+                      src="/img/brand/mascot-coffee-sun-official.png"
+                      alt="Don Café Sonriente - Barista Oficial"
+                      className="w-full h-full object-contain filter drop-shadow-md"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[#E6AE68] font-mono font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles size={12} />
+                      <span>Anatomía Visual de la Taza</span>
+                    </span>
+                    <span className="text-[10px] text-amber-200/80 font-sans block">
+                      Receta de Barista • Caranavi 4 Llamas
+                    </span>
+                  </div>
+                </div>
+                <span className="text-stone-200 font-mono text-xs font-bold px-2 py-0.5 rounded-full bg-white/10 border border-white/15">
                   {selectedRecipe.volume}
                 </span>
               </div>
@@ -626,6 +640,20 @@ export default function CoffeeLab() {
                     </>
                   )}
                 </motion.button>
+
+                {/* Nota del Barista Ilustrado Don Café Sonriente */}
+                <div className="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-3 flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0">
+                    <img
+                      src="/img/brand/mascot-coffee-sun-official.png"
+                      alt="Don Café Sonriente"
+                      className="w-full h-full object-contain drop-shadow"
+                    />
+                  </div>
+                  <p className="text-[11px] text-amber-200/90 font-serif italic leading-relaxed">
+                    &ldquo;Nuestros granos son tostados artesanalmente en Cochabamba para realzar notas a caramelo y chocolate.&rdquo;
+                  </p>
+                </div>
               </div>
 
             </div>

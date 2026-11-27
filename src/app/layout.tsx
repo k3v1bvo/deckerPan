@@ -53,7 +53,7 @@ export default function RootLayout({
         <Suspense fallback={<div className="h-16 bg-[#160D08]" />}>
           <RoleNav />
         </Suspense>
-        <main className="w-full flex flex-col items-center flex-1">{children}</main>
+        <main className="w-full flex flex-col flex-1">{children}</main>
         <Suspense fallback={null}>
           <CartDrawer />
         </Suspense>

@@ -580,6 +580,29 @@ export default function MesaPage({ params }: PageProps) {
           )}
         </AnimatePresence>
 
+        {/* ── Banner de Bienvenida Oficial con Don Dencker ── */}
+        <div className="p-4 sm:p-4.5 rounded-3xl bg-gradient-to-r from-[#2B1810] to-[#1E130C] border-2 border-amber-500/40 text-white shadow-lg flex items-center justify-between gap-3 relative overflow-hidden">
+          <div className="space-y-1 relative z-10">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold block">
+              ¡Bienvenido a Dencker Pan!
+            </span>
+            <h3 className="font-serif font-black text-base sm:text-lg text-white leading-tight">
+              Mesa {numero} • Experiencia Artesanal
+            </h3>
+            <p className="text-[11px] text-amber-100/80 leading-relaxed font-sans max-w-sm">
+              Pide directamente desde tu mesa. Café de especialidad 4 Llamas y pan de masa madre viva.
+            </p>
+          </div>
+          <div className="w-16 h-20 sm:w-20 sm:h-24 shrink-0 flex items-center justify-center relative z-10">
+            <img
+              src="/img/brand/don-dencker-mascot-official.png"
+              alt="Don Dencker"
+              className="w-full h-full object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+            />
+          </div>
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-amber-500/10 blur-xl pointer-events-none" />
+        </div>
+
         {/* ── Selector de Asiento / Silla para comanda individual en mesa ── */}
         <div className="p-3.5 sm:p-4 rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-[0_2px_12px_rgba(30,19,12,0.04)] space-y-2.5">
           <div className="flex items-center justify-between gap-2">

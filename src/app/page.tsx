@@ -691,13 +691,19 @@ export default function HomePage() {
             {/* Columna Derecha: Foto Real de la Panadería & Vitrina + Mascota y Sello Café 4 Llamas */}
             <div className="lg:col-span-5 relative">
               
-              {/* Mascota Croissant Oficial Flotante */}
-              <div className="absolute -top-6 -right-4 w-20 h-20 sm:w-24 sm:h-24 z-20 drop-shadow-2xl transform rotate-6 hover:rotate-12 transition-transform select-none pointer-events-none">
-                <img
-                  src="/img/brand/mascot-croissant-official.png"
-                  alt="Mascota Croissant Dencker"
-                  className="w-full h-full object-contain"
-                />
+              {/* Mascota Croissant Saltarín Oficial Flotante con Diálogo */}
+              <div className="absolute -top-12 -right-4 sm:-right-8 z-30 flex flex-col items-end select-none pointer-events-none drop-shadow-2xl">
+                <div className="bg-[#FFFDF7] text-[#1E130C] border-2 border-[#D97706] rounded-2xl px-3 py-1.5 shadow-xl mb-1 text-[11px] font-black flex items-center gap-1.5 transform rotate-2">
+                  <span>🥐</span>
+                  <span>¡Recién horneado a las 16:30!</span>
+                </div>
+                <div className="w-28 h-28 sm:w-36 sm:h-36 transform hover:rotate-6 transition-transform">
+                  <img
+                    src="/img/brand/mascot-croissant-official.png"
+                    alt="Croissant Saltarín - Dencker Pan"
+                    className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.45)]"
+                  />
+                </div>
               </div>
 
               <div className="relative rounded-3xl overflow-hidden border-2 border-[#EAE0D3] shadow-2xl group bg-[#1E130C]">
@@ -709,7 +715,7 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
                 {/* Sello Flotante Superior */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none pr-14 sm:pr-24">
                   <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#1E130C] shadow-sm border border-[#D9CDBF] flex items-center gap-1.5">
                     <span>🥖</span> Horneado Diario a Mano
                   </span>
@@ -838,18 +844,18 @@ export default function HomePage() {
           <div className="bg-gradient-to-r from-[#991B24]/95 via-[#7F1D1D] to-[#1E130C] rounded-3xl p-6 sm:p-10 border-2 border-amber-500/30 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
             
             <div className="space-y-3.5 text-left max-w-2xl">
-              {/* Logo Oficial Vectorizado del Menú Dencker (Color Claro Auténtico) */}
-              <div className="mb-4 max-w-[290px] sm:max-w-[360px]">
-                <img
-                  src="/img/brand/logo-menu-dencker-light.svg"
-                  alt="Menú Dencker Oficial"
-                  className="w-full h-auto object-contain filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
-                />
-              </div>
-
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-amber-400/30 text-amber-300 text-xs font-bold shadow-xs">
-                <FileText size={14} />
-                <span>Menú Oficial Impreso • Edición Fiel de 6 Páginas</span>
+              {/* Insignia Oficial Clara de la Carta Impresa */}
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border-2 border-amber-400/60 text-amber-300 font-serif font-black tracking-wider text-xs sm:text-sm shadow-md">
+                  <span>MENÚ DENCKER</span>
+                  <span className="bg-[#991B24] text-white text-[10px] px-2 py-0.5 rounded-full font-mono uppercase font-black border border-amber-400/40">
+                    OFICIAL
+                  </span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold shadow-xs">
+                  <FileText size={13} className="text-amber-300" />
+                  <span>Menú Oficial Impreso • Edición Fiel de 6 Páginas</span>
+                </div>
               </div>
               
               <h2 className="font-serif text-2xl sm:text-4xl font-black text-white leading-tight">
@@ -930,81 +936,87 @@ export default function HomePage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {/* Sello 1: Masa Madre */}
-              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/70 rounded-3xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400/80 rounded-3xl p-6 shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+                <div className="flex items-center gap-5">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center relative group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-lg pointer-events-none" />
                     <img
-                      src="/img/brand/logo-1-chef-hat.svg"
+                      src="/img/brand/logo-1-chef-hat.png"
                       alt="Sombrero Chef e Insignia Maestra"
-                      className="w-full h-full object-contain filter drop-shadow-xs"
+                      className="w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] relative z-10"
                     />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/30">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#991B24] text-white border border-amber-400/40 shadow-xs">
                         100% Artesanal
                       </span>
                     </div>
-                    <h4 className="font-serif font-black text-sm text-amber-200 uppercase tracking-wide">
+                    <h4 className="font-serif font-black text-base text-amber-200 tracking-wide">
                       Masa Madre Viva 24h
                     </h4>
+                    <span className="text-[11px] font-mono text-amber-400/80">Insignia Maestra Dencker</span>
                   </div>
                 </div>
-                <p className="text-xs text-stone-300 leading-relaxed mt-3 pt-3 border-t border-white/10 font-medium">
+                <p className="text-xs text-stone-300 leading-relaxed mt-4 pt-3.5 border-t border-white/10 font-medium">
                   Harinas puras seleccionadas, fermentación lenta en frío durante 24 horas y corteza dorada al horno sin químicos ni aditivos industriales.
                 </p>
               </div>
 
               {/* Sello 2: Café Caranavi */}
-              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/70 rounded-3xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform overflow-hidden">
+              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400/80 rounded-3xl p-6 shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+                <div className="flex items-center gap-5">
+                  <div className="w-24 h-16 sm:w-28 sm:h-18 shrink-0 flex items-center justify-center relative group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-lg pointer-events-none" />
                     <img
                       src="/img/brand/logo-2-dencker-coffee-vintage.png"
                       alt="Boleto Vintage Café Dencker"
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] relative z-10"
                     />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-600 text-stone-950 font-mono font-bold">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-600 text-stone-950 font-mono font-bold shadow-xs">
                         Origen Caranavi
                       </span>
                     </div>
-                    <h4 className="font-serif font-black text-sm text-amber-200 uppercase tracking-wide">
+                    <h4 className="font-serif font-black text-base text-amber-200 tracking-wide">
                       Café Especialidad 4 Llamas
                     </h4>
+                    <span className="text-[11px] font-mono text-amber-400/80">Boleto Clásico Vintage</span>
                   </div>
                 </div>
-                <p className="text-xs text-stone-300 leading-relaxed mt-3 pt-3 border-t border-white/10 font-medium">
+                <p className="text-xs text-stone-300 leading-relaxed mt-4 pt-3.5 border-t border-white/10 font-medium">
                   Microlotes de altura cultivados a 1.600 msnm, tostados artesanalmente en Cochabamba y molidos al instante para espressos y filtrados de autor.
                 </p>
               </div>
 
               {/* Sello 3: Tradición 1993 */}
-              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/70 rounded-3xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-1.5 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
+              <div className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400/80 rounded-3xl p-6 shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+                <div className="flex items-center gap-5">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center relative group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-lg pointer-events-none" />
                     <img
                       src="/img/brand/logo-3-don-dencker-badge.png"
                       alt="Sello Tradición Don Dencker"
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] relative z-10"
                     />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-800 text-emerald-100 border border-emerald-400/30">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-800 text-emerald-100 border border-emerald-400/30 shadow-xs">
                         Desde 1993
                       </span>
                     </div>
-                    <h4 className="font-serif font-black text-sm text-amber-200 uppercase tracking-wide">
+                    <h4 className="font-serif font-black text-base text-amber-200 tracking-wide">
                       Tradición Familiar Don Dencker
                     </h4>
+                    <span className="text-[11px] font-mono text-amber-400/80">Sello Oficial de Calidad</span>
                   </div>
                 </div>
-                <p className="text-xs text-stone-300 leading-relaxed mt-3 pt-3 border-t border-white/10 font-medium">
+                <p className="text-xs text-stone-300 leading-relaxed mt-4 pt-3.5 border-t border-white/10 font-medium">
                   Más de 30 años honrando las recetas clásicas de la panadería europea fusionada con el calor de nuestra gente cochabambina.
                 </p>
               </div>
@@ -1034,32 +1046,37 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-              {/* Mascota 1: Café Sonriente */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
+              {/* Mascota 1: Don Café Sonriente */}
               <div
                 onClick={() => {
                   soundManager.playCoffeeSteam();
                   setCategoriaActiva("c_cafes");
                   document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
-                    <img
-                      src="/img/brand/mascot-coffee-sun-official.png"
-                      alt="Café Sonriente y Sol"
-                      className="w-full h-full object-contain filter drop-shadow-xs"
-                    />
-                  </div>
-                  <div>
+                {/* Escenario del Personaje Ilustrado */}
+                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.22)_0%,transparent_72%)] pointer-events-none" />
+                  <img
+                    src="/img/brand/mascot-coffee-sun-official.png"
+                    alt="Don Café Sonriente y Sol"
+                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
                       Capítulo I • Barismo
                     </span>
-                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
-                      Don Café Sonriente
-                    </h5>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-stone-200 font-bold">
+                      Pág 02
+                    </span>
                   </div>
+                  <h5 className="font-serif font-black text-base text-white group-hover:text-amber-200 transition-colors">
+                    Don Café Sonriente
+                  </h5>
                 </div>
                 <p className="text-xs text-stone-300 font-medium leading-relaxed">
                   Custodia la extracción de granos Caranavi 4 Llamas, espressos dobles, flat whites y chocolates texturizados.
@@ -1069,9 +1086,7 @@ export default function HomePage() {
                     <span>Ver Cafetería</span>
                     <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
-                    Pág 02
-                  </span>
+                  <span className="text-[10px] text-amber-300/70 font-semibold">Carta Oficial</span>
                 </div>
               </div>
 
@@ -1082,24 +1097,29 @@ export default function HomePage() {
                   setCategoriaActiva("c_dulces");
                   document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
-                    <img
-                      src="/img/brand/mascot-croissant-official.png"
-                      alt="Croissant Saltarín"
-                      className="w-full h-full object-contain filter drop-shadow-xs"
-                    />
-                  </div>
-                  <div>
+                {/* Escenario del Personaje Ilustrado */}
+                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(217,119,6,0.22)_0%,transparent_72%)] pointer-events-none" />
+                  <img
+                    src="/img/brand/mascot-croissant-official.png"
+                    alt="Croissant Saltarín"
+                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
                       Capítulo II • Hojaldres
                     </span>
-                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
-                      Croissant Saltarín
-                    </h5>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-stone-200 font-bold">
+                      Pág 04
+                    </span>
                   </div>
+                  <h5 className="font-serif font-black text-base text-white group-hover:text-amber-200 transition-colors">
+                    Croissant Saltarín
+                  </h5>
                 </div>
                 <p className="text-xs text-stone-300 font-medium leading-relaxed">
                   Embajador del hojaldre 100% mantequilla, medialunas doradas, New York rolls y tartaletas horneadas al alba.
@@ -1109,9 +1129,7 @@ export default function HomePage() {
                     <span>Ver Repostería</span>
                     <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
-                    Pág 04
-                  </span>
+                  <span className="text-[10px] text-amber-300/70 font-semibold">Carta Oficial</span>
                 </div>
               </div>
 
@@ -1122,24 +1140,29 @@ export default function HomePage() {
                   setCategoriaActiva("c_sandwiches");
                   document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
-                    <img
-                      src="/img/brand/mascot-sandwich-official.png"
-                      alt="Sándwich Feliz"
-                      className="w-full h-full object-contain filter drop-shadow-xs"
-                    />
-                  </div>
-                  <div>
+                {/* Escenario del Personaje Ilustrado */}
+                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(153,27,36,0.22)_0%,transparent_72%)] pointer-events-none" />
+                  <img
+                    src="/img/brand/mascot-sandwich-official.png"
+                    alt="Sándwich Feliz"
+                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
                       Capítulo III • Sándwiches
                     </span>
-                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
-                      Sándwich Feliz
-                    </h5>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-stone-200 font-bold">
+                      Pág 05
+                    </span>
                   </div>
+                  <h5 className="font-serif font-black text-base text-white group-hover:text-amber-200 transition-colors">
+                    Sándwich Feliz
+                  </h5>
                 </div>
                 <p className="text-xs text-stone-300 font-medium leading-relaxed">
                   Guía de los lomitos gourmet, tostados triples, Croque Monsieur y ciabattas con panes de 24h de fermentación.
@@ -1149,9 +1172,7 @@ export default function HomePage() {
                     <span>Ver Sándwiches</span>
                     <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
-                    Pág 05
-                  </span>
+                  <span className="text-[10px] text-amber-300/70 font-semibold">Carta Oficial</span>
                 </div>
               </div>
 
@@ -1162,24 +1183,29 @@ export default function HomePage() {
                   setCategoriaActiva("c_pizzas");
                   document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/25 hover:border-amber-400/80 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 group cursor-pointer hover:-translate-y-1.5"
+                className="bg-gradient-to-b from-[#24150C] to-[#160D07] border border-amber-500/30 hover:border-amber-400 rounded-3xl p-6 flex flex-col justify-between space-y-4 shadow-2xl hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] transition-all duration-300 group cursor-pointer hover:-translate-y-2 relative overflow-hidden"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFDF7] p-2 flex items-center justify-center shrink-0 border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform">
-                    <img
-                      src="/img/brand/mascot-pizza-official.png"
-                      alt="Pizza Skater con Gafas"
-                      className="w-full h-full object-contain filter drop-shadow-xs"
-                    />
-                  </div>
-                  <div>
+                {/* Escenario del Personaje Ilustrado */}
+                <div className="h-36 sm:h-44 w-full flex items-center justify-center relative my-1 overflow-visible">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.22)_0%,transparent_72%)] pointer-events-none" />
+                  <img
+                    src="/img/brand/mascot-pizza-official.png"
+                    alt="Pizza Skater con Gafas"
+                    className="h-32 sm:h-40 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover:scale-115 group-hover:-translate-y-2 transition-all duration-300"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
                       Capítulo IV • Pizzas
                     </span>
-                    <h5 className="font-serif font-black text-sm text-white group-hover:text-amber-200 transition-colors">
-                      Pizza Skater
-                    </h5>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-stone-200 font-bold">
+                      Pág 06
+                    </span>
                   </div>
+                  <h5 className="font-serif font-black text-base text-white group-hover:text-amber-200 transition-colors">
+                    Pizza Skater
+                  </h5>
                 </div>
                 <p className="text-xs text-stone-300 font-medium leading-relaxed">
                   Maestro de las masas fermentadas 48h, salsa pomodoro casera, queso gratinado y porciones individuales de 4, 6 y 8.
@@ -1189,9 +1215,7 @@ export default function HomePage() {
                     <span>Ver Pizzas</span>
                     <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform text-amber-400" />
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
-                    Pág 06
-                  </span>
+                  <span className="text-[10px] text-amber-300/70 font-semibold">Carta Oficial</span>
                 </div>
               </div>
             </div>
@@ -3392,12 +3416,20 @@ export default function HomePage() {
           {/* Encabezado con Don Dencker */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-[#E6D9C8] pb-8">
             <div className="flex items-center gap-4 sm:gap-6">
-              <div className="w-20 h-24 sm:w-24 sm:h-28 shrink-0 flex items-center justify-center">
-                <img
-                  src="/img/brand/don-dencker-mascot-clean.png"
-                  alt="Don Dencker - Mascota Oficial"
-                  className="w-full h-full object-contain drop-shadow-md select-none transform hover:scale-105 transition-transform duration-300"
-                />
+              <div className="flex items-center gap-4">
+                <div className="w-24 h-32 sm:w-32 sm:h-40 shrink-0 flex items-center justify-center relative">
+                  <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-xl pointer-events-none" />
+                  <img
+                    src="/img/brand/don-dencker-mascot-official.png"
+                    alt="Don Dencker - Mascota Oficial"
+                    className="w-full h-full object-contain drop-shadow-2xl select-none transform hover:scale-105 transition-transform duration-300 relative z-10"
+                  />
+                </div>
+                <div className="hidden sm:flex flex-col justify-center">
+                  <div className="bg-[#FFFDF7] text-[#1E130C] border-2 border-amber-600/40 rounded-2xl px-3.5 py-2 shadow-md text-xs font-serif font-bold italic relative max-w-[210px]">
+                    &ldquo;¡Te esperamos en Av. Salamanca con café recién molido y pan al horno!&rdquo;
+                  </div>
+                </div>
               </div>
               <div>
                 <span className="text-xs uppercase tracking-widest font-extrabold text-[#991B24] block">
