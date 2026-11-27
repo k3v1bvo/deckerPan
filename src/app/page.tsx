@@ -698,6 +698,7 @@ export default function HomePage() {
                 <AnimatedMascot
                   mascot="croissant"
                   animation="bounce"
+                  color="#1E130C"
                   speechBubble="¡Recién horneado a las 16:30!"
                   speechBubblePosition="left"
                   className="w-36 h-36 sm:w-44 sm:h-44"
@@ -1060,7 +1061,8 @@ export default function HomePage() {
                   <AnimatedMascot
                     mascot="taza-sol"
                     animation="float"
-                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    color="#FFFDF7"
+                    className="h-36 sm:h-44 w-auto drop-shadow-[0_6px_24px_rgba(245,158,11,0.35)]"
                     interactive={false}
                   />
                 </div>
@@ -1104,7 +1106,8 @@ export default function HomePage() {
                   <AnimatedMascot
                     mascot="croissant"
                     animation="bounce"
-                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    color="#FFFDF7"
+                    className="h-36 sm:h-44 w-auto drop-shadow-[0_6px_24px_rgba(217,119,6,0.35)]"
                     interactive={false}
                   />
                 </div>
@@ -1148,7 +1151,8 @@ export default function HomePage() {
                   <AnimatedMascot
                     mascot="sandwich"
                     animation="pulse"
-                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    color="#FFFDF7"
+                    className="h-36 sm:h-44 w-auto drop-shadow-[0_6px_24px_rgba(153,27,36,0.35)]"
                     interactive={false}
                   />
                 </div>
@@ -1192,7 +1196,8 @@ export default function HomePage() {
                   <AnimatedMascot
                     mascot="pizza"
                     animation="sway"
-                    className="h-36 sm:h-44 w-auto drop-shadow-2xl"
+                    color="#FFFDF7"
+                    className="h-36 sm:h-44 w-auto drop-shadow-[0_6px_24px_rgba(220,38,38,0.35)]"
                     interactive={false}
                   />
                 </div>
@@ -2286,6 +2291,7 @@ export default function HomePage() {
                     <AnimatedMascot
                       mascot="sandwich"
                       animation="bounce"
+                      color="#1E130C"
                       speechBubble="¿Buscamos otra delicia?"
                       speechBubblePosition="top"
                       className="w-full h-full"
@@ -3465,6 +3471,7 @@ export default function HomePage() {
                   <AnimatedMascot
                     mascot="don-dencker"
                     animation="idle"
+                    color="#1E130C"
                     className="w-full h-full drop-shadow-2xl relative z-10"
                   />
                 </div>

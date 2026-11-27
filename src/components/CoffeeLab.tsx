@@ -526,7 +526,8 @@ export default function CoffeeLab() {
                     <AnimatedMascot
                       mascot="taza-sol"
                       animation="float"
-                      className="w-full h-full"
+                      color="#FFFDF7"
+                      className="w-full h-full drop-shadow-[0_4px_12px_rgba(245,158,11,0.35)]"
                       interactive={false}
                     />
                   </div>
@@ -649,7 +650,8 @@ export default function CoffeeLab() {
                     <AnimatedMascot
                       mascot="taza-sol"
                       animation="float"
-                      className="w-full h-full"
+                      color="#FFFDF7"
+                      className="w-full h-full drop-shadow-[0_4px_12px_rgba(245,158,11,0.35)]"
                       interactive={false}
                     />
                   </div>

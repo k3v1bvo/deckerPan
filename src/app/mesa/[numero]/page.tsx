@@ -598,7 +598,8 @@ export default function MesaPage({ params }: PageProps) {
             <AnimatedMascot
               mascot="don-dencker"
               animation="idle"
-              className="w-full h-full drop-shadow-[0_6px_16px_rgba(0,0,0,0.6)]"
+              color="#FFFDF7"
+              className="w-full h-full drop-shadow-[0_6px_20px_rgba(245,158,11,0.35)]"
             />
           </div>
           <div className="absolute right-0 top-0 bottom-0 w-32 bg-amber-500/10 blur-xl pointer-events-none" />

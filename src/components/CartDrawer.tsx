@@ -298,6 +298,7 @@ export default function CartDrawer() {
                   <AnimatedMascot
                     mascot="croissant"
                     animation="bounce"
+                    color="#1E130C"
                     speechBubble="¡Elige algo delicioso!"
                     speechBubblePosition="top"
                     className="w-full h-full"

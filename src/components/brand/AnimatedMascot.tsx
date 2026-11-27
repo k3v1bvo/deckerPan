@@ -4,6 +4,13 @@ import React from "react";
 import { motion, Variants } from "framer-motion";
 import { soundManager } from "@/lib/sound";
 import { DenckerLogo } from "./DenckerLogo";
+import {
+  CroissantVector,
+  TazaSolVector,
+  SandwichVector,
+  PizzaVector,
+  DonDenckerVector,
+} from "./vectors";
 
 export type MascotType =
   | "croissant"
@@ -253,19 +260,42 @@ export const AnimatedMascot: React.FC<AnimatedMascotProps> = ({
           interactive ? "cursor-pointer" : ""
         }`}
       >
-        {isLogo ? (
+        {isLogo && (
           <DenckerLogo
             className="w-full h-full drop-shadow-md"
-            color={color || "#A02314"}
+            color={color || "#9C2B1D"}
             animated={activeAnim !== "none"}
             interactive={false}
           />
-        ) : (
-          <img
-            src={mascotInfo?.src}
-            alt={mascotInfo?.alt}
-            className="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_16px_rgba(255,255,255,0.15)] transition-transform duration-300"
-            draggable={false}
+        )}
+        {mascot === "croissant" && (
+          <CroissantVector
+            className="w-full h-full filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_16px_rgba(255,255,255,0.15)] transition-colors duration-300"
+            color={color}
+          />
+        )}
+        {(mascot === "taza-sol" || mascot === "coffee") && (
+          <TazaSolVector
+            className="w-full h-full filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_16px_rgba(255,255,255,0.15)] transition-colors duration-300"
+            color={color}
+          />
+        )}
+        {mascot === "sandwich" && (
+          <SandwichVector
+            className="w-full h-full filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_16px_rgba(255,255,255,0.15)] transition-colors duration-300"
+            color={color}
+          />
+        )}
+        {mascot === "pizza" && (
+          <PizzaVector
+            className="w-full h-full filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_16px_rgba(255,255,255,0.15)] transition-colors duration-300"
+            color={color}
+          />
+        )}
+        {(mascot === "don-dencker" || mascot === "personaje") && (
+          <DonDenckerVector
+            className="w-full h-full filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_8px_16px_rgba(255,255,255,0.15)] transition-colors duration-300"
+            color={color}
           />
         )}
       </motion.div>
