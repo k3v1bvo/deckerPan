@@ -22,6 +22,41 @@ export const DonDenckerVector: React.FC<MascotVectorProps> = ({
       {...props}
     >
       <title>{title}</title>
+      {/* ── Vapor de Café Artesanal Animado sobre la taza de Don Dencker ── */}
+      <motion.path
+        d="M425 330 Q418 290 435 250 T422 210"
+        fill="none"
+        stroke={color || "#D97706"}
+        strokeWidth="6"
+        strokeLinecap="round"
+        animate={{
+          d: [
+            "M425 330 Q418 290 435 250 T422 210",
+            "M425 330 Q432 285 418 245 T430 205",
+            "M425 330 Q418 290 435 250 T422 210",
+          ],
+          y: [0, -14, 0],
+          opacity: [0.35, 0.9, 0.35],
+        }}
+        transition={{ duration: 3.0, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.path
+        d="M448 335 Q458 295 440 255 T452 215"
+        fill="none"
+        stroke={color || "#D97706"}
+        strokeWidth="5"
+        strokeLinecap="round"
+        animate={{
+          d: [
+            "M448 335 Q458 295 440 255 T452 215",
+            "M448 335 Q438 290 454 250 T442 210",
+            "M448 335 Q458 295 440 255 T452 215",
+          ],
+          y: [0, -18, 0],
+          opacity: [0.3, 0.8, 0.3],
+        }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+      />
       <path
         fill="currentColor"
         fillRule="evenodd"

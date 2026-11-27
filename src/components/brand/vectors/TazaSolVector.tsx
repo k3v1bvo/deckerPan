@@ -22,6 +22,51 @@ export const TazaSolVector: React.FC<MascotVectorProps> = ({
       {...props}
     >
       <title>{title}</title>
+      {/* ── Pulso cálido del sol naciente ── */}
+      <motion.circle
+        cx="176"
+        cy="80"
+        r="55"
+        fill="#F59E0B"
+        opacity={0.15}
+        animate={{ scale: [1, 1.25, 1], opacity: [0.1, 0.25, 0.1] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      {/* ── Vapor de café humeante animado ── */}
+      <motion.path
+        d="M162 48 Q158 32 165 18 T160 4"
+        fill="none"
+        stroke={color || "#D97706"}
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        animate={{
+          d: [
+            "M162 48 Q158 32 165 18 T160 4",
+            "M162 48 Q166 30 159 16 T164 2",
+            "M162 48 Q158 32 165 18 T160 4",
+          ],
+          y: [0, -6, 0],
+          opacity: [0.35, 0.85, 0.35],
+        }}
+        transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.path
+        d="M182 52 Q188 36 180 22 T186 8"
+        fill="none"
+        stroke={color || "#D97706"}
+        strokeWidth="3"
+        strokeLinecap="round"
+        animate={{
+          d: [
+            "M182 52 Q188 36 180 22 T186 8",
+            "M182 52 Q176 34 184 20 T180 6",
+            "M182 52 Q188 36 180 22 T186 8",
+          ],
+          y: [0, -8, 0],
+          opacity: [0.3, 0.75, 0.3],
+        }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+      />
       <path
         fill="currentColor"
         fillRule="evenodd"

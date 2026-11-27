@@ -1102,13 +1102,14 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+              <div className="p-4 sm:p-5 bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-sm space-y-4">
+                {/* Fila 1: Pestañas de Categorías con Scroll Limpio */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none w-full">
                   <button
                     onClick={() => setFiltroCategoria("todas")}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer transition ${filtroCategoria === "todas"
-                      ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
-                      : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+                    className={`px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap cursor-pointer transition select-none shrink-0 ${filtroCategoria === "todas"
+                      ? "bg-amber-900 text-white shadow-sm ring-2 ring-amber-500/40"
+                      : "bg-stone-100 text-stone-700 hover:bg-stone-200 hover:text-stone-900 border border-stone-200"
                       }`}
                   >
                     Todas ({productos.length})
@@ -1117,9 +1118,9 @@ export default function AdminPage() {
                     <button
                       key={c.id}
                       onClick={() => setFiltroCategoria(c.id)}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 cursor-pointer transition ${filtroCategoria === c.id
-                        ? "bg-amber-900 dark:bg-amber-700 text-white shadow-xs"
-                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200"
+                      className={`px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap flex items-center gap-1.5 cursor-pointer transition select-none shrink-0 ${filtroCategoria === c.id
+                        ? "bg-amber-900 text-white shadow-sm ring-2 ring-amber-500/40"
+                        : "bg-stone-100 text-stone-700 hover:bg-stone-200 hover:text-stone-900 border border-stone-200"
                         }`}
                     >
                       <span>{c.emoji}</span>
@@ -1128,61 +1129,71 @@ export default function AdminPage() {
                   ))}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+                {/* Fila 2: Barra de Herramientas (Búsqueda + Toggle Vista + PDF) */}
+                <div className="pt-3 border-t border-stone-200 flex flex-wrap items-center justify-between gap-3">
+                  <div className="relative flex-1 min-w-[200px] max-w-md">
+                    <Search size={15} className="absolute left-3.5 top-2.5 text-stone-400" />
                     <input
                       type="text"
-                      placeholder="Buscar producto o receta..."
+                      placeholder="Buscar producto o receta por nombre..."
                       value={busquedaProducto}
                       onChange={(e) => setBusquedaProducto(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500 w-44 sm:w-56"
+                      className="w-full pl-9 pr-8 py-2 text-xs font-semibold rounded-xl border border-stone-300 bg-stone-50 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                     />
+                    {busquedaProducto && (
+                      <button
+                        onClick={() => setBusquedaProducto("")}
+                        className="absolute right-2.5 top-2 text-stone-400 hover:text-stone-700 text-xs p-0.5"
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
 
-                  {/* Selector Vista Tarjetas vs Tabla */}
-                  <div className="flex items-center p-1 bg-stone-100 dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundManager.playTactileClick();
-                        setVistaProductosModo("tarjetas");
-                      }}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${vistaProductosModo === "tarjetas"
-                        ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs"
-                        : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
-                        }`}
-                      title="Vista Cuadrícula de Tarjetas"
-                    >
-                      <Layers size={13} />
-                      <span className="hidden sm:inline">Tarjetas</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundManager.playTactileClick();
-                        setVistaProductosModo("tabla");
-                      }}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${vistaProductosModo === "tabla"
-                        ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs"
-                        : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
-                        }`}
-                      title="Vista Planilla / Tabla de Precios Rápida"
-                    >
-                      <BarChart3 size={13} />
-                      <span className="hidden sm:inline">Planilla Precios</span>
-                    </button>
-                  </div>
+                  <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+                    {/* Selector Vista Tarjetas vs Tabla */}
+                    <div className="flex items-center p-1 bg-stone-100 rounded-xl border border-stone-200">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          setVistaProductosModo("tarjetas");
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1.5 cursor-pointer ${vistaProductosModo === "tarjetas"
+                          ? "bg-white text-stone-900 shadow-sm"
+                          : "text-stone-600 hover:text-stone-900"
+                          }`}
+                        title="Vista Cuadrícula de Tarjetas"
+                      >
+                        <Layers size={13} />
+                        <span>Tarjetas</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundManager.playTactileClick();
+                          setVistaProductosModo("tabla");
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1.5 cursor-pointer ${vistaProductosModo === "tabla"
+                          ? "bg-white text-stone-900 shadow-sm"
+                          : "text-stone-600 hover:text-stone-900"
+                          }`}
+                        title="Vista Planilla / Tabla de Precios Rápida"
+                      >
+                        <BarChart3 size={13} />
+                        <span>Planilla Precios</span>
+                      </button>
+                    </div>
 
-                  {/* Botón Ver PDF Oficial */}
-                  <button
-                    onClick={() => {
-                      soundManager.playClick();
-                      setModalPdfAbierto(true);
-                    }}
-                    className="px-3.5 py-2 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 font-bold text-xs border border-amber-300/60 dark:border-amber-800 hover:bg-amber-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer"
-                    title="Ver las 6 páginas del Menú Dencker original"
-                  >
+                    {/* Botón Ver PDF Oficial */}
+                    <button
+                      onClick={() => {
+                        soundManager.playClick();
+                        setModalPdfAbierto(true);
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-amber-100 text-amber-900 font-black text-xs border border-amber-300 hover:bg-amber-200 transition flex items-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer shadow-2xs"
+                      title="Ver las 6 páginas del Menú Dencker original"
+                    >
                     <FileText size={15} className="text-amber-700 dark:text-amber-400" />
                     <span className="hidden sm:inline">Menú Oficial PDF</span>
                     <span className="sm:hidden">PDF</span>
@@ -1212,6 +1223,7 @@ export default function AdminPage() {
                   </button>
                 </div>
               </div>
+            </div>
 
               {/* Hint informativo para el admin */}
               <div className="flex items-center justify-between text-xs px-4 py-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-300">

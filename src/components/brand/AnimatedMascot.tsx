@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { soundManager } from "@/lib/sound";
 import { DenckerLogo } from "./DenckerLogo";
@@ -21,6 +21,61 @@ export type MascotType =
   | "don-dencker"
   | "personaje"
   | "logo";
+
+export const MASCOT_JOKES: Record<string, string[]> = {
+  croissant: [
+    "¡Tengo 72 capas de puro hojaldre y mantequilla!",
+    "¡Cuidado que salgo volando con la brisa de la tarde!",
+    "¡Soy más crujiente que chisme en la plaza 14 de Septiembre!",
+    "¡Salgo calientito a las 16:30, no te quedes sin mí!",
+    "¡Una mordida y se te reinicia la vida!",
+    "¡La mantequilla francesa y yo somos uno solo!",
+  ],
+  "taza-sol": [
+    "¡Granos de Caranavi a 1,700 metros... más alto que tus metas!",
+    "¡Un espresso doble y despiertas hasta a la abuela!",
+    "¡Sonríe, que el café de especialidad ya está servido!",
+    "¡El sol de Cochabamba huele a café recién tostado!",
+    "¡Sin buen café no hay paraíso, caserito!",
+    "¡Catuaí lavado con notas a chocolate y avellana!",
+  ],
+  coffee: [
+    "¡Granos de Caranavi a 1,700 metros... más alto que tus metas!",
+    "¡Un espresso doble y despiertas hasta a la abuela!",
+    "¡Sonríe, que el café de especialidad ya está servido!",
+    "¡El sol de Cochabamba huele a café recién tostado!",
+  ],
+  sandwich: [
+    "¡Con pancito ciabatta de 24h soy todo un galán!",
+    "¡Un lomito bien armado alegra cualquier día nublado!",
+    "¡Pulgar arriba porque la palta está en su punto perfecto!",
+    "¡El secreto es el queso fundido con amor cochabambino!",
+    "¡Pide tu pan a elección, aquí mandas tú!",
+  ],
+  pizza: [
+    "¡Masa de 48h rodando por toda la Salamanca!",
+    "¡Uso gafas oscuras porque este queso gratinado brilla mucho!",
+    "¡4, 6 u 8 porciones... igual te la terminas toda!",
+    "¡Horno de piedra con fuego vivo, nada de microondas!",
+    "¡El tomate fresco es mi patineta favorita!",
+  ],
+  "don-dencker": [
+    "¡Desde 1993 alimentando a las familias qhochalas con amor!",
+    "¡La masa madre no tiene apuro, el buen pan toma su tiempo!",
+    "¡El café se toma caliente y la vida con una medialuna!",
+    "¡Pasa a la mesa, hoy horneamos doble tanda fresca!",
+    "¡En Dencker Pan no hay clientes, hay amigos de la casa!",
+  ],
+  personaje: [
+    "¡Desde 1993 alimentando a las familias qhochalas con amor!",
+    "¡La masa madre no tiene apuro, el buen pan toma su tiempo!",
+    "¡El café se toma caliente y la vida con una medialuna!",
+  ],
+  logo: [
+    "¡Dencker Pan: Masa madre viva y tradición familiar!",
+    "¡El auténtico sabor europeo en el corazón de Cochabamba!",
+  ],
+};
 
 export type AnimationType =
   | "bounce"
@@ -205,6 +260,12 @@ export const AnimatedMascot: React.FC<AnimatedMascotProps> = ({
   const activeAnim = animation || (mascotInfo ? mascotInfo.defaultAnim : "float");
   const selectedVariant = animationVariants[activeAnim] || animationVariants.float;
 
+  const jokes = MASCOT_JOKES[mascot] || MASCOT_JOKES.croissant;
+  const [jokeIndex, setJokeIndex] = useState<number>(-1);
+
+  // El texto activo es el chiste interactivo si se ha clickeado, o el speechBubble original si fue suministrado
+  const activeBubble = jokeIndex >= 0 ? jokes[jokeIndex % jokes.length] : speechBubble;
+
   const handleClick = () => {
     if (interactive) {
       if (mascot === "croissant") soundManager.playPastryCrinkle();
@@ -212,29 +273,33 @@ export const AnimatedMascot: React.FC<AnimatedMascotProps> = ({
       else if (mascot === "sandwich") soundManager.playBreadCrunch();
       else if (mascot === "pizza") soundManager.playPorcelainTink();
       else soundManager.playClick();
+
+      // Avanzar al siguiente chiste divertido de panadería
+      setJokeIndex((prev) => prev + 1);
     }
     if (onClick) onClick();
   };
 
   return (
     <div className={`relative inline-flex flex-col items-center select-none ${className}`}>
-      {/* Globo de Diálogo de Cómic Opcional */}
-      {speechBubble && (
+      {/* Globo de Diálogo de Cómic Opcional o Interactivo */}
+      {activeBubble && (
         <motion.div
-          initial={{ opacity: 0, y: 8, scale: 0.9 }}
+          key={activeBubble}
+          initial={{ opacity: 0, y: 8, scale: 0.88 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.35, ease: "easeOut" }}
-          className={`absolute z-30 pointer-events-none whitespace-nowrap shadow-xl px-3.5 py-1.5 rounded-2xl bg-[#FFFDF7] text-[#1E130C] border-2 border-[#D97706] text-xs font-black flex items-center gap-1.5 ${
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className={`absolute z-30 pointer-events-none whitespace-nowrap shadow-xl px-3.5 py-1.5 rounded-2xl bg-[#FFFDF7] text-[#1E130C] border-2 border-[#D97706] text-xs font-black flex items-center gap-1.5 max-w-[280px] sm:max-w-xs text-wrap text-center leading-snug ${
             speechBubblePosition === "top"
-              ? "-top-10 left-1/2 -translate-x-1/2 rotate-1"
+              ? "-top-12 left-1/2 -translate-x-1/2 rotate-1"
               : speechBubblePosition === "bottom"
-              ? "-bottom-10 left-1/2 -translate-x-1/2 -rotate-1"
+              ? "-bottom-12 left-1/2 -translate-x-1/2 -rotate-1"
               : speechBubblePosition === "left"
               ? "right-full mr-3 top-1/2 -translate-y-1/2 -rotate-2"
               : "left-full ml-3 top-1/2 -translate-y-1/2 rotate-2"
           }`}
         >
-          <span>{speechBubble}</span>
+          <span>{activeBubble}</span>
           <div
             className={`absolute w-2.5 h-2.5 bg-[#FFFDF7] border-b-2 border-r-2 border-[#D97706] transform ${
               speechBubblePosition === "top"

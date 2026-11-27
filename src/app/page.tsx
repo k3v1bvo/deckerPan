@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import CoffeeLab from "@/components/CoffeeLab";
 import { DenckerLogo, AnimatedMascot } from "@/components/brand";
+import { TazaSolVector, DonDenckerVector, CroissantVector } from "@/components/brand/vectors";
 import { useSystemStore, useCartStore, useUIStore } from "@/store";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS, SEED_CATEGORIAS, SEED_PRODUCTOS } from "@/lib/seed-data";
@@ -482,31 +483,59 @@ export default function HomePage() {
         const nom = normalizeSearch(p.nombre);
         const desc = normalizeSearch(p.descripcion || "");
 
-        // Coincidencia directa en nombre o descripción
-        if (nom.includes(termClean) || desc.includes(termClean)) return true;
+        // Coincidencia directa en nombre, descripción o categoría
+        if (
+          nom.includes(termClean) ||
+          desc.includes(termClean) ||
+          (p.categoria_id && normalizeSearch(p.categoria_id).includes(termClean))
+        ) {
+          return true;
+        }
+
+        // Búsqueda por palabras múltiples (ej. "cafe caranavi", "croissant mantequilla")
+        const words = termClean.split(/\s+/).filter(Boolean);
+        if (words.length > 1 && words.every((w) => nom.includes(w) || desc.includes(w))) {
+          return true;
+        }
 
         // Alias y sinónimos comunes de panadería y cafetería artesanal
         if (
           (termClean.includes("capuchino") || termClean.includes("cappuccino")) &&
-          (nom.includes("cappuccino") || nom.includes("capuchino") || nom.includes("cafe") || nom.includes("latte"))
+          (nom.includes("cappuccino") ||
+            nom.includes("capuchino") ||
+            nom.includes("cafe") ||
+            nom.includes("latte") ||
+            p.categoria_id === "c_cafes" ||
+            p.categoria_id === "c_lattes")
         ) {
           return true;
         }
         if (
           (termClean.includes("espresso") || termClean.includes("expreso")) &&
-          (nom.includes("espresso") || nom.includes("expreso") || nom.includes("cafe"))
+          (nom.includes("espresso") ||
+            nom.includes("expreso") ||
+            nom.includes("cafe") ||
+            p.categoria_id === "c_cafes")
         ) {
           return true;
         }
         if (
           (termClean.includes("croissant") || termClean.includes("cruasan") || termClean.includes("medialuna")) &&
-          (nom.includes("croissant") || nom.includes("cruasan") || nom.includes("roll"))
+          (nom.includes("croissant") ||
+            nom.includes("cruasan") ||
+            nom.includes("medialuna") ||
+            nom.includes("roll") ||
+            p.categoria_id === "c_dulces")
         ) {
           return true;
         }
         if (
           (termClean.includes("sandwich") || termClean.includes("sanduche") || termClean.includes("emparedado")) &&
-          (nom.includes("sandwich") || nom.includes("sandwiches") || p.categoria_id === "c_sandwiches")
+          (nom.includes("sandwich") ||
+            nom.includes("sandwiches") ||
+            nom.includes("lomito") ||
+            nom.includes("ciabatta") ||
+            p.categoria_id === "c_sandwiches")
         ) {
           return true;
         }
@@ -748,15 +777,15 @@ export default function HomePage() {
             {/* Columna Derecha: Foto Real de la Panadería & Vitrina + Mascota y Sello Café 4 Llamas */}
             <div className="lg:col-span-5 relative">
               
-              {/* Mascota Croissant Saltarín Oficial Flotante con Diálogo (libre de colisión) */}
-              <div className="absolute -top-14 -right-1 sm:-right-4 z-30 flex flex-col items-end select-none pointer-events-auto drop-shadow-2xl">
+              {/* Mascota Croissant Saltarín Oficial Flotante con Diálogo Interactivo (libre de colisión) */}
+              <div className="absolute -top-16 -right-4 sm:-right-8 z-30 flex flex-col items-end select-none pointer-events-auto drop-shadow-2xl">
                 <AnimatedMascot
                   mascot="croissant"
                   animation="bounce"
                   color="#1E130C"
-                  speechBubble="¡Recién horneado a las 16:30!"
-                  speechBubblePosition="left"
-                  className="w-40 h-40 sm:w-48 sm:h-48"
+                  speechBubble="¡Tócame para un chiste!"
+                  speechBubblePosition="bottom"
+                  className="w-36 h-36 sm:w-44 sm:h-44"
                 />
               </div>
 
@@ -768,8 +797,8 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-                {/* Sello Flotante Superior: agrupado a la izquierda sin colisionar con la mascota */}
-                <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2 z-10 pointer-events-none max-w-[calc(100%-150px)] sm:max-w-md">
+                {/* Sellos Flotantes Superiores: agrupados a la izquierda sin tocar la mascota */}
+                <div className="absolute top-4 left-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 z-10 pointer-events-none max-w-xs">
                   <span className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#1E130C] shadow-sm border border-[#D9CDBF] flex items-center gap-1.5">
                     <span>🥖</span> Horneado Diario a Mano
                   </span>
@@ -779,49 +808,34 @@ export default function HomePage() {
                   </span>
                 </div>
 
-                {/* Pie de Foto Editorial con Mini Badge Don Dencker */}
-                <div className="absolute bottom-5 left-5 right-5 text-white space-y-2 z-10">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 p-0.5 overflow-hidden shrink-0">
-                      <img
-                        src={DENCKER_ASSETS.badgeClean}
-                        alt="Don Dencker"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5 text-xs text-amber-300 font-semibold">
-                        <Sparkles size={13} />
-                        <span>Especialidades Dencker Pan & Café</span>
+                {/* Sello Inferior Dockeado: Café 4 Llamas & Especialidades Dencker Pan */}
+                <div className="absolute bottom-4 left-4 right-4 z-20">
+                  <div className="bg-[#1E130C]/90 backdrop-blur-md border border-amber-500/40 p-3 sm:p-3.5 rounded-2xl shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-xl bg-amber-950/80 p-1 border border-amber-500/40 flex items-center justify-center shrink-0">
+                        <img
+                          src={DENCKER_ASSETS.cafeCatuai}
+                          alt="Café 4 Llamas"
+                          className="w-full h-full object-contain drop-shadow"
+                        />
                       </div>
-                      <h3 className="font-serif text-lg sm:text-xl font-bold leading-tight">
-                        Pastelería Fina & Café 4 Llamas de Especialidad
-                      </h3>
+                      <div>
+                        <span className="text-[9px] font-mono text-amber-400 font-bold uppercase tracking-wider block">
+                          Café de Especialidad Boliviano
+                        </span>
+                        <h4 className="font-serif font-black text-sm text-white leading-tight">
+                          4 Llamas • Caranavi 1,700 msnm
+                        </h4>
+                        <span className="text-[10px] text-stone-300 block">
+                          Variedad Catuaí Lavado • Masa Madre Viva 24h
+                        </span>
+                      </div>
+                    </div>
+                    <div className="hidden sm:flex items-center gap-1.5 text-xs text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 px-3 py-1.5 rounded-xl self-end sm:self-center shrink-0">
+                      <Sparkles size={13} />
+                      <span>Av. Salamanca</span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-stone-300 line-clamp-1">
-                    Av. Daniel Salamanca, Cochabamba • Tueste fresco y masa madre de 24 horas
-                  </p>
-                </div>
-              </div>
-
-              {/* Sello Flotante Inferior: Café 4 Llamas de Altura */}
-              <div className="absolute -bottom-5 -left-4 bg-[#1E130C]/95 border-2 border-amber-500/50 p-2.5 sm:p-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-md z-20">
-                <div className="w-11 h-11 rounded-xl bg-amber-950/60 p-1 border border-amber-500/30 flex items-center justify-center shrink-0">
-                  <img
-                    src={DENCKER_ASSETS.cafeCatuai}
-                    alt="Café 4 Llamas"
-                    className="w-full h-full object-contain drop-shadow"
-                  />
-                </div>
-                <div>
-                  <span className="text-[9px] font-mono text-amber-400 font-bold uppercase tracking-wider block">
-                    Café de Especialidad Boliviano
-                  </span>
-                  <h4 className="font-serif font-black text-xs text-white">
-                    4 Llamas • Caranavi 1,700 msnm
-                  </h4>
-                  <span className="text-[10px] text-stone-300 block">Variedad Catuaí Lavado</span>
                 </div>
               </div>
 
@@ -1025,75 +1039,63 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="space-y-3.5">
-                    {/* Sello 1: Masa Madre */}
-                    <div className="p-4 sm:p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-amber-500/30 transition-all flex items-start gap-4 group">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#2E1A10] to-[#1E110A] border border-amber-400/40 p-2 shrink-0 flex items-center justify-center shadow-lg group-hover:scale-105 transition">
-                        <img
-                          src="/img/brand/logo-1-chef-hat.png"
-                          alt="Sombrero Chef e Insignia Maestra"
-                          className="w-full h-full object-contain filter drop-shadow"
-                        />
+                  <div className="space-y-4">
+                    {/* Sello 1: Masa Madre Viva (Vector Puro Desencasillado) */}
+                    <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-500/30 hover:border-amber-400/70 transition-all flex items-center gap-5 group shadow-lg">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center drop-shadow-[0_8px_20px_rgba(245,158,11,0.5)] group-hover:scale-110 transition-transform duration-300">
+                        <DenckerLogo className="w-full h-full" color="#F59E0B" animated={true} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h4 className="font-serif font-black text-base text-amber-200">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h4 className="font-serif font-black text-lg text-amber-200">
                             Masa Madre Viva 24 Horas
                           </h4>
-                          <span className="text-[9px] font-mono px-2 py-0.2 rounded-full bg-[#991B24] text-white font-bold">
-                            Insignia Maestra
+                          <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#991B24] text-white font-bold tracking-wider">
+                            100% ARTESANAL
                           </span>
                         </div>
-                        <p className="text-xs text-stone-300 leading-relaxed font-sans">
-                          Fermentación biológica lenta en frío. Desarrolla alveolos perfectos, aroma rústico inigualable y máxima digestibilidad sin levaduras químicas.
+                        <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-sans">
+                          Fermentación biológica lenta en frío. Desarrolla alveolos rústicos, aroma inconfundible y máxima digestibilidad sin aditivos industriales.
                         </p>
                       </div>
                     </div>
 
-                    {/* Sello 2: Café Caranavi */}
-                    <div className="p-4 sm:p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-amber-500/30 transition-all flex items-start gap-4 group">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#2E1A10] to-[#1E110A] border border-amber-400/40 p-2 shrink-0 flex items-center justify-center shadow-lg group-hover:scale-105 transition">
-                        <img
-                          src="/img/brand/logo-2-dencker-coffee-vintage.png"
-                          alt="Boleto Vintage Café Dencker"
-                          className="w-full h-full object-contain filter drop-shadow"
-                        />
+                    {/* Sello 2: Café Caranavi (Vector Animado con Sol y Vapor Humeante) */}
+                    <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-500/30 hover:border-amber-400/70 transition-all flex items-center gap-5 group shadow-lg">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center drop-shadow-[0_8px_24px_rgba(217,119,6,0.6)] group-hover:scale-110 transition-transform duration-300">
+                        <TazaSolVector className="w-full h-full" color="#FFFDF7" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h4 className="font-serif font-black text-base text-amber-200">
-                            Café de Especialidad 4 Llamas (1,700 msnm)
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h4 className="font-serif font-black text-lg text-amber-200">
+                            Café de Especialidad 4 Llamas
                           </h4>
-                          <span className="text-[9px] font-mono px-2 py-0.2 rounded-full bg-amber-600 text-stone-950 font-bold">
-                            Boleto Vintage
+                          <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amber-600 text-stone-950 font-black tracking-wider">
+                            ORIGEN CARANAVI 1,700M
                           </span>
                         </div>
-                        <p className="text-xs text-stone-300 leading-relaxed font-sans">
-                          Granos Catuaí Lavado de altura cosechados en Caranavi. Tueste medio artesanal en Cochabamba con notas a chocolate amargo, caramelo y cítrico brillante.
+                        <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-sans">
+                          Microlotes de altura cultivados a 1,700 msnm en Caranavi. Tostado artesanalmente en Cochabamba y molido al instante para espressos y filtrados de autor.
                         </p>
                       </div>
                     </div>
 
-                    {/* Sello 3: Tradición Familiar */}
-                    <div className="p-4 sm:p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-amber-500/30 transition-all flex items-start gap-4 group">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#2E1A10] to-[#1E110A] border border-amber-400/40 p-2 shrink-0 flex items-center justify-center shadow-lg group-hover:scale-105 transition">
-                        <img
-                          src="/img/brand/logo-3-don-dencker-badge.png"
-                          alt="Sello Tradición Don Dencker"
-                          className="w-full h-full object-contain filter drop-shadow"
-                        />
+                    {/* Sello 3: Tradición Don Dencker (Vector Don Dencker Auténtico con Vapor) */}
+                    <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-500/30 hover:border-amber-400/70 transition-all flex items-center gap-5 group shadow-lg">
+                      <div className="w-18 h-24 sm:w-22 sm:h-28 shrink-0 flex items-center justify-center drop-shadow-[0_8px_24px_rgba(255,255,255,0.4)] group-hover:scale-110 transition-transform duration-300">
+                        <DonDenckerVector className="w-full h-full" color="#FFFDF7" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h4 className="font-serif font-black text-base text-amber-200">
-                            Tradición &amp; Familia desde 1993
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h4 className="font-serif font-black text-lg text-amber-200">
+                            Tradición Familiar Don Dencker
                           </h4>
-                          <span className="text-[9px] font-mono px-2 py-0.2 rounded-full bg-emerald-800 text-emerald-100 font-bold">
-                            Sello Oficial
+                          <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-700 text-white font-bold tracking-wider">
+                            DESDE 1993
                           </span>
                         </div>
-                        <p className="text-xs text-stone-300 leading-relaxed font-sans">
-                          Más de tres décadas de oficio panadero ininterrumpido. Servicio cercano, horneado continuo en tandas de mañana y tarde para garantizar frescura real.
+                        <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-sans">
+                          Más de 30 años honrando las recetas clásicas de la panadería europea fusionada con el calor y hospitalidad de nuestra gente cochabambina.
                         </p>
                       </div>
                     </div>
@@ -1142,8 +1144,10 @@ export default function HomePage() {
                     mascot="taza-sol"
                     animation="float"
                     color="#FFFDF7"
+                    speechBubble="¡Tócame para un secreto!"
+                    speechBubblePosition="top"
                     className="h-44 sm:h-52 w-auto drop-shadow-[0_8px_28px_rgba(245,158,11,0.45)] group-hover:scale-108 transition-transform duration-300"
-                    interactive={false}
+                    interactive={true}
                   />
                 </div>
                 <div>
@@ -1186,8 +1190,10 @@ export default function HomePage() {
                     mascot="croissant"
                     animation="bounce"
                     color="#FFFDF7"
+                    speechBubble="¡72 capas de hojaldre!"
+                    speechBubblePosition="top"
                     className="h-44 sm:h-52 w-auto drop-shadow-[0_8px_28px_rgba(217,119,6,0.45)] group-hover:scale-108 transition-transform duration-300"
-                    interactive={false}
+                    interactive={true}
                   />
                 </div>
                 <div>
@@ -1230,8 +1236,10 @@ export default function HomePage() {
                     mascot="sandwich"
                     animation="pulse"
                     color="#FFFDF7"
+                    speechBubble="¡Pan ciabatta de 24h!"
+                    speechBubblePosition="top"
                     className="h-44 sm:h-52 w-auto drop-shadow-[0_8px_28px_rgba(153,27,36,0.45)] group-hover:scale-108 transition-transform duration-300"
-                    interactive={false}
+                    interactive={true}
                   />
                 </div>
                 <div>
@@ -1274,8 +1282,10 @@ export default function HomePage() {
                     mascot="pizza"
                     animation="sway"
                     color="#FFFDF7"
+                    speechBubble="¡Horno de piedra 48h!"
+                    speechBubblePosition="top"
                     className="h-44 sm:h-52 w-auto drop-shadow-[0_8px_28px_rgba(220,38,38,0.45)] group-hover:scale-108 transition-transform duration-300"
-                    interactive={false}
+                    interactive={true}
                   />
                 </div>
                 <div>
@@ -1909,8 +1919,8 @@ export default function HomePage() {
 
             {/* Fila 4: Pestañas de Categoría con Mascotas Auténticas en Vector (100% legibles, sin recortes en bordes) */}
             {(modoPresentacion === "categoria" || busqueda !== "") && (
-              <div className="w-full relative px-1 sm:px-0">
-                <div className="flex items-center gap-2 overflow-x-auto py-2.5 px-3 sm:px-4 scrollbar-none justify-start lg:justify-center flex-nowrap lg:flex-wrap">
+              <div className="w-full relative overflow-hidden rounded-2xl">
+                <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto py-2.5 px-4 sm:px-6 scroll-px-6 scrollbar-none justify-start flex-nowrap lg:flex-wrap lg:justify-center">
                   {[
                     { id: "todos", label: "Todos (114)", icon: UtensilsCrossed, sound: "tactile" },
                     { id: "c_desayunos", label: "Desayunos", mascot: "croissant" as const, sound: "pastry" },
