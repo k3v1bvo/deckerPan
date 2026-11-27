@@ -473,6 +473,11 @@ export default function HomePage() {
 
       if (!matchBusqueda) return false;
 
+      // Si hay una búsqueda activa, buscar en todo el catálogo sin restricción de categoría previa
+      if (busqueda && busqueda.trim().length > 0) {
+        return true;
+      }
+
       if (categoriaActiva === "bebidas") {
         return esBebidaEnvasada(p);
       }
@@ -1680,27 +1685,27 @@ export default function HomePage() {
           </div>
 
           {/* Barra de Control de Navegación del Menú (Modo General vs Por Categoría + Filtro de Fotos) */}
-          <div className="max-w-4xl mx-auto w-full space-y-4">
+          <div className="w-full max-w-5xl mx-auto space-y-4">
             
             {/* Fila 1: Selector de Modo (General / Categoría) y Switcher de Fotos (Exterior / Corte Interior) */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2.5 rounded-2xl bg-white border border-[#EAE2D5] shadow-xs">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl bg-white border-2 border-[#D5C7B5] shadow-xs">
               
               {/* Selector Modo Presentación */}
-              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#F5EFEB]">
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#FAF7F2] border border-[#EAE2D5]">
                 <button
                   type="button"
                   onClick={() => {
                     soundManager.playTactileClick();
                     setModoPresentacion("general");
                   }}
-                  className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
                     modoPresentacion === "general"
-                      ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
+                      ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm font-black"
                       : "text-[#785E4F] hover:text-[#1E130C]"
                   }`}
                 >
                   <LayoutGrid size={14} />
-                  <span>Vista General (Menú Completo)</span>
+                  <span>Menú Completo</span>
                 </button>
                 <button
                   type="button"
@@ -1708,23 +1713,23 @@ export default function HomePage() {
                     soundManager.playTactileClick();
                     setModoPresentacion("categoria");
                   }}
-                  className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
                     modoPresentacion === "categoria"
-                      ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
+                      ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm font-black"
                       : "text-[#785E4F] hover:text-[#1E130C]"
                   }`}
                 >
                   <ListFilter size={14} />
-                  <span>Por Categoría</span>
+                  <span>Por Categorías</span>
                 </button>
               </div>
 
               {/* Selector Global de Fotos: Exterior vs Corte Interior Artesanal */}
               <div className="flex items-center justify-between sm:justify-end gap-2 px-1">
-                <span className="text-[11px] font-bold text-[#A8988D] uppercase tracking-wider hidden sm:inline">
+                <span className="text-[11px] font-bold text-[#785E4F] uppercase tracking-wider hidden sm:inline">
                   Fotos:
                 </span>
-                <div className="flex items-center gap-1 p-1 rounded-xl bg-[#F5EFEB]">
+                <div className="flex items-center gap-1 p-1 rounded-xl bg-[#FAF7F2] border border-[#EAE2D5]">
                   <button
                     type="button"
                     onClick={() => {
@@ -1734,11 +1739,11 @@ export default function HomePage() {
                     }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                       vistaGlobalFotos === "exterior"
-                        ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm"
+                        ? "bg-[#1E130C] text-[#FAF7F2] shadow-sm font-black"
                         : "text-[#785E4F] hover:text-[#1E130C]"
                     }`}
                   >
-                    <span>🥐 Exterior</span>
+                    <span>🥐 Vitrina</span>
                   </button>
                   <button
                     type="button"
@@ -1749,12 +1754,12 @@ export default function HomePage() {
                     }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                       vistaGlobalFotos === "corte"
-                        ? "bg-[#991B24] text-white shadow-sm"
+                        ? "bg-[#991B24] text-white shadow-sm font-black"
                         : "text-[#785E4F] hover:text-[#1E130C]"
                     }`}
                   >
                     <Sparkles size={12} className="text-[#D97706]" />
-                    <span>🔪 Textura & Corte Interior</span>
+                    <span>🔪 Corte Artesanal</span>
                   </button>
                 </div>
               </div>
@@ -1768,12 +1773,12 @@ export default function HomePage() {
                 placeholder="Buscar por especialidad (New York Roll, cauka, croissant, espresso, cuñapé)..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                className="w-full pl-11 pr-10 py-3.5 rounded-[22px] bg-white border border-[#EAE2D5] shadow-xs text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#991B24] placeholder:text-[#A8988D] text-[#1E130C] transition"
+                className="w-full pl-11 pr-10 py-3.5 rounded-[22px] bg-white border-2 border-[#D5C7B5] shadow-xs text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#991B24] placeholder:text-[#A8988D] text-[#1E130C] font-medium transition"
               />
               {busqueda && (
                 <button
                   onClick={() => setBusqueda("")}
-                  className="absolute right-3.5 top-3.5 text-[#785E4F] hover:text-[#1E130C] text-xs cursor-pointer"
+                  className="absolute right-3.5 top-3.5 text-[#785E4F] hover:text-[#1E130C] text-xs cursor-pointer p-1"
                 >
                   <X size={16} />
                 </button>
@@ -1782,7 +1787,7 @@ export default function HomePage() {
 
             {/* Fila 3: Chips de Búsqueda Rápida */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
-              <span className="text-[10px] uppercase font-bold text-[#A8988D] shrink-0 tracking-wider flex items-center gap-1 mr-1">
+              <span className="text-[10px] uppercase font-bold text-[#785E4F] shrink-0 tracking-wider flex items-center gap-1 mr-1">
                 <Tag size={12} />
                 Populares:
               </span>
@@ -1792,19 +1797,23 @@ export default function HomePage() {
                 { tag: "cuñap", label: "#CuñapéCriollo" },
                 { tag: "baguette", label: "#MasaMadre24h" },
                 { tag: "alfajor", label: "#AlfajorManjar" },
-                { tag: "cappuccino", label: "#CaféCaranavi" },
+                { tag: "café", label: "#CaféCaranavi" },
               ].map((chip) => (
                 <button
                   key={chip.tag}
                   type="button"
                   onClick={() => {
                     soundManager.playTactileClick();
-                    setBusqueda(busqueda === chip.tag ? "" : chip.tag);
+                    const nextBusqueda = busqueda === chip.tag ? "" : chip.tag;
+                    setBusqueda(nextBusqueda);
+                    if (nextBusqueda) {
+                      setCategoriaActiva("todos");
+                    }
                   }}
                   className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] font-semibold transition border cursor-pointer select-none ${
                     busqueda === chip.tag
-                      ? "bg-[#991B24] text-white border-[#991B24] shadow-xs"
-                      : "bg-white text-[#785E4F] border-[#EAE2D5] hover:border-[#991B24] hover:text-[#1E130C]"
+                      ? "bg-[#991B24] text-white border-[#991B24] shadow-xs font-bold"
+                      : "bg-white text-[#785E4F] border-[#D5C7B5] hover:border-[#991B24] hover:text-[#1E130C]"
                   }`}
                 >
                   {chip.label}
@@ -1812,49 +1821,50 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Fila 4: Pestañas de Categoría con Mascotas Auténticas */}
+            {/* Fila 4: Pestañas de Categoría con Mascotas Auténticas (100% legibles, sin recortes) */}
             {(modoPresentacion === "categoria" || busqueda !== "") && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center pt-2">
-                {[
-                  { id: "todos", label: "Todos (114)", icon: UtensilsCrossed, sound: "tactile" },
-                  { id: "c_desayunos", label: "Desayunos", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
-                  { id: "c_cafes", label: "Cafés 4 Llamas", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "porcelain" },
-                  { id: "c_dulces", label: "Pastelería & Tortas", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
-                  { id: "c_saladas", label: "Masitas Saladas", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
-                  { id: "c_sandwiches", label: "Sándwiches Gourmet", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
-                  { id: "c_pizzas", label: "Pizzas al Horno", mascot: "/img/brand/mascot-pizza-official.png", sound: "bread" },
-                  { id: "c_jugos", label: "Bebidas & Frappés", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "tactile" },
-                  { id: "favoritos", label: "Más Vendidos ★", icon: Star, sound: "tactile" },
-                ].map((cat) => {
-                  const Icon = cat.icon;
-                  const isSel = categoriaActiva === cat.id;
-                  return (
-                    <motion.button
-                      key={cat.id}
-                      whileTap={{ scale: 0.95, y: 1 }}
-                      transition={springPhysics}
-                      onClick={() => {
-                        if (cat.sound === "bread") soundManager.playBreadCrunch();
-                        else if (cat.sound === "pastry") soundManager.playPastryCrinkle();
-                        else if (cat.sound === "porcelain") soundManager.playPorcelainTink();
-                        else soundManager.playTactileClick();
-                        setCategoriaActiva(cat.id);
-                      }}
-                      className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap flex items-center gap-2 transition-all select-none cursor-pointer ${
-                        isSel
-                          ? "bg-[#991B24] text-white shadow-md border border-[#7F1D1D]"
-                          : "bg-white text-[#785E4F] border border-[#EAE2D5] hover:bg-[#F5EFEB] hover:text-[#1E130C]"
-                      }`}
-                    >
-                      {cat.mascot ? (
-                        <img src={cat.mascot} alt={cat.label} className="w-5 h-5 object-contain" />
-                      ) : (
-                        Icon && <Icon size={14} className={isSel ? "text-amber-300" : "text-[#785E4F]"} />
-                      )}
-                      <span>{cat.label}</span>
-                    </motion.button>
-                  );
-                })}
+              <div className="w-full relative">
+                <div className="flex items-center gap-2 overflow-x-auto py-2 px-1 scrollbar-none justify-start lg:justify-center flex-nowrap lg:flex-wrap">
+                  {[
+                    { id: "todos", label: "Todos (114)", icon: UtensilsCrossed, sound: "tactile" },
+                    { id: "c_desayunos", label: "Desayunos", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
+                    { id: "c_cafes", label: "Cafés 4 Llamas", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "porcelain" },
+                    { id: "c_dulces", label: "Pastelería & Tortas", mascot: "/img/brand/mascot-croissant-official.png", sound: "pastry" },
+                    { id: "c_saladas", label: "Masitas Saladas", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
+                    { id: "c_sandwiches", label: "Sándwiches Gourmet", mascot: "/img/brand/mascot-sandwich-official.png", sound: "bread" },
+                    { id: "c_pizzas", label: "Pizzas al Horno", mascot: "/img/brand/mascot-pizza-official.png", sound: "bread" },
+                    { id: "c_jugos", label: "Bebidas & Frappés", mascot: "/img/brand/mascot-coffee-sun-official.png", sound: "tactile" },
+                    { id: "favoritos", label: "Más Vendidos ★", icon: Star, sound: "tactile" },
+                  ].map((cat) => {
+                    const Icon = cat.icon;
+                    const isSel = categoriaActiva === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => {
+                          if (cat.sound === "bread") soundManager.playBreadCrunch();
+                          else if (cat.sound === "pastry") soundManager.playPastryCrinkle();
+                          else if (cat.sound === "porcelain") soundManager.playPorcelainTink();
+                          else soundManager.playTactileClick();
+                          setCategoriaActiva(cat.id);
+                        }}
+                        className={`px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap flex items-center gap-2 transition-all select-none cursor-pointer shrink-0 border-2 ${
+                          isSel
+                            ? "bg-[#991B24] text-white shadow-md border-[#7F1D1D] ring-2 ring-amber-400/40"
+                            : "bg-white text-[#1E130C] border-[#D5C7B5] hover:bg-[#FAF6EF] hover:border-amber-600 shadow-2xs"
+                        }`}
+                      >
+                        {cat.mascot ? (
+                          <img src={cat.mascot} alt={cat.label} className="w-5 h-5 object-contain shrink-0" />
+                        ) : (
+                          Icon && <Icon size={15} className={`shrink-0 ${isSel ? "text-amber-300" : "text-[#991B24]"}`} />
+                        )}
+                        <span className="leading-none">{cat.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
@@ -2267,10 +2277,44 @@ export default function HomePage() {
                   Mostrando {remainingProducts.length} de {productosFiltrados.length} delicias
                   {busqueda && ` para "${busqueda}"`}
                 </span>
-                <span className="text-xs text-[#991B24] font-semibold">
+                <span className="text-xs text-[#991B24] font-semibold hidden sm:inline">
                   Fotos interactivas: Hover para ver corte interior
                 </span>
               </div>
+
+              {/* Estado cuando no hay productos que coincidan */}
+              {productosFiltrados.length === 0 && (
+                <div className="py-12 px-6 text-center rounded-3xl bg-white border-2 border-[#D5C7B5] shadow-sm max-w-lg mx-auto space-y-4 my-8">
+                  <div className="w-20 h-20 mx-auto flex items-center justify-center">
+                    <img
+                      src="/img/brand/mascot-croissant-official.png"
+                      alt="Don Dencker"
+                      className="w-full h-full object-contain filter drop-shadow-md"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1E130C]">
+                      No encontramos delicias para &ldquo;{busqueda}&rdquo;
+                    </h3>
+                    <p className="text-xs text-stone-600 max-w-sm mx-auto">
+                      Intenta buscar con términos como <strong>café</strong>, <strong>croissant</strong>, <strong>roll</strong> o <strong>pizza</strong>.
+                    </p>
+                  </div>
+                  <div className="pt-2 flex items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playTactileClick();
+                        setBusqueda("");
+                        setCategoriaActiva("todos");
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-[#991B24] hover:bg-[#7F1D1D] text-white text-xs font-bold transition shadow-sm cursor-pointer"
+                    >
+                      Ver Todo el Catálogo (114 Delicias)
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Grilla Bento Asimétrica con Tarjeta Estrella */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
