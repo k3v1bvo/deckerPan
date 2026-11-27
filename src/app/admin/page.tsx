@@ -1288,12 +1288,14 @@ export default function AdminPage() {
 
                               {/* Título & Estación del Producto con Alto Contraste */}
                               <div className="flex-1 min-w-0">
-                                <h4 className="font-bold text-sm text-[#1E130C] line-clamp-1 group-hover:text-[#991B24] transition">
+                                <h4 className="font-extrabold text-sm sm:text-base text-stone-900 line-clamp-1 group-hover:text-[#991B24] transition">
                                   {prod.nombre}
                                 </h4>
-                                <span className="text-[11px] text-stone-600 capitalize flex items-center gap-1 font-medium">
-                                  Estación: {prod.estacion}
-                                </span>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 capitalize">
+                                    {prod.estacion}
+                                  </span>
+                                </div>
                               </div>
                             </div>
 

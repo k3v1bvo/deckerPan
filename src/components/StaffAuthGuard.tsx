@@ -31,6 +31,7 @@ import {
 } from "@/lib/auth";
 import { soundManager } from "@/lib/sound";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
+import { DenckerLogo } from "@/components/brand/DenckerLogo";
 
 interface StaffAuthGuardProps {
   requiredRole: StaffRole;
@@ -154,18 +155,22 @@ export default function StaffAuthGuard({
 
   if (isLoading) {
     return (
-      <div className="w-full min-h-screen bg-[#120B07] flex flex-col items-center justify-center text-white space-y-4 px-4 select-none">
-        <div className="w-16 h-16 rounded-2xl bg-white/10 p-2.5 border border-amber-500/30 flex items-center justify-center shadow-inner">
-          <img
-            src={DENCKER_ASSETS.logoLight}
-            alt="Dencker Pan"
-            className="w-full h-full object-contain drop-shadow"
-          />
+      <div className="fixed inset-0 z-50 bg-[#160D08] flex flex-col items-center justify-center text-white space-y-5 px-4 select-none">
+        <div className="relative w-20 h-20 rounded-3xl bg-gradient-to-b from-[#25160E] to-[#160D08] p-3.5 border border-amber-500/40 flex items-center justify-center shadow-2xl">
+          <div className="absolute inset-0 bg-amber-500/15 rounded-3xl blur-xl animate-pulse pointer-events-none" />
+          <div className="w-12 h-12 flex items-center justify-center relative z-10">
+            <DenckerLogo className="w-full h-full drop-shadow" color="#F59E0B" animated={true} />
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-5 h-5 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
-          <span className="text-xs font-mono tracking-wider uppercase text-amber-200/90 font-bold">
-            Verificando Credenciales Dencker Pan...
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
+            <span className="text-xs font-mono tracking-widest uppercase text-amber-200 font-bold">
+              Verificando Credenciales Dencker Pan...
+            </span>
+          </div>
+          <span className="text-[11px] text-stone-400 font-sans">
+            Panadería Artesanal &amp; Café de Especialidad &bull; Cochabamba
           </span>
         </div>
       </div>

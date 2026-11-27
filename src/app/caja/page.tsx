@@ -27,7 +27,7 @@ import { Pedido, MetodoPago, BILLETES_BOLIVIANOS, FacturaEmitida } from "@/types
 import { soundManager } from "@/lib/sound";
 import StaffAuthGuard from "@/components/StaffAuthGuard";
 import { DENCKER_ASSETS } from "@/lib/seed-data";
-import { DenckerLogo } from "@/components/brand";
+import { DenckerLogo, AnimatedMascot } from "@/components/brand";
 import { printElementById } from "@/lib/print";
 import { convertirNumeroALiteral } from "@/lib/siat-utils";
 
@@ -940,14 +940,25 @@ export default function CajaPage() {
               </button>
             </div>
           ) : (
-            <div className="p-12 text-center bg-white rounded-3xl border-2 border-dashed border-[#D5C7B5] space-y-3 shadow-md">
-              <Receipt size={48} className="mx-auto text-amber-900/40" />
-              <h3 className="font-serif text-xl font-bold text-stone-800">
-                Selecciona una mesa para cobrar
-              </h3>
-              <p className="text-xs text-stone-600 max-w-sm mx-auto font-medium">
-                Elige cualquiera de las cuentas pendientes a la izquierda para desplegar la terminal de cobro y opciones de facturación y cálculo de cambio.
-              </p>
+            <div className="p-8 sm:p-12 text-center bg-white rounded-3xl border-2 border-stone-200 space-y-4 shadow-sm flex flex-col items-center justify-center">
+              <div className="w-32 h-44 sm:w-36 sm:h-48 flex items-center justify-center">
+                <AnimatedMascot
+                  mascot="don-dencker"
+                  animation="idle"
+                  color="#1E130C"
+                  speechBubble="¡Terminal lista! Selecciona una mesa pendiente a la izquierda para iniciar el cobro."
+                  speechBubblePosition="top"
+                  className="w-full h-full drop-shadow-md"
+                />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-stone-900">
+                  Terminal de Cobro Dencker Pan
+                </h3>
+                <p className="text-xs text-stone-600 max-w-sm mx-auto font-medium leading-relaxed">
+                  Calculador inteligente en Bolivianos (Bs), billetes exactos, división de cuentas por comensal y facturación SIAT con QR.
+                </p>
+              </div>
             </div>
           )}
         </div>

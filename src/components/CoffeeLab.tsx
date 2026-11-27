@@ -355,6 +355,18 @@ export default function CoffeeLab() {
       
       {/* ── Encabezado de la Sección con Switcher de Modos ── */}
       <div className="text-center space-y-4 max-w-3xl mx-auto w-full flex flex-col items-center">
+        {/* Mascota Embajadora: Don Café Sonriente & Sol */}
+        <div className="flex items-center justify-center relative -mb-1">
+          <AnimatedMascot
+            mascot="taza-sol"
+            animation="float"
+            color="#FFFDF7"
+            speechBubble="¡Tostado en Cochabamba con granos de Caranavi a 1,700 msnm!"
+            speechBubblePosition="right"
+            className="w-28 h-28 sm:w-36 sm:h-36 drop-shadow-[0_8px_30px_rgba(245,158,11,0.4)]"
+          />
+        </div>
+
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D49B54]/15 border border-[#D49B54]/30 text-[#E6AE68] text-xs font-semibold">
           <Sparkles size={14} className="text-[#E6AE68] animate-pulse" />
           <span>Laboratorio Sensorial de Barismo • 1,600 msnm</span>
