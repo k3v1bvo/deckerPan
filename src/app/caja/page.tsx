@@ -129,6 +129,11 @@ export default function CajaPage() {
     setPropinaPct(0);
     setPropinaCustom(0);
     setPagoCompletado(false);
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setTimeout(() => {
+        document.getElementById("panel-cobro")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
   };
 
   const agregarBillete = (valor: number) => {
@@ -338,7 +343,7 @@ export default function CajaPage() {
         </div>
 
         {/* Columna Derecha: Terminal de Cobro */}
-        <div className="lg:col-span-7">
+        <div id="panel-cobro" className="lg:col-span-7">
           {pedidoSeleccionado ? (
             <div className="bg-white rounded-3xl border-2 border-[#D5C7B5] shadow-xl p-6 sm:p-7 space-y-6">
               {/* Header Comanda a Cobrar con Pantalla POS de Alto Contraste */}
